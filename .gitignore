@@ -120,3 +120,5 @@ dist
 
 *.js
 code/jvm/daw-battleship-game/myvars.txt
+*.pem
+*.key
