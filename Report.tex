@@ -1,0 +1,83 @@
+\documentclass[a4paper,twoside,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{graphicx}
+\usepackage{url}
+
+% pdflatex
+
+% redefinição das margens das páginas
+\setlength{\textheight}{24.00cm}
+\setlength{\textwidth}{15.50cm}
+\setlength{\topmargin}{0.35cm}
+\setlength{\headheight}{0cm}
+\setlength{\headsep}{0cm}
+\setlength{\oddsidemargin}{0.25cm}
+\setlength{\evensidemargin}{0.25cm}
+
+\title{T\'{i}tulo do Projecto}
+
+\author{
+\begin{tabular}{c}
+             Fernando Pessoa, n.º 63975, e-mail: fp@alunos.isel.pt, tel.: 218317000\\
+             Ricardo Reis, n.º 57936, e-mail: rr@alunos.isel.pt, tel.: 218317000\\
+\end{tabular}}
+
+\date{
+\begin{tabular}{ll}
+  {Orientadores:} & Álvaro de Campos, e-mail: ac@isel.pt \\
+                 & Alberto Caeiro, e-mail: ac@pc.com, PersonCompany\\
+\end{tabular}\\
+\vspace{5mm}
+Fevereiro de 2023}
+
+\begin{document}
+
+\maketitle
+
+\section*{Introdução}
+Nesta secção aborda-se o enquadramento do projeto e a sua finalidade. O logótipo do ISEL é apresentado na figura~\ref{fig:logotipo}. Esta proposta está organizada em três secções...
+
+\begin{figure}[h]
+\begin{center}
+\resizebox{80mm}{!}{\includegraphics{logoISEL.png}}
+\end{center}
+\caption{Legenda da figura com o logótipo do ISEL.}\label{fig:logotipo}
+\end{figure}
+
+O livro \cite{dawson2015projects} é um guia para estudantes... 
+
+Na Wikipedia, o verbete \cite{enwiki:1136305432} é sobre \LaTeX. Em \cite{6547630} ...
+
+
+Exemplo de equação
+\begin{equation}
+    E_0 = mc^2                         
+\end{equation}
+
+A tabela~\ref{tab:ex1} é um exemplo de tabela.
+
+\begin{table}
+\begin{center}
+\begin{tabular}{ccc}
+	\hline
+	Nome & Tarefas & Progresso \\
+	\hline
+	Ricardo Reis & 1 e 2 & 50\% \\
+	Álvaro Campos & 1 e 3 & 20\%  \\
+	\hline
+\end{tabular}
+\caption{Exemplo de tabela.} \label{tab:ex1}
+\end{center}
+\end{table}
+
+\section*{Análise}
+Nesta secção...
+
+\section*{Planeamento}
+Agora o texto sobre o planeamento
+
+\bibliographystyle{unsrt}
+\bibliography{referencias}
+
+\end{document}

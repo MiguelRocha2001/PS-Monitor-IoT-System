@@ -12,6 +12,7 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+
     implementation("com.hivemq:hivemq-community-edition-embedded:2023.2")
 }
 

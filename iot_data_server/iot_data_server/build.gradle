@@ -36,6 +36,8 @@ dependencies {
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-webflux")
+
+	implementation("com.hivemq:hivemq-community-edition-embedded:2023.2")
 }
 
 tasks.withType(KotlinCompile) {
