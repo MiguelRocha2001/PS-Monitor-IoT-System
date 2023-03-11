@@ -15,18 +15,17 @@
 \setlength{\oddsidemargin}{0.25cm}
 \setlength{\evensidemargin}{0.25cm}
 
-\title{T\'{i}tulo do Projecto}
+\title{Sistema IoT para Monitorização de pH em Instalações fabris}
 
 \author{
 \begin{tabular}{c}
-             Fernando Pessoa, n.º 63975, e-mail: fp@alunos.isel.pt, tel.: 218317000\\
-             Ricardo Reis, n.º 57936, e-mail: rr@alunos.isel.pt, tel.: 218317000\\
+             Miguel Rocha, n.º 47185, e-mail: a47185@alunos.isel.pt, tel.: 933740977\\
+             Pedro Silva, n.º 57936, e-mail: rr@alunos.isel.pt, tel.: 218317000\\
 \end{tabular}}
 
 \date{
 \begin{tabular}{ll}
-  {Orientadores:} & Álvaro de Campos, e-mail: ac@isel.pt \\
-                 & Alberto Caeiro, e-mail: ac@pc.com, PersonCompany\\
+  {Orientadores:} & Rui Duarte, e-mail: rui.duarte@isel.pt\\
 \end{tabular}\\
 \vspace{5mm}
 Fevereiro de 2023}
@@ -35,44 +34,37 @@ Fevereiro de 2023}
 
 \maketitle
 
-\section*{Introdução}
-Nesta secção aborda-se o enquadramento do projeto e a sua finalidade. O logótipo do ISEL é apresentado na figura~\ref{fig:logotipo}. Esta proposta está organizada em três secções...
+\section*{Background}
+In this days, automation is in almost every corner of the world, specially in industrial factories. It brings many benefits, including increased efficiency, lower costs, improved quality, etc.
 
-\begin{figure}[h]
-\begin{center}
-\resizebox{80mm}{!}{\includegraphics{logoISEL.png}}
-\end{center}
-\caption{Legenda da figura com o logótipo do ISEL.}\label{fig:logotipo}
-\end{figure}
+There is a small factory business, that sells water filters. The filter components need to be monitored, and, eventually, replaced, duo to the degradation of those same components.
+For example, if the PH water levels become too low (basic), the water needs to be replaced. If there is an inundation, in the filter, the room needs to be cleaned. Its is also important to monitor other conditions that might affect the filter, like the room and water temperature.
 
-O livro \cite{dawson2015projects} é um guia para estudantes... 
+This control can be done, manually, which ends up being time consuming, prone to error, inefficient, specially when the target equipment, in this case, the water filter, is in a difficult access environment.
 
-Na Wikipedia, o verbete \cite{enwiki:1136305432} é sobre \LaTeX. Em \cite{6547630} ...
+With all this said, it is clearly that this process is a good candidate for automation.
 
+This project, aims to solve this problem, by building a system that will automate all this procedure, with care for the total system cost.
+The system will, not only collect and analyze the environment data, but also alert the user when then filter components require human intervention.
 
-Exemplo de equação
-\begin{equation}
-    E_0 = mc^2                         
-\end{equation}
+\section*{Main Objectives}
+\begin{itemize}
+  \item To produce a system that automates the filter PH control
+  \item To design, implement and articulate all the individual modules that compose the main system architecture
+  \item To produce a system that collects required data from the filter, and sends it to the system core (cloud)
+  \item Learn how to produce a system, not only composed by software, but also a physical (hardware) device
+  \item To produce a system that analyzes the required data, and alerts the user, of some eventual complications in the filter, and its components
+  \item The design of a database that stores collected data, and other project necessary information
+  \item To build a REST API, that allows for a Client (ex: Web, Android, etc) to interact with the system, requesting services like associating IoT devices and requesting stored data
+  \item The creation of a Web App to interact with the REST API/system
+  \item The interaction with the hardware core, to actually do something useful, as automation
+\end{itemize}
 
-A tabela~\ref{tab:ex1} é um exemplo de tabela.
-
-\begin{table}
-\begin{center}
-\begin{tabular}{ccc}
-	\hline
-	Nome & Tarefas & Progresso \\
-	\hline
-	Ricardo Reis & 1 e 2 & 50\% \\
-	Álvaro Campos & 1 e 3 & 20\%  \\
-	\hline
-\end{tabular}
-\caption{Exemplo de tabela.} \label{tab:ex1}
-\end{center}
-\end{table}
-
-\section*{Análise}
-Nesta secção...
+\section*{Additional Objectives}
+\begin{itemize}
+  \item To build an Android App, allowing the user to have an alternative to the Web application, which, in this days, is undoubtedly relevant
+  \item Implement a small AI algorithm that aims to filter collected filter data, eliminating possible meaningless data, that might occur sporadically
+\end{itemize}
 
 \section*{Planeamento}
 Agora o texto sobre o planeamento
