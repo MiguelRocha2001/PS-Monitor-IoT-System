@@ -1,0 +1,9 @@
+{
+    "cmake.configureOnOpen": true,
+    "idf.adapterTargetName": "esp32s2",
+    "idf.openOcdConfigs": [
+        "board/esp32s2-kaluga-1.cfg"
+    ],
+    "idf.portWin": "COM5",
+    "idf.flashType": "UART"
+}

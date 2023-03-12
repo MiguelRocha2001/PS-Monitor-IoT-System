@@ -1,0 +1,9 @@
+menu "Application Configuration"
+
+    config GPIO_RESET_PIN
+        int "GPIO reset pin"
+        default 16
+        help
+            Select pin that resets the saved parameters when set to HIGH.
+
+endmenu
