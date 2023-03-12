@@ -49,37 +49,69 @@ The system will, not only collect and analyze the environment data, but also ale
 
 \section*{Main Objectives}
 \begin{itemize}
-  \item To produce a system that automates the filter PH control
-  \item To design, implement and articulate all the individual modules that compose the main system architecture
-  \item To produce a system that collects required data from the filter, and sends it to the system core (cloud)
-  \item Learn how to produce a system, not only composed by software, but also a physical (hardware) device
-  \item To produce a system that analyzes the required data, and alerts the user, of some eventual complications in the filter, and its components
-  \item The design of a database that stores collected data, and other project necessary information
-  \item To build a REST API, that allows for a Client (ex: Web, Android, etc) to interact with the system, requesting services like associating IoT devices, requesting stored data and configuring system thresholds
-  \item The creation of a Web App to interact with the REST API/system
-  \item The interaction with the hardware core, to actually do something useful, as automation
+    \item To produce a system that automates the filter PH control
+    \item To design, implement and articulate all the individual modules that compose the main system architecture
+    \item To produce a system that collects required data from the filter, and sends it to the system core (cloud)
+    \item Learn how to produce a system, not only composed by software, but also a physical (hardware) device
+    \item To produce a system that analyzes the required data, and alerts the user, of some eventual complications in the filter, and its components
+    \item The design of a database that stores collected data, and other project necessary information
+    \item To build a REST API, that allows for a Client (ex: Web, Android, etc) to interact with the system, requesting services like associating IoT devices, requesting stored data and configuring system thresholds
+    \item The creation of a Web App to interact with the REST API/system
+    \item The interaction with the hardware core, to actually do something useful, as automation
 \end{itemize}
 
 \section*{Additional Objectives}
 \begin{itemize}
-  \item To build an Android App, allowing the user to have an alternative to the Web application, which, in this days, is undoubtedly relevant
-  \item Implement a small AI algorithm that aims to filter collected filter data, eliminating possible meaningless data, that might occur sporadically
+    \item To build an Android App, allowing the user to have an alternative to the Web application, which, in this days, is undoubtedly relevant
+    \item Implement a small AI algorithm that aims to filter collected filter data, eliminating possible meaningless data, that might occur sporadically
 \end{itemize}
 
 \section*{Justification}
-While working in a real world application, we will learn new skills, starting with the programming of a MCU, which is essential in IoT projects, and the use of alternative network protocols, other than the HTTP, and mainly used in IoT systems. Not only that, we will enhance other skills , already obtained in the current course, like Web Programming, composed by the Backend and Frontend, the design and use of a database and the design architecture of a medium scale project. Finally, we will have the opportunity to experience what is it like to plan, develop and report a real computer project.
+While working in a real world application, we will learn new skills, starting with the programming of a MCU, which is essential in IoT projects, and the use of alternative network protocols, other than the HTTP, and mainly used in IoT systems. 
+
+We will enhance other skills , already obtained in the current course, including Web Programming, composed by the Backend and Frontend, the design and use of a database and the design architecture of a medium scale project. 
+
+Finally, we will have the opportunity to experience what is it like to plan, develop and report a real computer project.
 
 \section*{Scope}
 The functional scope of the project is limited the collection and analysis of relevant data related to the target device, and the interaction with the system to configure preferences and to obtain collected data, namely:
 \begin{itemize}
-  \item Associate IoT devices to the system
-  \item Visualize collected data (collected PH values)
-  \item Receiving notification of a specific event (PH value, low IoT battery charge)
-  \item Configuring system thresholds
+    \item Associate IoT devices to the system
+    \item Visualize collected data (collected PH values)
+    \item Receiving notification of a specific event (PH value, low IoT battery charge)
+    \item Configuring system thresholds
 \end{itemize}
 
-\section*{Planning}
-Agora o texto sobre o planeamento
+\section*{Approach and Deliverables}
+\subsection{Approach}
+The project implementation will split the system in various modules:
+\begin{enumerate}
+    \item The factory/hardware
+    \item The IoT platform
+    \item The frontend interface
+\end{enumerate}
+The first module will be composed by an MCU and it's sensors. For this, we will use an ESP32-S2 Devkit, which provides everything we need, including WiFi, necessary peripherals, decent security, and very good community support, and, at the same time, being a low cost Board. connected to the Board, it will be uses a small 3.6V battery, and a low cost PH sensor. The Board will be programmed in C, which provides a good amount of hardware control.
+
+The second module, will include a Broker. This one will be implemented from scratch, given it could be customed for our system needs, and is part of an open free project. We will be using the HiveMq-CE.
+The database will use PostgreSQL or MySQL.
+The language chosen to implement the backend server will be Kotlin, because it is a modern and power full language, and is compatible with all JVM libraries.
+Spring will be the chosen framework to build the backend service, duo to being one of the best server-side frameworks of the Java (and consequently Kotlin) programming language.
+
+<Insert frontend language and framework option>
+
+\subsection{Deliverables}
+The final solution will include:
+\begin{itemize}
+    \item An MCU to collect and transmit collected data to the IoT platform
+    \item A IoT platform, composed by:
+    \begin{itemize}
+        \item A Broker server, that receives the data, from the MCU
+        \item A relational database to store system data (records, devices, etc) 
+        \item A backend service to manage system logic and analysis data
+        \item A server to serve the Web App
+        \end{itemize}
+        \item A fully functional Web App, to visualize and manage system data (devices, PH records, etc)
+\end{itemize}
 
 \bibliographystyle{unsrt}
 \bibliography{referencias}
