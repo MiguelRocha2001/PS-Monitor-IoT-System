@@ -14,6 +14,7 @@
 #include "sdkconfig.h"
 
 #include "ph_reader_fake.h"
+#include "broker_util.h"
 
 
 #define GPIO_RESET_PIN (CONFIG_GPIO_RESET_PIN)
@@ -55,6 +56,7 @@ void app_main(void) {
     ph_record_t ph_record;
     while (1) {
         read_ph(&ph_record);
+        send_ph_value(&ph_record);
     }
     
     send_notification(deviceID);

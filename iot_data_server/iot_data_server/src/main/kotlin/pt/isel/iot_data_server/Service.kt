@@ -1,8 +1,5 @@
 package pt.isel.iot_data_server
 
-import com.hivemq.client.mqtt.datatypes.MqttQos
-import com.hivemq.client.mqtt.mqtt5.message.subscribe.suback.Mqtt5SubAckReasonCode
-import com.hivemq.mqtt.topic.TopicFilter
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.springframework.stereotype.Service
 import pt.isel.iot_data_server.domain.Device
@@ -17,11 +14,7 @@ class Service(
     init {
         val client = MqttClient("tcp://localhost:1883", MqttClient.generateClientId())
         client.connect()
-        client.subscribe("topic") { topic, message ->
-            val byteArray = message.payload
-            val string = String(byteArray)
-            println("Received message on topic $topic: $string")
-        }
+        subscribePhTopic(client)
     }
 
     fun createDevice(device: Device) {
@@ -35,6 +28,14 @@ class Service(
     ) {
         transactionManager.run {
 
+        }
+    }
+
+    private fun subscribePhTopic(client: MqttClient) {
+        client.subscribe("topic/ph") { topic, message ->
+            val byteArray = message.payload
+            val string = String(byteArray)
+            println("Received message on topic $topic: $string")
         }
     }
 }
