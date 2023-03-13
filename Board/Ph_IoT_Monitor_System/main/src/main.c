@@ -3,7 +3,7 @@
 #include <driver/gpio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "freertos/event_groups.h"z
+#include "freertos/event_groups.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
 
@@ -52,12 +52,10 @@ void app_main(void) {
         esp_touch_helper(&deviceID);
     }
 
-    /*
     ph_record_t ph_record;
     while (1) {
         read_ph(&ph_record);
     }
-    */
     
     send_notification(deviceID);
 }

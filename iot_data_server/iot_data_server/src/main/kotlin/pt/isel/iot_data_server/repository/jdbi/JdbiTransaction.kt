@@ -9,7 +9,7 @@ class JdbiTransaction(
     private val handle: Handle
 ) : Transaction {
 
-    override val repository: ServerRepository by lazy { JdbiRepository(handle) }
+    override val repository: ServerRepository by lazy { JdbiServerRepository(handle) }
 
     override fun rollback() {
         handle.rollback()
