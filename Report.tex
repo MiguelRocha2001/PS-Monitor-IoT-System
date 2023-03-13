@@ -90,7 +90,8 @@ The project implementation will split the system in various modules:
     \item The IoT platform
     \item The frontend interface
 \end{enumerate}
-The first module will be composed by an MCU and it's sensors. For this, we will use an ESP32-S2 Devkit, which provides everything we need, including WiFi, necessary peripherals, decent security, and very good community support, and, at the same time, being a low cost Board. connected to the Board, it will be uses a small 3.6V battery, and a low cost PH sensor. The Board will be programmed in C, which provides a good amount of hardware control.
+The first module will be composed by an MCU and it's sensors. For this, we will use an ESP32-S2 Devkit, which provides everything we need, including WiFi, necessary peripherals, decent security, and very good community support, and, at the same time, being a low cost Board. It is also a low power consuming MCU.
+Connected to the Board, it will be uses a small 3.6V battery, and a low cost PH sensor. The Board will be programmed in C, which provides a good amount of hardware control.
 
 The second module, will include a Broker. This one will be implemented from scratch, given it could be customed for our system needs, and is part of an open free project. We will be using the HiveMq-CE.
 The database will use PostgreSQL or MySQL.

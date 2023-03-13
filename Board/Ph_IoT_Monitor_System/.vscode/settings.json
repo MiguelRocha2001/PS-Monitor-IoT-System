@@ -5,5 +5,19 @@
         "board/esp32s2-kaluga-1.cfg"
     ],
     "idf.portWin": "COM5",
-    "idf.flashType": "UART"
+    "idf.flashType": "UART",
+    "files.associations": {
+        "adc.h": "c",
+        "adc_types.h": "c",
+        "adc_cali.h": "c",
+        "stdlib.h": "c",
+        "ph_reader_fake.h": "c",
+        "string.h": "c",
+        "esp_compiler.h": "c",
+        "nvs_util.h": "c",
+        "unity.h": "c",
+        "stdio.h": "c",
+        "esp_err.h": "c",
+        "freertos.h": "c"
+    }
 }
