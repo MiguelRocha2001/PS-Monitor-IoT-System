@@ -3,6 +3,7 @@
 \usepackage[portuguese]{babel}
 \usepackage{graphicx}
 \usepackage{url}
+\usepackage{xcolor}
 
 % pdflatex
 
@@ -15,105 +16,178 @@
 \setlength{\oddsidemargin}{0.25cm}
 \setlength{\evensidemargin}{0.25cm}
 
-\title{Sistema IoT para Monitorização de pH em Instalações fabris}
+\begin{document}
+
+
+\begin{figure}
+    \centering
+        \centering
+        \includegraphics[scale = 0.7]{images/logoISEL.png}
+%        \begin{subfigure}{.6\textwidth}
+%        \centering
+%        \includegraphics[scale = 0.15]{athens.jpg}
+%        \end{subfigure}
+\end{figure}
+
+\title{\Large\textbf{\texorpdfstring{%
+    {Project Proposal for Project and Seminary 2022/23}\\[0.5ex]\rule{\linewidth}{0.5pt}\\[0.5ex]
+    IoT System for pH Monitoring in Manufacturing Facilities}%
+}{}}
 
 \author{
 \begin{tabular}{c}
              Miguel Rocha, n.º 47185, e-mail: a47185@alunos.isel.pt, tel.: 933740977\\
-             Pedro Silva, n.º , e-mail: , tel.: \\
+             Pedro Silva, n.º 47128, e-mail: 47128@alunos.isel.pt, tel.: 935122223\\
 \end{tabular}}
 
 \date{
 \begin{tabular}{ll}
-  {Orientadores:} & Rui Duarte, e-mail: rui.duarte@isel.pt\\
+  {Supervisor:} & Rui Duarte, e-mail: rui.duarte@isel.pt\\
 \end{tabular}\\
 \vspace{5mm}
-Fevereiro de 2023}
+March 20, 2023}
 
-\begin{document}
+% \begin{document}
 
 \maketitle
 
-\section*{Background}
-In this days, automation is in almost every corner of the world, specially in industrial factories. It brings many benefits, including increased efficiency, lower costs, improved quality, etc.
+\section{Introduction}
+The Internet of Things (IoT) is revolutionizing the way machines work and communicate with people.
+Our main objective consists in the creation of a smart and automated system using IoT technology to enhance the efficiency and accuracy of the machine filter process.
+By incorporating sensors into these machines, we can detect problems before they lead to costly downtime or safety hazards.
+The sensors will collect data relative to the machine's environment, such as the water temperature and pH.
+All this data is sent to a central server, and through real-time data analysis, we identify if the machine is not working optimally or is closer to failure.
+In these situations, an alert will be sent to a device controlled by the machine operator or manager, enabling them to take prompt action to resolve the issue.
+Our project seeks to improve efficiency, reduce costs and increase safety by automating the fault detection process of machine inspection.  \textcolor{red}{adicionar melhor explicação acerca dos filtros após reunião}.
 
-There is a small factory business, that sells water filters. The filter components need to be monitored, and, eventually, replaced, duo to the degradation of those same components.
-For example, if the PH water levels become too low (basic), the water needs to be replaced. If there is an inundation, in the filter, the room needs to be cleaned. Its is also important to monitor other conditions that might affect the filter, like the room and water temperature.
-
-This control can be done, manually, which ends up being time consuming, prone to error, inefficient, specially when the target equipment, in this case, the water filter, is in a difficult access environment.
-
-With all this said, it is clearly that this process is a good candidate for automation.
-
-This project, aims to solve this problem, by building a system that will automate all this procedure, with care for the total system cost.
-The system will, not only collect and analyze the environment data, but also alert the user when then filter components require human intervention.
-
-\section*{Main Objectives}
-\begin{itemize}
-    \item To produce a system that automates the filter PH control
-    \item To design, implement and articulate all the individual modules that compose the main system architecture
-    \item To produce a system that collects required data from the filter, and sends it to the system core (cloud)
-    \item Learn how to produce a system, not only composed by software, but also a physical (hardware) device
-    \item To produce a system that analyzes the required data, and alerts the user, of some eventual complications in the filter, and its components
-    \item The design of a database that stores collected data, and other project necessary information
-    \item To build a REST API, that allows for a Client (ex: Web, Android, etc) to interact with the system, requesting services like associating IoT devices, requesting stored data and configuring system thresholds
-    \item The creation of a Web App to interact with the REST API/system
-    \item The interaction with the hardware core, to actually do something useful, as automation
+\section{Objectives}
+ \subsection{Requirements}
+ \begin{itemize}
+    \item Familiarization with the microcontroller sp32-s2 and his IDE framework
+    \item Programming of the microcontroller to access the data provided by the pH and water temperature sensors
+    \item Using the MQTT (Message Queuing Telemetry Transport) protocol, produce a system that, after collecting data from the filter, publish it to a broker
+    \item Set up a broker for the MQTT communication
+    \item Configure a server to analyze all the data published by the board
+    \item To produce a system that alerts the user, of some eventual complications in the filter, and its components
+    \item To build a REST API, that allows for a Client (ex: Web, Android, etc) to interact with the system, requesting services like associating IoT devices, requesting stored data and configuring system thresholds.\textcolor{red}{NECESSÁRIO?}.
+    \item The user should have access to a graphical interface that can be consulted anytime with the collected information through a Web App, this application will interact with the server
+    \item The manager must have the ability to configure alert thresholds
+    \item A database instance which is configured to use PostgreSQL as the database engine, as it provides a solution for storing our sensor data
+    \item This system must be economic and have a relative high battery life
 \end{itemize}
-
-\section*{Additional Objectives}
-\begin{itemize}
-    \item To build an Android App, allowing the user to have an alternative to the Web application, which, in this days, is undoubtedly relevant
+ \subsection{Optional routes}
+ \begin{itemize}
+    \item Add additional sensors such as humidity and ambient temperature
+    \item Use artificial intelligence (AI) techniques to analyze the price of electricity and make decisions on when to turn on the machine 
+    \item To build an Android App, allowing the user to have an alternative to the Web application
     \item Implement a small AI algorithm that aims to filter collected filter data, eliminating possible meaningless data, that might occur sporadically
-\end{itemize}
+ \end{itemize}
 
-\section*{Justification}
-While working in a real world application, we will learn new skills, starting with the programming of a MCU, which is essential in IoT projects, and the use of alternative network protocols, other than the HTTP, and mainly used in IoT systems. 
 
-We will enhance other skills , already obtained in the current course, including Web Programming, composed by the Backend and Frontend, the design and use of a database and the design architecture of a medium scale project. 
+\section{Justification}
+
+The development of this project will provide us with valuable experience in one of the fastest growing areas of technology in the world -Internet of Things (IoT).
+By utilizing an industrial setting as inspiration, we aim to develop new skills, commencing with the programming of a microcontroller (MCU) which is widely used in IoT contexts.
+
+We will also learn how the use of alternative network protocols, mainly used in IoT systems. By doing so, we hope to gain a deeper understanding of how these protocols work and their benefits compared to traditional HTTP protocols.
+
+The implementation of this project will provide us with an opportunity to further our understanding of various topics covered during our academic course. These include web programming, database design and usage, and the design architecture of small to medium scale software projects. By applying these concepts in a practical setting, we will gain a deeper knowledge and appreciation for their importance and relevance in the real world. 
+
+Then, we will exploit how to articulate all those different modules, in hope of building a solution, capable of solving a real life problem.
 
 Finally, we will have the opportunity to experience what is it like to plan, develop and report a real computer project.
 
-\section*{Scope}
-The functional scope of the project is limited the collection and analysis of relevant data related to the target device, and the interaction with the system to configure preferences and to obtain collected data, namely:
+\section{Scope}
+The functional scope of the project is limited to the collection and analysis of relevant data related to the target device, and the interaction with the system to configure preferences and to obtain collected data, namely:
 \begin{itemize}
-    \item Associate IoT devices to the system
-    \item Visualize collected data (collected PH values)
-    \item Receiving notification of a specific event (PH value, low IoT battery charge)
+    \item Associate/remove IoT devices to/from the IoT platform
+    \item A Web Application to visualize the collected data (pH values, water temperature)
+    \item Receiving notification relative to a specific event that would compromise the normal function of the machine(pH value, low IoT battery charge)
     \item Configuring system thresholds
 \end{itemize}
 
-\section*{Approach and Deliverables}
+\section{Approach and Deliverables}
 \subsection{Approach}
-The project implementation will split the system in various modules:
+The project implementation will split the system in the following modules:
 \begin{enumerate}
-    \item The factory/hardware
-    \item The IoT platform
-    \item The frontend interface
+    \item Hardware
+    \item IoT platform
+    \item Backend 
+    \item User interface
 \end{enumerate}
-The first module will be composed by an MCU and it's sensors. For this, we will use an ESP32-S2 Devkit, which provides everything we need, including WiFi, necessary peripherals, decent security, and very good community support, and, at the same time, being a low cost Board. It is also a low power consuming MCU.
-Connected to the Board, it will be uses a small 3.6V battery, and a low cost PH sensor. The Board will be programmed in C, which provides a good amount of hardware control.
+Each module will be subjected to a set of tests (unit tests). Integration tests, are also foreseen.
 
-The second module, will include a Broker. This one will be implemented from scratch, given it could be customed for our system needs, and is part of an open free project. We will be using the HiveMq-CE.
-The database will use PostgreSQL or MySQL.
+The first module will be composed by an MCU and it's sensors. For this, we will use an ESP32-S2 development kit, which supports all technologies and peripherals necessary for the success of our system, including WiFi, built-in security, and very good community support, despite being a relatively inexpensive board. It will involve integrating a pH sensor and water temperature sensor into a small 3.6V battery-powered board. To program the board, we will utilize the C language, along with the ESP-IDF framework, which offers robust hardware control capabilities, specific to this board family.
+
+The second module, is composed by the Broker. Because one of the project requirments is the total cost, we chose to use an open source Broker, which will be implemented by us. We will be using the HiveMq-CE.
+The database will use PostgreSQL or MySQL engine.
+ \textcolor{red}{ver este ponto}.
 The language chosen to implement the backend server will be Kotlin, because it is a modern and power full language, and is compatible with all JVM libraries.
 Spring will be the chosen framework to build the backend service, duo to being one of the best server-side frameworks of the Java (and consequently Kotlin) programming language.
-
+ \textcolor{red}{falar do front end, pesquisar open source web apps, verificar outras teclonogias como o node-red }.
 <Insert frontend language and framework option>
+ \textcolor{red}{corrigir esta secção, ainda está em análise}.
 
 \subsection{Deliverables}
-The final solution will include:
+The end solution will comprise:
 \begin{itemize}
-    \item An MCU to collect and transmit collected data to the IoT platform
-    \item A IoT platform, composed by:
+    \item A MCU which will collect and transmit collected data from the sensors to the IoT platform
+    \item An IoT platform, composed by:
     \begin{itemize}
-        \item A Broker server, that receives the data, from the MCU
+        \item A Broker server, that receives the data, from the microcontroller
         \item A relational database to store system data (records, devices, etc) 
-        \item A backend service to manage system logic and analysis data
-        \item A server to serve the Web App
+        \item A backend service to:
+        \begin{itemize}
+            \item Manage system logic
+            \item Analyze data
+            \item Send user notifications
+            \item Manage user data (devices, etc)
         \end{itemize}
-        \item A fully functional Web App, to visualize and manage system data (devices, PH records, etc)
+        \item A server which will filter and analyze the data
+    \end{itemize}
+    \item Unit tests for all system modules
+    \item A fully functional Web App , to visualize and manage system data (devices, PH records, etc) provided by the server
 \end{itemize}
+´
+\section{Constrains and assumptions}
+    \begin{itemize}
+        \item Low experience in electronics
+        \item Relatively new to programming microcontrollers
+        \item Limited familiarity with IoT platforms.
+        \item Every deadline must be met
+        \item All hardware has to be possible to acquire in a timely manner due to the time bound nature of the project
+        \item Considering that this project is in an industrial context, there are requirements that have to be met in order to make the project viable, such as the final device being inexpensive and having a long battery life
+    \end{itemize}
 
+\section{Resources}
+    \begin{itemize}
+        \item Development boards: A suitable development board for our project, such as an ESP32-S2.
+        \item Sensors: We will have to use sensors to measure environmental conditions such as water temperature and ph
+        \item Open source software, like the HiveMq-CE, ESP-IDF, Kotlin, React, and others.
+        \item It is anticipated that the project will utilize software that is readily accessible to us either from our personal devices or at the university, without incurring any additional costs.
+        \item  \textcolor{red}{Possible hosting service ???}.
+    \end{itemize}
+
+
+\section{Risks}
+    \begin{itemize}
+        \item As we have limited experience with IoT platforms, we anticipate facing a steep learning curve during the project, specially in programming the MCU, and in the use of the MQTT network protocol
+        \item Like any other hardware project, unforeseen issues may arise that are beyond our control and inherent to the hardware's nature. These issues could potentially impact our project timeline and organization.
+        \item \textcolor{red}{Unforeseen costs, that may arise, for example in Hosting services, which are constantly changing as this report is being written}
+    \end{itemize}
+
+\section{Project Organization}
+Pedro Silva and Miguel Rocha will carry out the project under the supervision of Rui Duarte. The project's sponsor is a German company named Mommertz.
+
+\section{Major Milestones}
+    \begin{itemize}
+        \item Project Proposal -  March 20, 2023
+        \item Progress presentation -  April 24, 2023
+        \item Beta version (report, poster, and organization) -  June 5, 2023
+        \item Final version (Academic Calendar 2022/2023) -  July 10, 2023 
+    \end{itemize}
+
+    
 \bibliographystyle{unsrt}
 \bibliography{referencias}
 
