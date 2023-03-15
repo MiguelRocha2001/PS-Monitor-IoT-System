@@ -4,7 +4,7 @@ import {Col, Container, NavLink, Row} from "react-bootstrap";
 
 function Ph() {
     return (
-        <Card style={{ width: '18rem' }}>
+        <Card>
             <Card.Body>
                 <Card.Title>PH Graph</Card.Title>
                 <Card.Text>

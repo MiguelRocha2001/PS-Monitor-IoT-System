@@ -7,11 +7,15 @@ import NewDevice from "./views/NewDevice";
 import {Container, NavLink, Row, Stack} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import {Devices} from "./views/Devices";
+import {StillInProgressAlert} from "./views/StillInProgressAlert";
 
 function App() {
     return (
         <Container style={{width: '50%', margin: 'auto', marginTop: '30px'}}>
             <Stack gap={3}>
+                <Row>
+                    <StillInProgressAlert />
+                </Row>
                 <Row className="justify-content-center">
                     <BrowserRouter >
                         <Routes>
@@ -25,7 +29,9 @@ function App() {
                     </BrowserRouter>
                 </Row>
                 <Row className="justify-content-center">
-                    <NavLink href="/" style={{width: 'min-content'}}><Button variant="primary">Home</Button></NavLink>
+                    <NavLink href="/" style={{width: '20%'}} className="justify-content-center">
+                        <Button style={{width: '100%'}} variant="primary">Home</Button>
+                    </NavLink>
                 </Row>
             </Stack>
         </Container>

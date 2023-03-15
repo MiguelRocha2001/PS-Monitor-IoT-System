@@ -6,7 +6,7 @@ function Temp() {
     return (
         <Container>
             <Row className="justify-content-center">
-                <Card style={{ width: '18rem' }}>
+                <Card>
                     <Card.Body>
                         <Card.Title>Temperature Graph</Card.Title>
                         <Card.Text>
