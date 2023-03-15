@@ -3,6 +3,7 @@ import Card from 'react-bootstrap/Card';
 import {Alert, Container, NavLink, Row, Stack} from "react-bootstrap";
 import React from "react";
 import {StillInProgressAlert} from "./StillInProgressAlert";
+import {MyNavLink} from "./Commons";
 
 function Home() {
     return (
@@ -23,11 +24,12 @@ function Home() {
 }
 
 function NavigationalLinks() {
+    const navLinkWidth = 'auto';
     return (
         <Stack gap={2}>
-            <NavLink href="/devices"><Button variant="primary">See available devices</Button></NavLink>
-            <NavLink href="/ph"><Button variant="primary">PH Graph</Button></NavLink>
-            <NavLink href="/temperature"><Button variant="primary">Temperature Graph</Button></NavLink>
+            <MyNavLink text={'See available devices'} href={'/devices'} width={navLinkWidth}/>
+            <MyNavLink text={'PH'} href={'/ph'} width={navLinkWidth}/>
+            <MyNavLink text={'Temperature'} href={'/temperature'} width={navLinkWidth}/>
         </Stack>
     )
 }
