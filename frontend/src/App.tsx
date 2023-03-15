@@ -42,7 +42,7 @@ function HomeNavLink() {
     const homeButton = location.pathname !== '/' ? <MyNavLink text={"Home"} href={'/'} width={'30%'}/> : null;
 
     return (
-        <Row className="justify-content-center">
+        <Row className="justify-content-center" style={{marginBottom: '3em'}}>
             {homeButton}
         </Row>
     )
