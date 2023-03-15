@@ -1,8 +1,8 @@
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import {Card, Container} from "react-bootstrap";
+import {Card} from "react-bootstrap";
 
-function AddNewDeviceView() {
+function NewDevice() {
     return (
         <Card>
             <Card.Body>
@@ -14,7 +14,7 @@ function AddNewDeviceView() {
     );
 }
 
-export default AddNewDeviceView;
+export default NewDevice;
 
 function NewIoTDeviceForm() {
     return(

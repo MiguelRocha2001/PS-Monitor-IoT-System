@@ -2,7 +2,7 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import {Col, Container, NavLink, Row} from "react-bootstrap";
 
-function TempView() {
+function Temp() {
     return (
         <Container>
             <Row className="justify-content-center">
@@ -19,4 +19,4 @@ function TempView() {
     );
 }
 
-export default TempView;
+export default Temp;

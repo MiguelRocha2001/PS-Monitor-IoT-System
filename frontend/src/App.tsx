@@ -1,11 +1,12 @@
 import React from "react";
 import {BrowserRouter, Outlet, Route, Routes} from 'react-router-dom'
-import PhView from "./views/ph-view";
-import Home from "./views/home-view";
-import TempView from "./views/temp-view";
-import AddNewDevice from "./views/add-new-device";
+import Ph from "./views/Ph";
+import Home from "./views/Home";
+import Temp from "./views/Temp";
+import NewDevice from "./views/NewDevice";
 import {Container, NavLink, Row, Stack} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
+import {Devices} from "./views/Devices";
 
 function App() {
     return (
@@ -15,9 +16,10 @@ function App() {
                     <BrowserRouter >
                         <Routes>
                             <Route path='/' element={<Home />} />
-                            <Route path='/ph' element={<PhView />} />
-                            <Route path='/temperature' element={<TempView />} />
-                            <Route path='/add-new-device' element={<AddNewDevice />} />
+                            <Route path='/devices' element={<Devices />} />
+                            <Route path='/add-new-device' element={<NewDevice />} />
+                            <Route path='/ph' element={<Ph />} />
+                            <Route path='/temperature' element={<Temp />} />
                             <Route path='*' element={<div>404</div>} />
                         </Routes>
                     </BrowserRouter>

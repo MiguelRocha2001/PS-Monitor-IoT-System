@@ -20,9 +20,9 @@
 
 
 \begin{figure}
-    \centering
+    \
         \centering
-        \includegraphics[scale = 0.7]{images/logoISEL.png}
+        \includegraphics[scale = 0.4]{images/logoISEL.png}
 %        \begin{subfigure}{.6\textwidth}
 %        \centering
 %        \includegraphics[scale = 0.15]{athens.jpg}
@@ -53,131 +53,103 @@ March 20, 2023}
 
 \section{Introduction}
 The Internet of Things (IoT) is revolutionizing the way machines work and communicate with people.
-Our main objective consists in the creation of a smart and automated system using IoT technology to enhance the efficiency and accuracy of the machine filter process.
+Our main objective consists in the creation of a smart and automated system, using IoT technology to enhance the efficiency and accuracy of the machine filter process.
 By incorporating sensors into these machines, we can detect problems before they lead to costly downtime or safety hazards.
 The sensors will collect data relative to the machine's environment, such as the water temperature and pH.
 All this data is sent to a central server, and through real-time data analysis, we identify if the machine is not working optimally or is closer to failure.
 In these situations, an alert will be sent to a device controlled by the machine operator or manager, enabling them to take prompt action to resolve the issue.
-Our project seeks to improve efficiency, reduce costs and increase safety by automating the fault detection process of machine inspection.  \textcolor{red}{adicionar melhor explicação acerca dos filtros após reunião}.
+Our project seeks to improve efficiency, reduce costs and increase safety by automating the fault detection process of machine inspection.
 
-\section{Objectives}
- \subsection{Requirements}
- \begin{itemize}
-    \item Familiarization with the microcontroller sp32-s2 and his IDE framework
-    \item Programming of the microcontroller to access the data provided by the pH and water temperature sensors
-    \item Using the MQTT (Message Queuing Telemetry Transport) protocol, produce a system that, after collecting data from the filter, publish it to a broker
-    \item Set up a broker for the MQTT communication
-    \item Configure a server to analyze all the data published by the board
-    \item To produce a system that alerts the user, of some eventual complications in the filter, and its components
-    \item To build a REST API, that allows for a Client (ex: Web, Android, etc) to interact with the system, requesting services like associating IoT devices, requesting stored data and configuring system thresholds.\textcolor{red}{NECESSÁRIO?}.
-    \item The user should have access to a graphical interface that can be consulted anytime with the collected information through a Web App, this application will interact with the server
-    \item The manager must have the ability to configure alert thresholds
-    \item A database instance which is configured to use PostgreSQL as the database engine, as it provides a solution for storing our sensor data
-    \item This system must be economic and have a relative high battery life
+\section{Requirements}
+\begin{itemize}
+    \item Economic hardware
+    \item High battery life device
+    \item Low false alarm frequency
+    \item Visual and auditory alarm
+    \item Hardware documentation
 \end{itemize}
- \subsection{Optional routes}
+\section{Objectives}
+\subsection{Main routes}
  \begin{itemize}
-    \item Add additional sensors such as humidity and ambient temperature
-    \item Use artificial intelligence (AI) techniques to analyze the price of electricity and make decisions on when to turn on the machine 
-    \item To build an Android App, allowing the user to have an alternative to the Web application
-    \item Implement a small AI algorithm that aims to filter collected filter data, eliminating possible meaningless data, that might occur sporadically
- \end{itemize}
-
+    \item Programming the MCU to collect and send data
+    \item Setting the message broker
+    \item Implementing the back-end service to manage system logic (data analysis and alert system)
+    \item Implementing a user-friendly interface to interact with the system (visualize data, adding devices, etc)
+    \item Implementing the database to store system data
+\end{itemize}
+\subsection{Optional routes}
+    One possibility to enhance the functionality of the system is to contemplate the inclusion of supplementary sensors, such as those for measuring humidity and ambient temperature. Another route could be to develop an Android app as an additional option for users, providing an alternative to the web-based application.
 
 \section{Justification}
 
 The development of this project will provide us with valuable experience in one of the fastest growing areas of technology in the world -Internet of Things (IoT).
-By utilizing an industrial setting as inspiration, we aim to develop new skills, commencing with the programming of a microcontroller (MCU) which is widely used in IoT contexts.
+By utilizing an industrial setting as inspiration, we aim to develop new skills, commencing with the programming of an MCU which is the core of IoT contexts.
 
-We will also learn how the use of alternative network protocols, mainly used in IoT systems. By doing so, we hope to gain a deeper understanding of how these protocols work and their benefits compared to traditional HTTP protocols.
+We will also learn alternative network protocols, mainly used in IoT systems. By doing so, we hope to gain a deeper understanding of how these protocols work and their benefits compared to traditional HTTP protocols.
 
 The implementation of this project will provide us with an opportunity to further our understanding of various topics covered during our academic course. These include web programming, database design and usage, and the design architecture of small to medium scale software projects. By applying these concepts in a practical setting, we will gain a deeper knowledge and appreciation for their importance and relevance in the real world. 
 
-Then, we will exploit how to articulate all those different modules, in hope of building a solution, capable of solving a real life problem.
-
-Finally, we will have the opportunity to experience what is it like to plan, develop and report a real computer project.
 
 \section{Scope}
-The functional scope of the project is limited to the collection and analysis of relevant data related to the target device, and the interaction with the system to configure preferences and to obtain collected data, namely:
+The functional scope of the project is limited to the collection and analysis of relevant data, related to the target device, and the interaction with the system to configure preferences and to obtain collected data, namely:
 \begin{itemize}
     \item Associate/remove IoT devices to/from the IoT platform
-    \item A Web Application to visualize the collected data (pH values, water temperature)
-    \item Receiving notification relative to a specific event that would compromise the normal function of the machine(pH value, low IoT battery charge)
-    \item Configuring system thresholds
+    \item Having the ability to visualize collected data, in a graph form
+    \item Notification systems to alert the admin/manager of a possible machine filter malfunction
+    \item System thresholds configuration (PH or/and water temperature critical level)
 \end{itemize}
 
 \section{Approach and Deliverables}
 \subsection{Approach}
-The project implementation will split the system in the following modules:
-\begin{enumerate}
-    \item Hardware
-    \item IoT platform
-    \item Backend 
-    \item User interface
-\end{enumerate}
-Each module will be subjected to a set of tests (unit tests). Integration tests, are also foreseen.
 
-The first module will be composed by an MCU and it's sensors. For this, we will use an ESP32-S2 development kit, which supports all technologies and peripherals necessary for the success of our system, including WiFi, built-in security, and very good community support, despite being a relatively inexpensive board. It will involve integrating a pH sensor and water temperature sensor into a small 3.6V battery-powered board. To program the board, we will utilize the C language, along with the ESP-IDF framework, which offers robust hardware control capabilities, specific to this board family.
+The first module will be composed by an MCU and it's sensors. For this, we will use an ESP32-S2 development kit, which supports all technologies and peripherals necessary for the success of our system, including Wi-Fi, built-in security, and very good community support, despite being a relatively inexpensive board. It will involve integrating a pH sensor and water temperature sensor into a small 3.6V battery-powered board. To program the board, we will utilize the C language, along with the ESP-IDF framework, which offers robust hardware control capabilities, specific to this board family.
 
-The second module, is composed by the Broker. Because one of the project requirments is the total cost, we chose to use an open source Broker, which will be implemented by us. We will be using the HiveMq-CE.
-The database will use PostgreSQL or MySQL engine.
- \textcolor{red}{ver este ponto}.
-The language chosen to implement the backend server will be Kotlin, because it is a modern and power full language, and is compatible with all JVM libraries.
-Spring will be the chosen framework to build the backend service, duo to being one of the best server-side frameworks of the Java (and consequently Kotlin) programming language.
- \textcolor{red}{falar do front end, pesquisar open source web apps, verificar outras teclonogias como o node-red }.
-<Insert frontend language and framework option>
- \textcolor{red}{corrigir esta secção, ainda está em análise}.
+The Broker makes up the second module. We will either implement the Broker ourselves or evaluate the potential benefits of subscribing to a third-party Broker based on the project's scale.
+The data that is published will be stored in a database utilizing either the PostgreSQL or MySQL engine.
+
+We have opted to use Kotlin as the programming language for our backend server due to its modern and robust features. Additionally, we have decided to leverage the Spring framework for building our backend service since it is widely considered one of the top server-side frameworks for the Java (and thus Kotlin) programming language, considering our previous experience and proficiency in this technology.
+
+We aim to develop a user interface either by creating a website using React and Boostrap from scratch, or by utilizing open-source software to build a web application that allows for efficient management of the sensor data.
+
+
 
 \subsection{Deliverables}
 The end solution will comprise:
 \begin{itemize}
-    \item A MCU which will collect and transmit collected data from the sensors to the IoT platform
+    \item A MCU (micro-controller), which will collect and transmit (collected) data from the sensors to the IoT platform
     \item An IoT platform, composed by:
     \begin{itemize}
-        \item A Broker server, that receives the data, from the microcontroller
+        \item A Broker server, that receives the data, from the MCU
         \item A relational database to store system data (records, devices, etc) 
         \item A backend service to:
         \begin{itemize}
             \item Manage system logic
             \item Analyze data
             \item Send user notifications
-            \item Manage user data (devices, etc)
+            \item Manage user data (ex: devices)
         \end{itemize}
-        \item A server which will filter and analyze the data
     \end{itemize}
     \item Unit tests for all system modules
-    \item A fully functional Web App , to visualize and manage system data (devices, PH records, etc) provided by the server
+    \item A fully functional Web App, to interact with the system (covering the functionalities defined in the scope)
 \end{itemize}
 ´
-\section{Constrains and assumptions}
-    \begin{itemize}
-        \item Low experience in electronics
-        \item Relatively new to programming microcontrollers
-        \item Limited familiarity with IoT platforms.
-        \item Every deadline must be met
-        \item All hardware has to be possible to acquire in a timely manner due to the time bound nature of the project
-        \item Considering that this project is in an industrial context, there are requirements that have to be met in order to make the project viable, such as the final device being inexpensive and having a long battery life
-    \end{itemize}
+\bigbreak
 
+\section{Constraints and assumptions}
+    Our team has limited experience in programming MCUs, and is relatively new to IoT platforms. It is also relevant that all hardware has to be possible to acquire in a timely manner due to the time bound nature of the project.
+    
 \section{Resources}
-    \begin{itemize}
-        \item Development boards: A suitable development board for our project, such as an ESP32-S2.
-        \item Sensors: We will have to use sensors to measure environmental conditions such as water temperature and ph
-        \item Open source software, like the HiveMq-CE, ESP-IDF, Kotlin, React, and others.
-        \item It is anticipated that the project will utilize software that is readily accessible to us either from our personal devices or at the university, without incurring any additional costs.
-        \item  \textcolor{red}{Possible hosting service ???}.
-    \end{itemize}
+    For our project, we will need a suitable development board, such as the ESP32-S2, and sensors to measure environmental parameters, such as water temperature and pH. Also we plan to utilize open software which is easily available, at no additional cost, on our personal devices or university.
 
 
 \section{Risks}
     \begin{itemize}
-        \item As we have limited experience with IoT platforms, we anticipate facing a steep learning curve during the project, specially in programming the MCU, and in the use of the MQTT network protocol
-        \item Like any other hardware project, unforeseen issues may arise that are beyond our control and inherent to the hardware's nature. These issues could potentially impact our project timeline and organization.
-        \item \textcolor{red}{Unforeseen costs, that may arise, for example in Hosting services, which are constantly changing as this report is being written}
+        \item Due to our limited experience with IoT platforms, we expect to encounter a significant learning curve during this project, particularly in programming the MCU and utilizing the MQTT network protocol.
+        \item Like any other hardware project, unforeseen issues may arise, that are beyond our control and inherent to the hardware's nature. These issues could potentially impact our project timeline and organization.
     \end{itemize}
 
 \section{Project Organization}
-Pedro Silva and Miguel Rocha will carry out the project under the supervision of Rui Duarte. The project's sponsor is a German company named Mommertz.
+Pedro Silva and Miguel Rocha will carry out the project under the supervision of Rui Duarte. The project is sponsored by Mommertz, a German company.
 
 \section{Major Milestones}
     \begin{itemize}

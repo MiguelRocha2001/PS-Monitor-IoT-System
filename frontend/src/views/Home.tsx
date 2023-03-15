@@ -13,9 +13,10 @@ function Home() {
                             This is the home page.
                         </Card.Text>
                         <Stack gap={2}>
+                            <NavLink href="/devices"><Button variant="primary">See available devices</Button></NavLink>
+                            <NavLink href="/add-new-device"><Button variant="primary">Add New Device</Button></NavLink>
                             <NavLink href="/ph"><Button variant="primary">PH Graph</Button></NavLink>
                             <NavLink href="/temperature"><Button variant="primary">Temperature Graph</Button></NavLink>
-                            <NavLink href="/add-new-device"><Button variant="primary">Add New Device</Button></NavLink>
                         </Stack>
                     </Card.Body>
                 </Card>

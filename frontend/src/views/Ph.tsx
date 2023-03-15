@@ -2,7 +2,7 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import {Col, Container, NavLink, Row} from "react-bootstrap";
 
-function PhView() {
+function Ph() {
     return (
         <Card style={{ width: '18rem' }}>
             <Card.Body>
@@ -15,4 +15,4 @@ function PhView() {
     );
 }
 
-export default PhView;
+export default Ph;
