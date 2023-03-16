@@ -8,7 +8,7 @@ import pt.isel.iot_data_server.service.UserService
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 
 @SpringBootTest
-class ServiceTests {
+class UserServiceTests {
 	@Test
 	fun `create user`() {
 		testWithTransactionManagerAndRollback { transactionManager ->

@@ -12,7 +12,11 @@ class DeviceService(
 ) {
     fun createDevice(device: Device) {
         transactionManager.run {
-
+            val devices = it.repository.getAllDevices()
+            if (devices.any { it.deviceId == device.deviceId }) {
+                throw Exception("Device already exists")
+            }
+            it.repository.addDevice(device)
         }
     }
 

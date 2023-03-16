@@ -4,7 +4,9 @@ import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.iot_data_server.domain.*
 import pt.isel.iot_data_server.repository.ServerRepository
+import pt.isel.iot_data_server.repository.jdbi.mappers.DeviceMapper
 import pt.isel.iot_data_server.repository.jdbi.mappers.UserMapper
+import pt.isel.iot_data_server.repository.jdbi.mappers.toDevice
 import pt.isel.iot_data_server.repository.jdbi.mappers.toUser
 
 class JdbiServerRepository(
@@ -61,13 +63,15 @@ class JdbiServerRepository(
             insert into device (id) values (:id)
             """
         )
-            .bind("id", device.deviceId)
+            .bind("id", device.deviceId.id)
+            .execute()
     }
 
     override fun getAllDevices(): List<Device> {
         return handle.createQuery("select id from device")
-            .mapTo<Device>()
+            .mapTo<DeviceMapper>()
             .list()
+            .map { it.toDevice() }
     }
 
     override fun savePhRecord(deviceId: DeviceId, phRecord: PhRecord) {
