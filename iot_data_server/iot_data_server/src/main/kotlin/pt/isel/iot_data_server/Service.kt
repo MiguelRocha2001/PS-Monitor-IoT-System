@@ -2,10 +2,7 @@ package pt.isel.iot_data_server
 
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.springframework.stereotype.Service
-import pt.isel.iot_data_server.domain.Device
-import pt.isel.iot_data_server.domain.DeviceId
-import pt.isel.iot_data_server.domain.PhRecord
-import pt.isel.iot_data_server.domain.TemperatureRecord
+import pt.isel.iot_data_server.domain.*
 import pt.isel.iot_data_server.repository.TransactionManager
 
 @Service
@@ -16,6 +13,24 @@ class Service(
         val client = MqttClient("tcp://localhost:1883", MqttClient.generateClientId())
         client.connect()
         subscribePhTopic(client)
+    }
+
+    fun createUser(username: String, password: String) {
+        transactionManager.run {
+            it.repository.createUser(username, password)
+        }
+    }
+
+    fun getUserByToken(token: String): User? {
+        return transactionManager.run {
+            return@run it.repository.getUserByToken(token)
+        }
+    }
+
+    fun createToken(username: String, password: String) {
+        transactionManager.run {
+            it.repository.createToken(username, password)
+        }
     }
 
     fun createDevice(device: Device) {

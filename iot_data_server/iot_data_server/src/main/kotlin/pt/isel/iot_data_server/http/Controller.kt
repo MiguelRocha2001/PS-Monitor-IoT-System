@@ -1,9 +1,5 @@
 package pt.isel.iot_data_server.http
 
-import org.eclipse.paho.client.mqttv3.MqttClient
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions
-import org.eclipse.paho.client.mqttv3.MqttMessage
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -12,12 +8,27 @@ import org.springframework.web.bind.annotation.RestController
 import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.Service
 import java.util.*
-import kotlin.concurrent.thread
 
 @RestController
 class Controller(
     val service: Service
 ) {
+
+    @PostMapping("/users")
+    fun createUser(
+        @RequestBody userModel: CreateUserInputModel
+    ) {
+        service.createUser(userModel.username, userModel.password)
+    }
+
+
+    @PostMapping("/token")
+    fun createToken(
+        @RequestBody tokenModel: CreateTokenInputModel
+    ) {
+        service.createToken(tokenModel.username, tokenModel.password)
+    }
+
     @PostMapping("/device")
     fun addDevice(
         @RequestBody deviceModel: InputDeviceModel

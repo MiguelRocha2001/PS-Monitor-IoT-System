@@ -6,6 +6,10 @@ import pt.isel.iot_data_server.domain.PhRecord
 import java.sql.Timestamp
 import java.util.UUID
 
+data class CreateUserInputModel(val username: String, val password: String)
+
+data class CreateTokenInputModel(val username: String, val password: String)
+
 data class InputDeviceModel(val id: String)
 
 fun InputDeviceModel.toDevice(): Device {

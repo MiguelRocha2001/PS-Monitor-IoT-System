@@ -14,6 +14,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.web.method.support.HandlerMethodArgumentResolver
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import pt.isel.daw.dawbattleshipgame.http.pipeline.UserArgumentResolver
+import pt.isel.iot_data_server.http.pipeline.AuthenticationInterceptor
 import pt.isel.iot_data_server.repository.jdbi.configure
 import java.sql.Time
 import kotlin.concurrent.thread
@@ -45,6 +50,16 @@ class AppConfig {
 	@PreDestroy
 	fun destroy() {
 		hiveMQManager.stop()
+	}
+}
+
+@Configuration
+class PipelineConfigurer(
+	val authenticationInterceptor: AuthenticationInterceptor
+) : WebMvcConfigurer {
+
+	override fun addInterceptors(registry: InterceptorRegistry) {
+		registry.addInterceptor(authenticationInterceptor)
 	}
 }
 
