@@ -2,7 +2,7 @@ import React from "react";
 import {BrowserRouter, Route, Routes} from 'react-router-dom'
 import Ph from "./views/Ph";
 import Home from "./views/Home";
-import Temp from "./views/Temp";
+import Temperature from "./views/Temperature";
 import NewDevice from "./views/NewDevice";
 import {Col, Container} from "react-bootstrap";
 import {Devices} from "./views/Devices";
@@ -22,7 +22,7 @@ function App() {
                     <Route path='/devices' element={<Devices />} />
                     <Route path='/add-new-device' element={<NewDevice />} />
                     <Route path='/ph' element={<Ph />} />
-                    <Route path='/temperature' element={<Temp />} />
+                    <Route path='/temperature' element={<Temperature />} />
                     <Route path='*' element={<div>404</div>} />
                 </Routes>
             </Container>

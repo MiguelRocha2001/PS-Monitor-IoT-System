@@ -2,7 +2,7 @@ import Card from 'react-bootstrap/Card';
 import {Container, Row} from "react-bootstrap";
 import {MyChart} from "../chart/MyChart";
 
-function Temp() {
+function Temperature() {
     return (
         <Container>
             <Row className="justify-content-center">
@@ -12,7 +12,9 @@ function Temp() {
                         <Card.Text>
                             Later, this will display the temperature graph.
                         </Card.Text>
-                        <MyChart />
+                        <Row style={{width: '60%', margin: 'auto', marginTop: '30px'}}>
+                            <MyChart />
+                        </Row>
                     </Card.Body>
                 </Card>
             </Row>
@@ -20,4 +22,4 @@ function Temp() {
     );
 }
 
-export default Temp;
+export default Temperature;
