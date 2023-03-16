@@ -18,6 +18,14 @@ class JdbiServerRepository(
         )
             .bind("username", username)
             .bind("password_validation", password)
+            .execute()
+    }
+
+    override fun getAllUsers(): List<User> {
+        return handle.createQuery("select id, username from _USER")
+            .mapTo<UserMapper>()
+            .list()
+            .map { it.toUser() }
     }
 
     override fun getUserByToken(token: String): User? {
@@ -25,7 +33,7 @@ class JdbiServerRepository(
             """
             select id, username 
             from _USER as users 
-            inner join TOKEN as tokens 
+            inner join TOKEN as tokens
             on users.id = tokens.user_id
             where token = :token
             """
@@ -54,6 +62,12 @@ class JdbiServerRepository(
             """
         )
             .bind("id", device.deviceId)
+    }
+
+    override fun getAllDevices(): List<Device> {
+        return handle.createQuery("select id from device")
+            .mapTo<Device>()
+            .list()
     }
 
     override fun savePhRecord(deviceId: DeviceId, phRecord: PhRecord) {

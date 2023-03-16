@@ -7,12 +7,12 @@ import org.springframework.stereotype.Component
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.HandlerInterceptor
 import pt.isel.daw.dawbattleshipgame.http.pipeline.UserArgumentResolver
-import pt.isel.iot_data_server.Service
 import pt.isel.iot_data_server.domain.User
+import pt.isel.iot_data_server.service.UserService
 
 @Component
 class AuthenticationInterceptor(
-    val service: Service
+    val service: UserService
 ) : HandlerInterceptor {
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {

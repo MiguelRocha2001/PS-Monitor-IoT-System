@@ -1,4 +1,4 @@
-package pt.isel.iot_data_server.http
+package pt.isel.iot_data_server.http.controllers
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -6,34 +6,17 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import pt.isel.iot_data_server.domain.DeviceId
-import pt.isel.iot_data_server.Service
-import pt.isel.iot_data_server.domain.User
+import pt.isel.iot_data_server.http.InputPhRecordModel
+import pt.isel.iot_data_server.http.InputTemperatureRecordModel
+import pt.isel.iot_data_server.http.toPhRecord
+import pt.isel.iot_data_server.http.toTemperatureRecord
+import pt.isel.iot_data_server.service.SensorDataService
 import java.util.*
 
 @RestController
-class Controller(
-    val service: Service
+class SensorDataController(
+    val service: SensorDataService
 ) {
-
-    @PostMapping("/users")
-    fun createUser(
-        @RequestBody userModel: CreateUserInputModel
-    ) {
-        service.createUser(userModel.username, userModel.password)
-    }
-
-
-    @PostMapping("/token")
-    fun createToken(user: User) {
-        service.createToken(user.id)
-    }
-
-    @PostMapping("/device")
-    fun addDevice(
-        @RequestBody deviceModel: InputDeviceModel
-    ) {
-        service.createDevice(deviceModel.toDevice())
-    }
     @PostMapping("/device/{device_id}/ph")
     fun addPhRecord(
         @PathVariable device_id: String,
@@ -67,27 +50,4 @@ class Controller(
         val deviceId = DeviceId(UUID.fromString(device_id))
         service.getTemperatureRecords(deviceId)
     }
-
-    /*
-    @GetMapping("/mine")
-    fun getMine() {
-        val brokerUrl = "tcp://localhost:1883"
-        val clientId = "test-client"
-
-        val persistence = MemoryPersistence()
-        val client = MqttClient(brokerUrl, clientId, persistence)
-
-        val options = MqttConnectOptions()
-        options.isCleanSession = true
-
-        client.connect(options)
-
-        val topic = "topic"
-        val payload = "Hello, HiveMQ!".toByteArray()
-        val message = MqttMessage(payload)
-        client.publish(topic, message)
-
-        client.disconnect()
-    }
-     */
 }

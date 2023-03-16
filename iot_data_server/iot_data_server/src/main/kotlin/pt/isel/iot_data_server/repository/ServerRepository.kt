@@ -5,9 +5,11 @@ import pt.isel.iot_data_server.domain.*
 interface ServerRepository {
 
     fun createUser(username: String, password: String)
+    fun getAllUsers(): List<User>
     fun getUserByToken(token: String): User?
     fun addToken(userId: Int, token: String)
     fun addDevice(device: Device)
+    fun getAllDevices(): List<Device>
     fun getPhRecords(deviceId: DeviceId): List<PhRecord>
     fun savePhRecord(deviceId: DeviceId, phRecord: PhRecord)
     fun getTemperatureRecords(deviceId: DeviceId): List<TemperatureRecord>

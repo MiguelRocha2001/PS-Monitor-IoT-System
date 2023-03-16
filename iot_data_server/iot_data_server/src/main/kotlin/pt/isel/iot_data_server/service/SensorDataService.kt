@@ -1,15 +1,13 @@
-package pt.isel.iot_data_server
+package pt.isel.iot_data_server.service
 
 import org.eclipse.paho.client.mqttv3.MqttClient
-import org.postgresql.shaded.com.ongres.scram.common.util.CryptoUtil
 import org.springframework.stereotype.Service
 import pt.isel.iot_data_server.domain.*
 import pt.isel.iot_data_server.repository.TransactionManager
-import java.security.CryptoPrimitive
 import java.util.*
 
 @Service
-class Service(
+class SensorDataService(
     private val transactionManager: TransactionManager,
 ) {
     init {
@@ -18,30 +16,6 @@ class Service(
         subscribePhTopic(client)
     }
 
-    fun createUser(username: String, password: String) {
-        transactionManager.run {
-            it.repository.createUser(username, password)
-        }
-    }
-
-    fun getUserByToken(token: String): User? {
-        return transactionManager.run {
-            return@run it.repository.getUserByToken(token)
-        }
-    }
-
-    fun createToken(userId: Int) {
-        transactionManager.run {
-            val token = UUID.randomUUID().toString()
-            it.repository.addToken(userId, token)
-        }
-    }
-
-    fun createDevice(device: Device) {
-        transactionManager.run {
-
-        }
-    }
     fun savePhRecord(
         deviceId: DeviceId,
         phRecord: PhRecord
