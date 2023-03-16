@@ -1,9 +1,12 @@
 package pt.isel.iot_data_server
 
 import org.eclipse.paho.client.mqttv3.MqttClient
+import org.postgresql.shaded.com.ongres.scram.common.util.CryptoUtil
 import org.springframework.stereotype.Service
 import pt.isel.iot_data_server.domain.*
 import pt.isel.iot_data_server.repository.TransactionManager
+import java.security.CryptoPrimitive
+import java.util.*
 
 @Service
 class Service(
@@ -27,9 +30,10 @@ class Service(
         }
     }
 
-    fun createToken(username: String, password: String) {
+    fun createToken(userId: Int) {
         transactionManager.run {
-            it.repository.createToken(username, password)
+            val token = UUID.randomUUID().toString()
+            it.repository.addToken(userId, token)
         }
     }
 
@@ -55,10 +59,10 @@ class Service(
 
     fun saveTemperatureRecord(
         deviceId: DeviceId,
-        temperatureRecord: PhRecord
+        temperatureRecord: TemperatureRecord
     ) {
         transactionManager.run {
-
+            it.repository.saveTemperatureRecord(deviceId, temperatureRecord)
         }
     }
 

@@ -3,6 +3,7 @@ package pt.isel.iot_data_server.http
 import pt.isel.iot_data_server.domain.Device
 import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.PhRecord
+import pt.isel.iot_data_server.domain.TemperatureRecord
 import java.sql.Timestamp
 import java.util.UUID
 
@@ -23,4 +24,4 @@ fun InputPhRecordModel.toPhRecord() = PhRecord(ph, Timestamp(timestamp))
 
 data class InputTemperatureRecordModel(val temperature: Double, val timestamp: Long)
 
-fun InputTemperatureRecordModel.toTemperatureRecord() = PhRecord(temperature, Timestamp(timestamp))
+fun InputTemperatureRecordModel.toTemperatureRecord() = TemperatureRecord(temperature, Timestamp(timestamp))

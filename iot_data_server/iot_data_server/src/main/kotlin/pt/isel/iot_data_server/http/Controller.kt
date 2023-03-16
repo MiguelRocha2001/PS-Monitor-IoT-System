@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.Service
+import pt.isel.iot_data_server.domain.User
 import java.util.*
 
 @RestController
@@ -23,10 +24,8 @@ class Controller(
 
 
     @PostMapping("/token")
-    fun createToken(
-        @RequestBody tokenModel: CreateTokenInputModel
-    ) {
-        service.createToken(tokenModel.username, tokenModel.password)
+    fun createToken(user: User) {
+        service.createToken(user.id)
     }
 
     @PostMapping("/device")
@@ -59,6 +58,14 @@ class Controller(
     ) {
         val deviceId = DeviceId(UUID.fromString(device_id))
         service.saveTemperatureRecord(deviceId, temperatureRecordModel.toTemperatureRecord())
+    }
+
+    @GetMapping("/device/{device_id}/temperature")
+    fun getTemperatureRecords(
+        @PathVariable device_id: String
+    ) {
+        val deviceId = DeviceId(UUID.fromString(device_id))
+        service.getTemperatureRecords(deviceId)
     }
 
     /*
