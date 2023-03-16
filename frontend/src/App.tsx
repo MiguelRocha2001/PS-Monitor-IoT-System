@@ -4,19 +4,19 @@ import Ph from "./views/Ph";
 import Home from "./views/Home";
 import Temp from "./views/Temp";
 import NewDevice from "./views/NewDevice";
-import {Container, NavLink, Row, Stack} from "react-bootstrap";
+import {Col, Container, NavLink, Row, Stack} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import {Devices} from "./views/Devices";
 import {StillInProgressAlert} from "./views/StillInProgressAlert";
 import {MyNavLink} from "./views/Commons";
+import NavBar from "./views/NavBar";
 
 function App() {
     return (
-        <Container style={{width: '50%', margin: 'auto', marginTop: '30px'}}>
-            <Stack gap={3}>
-                <Row>
-                    <StillInProgressAlert />
-                </Row>
+        <Container>
+            <NavBar/>
+            <StillInProgressAlert />
+            <Container style={{width: '90%', margin: 'auto', marginTop: '30px'}}>
                 <Row className="justify-content-center">
                     <BrowserRouter >
                         <Stack gap={4}>
@@ -32,7 +32,7 @@ function App() {
                         </Stack>
                     </BrowserRouter>
                 </Row>
-            </Stack>
+            </Container>
         </Container>
     );
 }
