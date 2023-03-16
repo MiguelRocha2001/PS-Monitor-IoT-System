@@ -1,6 +1,4 @@
-import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
-import {Col, Container, NavLink, Row} from "react-bootstrap";
 import {MyChart} from "../chart/MyChart";
 
 function Ph() {

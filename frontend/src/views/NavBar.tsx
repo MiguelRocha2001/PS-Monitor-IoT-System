@@ -3,8 +3,9 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import React from "react";
+import {MyLink} from "./Commons";
 
-// TODO: Use router links instead of <Nav.Link href="...">...</Nav.Link>
+// TODO: Use router links instead of <Nav.Link href="...">...</Nav.Link> (line 18)
 
 function NavBar() {
     return (
@@ -16,8 +17,12 @@ function NavBar() {
                     <Nav className="me-auto">
                         <Nav.Link href="devices">Devices</Nav.Link>
                         <NavDropdown title="Data" id="basic-nav-dropdown">
-                            <NavDropdown.Item href="ph">pH</NavDropdown.Item>
-                            <NavDropdown.Item href="temperature">Temperature</NavDropdown.Item>
+                            <NavDropdown.Item>
+                                <MyLink text={'pH'} to="/ph" />
+                            </NavDropdown.Item>
+                            <NavDropdown.Item>
+                                <MyLink text={'Temperature'} to="/temperature" />
+                            </NavDropdown.Item>
                         </NavDropdown>
                     </Nav>
                 </Navbar.Collapse>

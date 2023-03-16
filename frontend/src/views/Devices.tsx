@@ -5,6 +5,7 @@ import {services} from "../services/services";
 import Card from "react-bootstrap/Card";
 import {NavLink, Stack} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
+import {MyLink} from "./Commons";
 
 export function Devices() {
     const [devices, setDevices] = useState<Device[]>([])
@@ -32,7 +33,7 @@ export function Devices() {
                                 </ListGroup.Item>
                             ))}
                         </ListGroup>
-                        <NavLink href="/add-new-device"><Button variant="primary">Add New Device</Button></NavLink>
+                        <MyLink to="/add-new-device" text={'Add New Device'} color={'DodgerBlue'} bold={true} />
                     </Stack>
                 </Stack>
             </Card.Body>

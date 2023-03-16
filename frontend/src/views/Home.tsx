@@ -1,9 +1,6 @@
-import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
-import {Alert, Container, NavLink, Row, Stack} from "react-bootstrap";
+import {Row} from "react-bootstrap";
 import React from "react";
-import {StillInProgressAlert} from "./StillInProgressAlert";
-import {MyNavLink} from "./Commons";
 
 function Home() {
     return (
