@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service
 import pt.isel.iot_data_server.domain.Device
 import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.PhRecord
+import pt.isel.iot_data_server.domain.TemperatureRecord
 import pt.isel.iot_data_server.repository.TransactionManager
 
 @Service
@@ -27,7 +28,28 @@ class Service(
         phRecord: PhRecord
     ) {
         transactionManager.run {
+            it.repository.savePhRecord(deviceId, phRecord)
+        }
+    }
 
+    fun getPhRecords(deviceId: DeviceId): List<PhRecord> {
+        return transactionManager.run {
+            return@run it.repository.getPhRecords(deviceId)
+        }
+    }
+
+    fun saveTemperatureRecord(
+        deviceId: DeviceId,
+        temperatureRecord: PhRecord
+    ) {
+        transactionManager.run {
+
+        }
+    }
+
+    fun getTemperatureRecords(deviceId: DeviceId): List<TemperatureRecord> {
+        return transactionManager.run {
+            return@run it.repository.getTemperatureRecords(deviceId)
         }
     }
 

@@ -25,7 +25,11 @@ export function Devices() {
                     <Stack gap={3}>
                         <ListGroup>
                             {devices.map(device => (
-                                <ListGroup.Item key={device.id}>Device Id: {device.id}</ListGroup.Item>
+                                <ListGroup.Item key={device.id}>
+                                    <text style={{fontWeight: 'bold'}}>Device Id</text>
+                                    <br/>
+                                    <text> {device.id}</text>
+                                </ListGroup.Item>
                             ))}
                         </ListGroup>
                         <NavLink href="/add-new-device"><Button variant="primary">Add New Device</Button></NavLink>

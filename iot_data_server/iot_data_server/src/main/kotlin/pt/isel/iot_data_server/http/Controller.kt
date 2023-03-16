@@ -33,6 +33,24 @@ class Controller(
         service.savePhRecord(deviceId, phRecordModel.toPhRecord())
     }
 
+    @GetMapping("/device/{device_id}/ph")
+    fun getPhRecords(
+        @PathVariable device_id: String
+    ) {
+        val deviceId = DeviceId(UUID.fromString(device_id))
+        service.getPhRecords(deviceId)
+    }
+
+    @PostMapping("/device/{device_id}/temperature")
+    fun addTemperatureRecord(
+        @PathVariable device_id: String,
+        @RequestBody temperatureRecordModel: InputTemperatureRecordModel
+    ) {
+        val deviceId = DeviceId(UUID.fromString(device_id))
+        service.saveTemperatureRecord(deviceId, temperatureRecordModel.toTemperatureRecord())
+    }
+
+    /*
     @GetMapping("/mine")
     fun getMine() {
         val brokerUrl = "tcp://localhost:1883"
@@ -53,4 +71,5 @@ class Controller(
 
         client.disconnect()
     }
+     */
 }
