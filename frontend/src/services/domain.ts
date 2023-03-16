@@ -1,3 +1,10 @@
+export class User {
+    constructor(
+        public username: string,
+        public password: string
+    ) {}
+}
+
 export class Device {
     constructor(public id: string) {}
 }
