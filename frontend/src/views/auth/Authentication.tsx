@@ -7,6 +7,9 @@ import {services} from "../../services/services";
 import {User} from "../../services/domain";
 import Form from "react-bootstrap/esm/Form"
 import Button from "react-bootstrap/Button";
+import Card from "react-bootstrap/Card";
+import {Row} from "react-bootstrap";
+import {MyCard} from "../Commons";
 
 
 const logger = new Logger({ name: "Authentication" });
@@ -44,13 +47,12 @@ export function Authentication({title, action}: { title: string, action: Action}
     const navigate = useNavigate()
     const location = useLocation()
 
-    if (user) {
-        return <Navigate to="/me" replace={true}/>
-    }
+    if (user)
+        return <Navigate to="/" replace={true}/>
 
-    if(redirect) {
+    if(redirect)
         return <Navigate to={redirect} replace={true}/>
-    }
+
     function handleChange(ev: React.FormEvent<HTMLInputElement>) {
         const name = ev.currentTarget.name
         if(name === "username") {
@@ -63,8 +65,7 @@ export function Authentication({title, action}: { title: string, action: Action}
         setError(undefined)
     }
 
-    function handleSubmit(ev: React.FormEvent<HTMLFormElement>) {
-        ev.preventDefault()
+    function handleSubmit() {
         setIsSubmitting(true)
         const username = inputs.username
         const password = inputs.password
@@ -76,8 +77,8 @@ export function Authentication({title, action}: { title: string, action: Action}
                     if (result instanceof Error) {
                         setError(result.message)
                     } else {
-                        setUser(new User(username, password)) // TODO: Change this to the user object
-                        setRedirect(location.state?.source?.pathname || "/me")
+                        setUser(new User(username, password))
+                        setRedirect("/")
                     }
                 })
                 .catch(error => {
@@ -92,9 +93,9 @@ export function Authentication({title, action}: { title: string, action: Action}
                     if(result instanceof Error)
                         setError(result.message)
                     else {
-                        setSuccessSignUp("User created successfully, you can now sign in")
+                        setSuccessSignUp("User created successfully!")
                         setError("")
-                        navigate("/sign-in")
+                        navigate("/")
                     }
                     // setRedirect(location.state?.source?.pathname || "/sign-in") // fixme - results in endless loop
                 })
@@ -107,25 +108,22 @@ export function Authentication({title, action}: { title: string, action: Action}
     }
 
     return (
-        <Form>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Label>Email address</Form.Label>
-                <Form.Control type="email" placeholder="Enter username" />
-                <Form.Text className="text-muted">
-                    We'll never share your email with anyone else.
-                </Form.Text>
-            </Form.Group>
+        <MyCard title={title} text={"Insert credentials under..."}>
+            <Form>
+                <Form.Group className="mb-3" controlId="formBasicEmail">
+                    <Form.Label>Username</Form.Label>
+                    <Form.Control type="name" placeholder="Enter username" />
+                </Form.Group>
 
-            <Form.Group className="mb-3" controlId="formBasicPassword">
-                <Form.Label>Password</Form.Label>
-                <Form.Control type="password" placeholder="Password" />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="formBasicCheckbox">
-                <Form.Check type="checkbox" label="Check me out" />
-            </Form.Group>
-            <Button variant="primary" type="submit">
-                Submit
-            </Button>
-        </Form>
+                <Form.Group className="mb-3" controlId="formBasicPassword">
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control type="password" placeholder="Password" />
+                </Form.Group>
+
+                <Button variant="primary" type="submit" onClick={handleSubmit}>
+                    Submit
+                </Button>
+            </Form>
+        </MyCard>
     )
 }

@@ -15,7 +15,17 @@ function NavBar() {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                        <Nav.Link href="devices">Devices</Nav.Link>
+                        <MyLink text={'Devices'} to="/devices" />
+
+                        <NavDropdown title="Authentication" id="basic-nav-dropdown">
+                            <NavDropdown.Item>
+                                <MyLink text={'Sign In'} to="/sign-in" />
+                            </NavDropdown.Item>
+                            <NavDropdown.Item>
+                                <MyLink text={'Sign Up'} to="/sign-up" />
+                            </NavDropdown.Item>
+                        </NavDropdown>
+
                         <NavDropdown title="Data" id="basic-nav-dropdown">
                             <NavDropdown.Item>
                                 <MyLink text={'pH'} to="/ph" />

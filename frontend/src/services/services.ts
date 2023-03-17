@@ -104,7 +104,9 @@ export class MockServices implements Services {
     ]
 
     async createUser(username: string, password: string) {
-        this.users.push(new User(username, password))
+        const newUser = new User(username, password)
+        this.users.push(newUser)
+        this.user = newUser
     }
 
     async authenticateUser(username: string, password: string) {
