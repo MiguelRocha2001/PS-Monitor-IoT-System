@@ -94,6 +94,7 @@ export function Authentication({title, action}: { title: string, action: Action}
                         setError(result.message)
                     else {
                         setSuccessSignUp("User created successfully!")
+                        setUser(new User(username, password))
                         setError("")
                         navigate("/")
                     }
