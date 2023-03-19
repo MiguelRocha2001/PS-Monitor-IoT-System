@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.util.AssertionErrors.assertTrue
-import pt.isel.iot_data_server.service.UserService
+import pt.isel.iot_data_server.service.user.UserService
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 
 @SpringBootTest

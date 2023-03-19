@@ -8,7 +8,7 @@ import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.HandlerInterceptor
 import pt.isel.daw.dawbattleshipgame.http.pipeline.UserArgumentResolver
 import pt.isel.iot_data_server.domain.User
-import pt.isel.iot_data_server.service.UserService
+import pt.isel.iot_data_server.service.user.UserService
 
 @Component
 class AuthenticationInterceptor(

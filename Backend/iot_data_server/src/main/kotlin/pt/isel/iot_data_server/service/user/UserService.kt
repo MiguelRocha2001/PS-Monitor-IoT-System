@@ -1,9 +1,9 @@
-package pt.isel.iot_data_server.service
+package pt.isel.iot_data_server.service.user
 
-import org.eclipse.paho.client.mqttv3.MqttClient
 import org.springframework.stereotype.Service
 import pt.isel.iot_data_server.domain.*
 import pt.isel.iot_data_server.repository.TransactionManager
+import pt.isel.iot_data_server.service.Either
 import java.util.*
 
 @Service
@@ -33,10 +33,11 @@ class UserService(
         }
     }
 
-    fun createToken(userId: Int) {
-        transactionManager.run {
+    fun createTokenAndGet(username: String, password: String): Either<String, String> {
+        return transactionManager.run {
             val token = UUID.randomUUID().toString()
             it.repository.addToken(userId, token)
+            return@run token
         }
     }
 }
