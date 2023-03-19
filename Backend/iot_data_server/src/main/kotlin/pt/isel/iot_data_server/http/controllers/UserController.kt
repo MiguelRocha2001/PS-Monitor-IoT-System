@@ -6,7 +6,15 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.http.CreateUserInputModel
+import pt.isel.iot_data_server.http.SirenMediaType
+import pt.isel.iot_data_server.http.hypermedia.actions.createTokenSirenAction
+import pt.isel.iot_data_server.http.infra.siren
+import pt.isel.iot_data_server.http.model.map
+import pt.isel.iot_data_server.http.model.user.TokenOutputModel
+import pt.isel.iot_data_server.http.model.user.UserCreateInputModel
+import pt.isel.iot_data_server.http.model.user.UserCreateOutputModel
 import pt.isel.iot_data_server.http.model.user.UserCreateTokenInputModel
+import pt.isel.iot_data_server.service.Either
 import pt.isel.iot_data_server.service.user.UserService
 import java.util.*
 
@@ -14,6 +22,28 @@ import java.util.*
 class UserController(
     val service: UserService
 ) {
+    @PostMapping(Uris.Users.ALL)
+    fun create(
+        @RequestBody input: UserCreateInputModel
+    ): ResponseEntity<*> {
+        val res = service.createUser(input.username, input.password)
+        return res.map {
+            val userId = it.first
+            val token = it.second
+            ResponseEntity.status(201)
+                .contentType(SirenMediaType)
+                .header(
+                    "Location",
+                    Uris.Users.byId(userId).toASCIIString()
+                )
+                .body(siren(UserCreateOutputModel(userId, token)) {
+                    link(Uris.Users.create(), Rels.SELF)
+                    createTokenSirenAction(this)
+                    clazz("users")
+                })
+        }
+    }
+
     /**
      * Since the User parameter is requested, the interceptor will try to authenticate the user.
      * If the user is not authenticated, the interceptor will throw an exception and the method will not be called.
@@ -50,7 +80,7 @@ class UserController(
         response: HttpServletResponse,
         @RequestBody input: UserCreateTokenInputModel
     ): ResponseEntity<*> {
-        val res = service.createTokenAndGet(input.username, input.password)
+        val res = service.createAndGetToken(input.username, input.password)
 
         // adds cookie to response
         if (res is Either.Right) {
@@ -63,20 +93,10 @@ class UserController(
                 .contentType(SirenMediaType)
                 .body(
                     siren(TokenOutputModel(it)) {
-                        link(Uris.Users.createToken(), Rels.SELF)
-                        link(Uris.Users.home(), Rels.USER_HOME)
-                        createGameSirenAction(this)
                         clazz("user-token")
                     }
                 )
         }
-    }
-
-    @PostMapping("/users")
-    fun createUser(
-        @RequestBody userModel: CreateUserInputModel
-    ) {
-        service.createUser(userModel.username, userModel.password)
     }
 
     @GetMapping("/users")

@@ -8,11 +8,13 @@ import java.util.*
 data class UserMapper(
     val id: Int,
     val username: String,
+    val password: String,
 )
 
 internal fun UserMapper.toUser() = User(
     id = id,
     username = username,
+    password = password,
 )
 
 data class DeviceMapper(

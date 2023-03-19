@@ -10,14 +10,23 @@ import java.util.*
 class UserService(
     private val transactionManager: TransactionManager,
 ) {
-    fun createUser(username: String, password: String) {
-        transactionManager.run {
-            getAllUsers().forEach { user ->
-                if (user.username == username) {
-                    throw Exception("User already exists")
-                }
-            }
-            it.repository.createUser(username, password)
+    fun createUser(username: String, password: String): UserCreationResult {
+        return transactionManager.run {
+            // generate random int
+            val userId = Random().nextInt()
+            val user = User(userId, username, password)
+
+            if (it.repository.exists(user))
+                return@run Either.Left(CreateUserError.UserAlreadyExists)
+
+            it.repository.createUser(user)
+
+            val tokenCreationResult = createAndGetToken(username, password)
+            if (tokenCreationResult is Either.Left)
+                throw RuntimeException("Failed to create token for user $username")
+
+            tokenCreationResult as Either.Right
+            return@run Either.Right(userId to tokenCreationResult.value)
         }
     }
 
@@ -33,11 +42,18 @@ class UserService(
         }
     }
 
-    fun createTokenAndGet(username: String, password: String): Either<String, String> {
+    /**
+     * Creates a token for the user with the given username and password.
+     * @throws RuntimeException if the user does not exist.
+     */
+    fun createAndGetToken(username: String, password: String): TokenCreationResult {
         return transactionManager.run {
+            val user = it.repository.getUserByUsername(username)
             val token = UUID.randomUUID().toString()
-            it.repository.addToken(userId, token)
-            return@run token
+
+            it.repository.addToken(user.id, token)
+
+            return@run Either.Right(token)
         }
     }
 }

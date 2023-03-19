@@ -12,14 +12,15 @@ import pt.isel.iot_data_server.repository.jdbi.mappers.toUser
 class JdbiServerRepository(
     private val handle: Handle
 ) : ServerRepository {
-    override fun createUser(username: String, password: String) {
+    override fun createUser(user: User) {
         handle.createUpdate(
             """
             insert into _USER (username, password) values (:username, :password_validation)
             """
         )
-            .bind("username", username)
-            .bind("password_validation", password)
+            .bind("id", user.id)
+            .bind("username", user.username)
+            .bind("password_validation", user.password)
             .execute()
     }
 
@@ -107,6 +108,26 @@ class JdbiServerRepository(
             .bind("device_id", deviceId)
             .bind("time", temperatureRecord.timestamp)
             .bind("value", temperatureRecord.value)
+    }
+
+    //  TODO - Optimize using the power of relational database queries
+    override fun exists(user: User): Boolean {
+        getAllUsers().forEach {
+            if (it.username == user.username) {
+                return true
+            }
+        }
+        return false
+    }
+
+    //  TODO - Optimize using the power of relational database queries
+    override fun getUserByUsername(username: String): User {
+        getAllUsers().forEach {
+            if (it.username == username) {
+                return it
+            }
+        }
+        throw Exception("User not found")
     }
 
     override fun getTemperatureRecords(deviceId: DeviceId): List<TemperatureRecord> {
