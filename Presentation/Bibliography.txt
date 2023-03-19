@@ -1,0 +1,6 @@
+For reference:
+
+https://mommertz.de/neutralisation-oel-bwk.html
+https://botland.store/gravity-temperature-sensors/15094-gravity-ph-analog-sensormeter-v2-dfrobot-sen0161-v2-5904422342920.html
+https://www.electrofun.pt/sensores-arduino/sensor-humidade-temperatura-dht22-am2302-modulo?utm_campaign=efshopping&utm_source=google&utm_medium=cpc&utm_source=google&utm_medium=shopping&utm_campaign=roas&gclid=CjwKCAjw5dqgBhBNEiwA7PryaNJvTICP7r6IVvm_VTUBhN60vsUV195PoVzG8gtCwhgmIQjtwREtyhoCotUQAvD_BwE
+https://pt.mouser.com/ProductDetail/Espressif-Systems/ESP32-S2-DevKitC-1U?qs=pBJMDPsKWf0y5luJFio6Ng%3D%3D
