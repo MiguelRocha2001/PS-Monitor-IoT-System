@@ -14,6 +14,8 @@
 #include "sdkconfig.h"
 
 #include "ph_reader_fake.h"
+
+#include "mqtt_client.h"
 #include "broker_util.h"
 
 
@@ -51,10 +53,19 @@ void app_main(void) {
     }
 
     struct ph_record ph_record;
+
+    ESP_LOGE(TAG, "pH value: %f", ph_record.value);
+
+    ESP_LOGE(TAG, "Setting up MQTT...");
+    esp_mqtt_client_handle_t client = setup_mqtt(&ph_record);
+
     while (1) {
+        ESP_LOGE(TAG, "Reading pH...");
         read_ph(&ph_record);
-        send_ph_value(&ph_record);
+
+        ESP_LOGE(TAG, "Sending pH...");
+        mqtt_send_ph(client, &ph_record);
+        
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
-    
-    send_notification(deviceID);
 }

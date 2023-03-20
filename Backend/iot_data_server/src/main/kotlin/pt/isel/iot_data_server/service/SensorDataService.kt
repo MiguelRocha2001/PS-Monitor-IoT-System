@@ -47,7 +47,7 @@ class SensorDataService(
     }
 
     private fun subscribePhTopic(client: MqttClient) {
-        client.subscribe("topic/ph") { topic, message ->
+        client.subscribe("/ph") { topic, message ->
             val byteArray = message.payload
             val string = String(byteArray)
             println("Received message on topic $topic: $string")

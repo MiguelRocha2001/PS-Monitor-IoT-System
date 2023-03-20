@@ -21,9 +21,11 @@
 #include "mqtt_client.h"
 #include "ph_reader_fake.h"
 
+// see: https://docs.espressif.com/projects/esp-idf/en/v5.0.1/esp32s2/api-reference/protocols/mqtt.html
+
 static const char *TAG = "MQTT_EXAMPLE";
 
-static const char *CONFIG_BROKER_URL = "";
+static const char *CONFIG_BROKER_URL = "mqtt://0.tcp.eu.ngrok.io:19921/";
 
 static void log_error_if_nonzero(const char *message, int error_code)
 {
@@ -51,7 +53,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
     switch ((esp_mqtt_event_id_t)event_id) {
         case MQTT_EVENT_CONNECTED:
             ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
-            msg_id = esp_mqtt_client_publish(client, "/topic/ph", "data_3", 0, 1, 0);
+            msg_id = esp_mqtt_client_publish(client, "topic/ph", "data_10", 0, 1, 0);
             ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
             break;
         case MQTT_EVENT_DISCONNECTED:
@@ -90,7 +92,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
     }
 }
 
-static void mqtt_app_start(void)
+esp_mqtt_client_handle_t mqtt_app_start(void)
 {
     esp_mqtt_client_config_t mqtt_cfg = {
         .broker.address.uri = CONFIG_BROKER_URL,
@@ -100,9 +102,11 @@ static void mqtt_app_start(void)
     /* The last argument may be used to pass data to the event handler, in this example mqtt_event_handler */
     esp_mqtt_client_register_event(client, ESP_EVENT_ANY_ID, mqtt_event_handler, NULL);
     esp_mqtt_client_start(client);
+
+    return client;
 }
 
-void send_ph_value(struct ph_record *ph_record)
+esp_mqtt_client_handle_t setup_mqtt(struct ph_record *ph_record)
 {
     ESP_LOGI(TAG, "[APP] Startup..");
     ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
@@ -115,10 +119,23 @@ void send_ph_value(struct ph_record *ph_record)
     esp_log_level_set("esp-tls", ESP_LOG_VERBOSE);
     esp_log_level_set("TRANSPORT", ESP_LOG_VERBOSE);
     esp_log_level_set("outbox", ESP_LOG_VERBOSE);
+    esp_log_level_set("*", ESP_LOG_INFO);
 
-    ESP_ERROR_CHECK(nvs_flash_init());
-    ESP_ERROR_CHECK(esp_netif_init());
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
+    // ESP_ERROR_CHECK(nvs_flash_init());
+    // ESP_ERROR_CHECK(esp_netif_init());
+    // ESP_ERROR_CHECK(esp_event_loop_create_default());
 
-    mqtt_app_start();
+    esp_mqtt_client_handle_t client = mqtt_app_start();
+    return client;
+}
+
+void mqtt_send_ph(esp_mqtt_client_handle_t client, struct ph_record *ph_record)
+{
+    // convert ph_record -> value to string
+    char buf[30];
+    sprintf(buf, "%f", ph_record -> value);
+    // gcvt(ph_record -> value, 6, buf);
+
+    int msg_id = esp_mqtt_client_publish(client, "/ph", buf, 0, 1, 0);
+    ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
 }

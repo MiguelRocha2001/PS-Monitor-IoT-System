@@ -1,4 +1,6 @@
 #include "ph_reader_fake.h"
 
 
-void send_ph_value(struct ph_record *ph_record);
+esp_mqtt_client_handle_t setup_mqtt(struct ph_record *ph_record);
+
+void mqtt_send_ph(esp_mqtt_client_handle_t client, struct ph_record *ph_record);
