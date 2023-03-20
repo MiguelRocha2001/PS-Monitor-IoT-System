@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.*
 import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.http.CreateUserInputModel
 import pt.isel.iot_data_server.http.SirenMediaType
+import pt.isel.iot_data_server.http.hypermedia.actions.createLogoutSirenAction
 import pt.isel.iot_data_server.http.hypermedia.actions.createTokenSirenAction
+import pt.isel.iot_data_server.http.hypermedia.actions.createUserInfoSirenAction
 import pt.isel.iot_data_server.http.infra.siren
 import pt.isel.iot_data_server.http.model.map
 import pt.isel.iot_data_server.http.model.user.TokenOutputModel
@@ -37,9 +39,10 @@ class UserController(
                     Uris.Users.byId(userId).toASCIIString()
                 )
                 .body(siren(UserCreateOutputModel(userId, token)) {
-                    link(Uris.Users.create(), Rels.SELF)
-                    createTokenSirenAction(this)
                     clazz("users")
+                    createUserInfoSirenAction(this)
+                    createTokenSirenAction(this)
+                    createLogoutSirenAction(this)
                 })
         }
     }
@@ -54,7 +57,7 @@ class UserController(
         return ResponseEntity.ok().build()
     }
 
-    @DeleteMapping("/users/token")
+    @DeleteMapping(Uris.Users.TOKEN)
     fun logout(
         user: User,
         response: HttpServletResponse
@@ -99,7 +102,7 @@ class UserController(
         }
     }
 
-    @GetMapping("/users")
+    @GetMapping(Uris.Users.ALL)
     fun getAllUsers(): List<User> {
         return service.getAllUsers()
     }

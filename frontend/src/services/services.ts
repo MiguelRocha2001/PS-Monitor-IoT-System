@@ -12,6 +12,7 @@ import {doFetch} from "../fetch";
 import {MockServices} from "./FakeServices";
 
 export interface Services {
+    getBackendSirenInfo(): Promise<void>
     createUser(username: string, password: string): void
     authenticateUser(username: string, password: string): void
     isLoggedIn(): Promise<boolean>

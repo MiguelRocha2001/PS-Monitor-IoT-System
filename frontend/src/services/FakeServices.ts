@@ -11,6 +11,10 @@ export class MockServices implements Services {
         new Device('cd152448-04b2-473e-86b4-50521e30fb27')
     ]
 
+    async getBackendSirenInfo() {
+        // Nothing to do
+    }
+
     async createUser(username: string, password: string) {
         const newUser = new User(username, password)
         this.users.push(newUser)
