@@ -4,10 +4,32 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import React from "react";
 import {MyLink} from "./Commons";
-
-// TODO: Use router links instead of <Nav.Link href="...">...</Nav.Link> (line 18)
+import {useCurrentUser, useSetUser} from "./auth/Authn";
+import {services} from "../services/services";
+import Button from "react-bootstrap/Button";
 
 function NavBar() {
+    const currentUser = useCurrentUser()
+    const setUser = useSetUser()
+
+    const logout =
+        currentUser ?
+            (<Button variant="outline-primary" onClick={async () => {
+                setUser(undefined)
+                await services.logout()
+            }}>LOGOUT</Button> ) : <></>
+
+    const signInUpDropdown =
+        currentUser === undefined ?
+            <NavDropdown title="Authentication" id="basic-nav-dropdown">
+                <NavDropdown.Item>
+                    <MyLink text={'Sign In'} to="/sign-in" />
+                </NavDropdown.Item>
+                <NavDropdown.Item>
+                    <MyLink text={'Sign Up'} to="/sign-up" />
+                </NavDropdown.Item>
+            </NavDropdown> : <></>
+
     return (
         <Navbar bg="light" expand="lg" style={{marginTop: '1em', marginBottom: '2em'}}>
             <Container>
@@ -17,14 +39,7 @@ function NavBar() {
                     <Nav className="me-auto">
                         <MyLink text={'Devices'} to="/devices" />
 
-                        <NavDropdown title="Authentication" id="basic-nav-dropdown">
-                            <NavDropdown.Item>
-                                <MyLink text={'Sign In'} to="/sign-in" />
-                            </NavDropdown.Item>
-                            <NavDropdown.Item>
-                                <MyLink text={'Sign Up'} to="/sign-up" />
-                            </NavDropdown.Item>
-                        </NavDropdown>
+                        {signInUpDropdown}
 
                         <NavDropdown title="Data" id="basic-nav-dropdown">
                             <NavDropdown.Item>
@@ -34,6 +49,8 @@ function NavBar() {
                                 <MyLink text={'Temperature'} to="/temperature" />
                             </NavDropdown.Item>
                         </NavDropdown>
+
+                        {logout}
                     </Nav>
                 </Navbar.Collapse>
             </Container>
