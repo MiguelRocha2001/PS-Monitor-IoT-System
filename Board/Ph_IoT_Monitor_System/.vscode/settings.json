@@ -19,6 +19,7 @@
         "stdio.h": "c",
         "esp_err.h": "c",
         "freertos.h": "c",
-        "esp_http_client.h": "c"
+        "esp_http_client.h": "c",
+        "broker_util.h": "c"
     }
 }

@@ -1,6 +1,6 @@
-typedef struct {
+typedef struct ph_record {
     float value;
     int timestamp;
-} ph_record_t;
+} Ph_record;
 
-void read_ph(ph_record_t* ph_record);
+void read_ph(Ph_record* ph_record);

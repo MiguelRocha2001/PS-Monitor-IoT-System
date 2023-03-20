@@ -21,9 +21,6 @@
 
 const static char* TAG = "MAIN";
 
-
-
-
 void app_main(void) {
 
 //    delete_saved_wifi();
@@ -53,7 +50,7 @@ void app_main(void) {
         esp_touch_helper(&deviceID);
     }
 
-    ph_record_t ph_record;
+    Ph_record ph_record;
     while (1) {
         read_ph(&ph_record);
         send_ph_value(&ph_record);

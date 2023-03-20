@@ -102,7 +102,7 @@ static void mqtt_app_start(void)
     esp_mqtt_client_start(client);
 }
 
-void send_ph_value(ph_record_t* ph_record)
+void send_ph_value(Ph_record* ph_record)
 {
     ESP_LOGI(TAG, "[APP] Startup..");
     ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
