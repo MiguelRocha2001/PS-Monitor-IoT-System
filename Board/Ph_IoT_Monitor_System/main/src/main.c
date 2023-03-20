@@ -50,7 +50,7 @@ void app_main(void) {
         esp_touch_helper(&deviceID);
     }
 
-    Ph_record ph_record;
+    struct ph_record ph_record;
     while (1) {
         read_ph(&ph_record);
         send_ph_value(&ph_record);

@@ -1,6 +1,13 @@
-typedef struct ph_record {
+#include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
+#include <string.h>
+#include <stddef.h>
+
+struct ph_record {
     float value;
     int timestamp;
-} Ph_record;
+};
 
-void read_ph(Ph_record* ph_record);
+void read_ph(struct ph_record *ph_record);
+
