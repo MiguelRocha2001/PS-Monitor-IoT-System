@@ -18,6 +18,7 @@
         "unity.h": "c",
         "stdio.h": "c",
         "esp_err.h": "c",
-        "freertos.h": "c"
+        "freertos.h": "c",
+        "esp_http_client.h": "c"
     }
 }
