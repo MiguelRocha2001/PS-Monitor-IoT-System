@@ -1,6 +1,7 @@
-import {Siren} from "./services/sirenModule";
 import {NetworkError, ServerError} from "./services/erros";
 import {Logger} from "tslog";
+import Any = jasmine.Any;
+import {Siren} from "./services/sirenModule";
 
 const host = 'http://localhost:8080/api'
 const CONTENT_TYPE_JSON = 'application/json'
@@ -14,7 +15,7 @@ export type Request = {
     body?: Body
 }
 
-export type Body = KeyValuePair[]
+type Body = KeyValuePair[]
 
 export type KeyValuePair = {
     name: string,
@@ -75,10 +76,18 @@ export function toBody(obj: any): Body {
 export async function getSirenOrProblemOrUndefined(response: Response): Promise<Siren | ProblemJson | undefined> {
     if (response.ok) {
         const isSiren = response.headers.get('content-type')?.includes('application/vnd.siren+json');
+        if (isSiren) {
+            const sirenJson = await response.json()
+            return buildSirenFromJson(sirenJson)
+        }
         return isSiren ? await response.json() : null;
     } else {
         const problemJson = await response.json()
         return new ProblemJson(problemJson.title, response.status, problemJson.detail)
+    }
+
+    function buildSirenFromJson(json: any): Siren {
+        return json as Siren
     }
 }
 
@@ -88,7 +97,7 @@ function validateRequestMethod(request: Request): boolean {
 }
 
 function buildBody(fields: KeyValuePair[]): string {
-    const body = {}
+    const body: any = {}
     fields.forEach(field => {
         body[field.name] = field.value
     })

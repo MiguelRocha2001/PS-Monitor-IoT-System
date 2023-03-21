@@ -10,44 +10,54 @@ import exp from "constants";
 
 const logger = new Logger({ name: "Siren" });
 
-export type Siren = {
-    class: string;
-    properties: any;
-    links: Link[];
-    entities: Entity[];
-    actions: Action[];
-  };
+export class Siren {
+    constructor(
+        public class_: string,
+        public properties: any,
+        public links: Link[],
+        public entities: Entity[],
+        public actions: Action[]
+    ) {}
+}
 
-export type Link = {
-    rel: string[];
-    href: string;
-    title?: string;
-    type?: string;
-};
+export class Link {
+    constructor(
+        public rel: string[],
+        public href: string,
+        public title?: string,
+        public type?: string
+    ) {}
+}
 
-type Entity = {
-    class: string[];
-    properties: Object;
-    entities: Entity[];
-    links: Link[];
-    actions: Action[];
-    title: string;
-};
+export class Action {
+    constructor(
+        public name: string,
+        public title: string,
+        public method: string,
+        public href: string,
+        public type: string,
+        public fields: Field[]
+    ) {}
+}
 
-export type Action = {
-    name: string;
-    title: string;
-    method: string;
-    href: string;
-    type: string;
-    fields: Field[];
-};
+export class Field {
+    constructor(
+        public name: string,
+        public type: string,
+        public value: string
+    ) {}
+}
 
-type Field = {
-    name: string;
-    type: string;
-    value: string;
-};
+export class Entity {
+    constructor(
+        public class_: string[],
+        public properties: any,
+        public entities: Entity[],
+        public links: Link[],
+        public actions: Action[],
+        public title: string
+    ) {}
+}
 
 let CREATE_USER_ACTION: Action
 let CREATE_TOKEN_ACTION: Action

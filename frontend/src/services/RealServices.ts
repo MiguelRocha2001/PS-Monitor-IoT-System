@@ -19,11 +19,11 @@ export class RealServices implements Services {
             method: 'GET',
         }
         const response = await doFetch(request)
-        if (response instanceof ServerError) {
-            throw new Error(`Failed to get backend info: ${response.status} ${response.message}`)
-        } else {
-            extractSirenInfo()
-        }
+        if (response instanceof Siren)
+            extractSirenInfo(response)
+        else if (response instanceof ServerError)
+            throw new Error(`Failed to get backend siren info: ${response.status} ${response.message}`)
+        throw new Error(`Failed to get backend siren info: ${response}`)
     }
 
     async createUser(username: string, password: string) {
@@ -33,10 +33,10 @@ export class RealServices implements Services {
             body: toBody({username, password})
         }
         const response = await doFetch(request)
-        if (response instanceof ServerError)
+        if (response instanceof Siren) return
+        else if (response instanceof ServerError)
             throw new Error(`Failed to create user: ${response.status} ${response.message}`)
-        else
-            return
+        throw new Error(`Failed to create user: ${response}`)
     }
 
     async authenticateUser(username: string, password: string) {
@@ -46,10 +46,10 @@ export class RealServices implements Services {
             body: toBody({username, password})
         }
         const response = await doFetch(request)
-        if (response instanceof ServerError)
+        if (response instanceof Siren) return
+        else if (response instanceof ServerError)
             throw new Error(`Failed to authenticate user: ${response.status} ${response.message}`)
-        else
-            return
+        throw new Error(`Failed to authenticate user: ${response}`)
     }
 
     async isLoggedIn(): Promise<boolean> {
