@@ -1,5 +1,4 @@
 import {Logger} from "tslog";
-import exp from "constants";
 
 /**
  * This module implements the Siren specification.
@@ -57,6 +56,16 @@ export class Entity {
         public actions: Action[],
         public title: string
     ) {}
+}
+
+export function fromJson(json: any): Siren {
+    return new Siren(
+        json.class,
+        json.properties,
+        json.links,
+        json.entities,
+        json.actions
+    );
 }
 
 let CREATE_USER_ACTION: Action

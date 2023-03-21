@@ -1,7 +1,7 @@
 import {doFetch, toBody} from "./fetch";
 import {Device, PhData, TemperatureData, toDevices, toPhData, toTemperatureData, User} from "./domain";
 import {deviceAdded, Services} from "./services";
-import {ServerError} from "./erros";
+import {BackendError} from "./erros";
 import {Siren, SirenModule} from "./sirenModule";
 import {Logger} from "tslog";
 
@@ -24,9 +24,11 @@ export class RealServices implements Services {
             method: 'GET',
         }
         const response = await doFetch(request)
-        if (response instanceof Siren)
+        if (response instanceof Siren) {
             extractSirenInfo(response)
-        else if (response instanceof ServerError)
+            return
+        }
+        else if (response instanceof BackendError)
             throw new Error(`Failed to get backend siren info: ${response.status} ${response.message}`)
         throw new Error(`Failed to get backend siren info: ${response}`)
     }
@@ -49,7 +51,7 @@ export class RealServices implements Services {
             logger.info(`User ${username} created`)
             return
         }
-        else if (response instanceof ServerError)
+        else if (response instanceof BackendError)
             throw new Error(`Failed to create user: ${response.status} ${response.message}`)
         throw new Error(`Failed to create user: ${response}`)
     }
@@ -62,7 +64,7 @@ export class RealServices implements Services {
         }
         const response = await doFetch(request)
         if (response instanceof Siren) return
-        else if (response instanceof ServerError)
+        else if (response instanceof BackendError)
             throw new Error(`Failed to authenticate user: ${response.status} ${response.message}`)
         throw new Error(`Failed to authenticate user: ${response}`)
     }
@@ -71,15 +73,15 @@ export class RealServices implements Services {
         const isLoggedInLink = SirenModule.getIsLoggedInLink()
         if (!isLoggedInLink) throw new Error('Is logged in link not found')
         const request = {
-            url: this.API_HOST + isLoggedInLink.href,
+            url: isLoggedInLink.href,
             method: 'GET'
         }
         const response = await doFetch(request)
         if (response instanceof Siren) {
-
+            return true
         }
-        else if (response instanceof ServerError)
-            throw new Error(`Failed to check if user is logged in: ${response.status} ${response.message}`)
+        else if (response instanceof BackendError)
+            return false
         throw new Error(`Failed to check if user is logged in: ${response}`)
     }
 
@@ -95,7 +97,7 @@ export class RealServices implements Services {
             body: toBody(device)
         }
         const response = await doFetch(request)
-        if (response instanceof ServerError)
+        if (response instanceof BackendError)
             throw new Error(`Failed to add device: ${response.status} ${response.message}`)
         else {
             return deviceAdded(device)
@@ -108,7 +110,7 @@ export class RealServices implements Services {
             method: 'GET',
         }
         const response = await doFetch(request)
-        if (response instanceof ServerError)
+        if (response instanceof BackendError)
             throw new Error(`Failed to get devices: ${response.status} ${response.message}`)
         else
             return toDevices(response)
@@ -120,7 +122,7 @@ export class RealServices implements Services {
             method: 'GET'
         }
         const response = await doFetch(request)
-        if (response instanceof ServerError)
+        if (response instanceof BackendError)
             throw new Error(`Failed to get ph data: ${response.status} ${response.message}`)
         else
             return toPhData(response)
@@ -132,7 +134,7 @@ export class RealServices implements Services {
             method: 'GET'
         }
         const response = await doFetch(request)
-        if (response instanceof ServerError)
+        if (response instanceof BackendError)
             throw new Error(`Failed to get temperature data: ${response.status} ${response.message}`)
         else
             return toTemperatureData(response)

@@ -1,6 +1,6 @@
-import {NetworkError, ServerError} from "./erros";
+import {NetworkError, BackendError} from "./erros";
 import {Logger} from "tslog";
-import {Siren} from "./sirenModule";
+import {fromJson, Siren} from "./sirenModule";
 
 const host = 'http://localhost:8080'
 const CONTENT_TYPE_JSON = 'application/json'
@@ -24,7 +24,6 @@ export type KeyValuePair = {
 export async function fetchRequest(request: Request): Promise<Response> {
     return await fetch(host + '/' + request.url, {
         method: request.method,
-        mode: 'no-cors',
         headers: {
             'Content-Type': CONTENT_TYPE_JSON,
         },
@@ -38,9 +37,9 @@ export async function fetchRequest(request: Request): Promise<Response> {
  * @param request Request object containing url, method and body.
  * The url is relative to the API host (host should not be included).
  */
-export async function doFetch(request: Request): Promise<Siren | undefined | ServerError> {
+export async function doFetch(request: Request): Promise<Siren | undefined | BackendError> {
     if (request && validateRequestMethod(request)) {
-        logger.info("sending request to: ", host + request.url)
+        logger.info("sending request to: ", host + "/" + request.url)
         // console.log("body: ", request.body ? buildBody(request.body) : undefined)
         try {
             const resp = await fetchRequest(request)
@@ -48,7 +47,7 @@ export async function doFetch(request: Request): Promise<Siren | undefined | Ser
 
             if (data instanceof ProblemJson) {
                 logger.error("Response Error: ", data.title)
-                return new ServerError(data.title, resp.status)
+                return new BackendError(data.title, resp.status)
             }
             return data
         } catch (error: any) {
@@ -83,16 +82,12 @@ export async function getSirenOrProblemOrUndefined(response: Response): Promise<
         const isSiren = response.headers.get('content-type')?.includes('application/vnd.siren+json');
         if (isSiren) {
             const sirenJson = await response.json()
-            return buildSirenFromJson(sirenJson)
+            return fromJson(sirenJson)
         }
         return isSiren ? await response.json() : null;
     } else {
         const problemJson = await response.json()
         return new ProblemJson(problemJson.title, response.status, problemJson.detail)
-    }
-
-    function buildSirenFromJson(json: any): Siren {
-        return json as Siren
     }
 }
 

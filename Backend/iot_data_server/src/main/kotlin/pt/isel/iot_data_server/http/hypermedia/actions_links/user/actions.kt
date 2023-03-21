@@ -9,7 +9,7 @@ import java.net.URI
 
 fun createUserSirenAction(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.action(
-        name = "user-info",
+        name = "create-user",
         href = URI(Uris.Users.TOKEN),
         method = HttpMethod.GET,
         type = MediaType.APPLICATION_JSON

@@ -1,6 +1,7 @@
 package pt.isel.iot_data_server.http.controllers
 
 import jakarta.servlet.http.Cookie
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -49,8 +50,15 @@ class UserController(
      * Because of this, the method will only be called if the user is authenticated, and thus, the user is logically logged.
      */
     @GetMapping(Uris.Users.ME + "/logged")
-    fun isLogged(user: User): ResponseEntity<Unit> {
-        return ResponseEntity.ok().build()
+    fun isLogged(
+        request: HttpServletRequest
+    ): ResponseEntity<*> {
+        val isLogged = request.cookies?.find { it.name == "token" } != null
+        return ResponseEntity.status(200)
+            .contentType(SirenMediaType)
+            .body(siren(IsLoggedInOutputModel(isLogged)) {
+                clazz("user-logged")
+            })
     }
 
     @DeleteMapping(Uris.Users.TOKEN)

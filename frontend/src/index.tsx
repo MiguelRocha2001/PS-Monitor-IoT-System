@@ -11,7 +11,8 @@ const root = ReactDOM.createRoot(
 );
 
 // Ensures that the Services module extracts all available Siren information, from the backend.
-services.getBackendSirenInfo().then((sirenInfo) => {
+services.getBackendSirenInfo().then(() => {
+    console.log("Siren information extracted from the backend.")
     root.render(
       <React.StrictMode>
         <App />
