@@ -1,10 +1,8 @@
 package pt.isel.iot_data_server.service
 
-import org.eclipse.paho.client.mqttv3.MqttClient
 import org.springframework.stereotype.Service
-import pt.isel.iot_data_server.domain.*
+import pt.isel.iot_data_server.domain.Device
 import pt.isel.iot_data_server.repository.TransactionManager
-import java.util.*
 
 @Service
 class DeviceService(

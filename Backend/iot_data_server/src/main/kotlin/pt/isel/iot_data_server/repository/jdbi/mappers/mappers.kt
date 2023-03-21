@@ -1,6 +1,5 @@
 package pt.isel.iot_data_server.repository.jdbi.mappers
 
-import jakarta.validation.constraints.Email
 import pt.isel.iot_data_server.domain.Device
 import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.User

@@ -1,7 +1,6 @@
 package pt.isel.iot_data_server.http.model.user
 
 import pt.isel.iot_data_server.domain.UserInfo
-import java.util.regex.Pattern
 
 class UserCreateInputModel(username: String, password: String, val email: String, mobile: String) {
     val username: String

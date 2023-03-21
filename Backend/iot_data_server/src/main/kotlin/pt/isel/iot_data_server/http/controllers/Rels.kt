@@ -17,12 +17,5 @@ object Rels {
     val USER_HOME = LinkRelation("user-home")
     val REGISTER = LinkRelation("register")
     val USERS_STATS = LinkRelation("user-stats")
-
-    // ------------------- GAMES -------------------
-    val GAME_ID = LinkRelation("game-id")
-    val GAME = LinkRelation("game")
-    val GAME_BY_ID = LinkRelation("game-by-id")
-    val GAME_INFO = LinkRelation("game-info")
-    val GAME_QUEUE_BY_ID = LinkRelation("game-queue")
-    val IN_WAITING_QUEUE = LinkRelation("in-waiting-queue")
+    val IS_LOGGED_IN = LinkRelation("is-logged-in")
 }

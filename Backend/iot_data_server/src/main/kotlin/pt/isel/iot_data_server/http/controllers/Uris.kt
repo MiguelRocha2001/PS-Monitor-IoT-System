@@ -9,6 +9,7 @@ object Uris {
         const val TOKEN = "/users/token"
         const val BY_ID1 = "/users/{id}"
         private const val BY_ID2 = "/users/:id"
+        const val ME = "/users/me"
 
         fun all(): URI = URI(ALL)
         fun create() = URI(ALL)

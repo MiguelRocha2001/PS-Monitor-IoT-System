@@ -1,12 +1,13 @@
-package pt.isel.iot_data_server.http.hypermedia.actions
+package pt.isel.iot_data_server.http.hypermedia.actions_links.user
 
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
+import pt.isel.iot_data_server.http.controllers.Rels
 import pt.isel.iot_data_server.http.controllers.Uris
 import pt.isel.iot_data_server.http.infra.SirenBuilderScope
 import java.net.URI
 
-fun createUserInfoSirenAction(sirenBuilderScope: SirenBuilderScope<*>) =
+fun createUserSirenAction(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.action(
         name = "user-info",
         href = URI(Uris.Users.TOKEN),
@@ -38,3 +39,9 @@ fun createLogoutSirenAction(sirenBuilderScope: SirenBuilderScope<*>) =
         this.textField("username")
         this.textField("password")
     }
+
+fun createIsLoggedInLink(sirenBuilderScope: SirenBuilderScope<*>) =
+    sirenBuilderScope.link(
+        href = URI(Uris.Users.ME),
+        rel = Rels.IS_LOGGED_IN
+    )

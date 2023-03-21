@@ -5,7 +5,7 @@ import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.PhRecord
 import pt.isel.iot_data_server.domain.TemperatureRecord
 import java.sql.Timestamp
-import java.util.UUID
+import java.util.*
 
 data class CreateUserInputModel(val username: String, val password: String)
 

@@ -1,6 +1,5 @@
 package pt.isel.iot_data_server.domain
 
-import jakarta.validation.constraints.Email
 import java.util.regex.Pattern
 
 data class UserInfo(val username: String, val password: String, val email: String, val mobile: String) {

@@ -5,11 +5,10 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pt.isel.iot_data_server.domain.User
-import pt.isel.iot_data_server.http.CreateUserInputModel
 import pt.isel.iot_data_server.http.SirenMediaType
-import pt.isel.iot_data_server.http.hypermedia.actions.createLogoutSirenAction
-import pt.isel.iot_data_server.http.hypermedia.actions.createTokenSirenAction
-import pt.isel.iot_data_server.http.hypermedia.actions.createUserInfoSirenAction
+import pt.isel.iot_data_server.http.hypermedia.actions_links.user.createLogoutSirenAction
+import pt.isel.iot_data_server.http.hypermedia.actions_links.user.createTokenSirenAction
+import pt.isel.iot_data_server.http.hypermedia.actions_links.user.createUserSirenAction
 import pt.isel.iot_data_server.http.infra.siren
 import pt.isel.iot_data_server.http.model.map
 import pt.isel.iot_data_server.http.model.user.*
@@ -37,7 +36,7 @@ class UserController(
                 )
                 .body(siren(UserCreateOutputModel(userId, token)) {
                     clazz("users")
-                    createUserInfoSirenAction(this)
+                    createUserSirenAction(this)
                     createTokenSirenAction(this)
                     createLogoutSirenAction(this)
                 })
@@ -49,7 +48,7 @@ class UserController(
      * If the user is not authenticated, the interceptor will throw an exception and the method will not be called.
      * Because of this, the method will only be called if the user is authenticated, and thus, the user is logically logged.
      */
-    @GetMapping("/users/token")
+    @GetMapping(Uris.Users.ME + "/logged")
     fun isLogged(user: User): ResponseEntity<Unit> {
         return ResponseEntity.ok().build()
     }

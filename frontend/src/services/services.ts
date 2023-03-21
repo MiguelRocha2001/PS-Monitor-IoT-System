@@ -1,15 +1,10 @@
 import {
     Device,
     PhData,
-    PhRecord,
     TemperatureData,
-    TemperatureRecord,
-    toDevices,
-    toPhData,
-    toTemperatureData, User
+    User
 } from "./domain";
-import {doFetch} from "../fetch";
-import {MockServices} from "./FakeServices";
+import {RealServices} from "./RealServices";
 
 export interface Services {
     getBackendSirenInfo(): Promise<void>
@@ -28,4 +23,4 @@ export function deviceAdded(device: Device) {
     console.log(`Device added: ${JSON.stringify(device)}`)
 }
 
-export const services: Services = new MockServices()
+export const services: Services = new RealServices()

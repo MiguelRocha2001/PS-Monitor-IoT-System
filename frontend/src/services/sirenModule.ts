@@ -62,6 +62,24 @@ export class Entity {
 let CREATE_USER_ACTION: Action
 let CREATE_TOKEN_ACTION: Action
 let LOGOUT_ACTION: Action
+let IS_LOGGED_IN_LINK: Link
+
+function getCreateUserAction(): Action {
+    return CREATE_USER_ACTION
+}
+
+function getCreateTokenAction(): Action {
+    return CREATE_TOKEN_ACTION
+}
+
+function getLogoutAction(): Action {
+    return LOGOUT_ACTION
+}
+
+function getIsLoggedInLink(): Link {
+    return IS_LOGGED_IN_LINK
+}
+
 
 function extractCreateUserAction(actions: any[]) {
     CREATE_USER_ACTION = extractAction(actions, "create-user")
@@ -75,13 +93,17 @@ function extractLogoutAction(actions: any[]) {
     LOGOUT_ACTION = extractAction(actions, "logout")
 }
 
+function extractIsLoggedInLink(links: Link[]) {
+    IS_LOGGED_IN_LINK = extractLink(links, "is-logged-in")
+}
 
-function extractLink(linksArg: Link[], rel: string): string {
+
+function extractLink(linksArg: Link[], rel: string): Link {
     for (let i = 0; i < linksArg.length; i++) {
         const link = linksArg[i]
         for (let j = 0; j < link.rel.length; j++) {
             if (link.rel[j] === rel) {
-                return link.href
+                return link
             }
         }
     }
@@ -114,8 +136,13 @@ function extractAction(actions: any[], name: string): Action {
 }
 
 export const SirenModule = {
+     getCreateTokenAction,
+    getCreateUserAction,
+    getLogoutAction,
+    getIsLoggedInLink,
     extractCreateUserAction,
     extractCreateTokenAction,
     extractLogoutAction,
+    extractIsLoggedInLink,
     validateFields
 }

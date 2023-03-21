@@ -1,9 +1,8 @@
-import {NetworkError, ServerError} from "./services/erros";
+import {NetworkError, ServerError} from "./erros";
 import {Logger} from "tslog";
-import Any = jasmine.Any;
-import {Siren} from "./services/sirenModule";
+import {Siren} from "./sirenModule";
 
-const host = 'http://localhost:8080/api'
+const host = 'http://localhost:8080'
 const CONTENT_TYPE_JSON = 'application/json'
 
 const logger = new Logger({name: "Fetch Module"});
@@ -23,16 +22,22 @@ export type KeyValuePair = {
 }
 
 export async function fetchRequest(request: Request): Promise<Response> {
-    return await fetch(host + request.url, {
+    return await fetch(host + '/' + request.url, {
         method: request.method,
-        body: request.body ? buildBody(request.body) : undefined,
+        mode: 'no-cors',
         headers: {
             'Content-Type': CONTENT_TYPE_JSON,
         },
-        credentials: 'include'
+        credentials: 'include',
+        body: request.body ? buildBody(request.body) : undefined
     })
 }
 
+/**
+ * Makes an API call.
+ * @param request Request object containing url, method and body.
+ * The url is relative to the API host (host should not be included).
+ */
 export async function doFetch(request: Request): Promise<Siren | undefined | ServerError> {
     if (request && validateRequestMethod(request)) {
         logger.info("sending request to: ", host + request.url)

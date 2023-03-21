@@ -40,7 +40,6 @@ dependencies {
 	implementation("com.hivemq:hivemq-community-edition-embedded:2023.2")
 	implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
 	implementation("com.hivemq:hivemq-mqtt-client:1.2.2")
-
 }
 
 tasks.withType(KotlinCompile) {

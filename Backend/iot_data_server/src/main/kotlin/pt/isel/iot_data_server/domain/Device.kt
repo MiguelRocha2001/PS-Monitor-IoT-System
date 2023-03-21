@@ -1,6 +1,6 @@
 package pt.isel.iot_data_server.domain
 
-import java.util.UUID
+import java.util.*
 
 
 data class DeviceId(val id: UUID)
