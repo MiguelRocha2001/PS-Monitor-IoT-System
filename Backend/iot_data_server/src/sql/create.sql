@@ -1,7 +1,9 @@
 create table _user(
-    id serial primary key,
+    id int primary key,
     username varchar,
-    password varchar
+    password varchar,
+    email varchar,
+    mobile varchar
 );
 
 create table token(

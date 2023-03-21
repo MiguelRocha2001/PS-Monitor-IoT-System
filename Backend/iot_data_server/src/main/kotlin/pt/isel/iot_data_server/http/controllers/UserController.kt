@@ -12,10 +12,7 @@ import pt.isel.iot_data_server.http.hypermedia.actions.createTokenSirenAction
 import pt.isel.iot_data_server.http.hypermedia.actions.createUserInfoSirenAction
 import pt.isel.iot_data_server.http.infra.siren
 import pt.isel.iot_data_server.http.model.map
-import pt.isel.iot_data_server.http.model.user.TokenOutputModel
-import pt.isel.iot_data_server.http.model.user.UserCreateInputModel
-import pt.isel.iot_data_server.http.model.user.UserCreateOutputModel
-import pt.isel.iot_data_server.http.model.user.UserCreateTokenInputModel
+import pt.isel.iot_data_server.http.model.user.*
 import pt.isel.iot_data_server.service.Either
 import pt.isel.iot_data_server.service.user.UserService
 import java.util.*
@@ -28,7 +25,7 @@ class UserController(
     fun create(
         @RequestBody input: UserCreateInputModel
     ): ResponseEntity<*> {
-        val res = service.createUser(input.username, input.password)
+        val res = service.createUser(input.toUserInfo())
         return res.map {
             val userId = it.first
             val token = it.second
@@ -83,7 +80,7 @@ class UserController(
         response: HttpServletResponse,
         @RequestBody input: UserCreateTokenInputModel
     ): ResponseEntity<*> {
-        val res = service.createAndGetToken(input.username, input.password)
+        val res = service.createAndGetToken(input.username)
 
         // adds cookie to response
         if (res is Either.Right) {

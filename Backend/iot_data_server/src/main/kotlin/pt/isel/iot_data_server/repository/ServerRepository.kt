@@ -14,6 +14,6 @@ interface ServerRepository {
     fun savePhRecord(deviceId: DeviceId, phRecord: PhRecord)
     fun getTemperatureRecords(deviceId: DeviceId): List<TemperatureRecord>
     fun saveTemperatureRecord(deviceId: DeviceId, temperatureRecord: TemperatureRecord)
-    fun exists(user: User): Boolean
+    fun exists(username: String): Boolean
     fun getUserByUsername(username: String): User
 }

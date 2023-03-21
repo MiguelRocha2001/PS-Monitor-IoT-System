@@ -15,12 +15,14 @@ class JdbiServerRepository(
     override fun createUser(user: User) {
         handle.createUpdate(
             """
-            insert into _USER (username, password) values (:username, :password_validation)
+            insert into _USER (id, username, password, email, mobile) values (:username, :password_validation, :email, :mobile)
             """
         )
             .bind("id", user.id)
-            .bind("username", user.username)
-            .bind("password_validation", user.password)
+            .bind("username", user.userInfo.username)
+            .bind("password_validation", user.userInfo.password)
+            .bind("email", user.userInfo.email)
+            .bind("mobile", user.userInfo.mobile)
             .execute()
     }
 
@@ -111,9 +113,9 @@ class JdbiServerRepository(
     }
 
     //  TODO - Optimize using the power of relational database queries
-    override fun exists(user: User): Boolean {
+    override fun exists(username: String): Boolean {
         getAllUsers().forEach {
-            if (it.username == user.username) {
+            if (it.userInfo.username == username) {
                 return true
             }
         }
@@ -123,7 +125,7 @@ class JdbiServerRepository(
     //  TODO - Optimize using the power of relational database queries
     override fun getUserByUsername(username: String): User {
         getAllUsers().forEach {
-            if (it.username == username) {
+            if (it.userInfo.username == username) {
                 return it
             }
         }
