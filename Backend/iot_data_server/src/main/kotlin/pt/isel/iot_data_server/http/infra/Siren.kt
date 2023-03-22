@@ -29,7 +29,7 @@ data class EntityModel<T>(
 data class ActionModel(
     val name: String,
     val href: String,
-    val method: HttpMethod,
+    val method: String,
     val type: String,
     val fields: List<FieldModel>,
 )
@@ -139,7 +139,7 @@ class ActionBuilderScope(
         scope.block()
         fields.add(ObjectFieldModel(name, "object", scope.fields))
     }
-    fun build() = ActionModel(name, href.toASCIIString(), method, "${type.type}/${type.subtype}", fields)
+    fun build() = ActionModel(name, href.toASCIIString(), method.toString(), "${type.type}/${type.subtype}", fields)
 }
 
 fun <T> siren(value: T, block: SirenBuilderScope<T>.() -> Unit = {}): SirenModel<T> {

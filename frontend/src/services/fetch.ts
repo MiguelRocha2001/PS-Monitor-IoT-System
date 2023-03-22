@@ -37,7 +37,7 @@ export async function fetchRequest(request: Request): Promise<Response> {
  * @param request Request object containing url, method and body.
  * The url is relative to the API host (host should not be included).
  */
-export async function doFetch(request: Request): Promise<Siren | undefined | BackendError> {
+export async function doFetch(request: Request): Promise<Siren | BackendError> {
     if (request && validateRequestMethod(request)) {
         logger.info("sending request to: ", toFullUrl(request))
         // console.log("body: ", request.body ? buildBody(request.body) : undefined)
@@ -55,6 +55,7 @@ export async function doFetch(request: Request): Promise<Siren | undefined | Bac
             return Promise.reject(new NetworkError(error.message))
         }
     }
+    return Promise.reject(new Error('Invalid request'))
 }
 
 function toFullUrl(request: Request): string {
@@ -81,7 +82,7 @@ export function toBody(obj: any): Body {
     return body
 }
 
-export async function getSirenOrProblemOrUndefined(response: Response): Promise<Siren | ProblemJson | undefined> {
+export async function getSirenOrProblemOrUndefined(response: Response): Promise<Siren | ProblemJson> {
     if (response.ok) {
         const isSiren = response.headers.get('content-type')?.includes('application/vnd.siren+json');
         if (isSiren) {

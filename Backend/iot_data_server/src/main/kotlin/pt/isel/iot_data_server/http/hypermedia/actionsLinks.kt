@@ -10,8 +10,8 @@ import java.net.URI
 fun createUserSirenAction(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.action(
         name = "create-user",
-        href = URI(Uris.Users.TOKEN),
-        method = HttpMethod.GET,
+        href = URI(Uris.Users.ALL),
+        method = HttpMethod.POST,
         type = MediaType.APPLICATION_JSON
     ) {
         this.textField("username")

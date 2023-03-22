@@ -4,6 +4,8 @@ import {deviceAdded, Services} from "./services";
 import {BackendError} from "./erros";
 import {Siren, SirenModule} from "./sirenModule";
 import {Logger} from "tslog";
+import {Simulate} from "react-dom/test-utils";
+import error = Simulate.error;
 
 const logger = new Logger({name: "Real Services"});
 logger.settings.minLevel = 3 // LogLevel: INFO
@@ -28,10 +30,8 @@ export class RealServices implements Services {
         if (response instanceof Siren) {
             extractSirenInfo(response)
             return
-        }
-        else if (response instanceof BackendError)
+        } else
             throw new Error(`Failed to get backend siren info: ${response.status} ${response.message}`)
-        throw new Error(`Failed to get backend siren info: ${response}`)
     }
 
     /**
@@ -40,23 +40,31 @@ export class RealServices implements Services {
      * @param password password
      */
     async createUser(username: string, password: string) {
+        logger.info(`Creating user ${username}`)
         const createUserAction = SirenModule.getCreateUserAction()
-        if (!createUserAction) throw new Error('Create user action not found')
+        if (!createUserAction) {
+            const msg = 'Create user action not found'
+            logger.error(msg)
+            throw new Error(msg)
+        }
         const request = {
-            url: this.API_HOST + createUserAction.href,
+            url: createUserAction.href,
             method: createUserAction.method,
             body: toBody({username, password})
         }
-        const response = await doFetch(request)
-        if (response instanceof Siren) {
-            logger.info(`User ${username} created`)
-            return
+        console.log(createUserAction)
+        try {
+            const response = await doFetch(request)
+            if (response instanceof Siren) {
+                logger.info(`User ${username} created`)
+                return
+            }
+        } catch (e) {
+            logger.error(`Failed to create user: ${e}`)
         }
-        else if (response instanceof BackendError)
-            throw new Error(`Failed to create user: ${response.status} ${response.message}`)
-        throw new Error(`Failed to create user: ${response}`)
     }
 
+    // TODO: fix this
     async authenticateUser(username: string, password: string) {
         const request = {
             url: `${(this.API_HOST)}/users/authenticate`,
