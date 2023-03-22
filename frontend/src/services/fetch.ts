@@ -22,7 +22,7 @@ export type KeyValuePair = {
 }
 
 export async function fetchRequest(request: Request): Promise<Response> {
-    return await fetch(host + '/' + request.url, {
+    return await fetch(toFullUrl(request), {
         method: request.method,
         headers: {
             'Content-Type': CONTENT_TYPE_JSON,
@@ -39,7 +39,7 @@ export async function fetchRequest(request: Request): Promise<Response> {
  */
 export async function doFetch(request: Request): Promise<Siren | undefined | BackendError> {
     if (request && validateRequestMethod(request)) {
-        logger.info("sending request to: ", host + "/" + request.url)
+        logger.info("sending request to: ", toFullUrl(request))
         // console.log("body: ", request.body ? buildBody(request.body) : undefined)
         try {
             const resp = await fetchRequest(request)
@@ -55,6 +55,10 @@ export async function doFetch(request: Request): Promise<Siren | undefined | Bac
             return Promise.reject(new NetworkError(error.message))
         }
     }
+}
+
+function toFullUrl(request: Request): string {
+    return request.url[0] === '/' ? host + request.url : host + '/' + request.url
 }
 
 export class ProblemJson {

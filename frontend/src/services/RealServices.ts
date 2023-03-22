@@ -9,7 +9,7 @@ const logger = new Logger({name: "Real Services"});
 logger.settings.minLevel = 3 // LogLevel: INFO
 
 export class RealServices implements Services {
-    private readonly API_HOST = 'http://localhost:8080/'
+    private readonly API_HOST = 'http://localhost:8080'
 
     async getBackendSirenInfo() {
         function extractSirenInfo(response: Siren) {
@@ -17,6 +17,7 @@ export class RealServices implements Services {
             SirenModule.extractCreateTokenAction(response.actions)
             SirenModule.extractLogoutAction(response.actions)
             SirenModule.extractIsLoggedInLink(response.links)
+            SirenModule.extractGetMeLink(response.links)
         }
 
         const request = {
@@ -78,16 +79,29 @@ export class RealServices implements Services {
         }
         const response = await doFetch(request)
         if (response instanceof Siren) {
-            return true
+            return response.properties.isLoggedIn
         }
-        else if (response instanceof BackendError)
-            return false
+        else if (response instanceof BackendError) {
+            throw new Error(`Failed to check if user is logged in: ${response.status} ${response.message}`)
+        }
         throw new Error(`Failed to check if user is logged in: ${response}`)
     }
 
     async getMe(): Promise<User> {
-        // TODO: Implement
-        throw new Error('Not implemented')
+        const getMeLink = SirenModule.getGetMeLink()
+        if (!getMeLink) throw new Error('Get me link not found')
+        const request = {
+            url: getMeLink.href,
+            method: 'GET'
+        }
+        const response = await doFetch(request)
+        if (response instanceof Siren) {
+            const userFromResponse = response.properties
+            return new User(userFromResponse.username, userFromResponse.password)
+        }
+        else if (response instanceof BackendError)
+            throw new Error(`Failed to get me: ${response.status} ${response.message}`)
+        throw new Error(`Failed to get me: ${response}`)
     }
 
     async addDevice(device: Device) {

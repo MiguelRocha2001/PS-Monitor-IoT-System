@@ -1,4 +1,4 @@
-package pt.isel.iot_data_server.http.hypermedia.actions_links.user
+package pt.isel.iot_data_server.http.hypermedia
 
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
@@ -42,6 +42,12 @@ fun createLogoutSirenAction(sirenBuilderScope: SirenBuilderScope<*>) =
 
 fun createIsLoggedInLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
-        href = URI(Uris.Users.ME),
+        href = Uris.Users.Me.loggedIn(),
         rel = Rels.IS_LOGGED_IN
+    )
+
+fun createGetMeLink(sirenBuilderScope: SirenBuilderScope<*>) =
+    sirenBuilderScope.link(
+        href = URI(Uris.Users.ME),
+        rel = Rels.ME
     )

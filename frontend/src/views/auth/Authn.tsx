@@ -19,6 +19,7 @@ export function AuthnContainer({ children }: { children: React.ReactNode }) {
         async function fetchUser () {
             const isLogged = await services.isLoggedIn()
             if (isLogged) {
+                console.log("User is logged in, fetching user information.")
                 const user = await services.getMe()
                 setUser(user)
             }

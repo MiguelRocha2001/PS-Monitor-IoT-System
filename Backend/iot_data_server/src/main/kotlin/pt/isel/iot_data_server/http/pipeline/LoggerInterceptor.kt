@@ -12,7 +12,7 @@ class LoggerInterceptor : HandlerInterceptor {
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         if (handler is HandlerMethod) {
-            logger.info("Request: ${request.method} ${request.requestURI}")
+            logger.info("Request: ${request.method} ${request.requestURL} ${handler.method.name}")
         }
         return true
     }

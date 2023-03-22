@@ -7,9 +7,9 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.http.SirenMediaType
-import pt.isel.iot_data_server.http.hypermedia.actions_links.user.createLogoutSirenAction
-import pt.isel.iot_data_server.http.hypermedia.actions_links.user.createTokenSirenAction
-import pt.isel.iot_data_server.http.hypermedia.actions_links.user.createUserSirenAction
+import pt.isel.iot_data_server.http.hypermedia.createLogoutSirenAction
+import pt.isel.iot_data_server.http.hypermedia.createTokenSirenAction
+import pt.isel.iot_data_server.http.hypermedia.createUserSirenAction
 import pt.isel.iot_data_server.http.infra.siren
 import pt.isel.iot_data_server.http.model.map
 import pt.isel.iot_data_server.http.model.user.*
@@ -49,7 +49,7 @@ class UserController(
      * If the user is not authenticated, the interceptor will throw an exception and the method will not be called.
      * Because of this, the method will only be called if the user is authenticated, and thus, the user is logically logged.
      */
-    @GetMapping(Uris.Users.ME + "/logged")
+    @GetMapping(Uris.Users.Me.loggedIn)
     fun isLogged(
         request: HttpServletRequest
     ): ResponseEntity<*> {
@@ -109,5 +109,22 @@ class UserController(
     @GetMapping(Uris.Users.ALL)
     fun getAllUsers(): List<User> {
         return service.getAllUsers()
+    }
+
+    @GetMapping(Uris.Users.ME)
+    fun getMe(
+        user: User
+    ): ResponseEntity<*> {
+        val userOutputModel = UserOutputModel(
+            user.id,
+            user.userInfo.username,
+            user.userInfo.email,
+            user.userInfo.mobile
+        )
+        return ResponseEntity.status(200)
+            .contentType(SirenMediaType)
+            .body(siren(userOutputModel) {
+                clazz("user")
+            })
     }
 }

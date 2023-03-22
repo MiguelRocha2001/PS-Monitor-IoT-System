@@ -4,10 +4,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 import pt.isel.iot_data_server.http.SirenMediaType
-import pt.isel.iot_data_server.http.hypermedia.actions_links.user.createIsLoggedInLink
-import pt.isel.iot_data_server.http.hypermedia.actions_links.user.createLogoutSirenAction
-import pt.isel.iot_data_server.http.hypermedia.actions_links.user.createTokenSirenAction
-import pt.isel.iot_data_server.http.hypermedia.actions_links.user.createUserSirenAction
+import pt.isel.iot_data_server.http.hypermedia.*
 import pt.isel.iot_data_server.http.infra.siren
 
 @RestController
@@ -24,6 +21,7 @@ class InfoController(
                 createTokenSirenAction(this)
                 createLogoutSirenAction(this)
                 createIsLoggedInLink(this)
+                createGetMeLink(this)
             })
     }
 }

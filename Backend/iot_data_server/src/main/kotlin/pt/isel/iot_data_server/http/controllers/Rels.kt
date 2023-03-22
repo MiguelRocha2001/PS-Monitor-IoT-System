@@ -18,4 +18,5 @@ object Rels {
     val REGISTER = LinkRelation("register")
     val USERS_STATS = LinkRelation("user-stats")
     val IS_LOGGED_IN = LinkRelation("is-logged-in")
+    val ME = LinkRelation("me")
 }

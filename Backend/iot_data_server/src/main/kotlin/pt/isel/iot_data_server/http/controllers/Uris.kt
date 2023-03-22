@@ -11,6 +11,12 @@ object Uris {
         private const val BY_ID2 = "/users/:id"
         const val ME = "/users/me"
 
+        object Me {
+            const val loggedIn = "/users/me/loggedIn"
+
+            fun loggedIn(): URI = URI(loggedIn)
+        }
+
         fun all(): URI = URI(ALL)
         fun create() = URI(ALL)
         fun byId() = URI(BY_ID2)

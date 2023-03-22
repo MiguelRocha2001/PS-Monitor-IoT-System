@@ -72,6 +72,7 @@ let CREATE_USER_ACTION: Action
 let CREATE_TOKEN_ACTION: Action
 let LOGOUT_ACTION: Action
 let IS_LOGGED_IN_LINK: Link
+let GET_ME_LINK: Link
 
 function getCreateUserAction(): Action {
     return CREATE_USER_ACTION
@@ -87,6 +88,10 @@ function getLogoutAction(): Action {
 
 function getIsLoggedInLink(): Link {
     return IS_LOGGED_IN_LINK
+}
+
+function getGetMeLink(): Link {
+    return GET_ME_LINK
 }
 
 
@@ -106,6 +111,9 @@ function extractIsLoggedInLink(links: Link[]) {
     IS_LOGGED_IN_LINK = extractLink(links, "is-logged-in")
 }
 
+function extractGetMeLink(links: Link[]) {
+     GET_ME_LINK = extractLink(links, "me")
+}
 
 function extractLink(linksArg: Link[], rel: string): Link {
     for (let i = 0; i < linksArg.length; i++) {
@@ -153,5 +161,7 @@ export const SirenModule = {
     extractCreateTokenAction,
     extractLogoutAction,
     extractIsLoggedInLink,
+    extractGetMeLink,
+    getGetMeLink,
     validateFields
 }
