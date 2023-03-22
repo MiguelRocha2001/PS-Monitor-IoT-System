@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {services} from "./services/services";
+import {SomethingWentWrong} from "./views/SomethingWentWrong";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -16,6 +17,13 @@ services.getBackendSirenInfo().then(() => {
     root.render(
       <React.StrictMode>
         <App />
+      </React.StrictMode>
+    );
+}).catch((error) => {
+    console.log("Error while extracting Siren information from the backend: " + error)
+    root.render(
+      <React.StrictMode>
+        <SomethingWentWrong details={'Error while extracting Siren information from the backend: ' + error}/>
       </React.StrictMode>
     );
 });
