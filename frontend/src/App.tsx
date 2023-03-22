@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {BrowserRouter, Outlet, Route, Routes} from 'react-router-dom'
 import Ph from "./views/Ph";
 import Home from "./views/Home";
@@ -11,8 +11,32 @@ import NavBar from "./views/NavBar";
 import {AuthnContainer} from "./views/auth/Authn";
 import {RequireAuthn} from "./views/auth/RequireAuthn";
 import {Authentication} from "./views/auth/Authentication";
+import {services} from "./services/services";
+import {SomethingWentWrong} from "./views/SomethingWentWrong";
 
 function App() {
+    const [componentToDisplay, setComponentToDisplay]
+        = React.useState<React.ReactElement>(<div>Loading...</div>);
+
+    useEffect(() => {
+        // Ensures that the Services module extracts all available Siren information, from the backend.
+        services.getBackendSirenInfo().then(() => {
+            console.log("Siren information extracted from the backend.")
+            setComponentToDisplay(getRouterComponent())
+        }).catch((error) => {
+            const errorToLogAndDisplay = "Error while extracting Siren information from the backend: " + error
+            console.log(errorToLogAndDisplay)
+            const errorComponent = <SomethingWentWrong details={errorToLogAndDisplay}/>;
+            setComponentToDisplay(errorComponent)
+        });
+    }, []);
+
+    return (componentToDisplay);
+}
+
+export default App;
+
+function getRouterComponent() {
     return (
         <AuthnContainer><Outlet />
             <BrowserRouter >
@@ -36,5 +60,3 @@ function App() {
         </AuthnContainer>
     );
 }
-
-export default App;

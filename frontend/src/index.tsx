@@ -11,22 +11,11 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-// Ensures that the Services module extracts all available Siren information, from the backend.
-services.getBackendSirenInfo().then(() => {
-    console.log("Siren information extracted from the backend.")
-    root.render(
-      <React.StrictMode>
+root.render(
+    <React.StrictMode>
         <App />
-      </React.StrictMode>
-    );
-}).catch((error) => {
-    console.log("Error while extracting Siren information from the backend: " + error)
-    root.render(
-      <React.StrictMode>
-        <SomethingWentWrong details={'Error while extracting Siren information from the backend: ' + error}/>
-      </React.StrictMode>
-    );
-});
+    </React.StrictMode>
+);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
