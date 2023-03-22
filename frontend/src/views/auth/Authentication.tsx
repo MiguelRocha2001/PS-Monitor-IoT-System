@@ -22,9 +22,9 @@ export async function authenticate(username: string, password: string): Promise<
     }
 }
 
-export async function createUser(username: string, password: string): Promise<void | Error> {
+export async function createUser(username: string, password: string, email: string, mobile: string): Promise<void | Error> {
     try {
-        return await services.createUser(username, password);
+        return await services.createUser(username, password, email, mobile);
     } catch (e) {
         return new Error("Something went wrong");
     }
@@ -36,6 +36,8 @@ export function Authentication({title, action}: { title: string, action: Action}
     const [inputs, setInputs] = useState({
         username: "",
         password: "",
+        email: "",
+        mobile: ""
     })
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [error, setError] = useState<string | undefined>(undefined)
@@ -68,6 +70,8 @@ export function Authentication({title, action}: { title: string, action: Action}
         setIsSubmitting(true)
         const username = inputs.username
         const password = inputs.password
+        const email = inputs.email
+        const mobile = inputs.mobile
         if (action === "login") {
             authenticate(username, password)
                 .then((result) => {
@@ -85,7 +89,7 @@ export function Authentication({title, action}: { title: string, action: Action}
                     setError("Invalid username or password")
                 })
         } else {
-            createUser(username, password)
+            createUser(username, password, email, mobile)
                 .then((result) => {
                     setIsSubmitting(false)
                     if(result instanceof Error)
@@ -106,6 +110,23 @@ export function Authentication({title, action}: { title: string, action: Action}
         }
     }
 
+    const emailComponent = action === "login" ? <></> : (
+        <Form.Group className="mb-3" controlId="formBasicPassword">
+            <Form.Label>Email</Form.Label>
+            <Form.Control type="email" placeholder="Email" onChange={(ev) => {
+                handleChange("email", ev.target.value)
+            }} />
+        </Form.Group>
+    )
+    const mobileComponent = action === "login" ? <></> : (
+        <Form.Group className="mb-3" controlId="formBasicPassword">
+            <Form.Label>Mobile</Form.Label>
+            <Form.Control type="number" placeholder="Mobile Number" onChange={(ev) => {
+                handleChange("mobile", ev.target.value)
+            }} />
+        </Form.Group>
+    )
+
     return (
         <MyCard title={title} text={"Insert credentials under..."}>
             <Form>
@@ -122,6 +143,9 @@ export function Authentication({title, action}: { title: string, action: Action}
                         handleChange("password", ev.target.value)
                     }} />
                 </Form.Group>
+
+                {emailComponent}
+                {mobileComponent}
 
                 <Button variant="primary" onClick={handleSubmit}>
                     Submit

@@ -82,7 +82,7 @@ class UserController(
         return cookieWithToken
     }
 
-    @PostMapping("/token")
+    @PostMapping(Uris.Users.TOKEN)
     fun createToken(
         response: HttpServletResponse,
         @RequestBody input: UserCreateTokenInputModel

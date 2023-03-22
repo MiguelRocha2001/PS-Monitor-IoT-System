@@ -15,13 +15,13 @@ export class MockServices implements Services {
         // Nothing to do
     }
 
-    async createUser(username: string, password: string) {
+    async createUser(username: string, password: string, email: string, mobile: string): Promise<void> {
         const newUser = new User(username, password)
         this.users.push(newUser)
         this.user = newUser
     }
 
-    async authenticateUser(username: string, password: string) {
+    async authenticateUser(username: string, password: string): Promise<void> {
         const user = this.users.find(u => u.username === username && u.password === password)
         if (user) {
             this.user = user

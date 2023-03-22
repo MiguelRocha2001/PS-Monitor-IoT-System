@@ -15,19 +15,19 @@ class JdbiServerRepository(
     override fun createUser(user: User) {
         handle.createUpdate(
             """
-            insert into _USER (id, username, password, email, mobile) values (:username, :password_validation, :email, :mobile)
+            insert into _USER (id, username, password, email, mobile) values (:id, :username, :password, :email, :mobile)
             """
         )
             .bind("id", user.id)
             .bind("username", user.userInfo.username)
-            .bind("password_validation", user.userInfo.password)
+            .bind("password", user.userInfo.password)
             .bind("email", user.userInfo.email)
             .bind("mobile", user.userInfo.mobile)
             .execute()
     }
 
     override fun getAllUsers(): List<User> {
-        return handle.createQuery("select id, username from _USER")
+        return handle.createQuery("select id, username, password, email, mobile from _USER")
             .mapTo<UserMapper>()
             .list()
             .map { it.toUser() }

@@ -28,6 +28,7 @@ export class RealServices implements Services {
         }
         const response = await doFetch(request)
         if (response instanceof Siren) {
+            console.log(response.actions[0].method)
             extractSirenInfo(response)
             return
         } else
@@ -38,8 +39,10 @@ export class RealServices implements Services {
      * Creates a new user
      * @param username username
      * @param password password
+     * @param email email
+     * @param mobile mobile
      */
-    async createUser(username: string, password: string) {
+    async createUser(username: string, password: string, email: string, mobile: string): Promise<void> {
         logger.info(`Creating user ${username}`)
         const createUserAction = SirenModule.getCreateUserAction()
         if (!createUserAction) {
@@ -50,7 +53,7 @@ export class RealServices implements Services {
         const request = {
             url: createUserAction.href,
             method: createUserAction.method,
-            body: toBody({username, password})
+            body: toBody({username, password, email, mobile})
         }
         console.log(createUserAction)
         try {
@@ -66,16 +69,18 @@ export class RealServices implements Services {
 
     // TODO: fix this
     async authenticateUser(username: string, password: string) {
+        logger.info(`Creating user ${username}`)
+        const action = SirenModule.getCreateTokenAction()
         const request = {
-            url: `${(this.API_HOST)}/users/authenticate`,
-            method: 'POST',
+            url: action.href,
+            method: action.method,
             body: toBody({username, password})
         }
         const response = await doFetch(request)
-        if (response instanceof Siren) return
-        else if (response instanceof BackendError)
+        if (response instanceof Siren)
+            return
+        else
             throw new Error(`Failed to authenticate user: ${response.status} ${response.message}`)
-        throw new Error(`Failed to authenticate user: ${response}`)
     }
 
     async isLoggedIn(): Promise<boolean> {
