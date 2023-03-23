@@ -3,8 +3,7 @@ import React, {useEffect, useState} from "react";
 import ListGroup from "react-bootstrap/ListGroup";
 import {services} from "../services/services";
 import Card from "react-bootstrap/Card";
-import {NavLink, Stack} from "react-bootstrap";
-import Button from "react-bootstrap/Button";
+import {Stack} from "react-bootstrap";
 import {MyLink} from "./Commons";
 
 export function Devices() {

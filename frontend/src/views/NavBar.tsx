@@ -10,25 +10,12 @@ import Button from "react-bootstrap/Button";
 
 function NavBar() {
     const currentUser = useCurrentUser()
-    const setUser = useSetUser()
 
     const logout =
         currentUser ?
             (<Button variant="outline-primary" onClick={async () => {
-                setUser(undefined)
                 await services.logout()
             }}>LOGOUT</Button> ) : <></>
-
-    const signInUpDropdown =
-        currentUser === undefined ?
-            <NavDropdown title="Authentication" id="basic-nav-dropdown">
-                <NavDropdown.Item>
-                    <MyLink text={'Sign In'} to="/sign-in" />
-                </NavDropdown.Item>
-                <NavDropdown.Item>
-                    <MyLink text={'Sign Up'} to="/sign-up" />
-                </NavDropdown.Item>
-            </NavDropdown> : <></>
 
     return (
         <Navbar bg="light" expand="lg" style={{marginTop: '1em', marginBottom: '2em'}}>
@@ -38,8 +25,6 @@ function NavBar() {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
                         <MyLink text={'Devices'} to="/devices" />
-
-                        {signInUpDropdown}
 
                         <NavDropdown title="Data" id="basic-nav-dropdown">
                             <NavDropdown.Item>

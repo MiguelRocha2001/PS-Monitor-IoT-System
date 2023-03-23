@@ -5,7 +5,7 @@ import {BackendError} from "./erros";
 import {Siren, SirenModule} from "./sirenModule";
 import {Logger} from "tslog";
 import {Simulate} from "react-dom/test-utils";
-import error = Simulate.error;
+
 
 const logger = new Logger({name: "Real Services"});
 logger.settings.minLevel = 3 // LogLevel: INFO

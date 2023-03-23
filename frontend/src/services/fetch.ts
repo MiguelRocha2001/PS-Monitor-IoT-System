@@ -1,4 +1,4 @@
-import {NetworkError, BackendError} from "./erros";
+import {BackendError, NetworkError} from "./erros";
 import {Logger} from "tslog";
 import {fromJson, Siren} from "./sirenModule";
 
@@ -22,10 +22,15 @@ export type KeyValuePair = {
 }
 
 export async function fetchRequest(request: Request): Promise<Response> {
+    const accessToken = localStorage.getItem("access_token");
+    if (!accessToken)
+        return Promise.reject(new NetworkError("No access token found"))
+
     return await fetch(toFullUrl(request), {
         method: request.method,
         headers: {
             'Content-Type': CONTENT_TYPE_JSON,
+            'Authorization': `Bearer ${accessToken}`
         },
         credentials: 'include',
         body: request.body ? buildBody(request.body) : undefined

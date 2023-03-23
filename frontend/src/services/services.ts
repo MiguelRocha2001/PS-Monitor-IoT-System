@@ -1,9 +1,4 @@
-import {
-    Device,
-    PhData,
-    TemperatureData,
-    User
-} from "./domain";
+import {Device, PhData, TemperatureData, User} from "./domain";
 import {RealServices} from "./RealServices";
 
 export interface Services {
