@@ -16,13 +16,18 @@ repositories {
 }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.springframework.boot:spring-boot-starter-webflux")
+
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-oauth2-resource-server
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server:3.0.4'
+
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
-	implementation("org.springframework.security:spring-security-core:5.7.3")
 
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
@@ -32,10 +37,6 @@ dependencies {
 	implementation("org.jdbi:jdbi3-kotlin:3.33.0")
 	implementation("org.jdbi:jdbi3-postgres:3.33.0")
 	implementation("org.postgresql:postgresql:42.5.0")
-
-
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("org.springframework.boot:spring-boot-starter-webflux")
 
 	implementation("com.hivemq:hivemq-community-edition-embedded:2023.2")
 	implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
