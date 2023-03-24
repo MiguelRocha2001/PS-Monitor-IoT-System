@@ -15,7 +15,8 @@ class IotDataServerApplication {
 	fun jdbi() = Jdbi.create(
 		PGSimpleDataSource().apply {
 			// TODO -> Change this to use environment variables
-			setURL("jdbc:postgresql://localhost:5432/postgres?user=postgres&password=rocha")
+			//setURL("jdbc:postgresql://localhost:5432/postgres?user=postgres&password=rocha")
+			setUrl(System.getenv("DB_POSTGRES_IOT_SYSTEM"))
 		}
 	).configure()
 
