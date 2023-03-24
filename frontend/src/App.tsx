@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import {Outlet, Route, Routes, useNavigate} from 'react-router-dom'
+import {Route, Routes, useNavigate} from 'react-router-dom'
 import Ph from "./views/Ph";
 import Home from "./views/Home";
 import Temperature from "./views/Temperature";
@@ -8,8 +8,6 @@ import {Col, Container} from "react-bootstrap";
 import {Devices} from "./views/Devices";
 import {StillInProgressAlert} from "./views/StillInProgressAlert";
 import NavBar from "./views/NavBar";
-import {AuthnContainer} from "./views/auth/Authn";
-import {RequireAuthn} from "./views/auth/RequireAuthn";
 import {services} from "./services/services";
 import {SomethingWentWrong} from "./views/SomethingWentWrong";
 import {useAuth} from "./auth/auth";

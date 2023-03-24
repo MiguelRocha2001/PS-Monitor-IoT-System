@@ -4,7 +4,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import React from "react";
 import {MyLink} from "./Commons";
-import {useCurrentUser, useSetUser} from "./auth/Authn";
+import {useCurrentUser} from "./auth/Authn";
 import {services} from "../services/services";
 import Button from "react-bootstrap/Button";
 

@@ -1,6 +1,6 @@
 package pt.isel.iot_data_server.http.controllers
 
-import pt.isel.daw.dawbattleshipgame.http.infra.LinkRelation
+import pt.isel.iot_data_server.http.infra.LinkRelation
 
 object Rels {
 
