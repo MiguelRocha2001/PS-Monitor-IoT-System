@@ -1,4 +1,4 @@
-package pt.isel.daw.dawbattleshipgame.http.infra
+package pt.isel.iot_data_server.http.infra
 
 @JvmInline
 value class LinkRelation(

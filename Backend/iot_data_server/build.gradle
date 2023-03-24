@@ -18,11 +18,13 @@ repositories {
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 
+	implementation 'org.springframework.security.oauth:spring-security-oauth2:2.5.2.RELEASE'
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-webflux")
 
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-oauth2-resource-server
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server:3.0.4'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server:3.0.5'
 
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")

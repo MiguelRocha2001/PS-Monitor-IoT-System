@@ -3,7 +3,6 @@ package pt.isel.iot_data_server.http.infra
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
-import pt.isel.daw.dawbattleshipgame.http.infra.LinkRelation
 import java.net.URI
 
 data class SirenModel<T>(

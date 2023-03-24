@@ -4,7 +4,6 @@ import {deviceAdded, Services} from "./services";
 import {BackendError} from "./erros";
 import {Siren, SirenModule} from "./sirenModule";
 import {Logger} from "tslog";
-import {Simulate} from "react-dom/test-utils";
 
 
 const logger = new Logger({name: "Real Services"});
