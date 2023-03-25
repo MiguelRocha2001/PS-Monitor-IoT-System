@@ -23,6 +23,8 @@
 
 const static char* TAG = "MAIN";
 
+const static long SLEEP_TIME = 1000000 * 5; // 5 seconds
+
 void app_main(void) {
 
 //    delete_saved_wifi();
