@@ -16,8 +16,6 @@
 #include "nvs_util.h"
 #include "esp_touch_util.h"
 
-#define GPIO_RESET_PIN (CONFIG_GPIO_RESET_PIN)
-
 const static char* TAG = "MAIN";
 
 const static long READ_PH_INTERVAL = 1000000 * 3; // 3 seconds
@@ -64,6 +62,13 @@ void send_ph_values(esp_mqtt_client_handle_t client) {
     }
 }
 
+void erase_ph_values() {
+    ESP_LOGE(TAG, "Erasing pH values...");
+    for (int i = 0; i < MAX_PH_VALUES; i++) {
+        ph_values[i] = 0;
+    }
+}
+
 void setup_wifi(void) {
     ESP_LOGE(TAG, "Setting up WiFi...");
 
@@ -86,22 +91,20 @@ void app_main(void) {
 
     print_ph_values();
 
-    struct ph_record ph_record;
-    read_ph(&ph_record);
-
-    store_ph_in_RTC_memory(&ph_record);
-
     if (is_ph_reading_complete())
     {
         setup_wifi();
-
         esp_mqtt_client_handle_t client = setup_mqtt();
-
         send_ph_values(client);
+        erase_ph_values();
 
-        // TODO: send data to MQTT broker
         start_deep_sleep(LONG_SLEEP_TIME);
     } else {
+        struct ph_record ph_record;
+        read_ph(&ph_record);
+
+        store_ph_in_RTC_memory(&ph_record);
+
         start_deep_sleep(READ_PH_INTERVAL);
     }
 }

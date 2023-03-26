@@ -1,3 +1,4 @@
+/*
 package pt.isel.iot_data_server.configuration
 
 import com.nimbusds.jose.JOSEObjectType
@@ -23,3 +24,5 @@ class JwtConfig {
             .build()
     }
 }
+
+ */

@@ -23,9 +23,9 @@
 
 // see: https://docs.espressif.com/projects/esp-idf/en/v5.0.1/esp32s2/api-reference/protocols/mqtt.html
 
-static const char *TAG = "MQTT_EXAMPLE";
+static const char *TAG = "MQTT_MODULE";
 
-static const char *CONFIG_BROKER_URL = "mqtt://0.tcp.eu.ngrok.io:19921/";
+static const char *CONFIG_BROKER_URL = "mqtt://2.tcp.eu.ngrok.io:18525/";
 
 static void log_error_if_nonzero(const char *message, int error_code)
 {
@@ -53,7 +53,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
     switch ((esp_mqtt_event_id_t)event_id) {
         case MQTT_EVENT_CONNECTED:
             ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
-            msg_id = esp_mqtt_client_publish(client, "topic/ph", "data_10", 0, 1, 0);
+            msg_id = esp_mqtt_client_publish(client, "/ph", "data_10", 0, 1, 0);
             ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
             break;
         case MQTT_EVENT_DISCONNECTED:

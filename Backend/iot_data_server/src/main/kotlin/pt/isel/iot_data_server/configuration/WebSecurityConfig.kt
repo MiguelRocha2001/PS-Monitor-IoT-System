@@ -1,3 +1,4 @@
+/*
 package pt.isel.iot_data_server.configuration
 
 import org.springframework.context.annotation.Bean
@@ -35,3 +36,5 @@ class WebSecurityConfig {
             .build()
     }
 }
+
+ */
