@@ -7,6 +7,7 @@ idf_component_register(
             "src/utils/wifi_connect_util.c"
             "src/utils/ph_reader_fake.c"
             "src/utils/broker_util.c"
+            "src/utils/deep_sleep.c"
         INCLUDE_DIRS "include"
 )
 target_compile_options(${COMPONENT_LIB} PRIVATE  -Wno-format)
