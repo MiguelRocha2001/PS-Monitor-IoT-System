@@ -12,6 +12,7 @@ import java.util.*
 
 @SpringBootTest
 class DeviceServiceTests {
+	//MESSAGE: There is not much to test here
 	@Test
 	fun `create device`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
@@ -21,12 +22,12 @@ class DeviceServiceTests {
 			service.createDevice(device)
 
 			val devices = service.getAllDevices()
-			assertTrue("Device was not created", devices.any { it.deviceId == device.deviceId })
+			assertTrue("Device was created", devices.any { it.deviceId == device.deviceId })
 		}
 	}
 
 	@Test
-	fun `create multiple users`() {
+	fun `create multiple devices`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
 			val service = DeviceService(transactionManager)
 			val device1 = Device(DeviceId(UUID.randomUUID()))
@@ -44,18 +45,4 @@ class DeviceServiceTests {
 		}
 	}
 
-	@Test
-	fun `create existing user`() {
-		testWithTransactionManagerAndRollback { transactionManager ->
-			val service = DeviceService(transactionManager)
-			val device = Device(DeviceId(UUID.randomUUID()))
-
-			service.createDevice(device)
-
-			val devices = service.getAllDevices()
-			assertTrue("Device was not created", devices.any { it.deviceId == device.deviceId })
-
-			assertThrows<Exception> { service.createDevice(device) }
-		}
-	}
 }

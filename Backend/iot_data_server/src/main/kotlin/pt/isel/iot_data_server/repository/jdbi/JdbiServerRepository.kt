@@ -15,10 +15,10 @@ class JdbiServerRepository(
     override fun createUser(user: User) {
         handle.createUpdate(
             """
-            insert into _USER (id, username, password, email, mobile) values (:id, :username, :password, :email, :mobile)
+            insert into _USER (_id, username, password, email, mobile) values (:_id, :username, :password, :email, :mobile)
             """
         )
-            .bind("id", user.id)
+            .bind("_id", user.id)
             .bind("username", user.userInfo.username)
             .bind("password", user.userInfo.password)
             .bind("email", user.userInfo.email)
@@ -27,7 +27,7 @@ class JdbiServerRepository(
     }
 
     override fun getAllUsers(): List<User> {
-        return handle.createQuery("select id, username, password, email, mobile from _USER")
+        return handle.createQuery("select _id, username, password, email, mobile from _USER")
             .mapTo<UserMapper>()
             .list()
             .map { it.toUser() }
@@ -83,7 +83,7 @@ class JdbiServerRepository(
             insert into ph_record (device_id, time, value) values (:device_id, :time, :value)
             """
         )
-            .bind("device_id", deviceId)
+            .bind("device_id", deviceId.id)
             .bind("time", phRecord.timestamp)
             .bind("value", phRecord.value)
     }
@@ -96,7 +96,7 @@ class JdbiServerRepository(
             where device_id = :device_id
             """
         )
-            .bind("device_id", deviceId)
+            .bind("device_id", deviceId.id)
             .mapTo<PhRecord>()
             .list()
     }
