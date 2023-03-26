@@ -106,8 +106,10 @@ esp_mqtt_client_handle_t mqtt_app_start(void)
     return client;
 }
 
-esp_mqtt_client_handle_t setup_mqtt(struct ph_record *ph_record)
+esp_mqtt_client_handle_t setup_mqtt()
 {
+    ESP_LOGE(TAG, "Setting up MQTT...");
+
     ESP_LOGI(TAG, "[APP] Startup..");
     ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
     ESP_LOGI(TAG, "[APP] IDF version: %s", esp_get_idf_version());
