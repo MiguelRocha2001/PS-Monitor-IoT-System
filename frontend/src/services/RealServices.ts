@@ -19,6 +19,10 @@ export class RealServices implements Services {
             SirenModule.extractLogoutAction(response.actions)
             SirenModule.extractIsLoggedInLink(response.links)
             SirenModule.extractGetMeLink(response.links)
+            SirenModule.extractAddDeviceAction(response.actions)
+            SirenModule.extractGetDevicesLink(response.links)
+            SirenModule.extractGetPhDataLink(response.links)
+            SirenModule.extractGetTemperatureDataLink(response.links)
         }
 
         const request = {
@@ -93,10 +97,9 @@ export class RealServices implements Services {
         if (response instanceof Siren) {
             return response.properties.isLoggedIn
         }
-        else if (response instanceof BackendError) {
+        else {
             throw new Error(`Failed to check if user is logged in: ${response.status} ${response.message}`)
         }
-        throw new Error(`Failed to check if user is logged in: ${response}`)
     }
 
     async getMe(): Promise<User> {
@@ -111,59 +114,67 @@ export class RealServices implements Services {
             const userFromResponse = response.properties
             return new User(userFromResponse.username, userFromResponse.password)
         }
-        else if (response instanceof BackendError)
+        else {
             throw new Error(`Failed to get me: ${response.status} ${response.message}`)
-        throw new Error(`Failed to get me: ${response}`)
+        }
     }
 
     async addDevice(device: Device) {
+        const addDeviceAction = SirenModule.getAddDeviceAction()
+        if (!addDeviceAction) throw new Error('Add device action not found')
         const request = {
-            url: `${(this.API_HOST)}/devices`,
-            method: 'POST',
+            url: addDeviceAction.href,
+            method: addDeviceAction.method,
             body: toBody(device)
         }
         const response = await doFetch(request)
-        if (response instanceof BackendError)
+        if (response instanceof Siren) {
+            deviceAdded(device)
+            return
+        } else
             throw new Error(`Failed to add device: ${response.status} ${response.message}`)
-        else {
-            return deviceAdded(device)
-        }
     }
 
     async getDevices(): Promise<Device[]> {
+        const getDevicesLink = SirenModule.getGetDevicesLink()
+        if (!getDevicesLink) throw new Error('Get devices link not found')
         const request = {
-            url: `${(this.API_HOST)}/devices`,
-            method: 'GET',
+            url: getDevicesLink.href,
+            method: 'GET'
         }
         const response = await doFetch(request)
-        if (response instanceof BackendError)
+        if (response instanceof Siren) {
+            return toDevices(response.entities)
+        } else
             throw new Error(`Failed to get devices: ${response.status} ${response.message}`)
-        else
-            return toDevices(response)
     }
 
     async getPhData(deviceId: string): Promise<PhData> {
+        const getPhDataLink = SirenModule.getGetPhDataLink()
+        if (!getPhDataLink) throw new Error('Get ph data link not found')
         const request = {
-            url: `${(this.API_HOST)}/devices/${deviceId}/ph`,
+            url: getPhDataLink.href,
             method: 'GET'
         }
         const response = await doFetch(request)
-        if (response instanceof BackendError)
-            throw new Error(`Failed to get ph data: ${response.status} ${response.message}`)
-        else
+        if (response instanceof Siren)
             return toPhData(response)
+        else
+            throw new Error(`Failed to get ph data: ${response.status} ${response.message}`)
     }
 
     async getTemperatureData(deviceId: string): Promise<TemperatureData> {
+        const getTemperatureDataLink = SirenModule.getGetTemperatureDataLink()
+        if (!getTemperatureDataLink) throw new Error('Get temperature data link not found')
         const request = {
-            url: `${(this.API_HOST)}/devices/${deviceId}/temperature`,
+            url: getTemperatureDataLink.href,
             method: 'GET'
         }
         const response = await doFetch(request)
-        if (response instanceof BackendError)
-            throw new Error(`Failed to get temperature data: ${response.status} ${response.message}`)
-        else
+        if (response instanceof Siren)
             return toTemperatureData(response)
+        else
+            throw new Error(`Failed to get temperature data: ${response.status} ${response.message}`)
     }
 
     logout(): Promise<void> {

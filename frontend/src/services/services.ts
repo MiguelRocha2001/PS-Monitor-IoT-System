@@ -3,7 +3,6 @@ import {RealServices} from "./RealServices";
 
 export interface Services {
     getBackendSirenInfo(): Promise<void>
-
     createUser(username: string, password: string, email: string, mobile: string): Promise<void>
     authenticateUser(username: string, password: string): Promise<void>
     isLoggedIn(): Promise<boolean>

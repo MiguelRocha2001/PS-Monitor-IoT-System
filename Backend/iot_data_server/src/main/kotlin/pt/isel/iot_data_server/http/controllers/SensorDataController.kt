@@ -13,16 +13,7 @@ import java.util.*
 class SensorDataController(
     val service: SensorDataService
 ) {
-    @PostMapping("/device/{device_id}/ph")
-    fun addPhRecord(
-        @PathVariable device_id: String,
-        @RequestBody phRecordModel: InputPhRecordModel
-    ) {
-        val deviceId = DeviceId(UUID.fromString(device_id))
-        service.savePhRecord(deviceId, phRecordModel.toPhRecord())
-    }
-
-    @GetMapping("/device/{device_id}/ph")
+    @GetMapping(Uris.Devices.PH.ALL)
     fun getPhRecords(
         @PathVariable device_id: String
     ) {
@@ -30,16 +21,7 @@ class SensorDataController(
         service.getPhRecords(deviceId)
     }
 
-    @PostMapping("/device/{device_id}/temperature")
-    fun addTemperatureRecord(
-        @PathVariable device_id: String,
-        @RequestBody temperatureRecordModel: InputTemperatureRecordModel
-    ) {
-        val deviceId = DeviceId(UUID.fromString(device_id))
-        service.saveTemperatureRecord(deviceId, temperatureRecordModel.toTemperatureRecord())
-    }
-
-    @GetMapping("/device/{device_id}/temperature")
+    @GetMapping(Uris.Devices.Temperature.ALL)
     fun getTemperatureRecords(
         @PathVariable device_id: String
     ) {

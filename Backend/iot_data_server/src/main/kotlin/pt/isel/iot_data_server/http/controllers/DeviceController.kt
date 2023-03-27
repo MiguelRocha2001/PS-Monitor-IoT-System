@@ -13,7 +13,7 @@ import java.util.*
 class DeviceController(
     val service: DeviceService
 ) {
-    @PostMapping("/device")
+    @PostMapping(Uris.Devices.ALL)
     fun addDevice(
         user: User,
         @RequestBody deviceModel: InputDeviceModel
