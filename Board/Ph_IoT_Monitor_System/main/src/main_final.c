@@ -19,8 +19,8 @@
 
 const static char* TAG = "MAIN";
 
-const static long READ_PH_INTERVAL = 1000000 * 3; // 3 seconds
-const static long LONG_SLEEP_TIME = 1000000 * 10; // 10 seconds
+const static long READ_PH_INTERVAL = 1000000 * 0.3; // 3 seconds
+const static long LONG_SLEEP_TIME = 1000000 * 3; // 10 seconds
 
 RTC_DATA_ATTR struct ph_records_struct ph_records;
 
@@ -34,7 +34,6 @@ void store_ph_in_RTC_memory(struct ph_record* ph_record) {
     } else {
         ESP_LOGE(TAG, "No more space in RTC memory");
     }
-    ESP_LOGE(TAG, "No more space in RTC memory");
 }
 
 int is_ph_reading_complete() {
@@ -57,6 +56,8 @@ void send_ph_values(esp_mqtt_client_handle_t client) {
     for (int i = 0; i < MAX_PH_VALUES; i++) {
         if (ph_records.ph_values[i].value != 0) {
             mqtt_send_ph(client, &ph_records.ph_values[i]);
+            // delay necessary. Without it, the Backend server will not receive all messages. Not sure why...
+            vTaskDelay(300 / portTICK_PERIOD_MS);
         }
     }
 }
@@ -85,17 +86,24 @@ void setup_wifi(void) {
     ESP_LOGE(TAG, "Finished setting up WiFi");
 }
 
+/**
+ * The program starts here.
+ * It will read the pH value every 0.3 seconds and store it in RTC memory.
+ * After 5 readings, it will send the values to the MQTT broker and go to deep sleep for 3 seconds.
+ * For some unknown reason, the MQTT broker does not receive all messages, the first reading round.
+*/
 void app_main(void) {
+    ESP_LOGE(TAG, "Starting app_main...");
     ESP_ERROR_CHECK(nvs_flash_init());
 
     printDeepSleepWokeCause();
 
     print_ph_values();
 
-    if (is_ph_reading_complete())
-    {
+    if (is_ph_reading_complete()) {
         setup_wifi();
         esp_mqtt_client_handle_t client = setup_mqtt();
+
         send_ph_values(client);
         erase_ph_values();
 
