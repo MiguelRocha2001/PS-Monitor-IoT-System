@@ -11,7 +11,8 @@ fun main() = runBlocking {
 
     // You can generate an API token from the "API Tokens Tab" in the UI
     // val token = System.getenv()["INFLUX_TOKEN"]
-    val token = "ghcTbN29lFBqzInm7uOUz7WwwEToT6q-w9Ly97o0puf_SNY064iY4BCzTNQ6zGRqFsYeE2PlrU97kO00C1LIZw=="
+  //  val token = "ghcTbN29lFBqzInm7uOUz7WwwEToT6q-w9Ly97o0puf_SNY064iY4BCzTNQ6zGRqFsYeE2PlrU97kO00C1LIZw=="
+    val token = System.getenv()["INFLUX_TOKEN"]
     val org = "isel"
     val bucket = "my_bucket"
 
@@ -23,9 +24,9 @@ fun main() = runBlocking {
         // writeApi.writeRecord(record, WritePrecision.NS)
 
         val point = Point
-            .measurement("mem")
-            .addTag("host", "host1")
-            .addField("used_percent", 23.43234543)
+            .measurement("ph")
+            .addTag("device", "device_1")
+            .addField("value", 7.0)
             .time(Instant.now(), WritePrecision.NS);
 
         writeApi.writePoint(point)
