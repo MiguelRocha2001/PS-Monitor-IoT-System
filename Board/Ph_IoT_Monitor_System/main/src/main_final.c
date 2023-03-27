@@ -15,40 +15,39 @@
 #include "wifi_connect_util.h"
 #include "nvs_util.h"
 #include "esp_touch_util.h"
+#include "ph_values_struct.h"
 
 const static char* TAG = "MAIN";
 
 const static long READ_PH_INTERVAL = 1000000 * 3; // 3 seconds
 const static long LONG_SLEEP_TIME = 1000000 * 10; // 10 seconds
 
-#define MAX_PH_VALUES 5
-RTC_DATA_ATTR struct ph_record* ph_values[MAX_PH_VALUES];
+RTC_DATA_ATTR struct ph_records_struct ph_records;
 
 void store_ph_in_RTC_memory(struct ph_record* ph_record) {
     ESP_LOGE(TAG, "Storing pH...");
-    for (int i = 0; i < MAX_PH_VALUES; i++) {
-        if (ph_values[i] == 0) {
-            ph_values[i] = ph_record;
-            return;
-        }
+    if (ph_records.index < MAX_PH_VALUES) {
+        ph_records.ph_values[ph_records.index].value = ph_record->value;
+        ph_records.ph_values[ph_records.index].timestamp = ph_record->timestamp;
+
+        ph_records.index++;
+    } else {
+        ESP_LOGE(TAG, "No more space in RTC memory");
     }
     ESP_LOGE(TAG, "No more space in RTC memory");
 }
 
 int is_ph_reading_complete() {
-    for (int i = 0; i < MAX_PH_VALUES; i++) {
-        if (ph_values[i] == 0) {
-            return 0;
-        }
-    }
-    return 1;
+    ESP_LOGE(TAG, "Checking if pH reading is complete...");
+    return ph_records.index == MAX_PH_VALUES;
 }
 
 void print_ph_values() {
     ESP_LOGE(TAG, "Printing pH values...");
     for (int i = 0; i < MAX_PH_VALUES; i++) {
-        if (ph_values[i] != 0) {
-            ESP_LOGE(TAG, "pH value: %f; timestamp: %d", ph_values[i]->value, ph_values[i]->timestamp);
+        if (ph_records.ph_values[i].value != 0) {
+            ESP_LOGE(TAG, "pH value: %f", ph_records.ph_values[i].value);
+            ESP_LOGE(TAG, "Timestamp: %d", ph_records.ph_values[i].timestamp);
         }
     }
 }
@@ -56,8 +55,8 @@ void print_ph_values() {
 void send_ph_values(esp_mqtt_client_handle_t client) {
     ESP_LOGE(TAG, "Sending pH values...");
     for (int i = 0; i < MAX_PH_VALUES; i++) {
-        if (ph_values[i] != 0) {
-            mqtt_send_ph(client, ph_values[i]);
+        if (ph_records.ph_values[i].value != 0) {
+            mqtt_send_ph(client, &ph_records.ph_values[i]);
         }
     }
 }
@@ -65,8 +64,10 @@ void send_ph_values(esp_mqtt_client_handle_t client) {
 void erase_ph_values() {
     ESP_LOGE(TAG, "Erasing pH values...");
     for (int i = 0; i < MAX_PH_VALUES; i++) {
-        ph_values[i] = 0;
+        ph_records.ph_values[i].value = 0;
+        ph_records.ph_values[i].timestamp = 0;
     }
+    ph_records.index = 0;
 }
 
 void setup_wifi(void) {
