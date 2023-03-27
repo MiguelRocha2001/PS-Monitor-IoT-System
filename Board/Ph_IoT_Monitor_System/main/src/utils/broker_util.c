@@ -25,7 +25,7 @@
 
 static const char *TAG = "MQTT_MODULE";
 
-static const char *CONFIG_BROKER_URL = "mqtt://7.tcp.eu.ngrok.io:17513/";
+static const char *CONFIG_BROKER_URL = "mqtt://0.tcp.eu.ngrok.io:12794/";
 
 static void log_error_if_nonzero(const char *message, int error_code)
 {
@@ -135,7 +135,7 @@ void mqtt_send_ph(esp_mqtt_client_handle_t client, struct ph_record *ph_record)
 {
     // convert ph_record -> value to string
     char buf[100];
-    sprintf(buf, "{value: %d, timestamp: %d}", ph_record -> value, ph_record -> timestamp);
+    sprintf(buf, "{value: %f, timestamp: %u}", ph_record -> value, ph_record -> timestamp);
     // gcvt(ph_record -> value, 6, buf);
 
     int msg_id = esp_mqtt_client_publish(client, "/ph", buf, 0, 1, 0);
