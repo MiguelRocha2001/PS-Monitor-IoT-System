@@ -5,8 +5,14 @@ import com.influxdb.client.kotlin.InfluxDBClientKotlinFactory
 import com.influxdb.client.write.Point
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.runBlocking
+import pt.isel.iot_data_server.domain.DeviceId
+import pt.isel.iot_data_server.domain.PhRecord
+import pt.isel.iot_data_server.domain.TemperatureRecord
+import pt.isel.iot_data_server.repository.jdbi.TSDBRepository
 import java.time.Instant
+import kotlin.random.Random
 
+/*
 fun main() = runBlocking {
 
     // You can generate an API token from the "API Tokens Tab" in the UI
@@ -25,8 +31,8 @@ fun main() = runBlocking {
 
         val point = Point
             .measurement("ph")
-            .addTag("device", "device_1")
-            .addField("value", 7.0)
+            .addTag("device", "device1")
+            .addField("used_percent", 23.43234543)
             .time(Instant.now(), WritePrecision.NS);
 
         writeApi.writePoint(point)
@@ -43,5 +49,28 @@ fun main() = runBlocking {
             .consumeAsFlow()
             .collect { println("$it") }
     }
+}
+*/
+fun main() {
+    val repository = TSDBRepository()
+
+    // Save a ph record
+    val uuid = java.util.UUID.randomUUID()
+    val deviceId = DeviceId(uuid)
+    val phRecord = PhRecord(Random.nextDouble(0.0,10.0),Instant.now())
+    repository.savePhRecord(deviceId, phRecord)
+
+    // Get ph records
+    val phRecords = repository.getPhRecords(deviceId)
+    println("Ph records: $phRecords")
+
+
+    // Save a temperature record
+    val temperatureRecord = TemperatureRecord(20.0, Instant.now())
+    repository.saveTemperatureRecord(deviceId, temperatureRecord)
+
+    // Get temperature records
+    val temperatureRecords = repository.getTemperatureRecords(deviceId)
+    println("Temperature records: $temperatureRecords")
 }
 

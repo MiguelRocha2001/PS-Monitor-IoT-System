@@ -20,8 +20,8 @@ fun InputDeviceModel.toDevice(): Device {
 
 data class InputPhRecordModel(val ph: Double, val timestamp: Long)
 
-fun InputPhRecordModel.toPhRecord() = PhRecord(ph, Timestamp(timestamp))
+//fun InputPhRecordModel.toPhRecord() = PhRecord(ph, Timestamp(timestamp))
 
 data class InputTemperatureRecordModel(val temperature: Double, val timestamp: Long)
 
-fun InputTemperatureRecordModel.toTemperatureRecord() = TemperatureRecord(temperature, Timestamp(timestamp))
+//fun InputTemperatureRecordModel.toTemperatureRecord() = TemperatureRecord(temperature, Timestamp(timestamp))
