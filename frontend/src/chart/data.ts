@@ -1,3 +1,13 @@
+type DataSet = {
+    [key: string]: {
+        label: string;
+        data: { x: string; y: number }[];
+        bgColor: string;
+        borderColor: string;
+        isVisible: boolean;
+    };
+};
+
 export const dataSet = {
     PH: {
         label: "pH",

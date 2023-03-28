@@ -1,3 +1,6 @@
+import { ReactElement, JSXElementConstructor, ReactFragment, ReactPortal } from "react";
+import {PhData, PhRecord} from "../services/domain";
+
 const {useChart} = require("./useChart");
 const {dataSet} = require("./data");
 const React = require("react");
@@ -33,28 +36,28 @@ const labels = [
     'December'
 ];
 
-export function MyChart() {
+export function MyChart({phRecords, tempRecords}: { phRecords: PhRecord[], tempRecords: PhRecord[] }) {
     const canvasRef = React.useRef(null);
     const [data, setData] = React.useState(dataSet);
 
-    const handleToggleBars = color => {
-        setData(prev => ({
+    const handleToggleBars = (property: string) => {
+        setData((prev: { [x: string]: { isVisible: any; }; }) => ({
             ...prev,
 
-            [color]: {
-                ...prev[color],
+            [property]: {
+                ...prev[property],
 
-                isVisible: !prev[color].isVisible
+                isVisible: !prev[property].isVisible
             }
         }));
     };
 
     const phDataset = data["PH"].isVisible ? {
         label: data["PH"].label,
-            data: data["PH"].data,
-            backgroundColor: data["PH"].bgColor,
-            borderColor: data["PH"].borderColor,
-            borderWidth: 1
+        data: data["PH"].data,
+        backgroundColor: data["PH"].bgColor,
+        borderColor: data["PH"].borderColor,
+        borderWidth: 1
     } : {};
 
     const tempDataset = data["Temperature"].isVisible ? {
@@ -65,11 +68,15 @@ export function MyChart() {
         borderWidth: 1
     } : {};
 
+    const dataset =
+        [phDataset, tempDataset]
+        .filter((d: any) => Object.keys(d).length > 0);
+
     const config = {
         type: "line",
         data: {
             labels: labels,
-            datasets: [phDataset, tempDataset]
+            datasets: dataset
         },
         options: {
             legend: {
@@ -96,7 +103,7 @@ export function MyChart() {
         <div className="App">
             <h1>React Hook for the Chart JS </h1>
 
-            <canvas ref={canvasRef} width="400" height="200" />
+            <canvas ref={canvasRef} width="400" height="200"/>
 
             {Object.keys(dataSet).map(key => (
                 <Button
@@ -114,7 +121,7 @@ export function MyChart() {
     );
 }
 
-const Button = props => (
+const Button = (props: { options: { isVisible: any; borderColor: string | (string & {}) | undefined; bgColor: string | (string & {}) | undefined; caption: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | null | undefined; }; handleToggleBars: (arg0: any) => void; }) => (
     <button
         style={{
             marginTop: "32px",

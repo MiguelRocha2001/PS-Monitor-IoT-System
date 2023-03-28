@@ -2,7 +2,7 @@ import Card from 'react-bootstrap/Card';
 import React, {useEffect} from "react";
 import {Row} from "react-bootstrap";
 import {services} from "../services/services";
-import {Device, PhData} from "../services/domain";
+import {Device, PhData, PhRecord} from "../services/domain";
 import {ChooseDevice} from "./Commons";
 import {MyChart} from "../chart/MyChart";
 
@@ -23,15 +23,24 @@ export function DeviceSensorialData() {
 }
 
 function Graph({deviceId}: { deviceId: string | undefined}) {
-    const [phData, setPhData] = React.useState<PhData[]>([]);
+    const [phRecords, setPhRecords] = React.useState<PhRecord[]>([]);
+    const [tempRecords, setTempRecords] = React.useState<PhRecord[]>([]);
 
     useEffect(() => {
         async function fetchPh() {
             if (deviceId !== undefined) {
                 const ph = await services.getPhData(deviceId);
+                setPhRecords(ph.records);
+            }
+        }
+        async function fetchTemp() {
+            if (deviceId !== undefined) {
+                const temp = await services.getTemperatureData(deviceId);
+                setTempRecords(temp.records);
             }
         }
         fetchPh();
+        fetchTemp();
     }, [deviceId]);
 
     return (
@@ -41,7 +50,7 @@ function Graph({deviceId}: { deviceId: string | undefined}) {
                 <Card.Text>
                     Later, this will display the <b>real</b> device sensorial data.
                     <Row style={{width: '60%', margin: 'auto', marginTop: '30px'}}>
-                        <MyChart />
+                        <MyChart phRecords={phRecords} tempRecords={tempRecords}/>
                     </Row>
                 </Card.Text>
             </Card.Body>
