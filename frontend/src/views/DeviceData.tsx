@@ -1,12 +1,12 @@
+import Card from 'react-bootstrap/Card';
 import React, {useEffect} from "react";
-import Card from "react-bootstrap/Card";
-import {ChooseDevice} from "./Commons";
-import {PhData} from "../services/domain";
-import {services} from "../services/services";
 import {Row} from "react-bootstrap";
+import {services} from "../services/services";
+import {Device, PhData} from "../services/domain";
+import {ChooseDevice} from "./Commons";
 import {MyChart} from "../chart/MyChart";
 
-export function Temperature() {
+export function DeviceSensorialData() {
     const [selectedDevice, setSelectedDevice] = React.useState<string | undefined>(undefined);
     function onDeviceSelected(deviceId: string) {
         setSelectedDevice(deviceId);
@@ -16,30 +16,30 @@ export function Temperature() {
         <Card>
             <Card.Body>
                 <ChooseDevice onDeviceSelected={onDeviceSelected}/>
-                <TempGraph deviceId={selectedDevice} />
+                <Graph deviceId={selectedDevice} />
             </Card.Body>
         </Card>
     );
 }
 
-function TempGraph({deviceId}: { deviceId: string | undefined}) {
+function Graph({deviceId}: { deviceId: string | undefined}) {
     const [phData, setPhData] = React.useState<PhData[]>([]);
 
     useEffect(() => {
-        async function fetchTemp() {
+        async function fetchPh() {
             if (deviceId !== undefined) {
-                const ph = await services.getTemperatureData(deviceId);
+                const ph = await services.getPhData(deviceId);
             }
         }
-        fetchTemp();
+        fetchPh();
     }, [deviceId]);
 
     return (
         <Card>
             <Card.Body>
-                <Card.Title>Temperature Graph</Card.Title>
+                <Card.Title>Device Sensorial Data</Card.Title>
                 <Card.Text>
-                    Later, this will display the <b>real</b> Temperature graph.
+                    Later, this will display the <b>real</b> device sensorial data.
                     <Row style={{width: '60%', margin: 'auto', marginTop: '30px'}}>
                         <MyChart />
                     </Row>

@@ -1,7 +1,37 @@
-import React from "react";
-import "./styles.css";
-import {dataSet} from "./data";
-import {useChart} from "./useChart";
+const {useChart} = require("./useChart");
+const {dataSet} = require("./data");
+const React = require("react");
+
+const dataSample = [
+    {x: 'January', y: 10},
+    {x: 'February', y: 5},
+    {x: 'March', y: 15},
+    {x: 'April', y: 20},
+    {x: 'May', y: 30},
+    {x: 'June', y: 40},
+    {x: 'July', y: 20},
+    {x: 'August', y: 30},
+    {x: 'September', y: 50},
+    {x: 'October', y: 60},
+    {x: 'November', y: 30},
+    {x: 'December', y: 25},
+]
+
+// months
+const labels = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+];
 
 export function MyChart() {
     const canvasRef = React.useRef(null);
@@ -19,38 +49,27 @@ export function MyChart() {
         }));
     };
 
-    console.log(
-        "re",
-        Object.keys(data)
-            .filter(key => data[key].isVisible)
-            .map(key => data[key].value)
-    );
+    const phDataset = data["PH"].isVisible ? {
+        label: data["PH"].label,
+            data: data["PH"].data,
+            backgroundColor: data["PH"].bgColor,
+            borderColor: data["PH"].borderColor,
+            borderWidth: 1
+    } : {};
 
-    useChart(canvasRef, {
+    const tempDataset = data["Temperature"].isVisible ? {
+        label: data["Temperature"].label,
+        data: data["Temperature"].data,
+        backgroundColor: data["Temperature"].bgColor,
+        borderColor: data["Temperature"].borderColor,
+        borderWidth: 1
+    } : {};
+
+    const config = {
         type: "line",
-
         data: {
-            labels: Object.keys(data).filter(key => data[key].isVisible),
-
-            datasets: [
-                {
-                    label: "# of Votes",
-
-                    data: Object.keys(data)
-                        .filter(key => data[key].isVisible)
-                        .map(key => data[key].value),
-
-                    backgroundColor: Object.keys(data)
-                        .filter(key => data[key].isVisible)
-                        .map(key => data[key].bgColor),
-
-                    borderColor: Object.keys(data)
-                        .filter(key => data[key].isVisible)
-                        .map(key => data[key].borderColor),
-
-                    borderWidth: 1
-                }
-            ]
+            labels: labels,
+            datasets: [phDataset, tempDataset]
         },
         options: {
             legend: {
@@ -69,7 +88,9 @@ export function MyChart() {
                 ]
             }
         }
-    });
+    };
+
+    useChart(canvasRef, config);
 
     return (
         <div className="App">

@@ -10,8 +10,7 @@ import {services} from "./services/services";
 import {SomethingWentWrong} from "./views/SomethingWentWrong";
 import {useAuth} from "./auth/auth";
 import LoginView from "./views/auth/Login";
-import {Ph} from "./views/Ph";
-import {Temperature} from "./views/Temperature";
+import {DeviceSensorialData} from "./views/DeviceData";
 
 function App() {
     const navigate = useNavigate();
@@ -54,8 +53,7 @@ function getRouterComponent() {
                     <Route path='/login' element={<LoginView />} />
                     <Route path='/devices' element={<Devices />} />
                     <Route path='/add-new-device' element={<NewDevice />} />
-                    <Route path='/ph' element={<Ph />} />
-                    <Route path='/temperature' element={<Temperature />} />
+                    <Route path='/device-data' element={<DeviceSensorialData />} />
                     <Route path='*' element={<div>404</div>} />
                 </Routes>
             </Container>
