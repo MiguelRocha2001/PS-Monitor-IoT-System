@@ -2,7 +2,7 @@ package pt.isel.iot_data_server.repository
 
 import pt.isel.iot_data_server.domain.*
 
-interface ServerRepository {
+interface StaticDataRepository {
 
     fun createUser(user: User)
     fun getAllUsers(): List<User>

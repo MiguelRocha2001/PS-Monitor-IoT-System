@@ -3,7 +3,7 @@ package pt.isel.iot_data_server.repository.jdbi
 import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.iot_data_server.domain.*
-import pt.isel.iot_data_server.repository.ServerRepository
+import pt.isel.iot_data_server.repository.StaticDataRepository
 import pt.isel.iot_data_server.repository.jdbi.mappers.DeviceMapper
 import pt.isel.iot_data_server.repository.jdbi.mappers.UserMapper
 import pt.isel.iot_data_server.repository.jdbi.mappers.toDevice
@@ -11,7 +11,7 @@ import pt.isel.iot_data_server.repository.jdbi.mappers.toUser
 
 class JdbiServerRepository(
     private val handle: Handle
-) : ServerRepository {
+) : StaticDataRepository {
     override fun createUser(user: User) {
         handle.createUpdate(
             """

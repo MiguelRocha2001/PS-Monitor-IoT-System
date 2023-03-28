@@ -7,17 +7,8 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
-import okhttp3.OkHttpClient
-import org.jdbi.v3.core.Handle
-import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.iot_data_server.domain.*
 import pt.isel.iot_data_server.repository.CollectedDataRepository
-import pt.isel.iot_data_server.repository.ServerRepository
-import pt.isel.iot_data_server.repository.jdbi.mappers.DeviceMapper
-import pt.isel.iot_data_server.repository.jdbi.mappers.UserMapper
-import pt.isel.iot_data_server.repository.jdbi.mappers.toDevice
-import pt.isel.iot_data_server.repository.jdbi.mappers.toUser
-import java.time.Duration
 import java.time.Instant
 
 private val token = System.getenv()["INFLUX_TOKEN"]
@@ -29,7 +20,6 @@ val client = InfluxDBClientKotlinFactory.create(path, token!!.toCharArray(), org
 class TSDBRepository(
 ) : CollectedDataRepository {
     override fun getPhRecords(deviceId: DeviceId): List<PhRecord> = runBlocking {
-        client.use {
             val query =
                 """from(bucket: "my_bucket")
             |> range(start: -7d)
@@ -42,29 +32,14 @@ class TSDBRepository(
             results
                 .consumeAsFlow()
                 .map { result ->
-                    val value = result.getValueByKey("value") as Double
+                    val value = result.value as Double
                     val timestamp = result.time ?: Instant.MIN
                     PhRecord(value, timestamp)
                 }
                 .toList()
-        }
-    }
-
-    override fun savePhRecord(deviceId: DeviceId, phRecord: PhRecord) = runBlocking {
-        client.use {
-            val writeApi = it.getWriteKotlinApi()
-
-            val point = Point
-                .measurement("ph")
-                .addTag("device", deviceId.id.toString())
-                .addField("ph_value", phRecord.value)
-                .time(Instant.now(), WritePrecision.NS);
-            writeApi.writePoint(point)
-        }
     }
 
     override fun getTemperatureRecords(deviceId: DeviceId): List<TemperatureRecord> = runBlocking {
-        client.use {
             val query =
                 """from(bucket: "my_bucket")
             |> range(start: -7d)
@@ -77,25 +52,29 @@ class TSDBRepository(
             results
                 .consumeAsFlow()
                 .map { result ->
-                    val value = result.getValueByKey("value") as Double
+                    val value = result.value as Double
                     val timestamp = result.time ?: Instant.MIN
                     TemperatureRecord(value, timestamp)
                 }
                 .toList()
-        }
     }
 
-    override fun saveTemperatureRecord(deviceId: DeviceId, temperatureRecord: TemperatureRecord) = runBlocking{
-        client.use {
-            val writeApi = it.getWriteKotlinApi()
+    override fun savePhRecord(deviceId: DeviceId, phRecord: PhRecord) = runBlocking {
+           val point = Point
+               .measurement("ph")
+               .addTag("device", deviceId.id.toString())
+               .addField("ph_value", phRecord.value)
+               .time(Instant.now(), WritePrecision.NS);
+           client.getWriteKotlinApi().writePoint(point)
+       }
 
+    override fun saveTemperatureRecord(deviceId: DeviceId, temperatureRecord: TemperatureRecord) = runBlocking{
             val point = Point
                 .measurement("temperature")
                 .addTag("device", deviceId.id.toString())
                 .addField("temperature_value", temperatureRecord.value)
                 .time(Instant.now(), WritePrecision.NS);
-            writeApi.writePoint(point)
-        }
+            client.getWriteKotlinApi().writePoint(point)
     }
 
 }

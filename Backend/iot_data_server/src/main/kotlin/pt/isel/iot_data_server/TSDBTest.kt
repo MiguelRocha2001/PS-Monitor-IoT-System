@@ -9,6 +9,7 @@ import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.PhRecord
 import pt.isel.iot_data_server.domain.TemperatureRecord
 import pt.isel.iot_data_server.repository.jdbi.TSDBRepository
+import java.lang.Thread.sleep
 import java.time.Instant
 import kotlin.random.Random
 
@@ -53,17 +54,12 @@ fun main() = runBlocking {
 */
 fun main() {
     val repository = TSDBRepository()
-
-    // Save a ph record
     val uuid = java.util.UUID.randomUUID()
     val deviceId = DeviceId(uuid)
+
+    // Save a ph record
     val phRecord = PhRecord(Random.nextDouble(0.0,10.0),Instant.now())
     repository.savePhRecord(deviceId, phRecord)
-
-    // Get ph records
-    val phRecords = repository.getPhRecords(deviceId)
-    println("Ph records: $phRecords")
-
 
     // Save a temperature record
     val temperatureRecord = TemperatureRecord(20.0, Instant.now())
@@ -72,5 +68,10 @@ fun main() {
     // Get temperature records
     val temperatureRecords = repository.getTemperatureRecords(deviceId)
     println("Temperature records: $temperatureRecords")
+
+    // Get ph records
+    val phRecords = repository.getPhRecords(deviceId)
+    println("Ph records: $phRecords")
+
 }
 
