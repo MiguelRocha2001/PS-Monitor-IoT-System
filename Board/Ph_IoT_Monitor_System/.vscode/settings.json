@@ -23,6 +23,7 @@
         "broker_util.h": "c",
         "gpio.h": "c",
         "esp_sleep.h": "c",
-        "nvs_flash.h": "c"
+        "nvs_flash.h": "c",
+        "ph_values_struct.h": "c"
     }
 }
