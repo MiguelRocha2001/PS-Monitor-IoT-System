@@ -19,4 +19,16 @@ object Rels {
     val USERS_STATS = LinkRelation("user-stats")
     val IS_LOGGED_IN = LinkRelation("is-logged-in")
     val ME = LinkRelation("me")
+
+    // ------------------- Devices -------------------
+    val DEVICES = LinkRelation("devices")
+    val DEVICE_BY_ID = LinkRelation("device")
+
+    // ------------------- PH -------------------
+    val PH = LinkRelation("ph")
+    val PH_BY_ID = LinkRelation("ph-by-id")
+
+    // ------------------- Temperature -------------------
+    val TEMPERATURE = LinkRelation("temperature")
+    val TEMPERATURE_BY_ID = LinkRelation("temperature-by-id")
 }

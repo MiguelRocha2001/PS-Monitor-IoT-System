@@ -51,3 +51,54 @@ fun createGetMeLink(sirenBuilderScope: SirenBuilderScope<*>) =
         href = URI(Uris.Users.ME),
         rel = Rels.ME
     )
+
+fun createGetDevicesLink(sirenBuilderScope: SirenBuilderScope<*>) =
+    sirenBuilderScope.link(
+        href = Uris.Devices.all(),
+        rel = Rels.DEVICES
+    )
+
+fun createPostDeviceAction(sirenBuilderScope: SirenBuilderScope<*>) =
+    sirenBuilderScope.action(
+        name = "post-device",
+        href = Uris.Devices.all(),
+        method = HttpMethod.POST,
+        type = MediaType.APPLICATION_JSON
+    ) {
+        this.textField("name")
+        this.textField("description")
+        this.textField("location")
+        this.textField("type")
+    }
+
+fun createGetPhLink(sirenBuilderScope: SirenBuilderScope<*>) =
+    sirenBuilderScope.link(
+        href = Uris.Devices.PH.all(),
+        rel = Rels.PH
+    )
+
+fun createGetTemperatureLink(sirenBuilderScope: SirenBuilderScope<*>) =
+    sirenBuilderScope.link(
+        href = Uris.Devices.Temperature.all(),
+        rel = Rels.TEMPERATURE
+    )
+
+fun createPostPhAction(sirenBuilderScope: SirenBuilderScope<*>) =
+    sirenBuilderScope.action(
+        name = "post-ph",
+        href = Uris.Devices.PH.all(),
+        method = HttpMethod.POST,
+        type = MediaType.APPLICATION_JSON
+    ) {
+        this.textField("value")
+    }
+
+fun createPostTemperatureAction(sirenBuilderScope: SirenBuilderScope<*>) =
+    sirenBuilderScope.action(
+        name = "post-temperature",
+        href = Uris.Devices.Temperature.all(),
+        method = HttpMethod.POST,
+        type = MediaType.APPLICATION_JSON
+    ) {
+        this.textField("value")
+    }

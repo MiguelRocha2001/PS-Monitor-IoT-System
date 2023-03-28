@@ -22,6 +22,10 @@ class InfoController(
                 createLogoutSirenAction(this)
                 createIsLoggedInLink(this)
                 createGetMeLink(this)
+                createGetDevicesLink(this)
+                createPostDeviceAction(this)
+                createGetPhLink(this)
+                createGetTemperatureLink(this)
             })
     }
 }

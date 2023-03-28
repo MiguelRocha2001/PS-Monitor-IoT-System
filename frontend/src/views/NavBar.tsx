@@ -26,14 +26,8 @@ function NavBar() {
                     <Nav className="me-auto">
                         <MyLink text={'Devices'} to="/devices" />
 
-                        <NavDropdown title="Data" id="basic-nav-dropdown">
-                            <NavDropdown.Item>
-                                <MyLink text={'pH'} to="/ph" />
-                            </NavDropdown.Item>
-                            <NavDropdown.Item>
-                                <MyLink text={'Temperature'} to="/temperature" />
-                            </NavDropdown.Item>
-                        </NavDropdown>
+                        <MyLink text={'pH'} to="/ph" />
+                        <MyLink text={'Temperature'} to="/temperature" />
 
                         {logout}
                     </Nav>

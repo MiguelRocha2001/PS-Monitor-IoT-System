@@ -24,4 +24,27 @@ object Uris {
         fun createToken(): URI = URI(TOKEN)
         fun token(): URI = URI(TOKEN)
     }
+
+    object Devices {
+        const val ALL = "/devices"
+        fun all(): URI = URI(ALL)
+
+        object PH {
+            const val ALL = "/devices/{id}/ph"
+            const val BY_ID1 = ALL + "/{id}"
+
+            fun all(): URI = URI(ALL)
+            fun byId(id: Int): URI = UriTemplate(BY_ID1).expand(id)
+
+        }
+
+        object Temperature {
+            const val ALL = "/devices/{id}/temperature"
+            const val BY_ID1 = ALL + "/{id}"
+
+            fun all(): URI = URI(ALL)
+            fun byId(id: Int): URI = UriTemplate(BY_ID1).expand(id)
+
+        }
+    }
 }

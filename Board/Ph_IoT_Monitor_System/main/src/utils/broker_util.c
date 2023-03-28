@@ -25,7 +25,7 @@
 
 static const char *TAG = "MQTT_MODULE";
 
-static const char *CONFIG_BROKER_URL = "mqtt://2.tcp.eu.ngrok.io:18525/";
+static const char *CONFIG_BROKER_URL = "mqtt://0.tcp.eu.ngrok.io:12698/";
 
 static void log_error_if_nonzero(const char *message, int error_code)
 {
@@ -53,8 +53,8 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
     switch ((esp_mqtt_event_id_t)event_id) {
         case MQTT_EVENT_CONNECTED:
             ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
-            msg_id = esp_mqtt_client_publish(client, "/ph", "data_10", 0, 1, 0);
-            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+            // msg_id = esp_mqtt_client_publish(client, "/ph", "data_10", 0, 1, 0);
+            // ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
             break;
         case MQTT_EVENT_DISCONNECTED:
             ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");
@@ -134,10 +134,10 @@ esp_mqtt_client_handle_t setup_mqtt()
 void mqtt_send_ph(esp_mqtt_client_handle_t client, struct ph_record *ph_record)
 {
     // convert ph_record -> value to string
-    char buf[30];
-    sprintf(buf, "%f", ph_record -> value);
-    // gcvt(ph_record -> value, 6, buf);
+    char buf[100];
+    sprintf(buf, "{value: %f, timestamp: %u}", ph_record -> value, ph_record -> timestamp);
 
     int msg_id = esp_mqtt_client_publish(client, "/ph", buf, 0, 1, 0);
-    ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+    
+    ESP_LOGI(TAG, "Message: %s published on topic /ph", buf);
 }

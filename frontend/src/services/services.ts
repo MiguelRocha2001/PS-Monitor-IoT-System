@@ -1,9 +1,9 @@
 import {Device, PhData, TemperatureData, User} from "./domain";
 import {RealServices} from "./RealServices";
+import {MockServices} from "./FakeServices";
 
 export interface Services {
     getBackendSirenInfo(): Promise<void>
-
     createUser(username: string, password: string, email: string, mobile: string): Promise<void>
     authenticateUser(username: string, password: string): Promise<void>
     isLoggedIn(): Promise<boolean>
@@ -19,4 +19,4 @@ export function deviceAdded(device: Device) {
     console.log(`Device added: ${JSON.stringify(device)}`)
 }
 
-export const services: Services = new RealServices()
+export const services: Services = new MockServices()

@@ -1,8 +1,6 @@
 import React, {useEffect} from "react";
 import {Route, Routes, useNavigate} from 'react-router-dom'
-import Ph from "./views/Ph";
 import Home from "./views/Home";
-import Temperature from "./views/Temperature";
 import NewDevice from "./views/NewDevice";
 import {Col, Container} from "react-bootstrap";
 import {Devices} from "./views/Devices";
@@ -12,6 +10,8 @@ import {services} from "./services/services";
 import {SomethingWentWrong} from "./views/SomethingWentWrong";
 import {useAuth} from "./auth/auth";
 import LoginView from "./views/auth/Login";
+import {Ph} from "./views/Ph";
+import {Temperature} from "./views/Temperature";
 
 function App() {
     const navigate = useNavigate();

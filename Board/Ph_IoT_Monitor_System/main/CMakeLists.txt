@@ -8,6 +8,7 @@ idf_component_register(
             "src/utils/ph_reader_fake.c"
             "src/utils/broker_util.c"
             "src/utils/deep_sleep.c"
+            "src/utils/dht11.c"
         INCLUDE_DIRS "include"
 )
 target_compile_options(${COMPONENT_LIB} PRIVATE  -Wno-format)

@@ -73,6 +73,10 @@ let CREATE_TOKEN_ACTION: Action
 let LOGOUT_ACTION: Action
 let IS_LOGGED_IN_LINK: Link
 let GET_ME_LINK: Link
+let ADD_DEVICE_ACTION: Action
+let GET_DEVICES_LINK: Link
+let GET_PH_DATA_LINK: Link
+let GET_TEMPERATURE_DATA_LINK: Link
 
 function getCreateUserAction(): Action {
     return CREATE_USER_ACTION
@@ -94,6 +98,22 @@ function getGetMeLink(): Link {
     return GET_ME_LINK
 }
 
+function getAddDeviceAction(): Action {
+    return ADD_DEVICE_ACTION
+}
+
+function getGetDevicesLink(): Link {
+    return GET_DEVICES_LINK
+}
+
+function getGetPhDataLink(): Link {
+    return GET_PH_DATA_LINK
+}
+
+function getGetTemperatureDataLink(): Link {
+    return GET_TEMPERATURE_DATA_LINK
+}
+
 
 function extractCreateUserAction(actions: any[]) {
     CREATE_USER_ACTION = extractAction(actions, "create-user")
@@ -113,6 +133,22 @@ function extractIsLoggedInLink(links: Link[]) {
 
 function extractGetMeLink(links: Link[]) {
      GET_ME_LINK = extractLink(links, "me")
+}
+
+function extractAddDeviceAction(actions: any[]) {
+    ADD_DEVICE_ACTION = extractAction(actions, "post-device")
+}
+
+function extractGetDevicesLink(links: Link[]) {
+    GET_DEVICES_LINK = extractLink(links, "devices")
+}
+
+function extractGetPhDataLink(links: Link[]) {
+    GET_PH_DATA_LINK = extractLink(links, "ph-data")
+}
+
+function extractGetTemperatureDataLink(links: Link[]) {
+    GET_TEMPERATURE_DATA_LINK = extractLink(links, "temperature-data")
 }
 
 function extractLink(linksArg: Link[], rel: string): Link {
@@ -162,6 +198,14 @@ export const SirenModule = {
     extractLogoutAction,
     extractIsLoggedInLink,
     extractGetMeLink,
+    extractAddDeviceAction,
     getGetMeLink,
+    getAddDeviceAction,
+    getGetDevicesLink,
+    extractGetDevicesLink,
+    getGetPhDataLink,
+    extractGetPhDataLink,
+    getGetTemperatureDataLink,
+    extractGetTemperatureDataLink,
     validateFields
 }

@@ -19,8 +19,7 @@ int generate_random_int()
 {
     srand((unsigned int)time(NULL));
 
-    float a = 5.0;
-    return (rand()/(RAND_MAX)) * a;
+    return rand();
 }
 
 void read_ph(struct ph_record *ph_record)
