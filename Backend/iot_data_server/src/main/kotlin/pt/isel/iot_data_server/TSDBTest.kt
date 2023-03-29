@@ -62,7 +62,7 @@ fun main() {
     repository.savePhRecord(deviceId, phRecord)
 
     // Save a temperature record
-    val temperatureRecord = TemperatureRecord(20.0, Instant.now())
+    val temperatureRecord = TemperatureRecord(Random.nextDouble(0.0,10.0),Instant.now())
     repository.saveTemperatureRecord(deviceId, temperatureRecord)
 
     // Get temperature records

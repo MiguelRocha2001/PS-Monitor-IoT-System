@@ -7,6 +7,7 @@ import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.PhRecord
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 import java.sql.Timestamp
+import java.time.Instant
 import java.util.*
 
 class PhRepoTests {
@@ -16,7 +17,7 @@ class PhRepoTests {
             testWithTransactionManagerAndRollback { transactionManager ->
                 transactionManager.run { transaction ->
                     val phRepo = transaction.repository
-                    val timestampExample = Timestamp(System.currentTimeMillis())
+                    val timestampExample = Instant.now()
                     val ph = PhRecord(1.0, timestampExample)
                     val deviceId = DeviceId(UUID.randomUUID())
                     phRepo.savePhRecord(deviceId, ph)
@@ -32,7 +33,7 @@ class PhRepoTests {
             testWithTransactionManagerAndRollback { transactionManager ->
                 transactionManager.run { transaction ->
                     val phRepo = transaction.repository
-                    val timestampExample = Timestamp(System.currentTimeMillis())
+                    val timestampExample = Instant.now()
                     val ph1 = PhRecord(1.0, timestampExample)
                     val ph2 = PhRecord(2.0, timestampExample)
                     val ph3 = PhRecord(3.0, timestampExample)
