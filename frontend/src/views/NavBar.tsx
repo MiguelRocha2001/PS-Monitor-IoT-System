@@ -25,10 +25,7 @@ function NavBar() {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
                         <MyLink text={'Devices'} to="/devices" />
-
-                        <MyLink text={'pH'} to="/ph" />
-                        <MyLink text={'Temperature'} to="/temperature" />
-
+                        <MyLink text={'Device Data'} to="/device-data" />
                         {logout}
                     </Nav>
                 </Navbar.Collapse>

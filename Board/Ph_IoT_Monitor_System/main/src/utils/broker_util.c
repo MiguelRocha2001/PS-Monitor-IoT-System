@@ -131,13 +131,24 @@ esp_mqtt_client_handle_t setup_mqtt()
     return client;
 }
 
-void mqtt_send_ph(esp_mqtt_client_handle_t client, struct ph_record *ph_record)
+void mqtt_send_ph(esp_mqtt_client_handle_t client, struct ph_record *ph_record, char* deviceID)
 {
     // convert ph_record -> value to string
     char buf[100];
-    sprintf(buf, "{value: %f, timestamp: %u}", ph_record -> value, ph_record -> timestamp);
+    sprintf(buf, "{deviceId: %s, value: %f, timestamp: %u}", deviceID, ph_record -> value, ph_record -> timestamp);
 
     int msg_id = esp_mqtt_client_publish(client, "/ph", buf, 0, 1, 0);
     
     ESP_LOGI(TAG, "Message: %s published on topic /ph", buf);
+}
+
+void mqtt_send_water_alert(esp_mqtt_client_handle_t client, char* timestamp, char* deviceID)
+{
+    // convert ph_record -> value to string
+    char buf[100];
+    sprintf(buf, "{deviceId: %s, timestamp: %u}", deviceID, timestamp);
+
+    int msg_id = esp_mqtt_client_publish(client, "/water_alert", buf, 0, 1, 0);
+    
+    ESP_LOGI(TAG, "Message: %s published on topic /water_alert", buf);
 }

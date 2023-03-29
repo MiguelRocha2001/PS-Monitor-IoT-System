@@ -16,6 +16,7 @@
 #include "nvs_util.h"
 #include "esp_touch_util.h"
 #include "ph_values_struct.h"
+#include "time_utils.h"
 
 const static char* TAG = "MAIN";
 
@@ -23,6 +24,14 @@ const static long READ_PH_INTERVAL = 1000000 * 0.3; // 3 seconds
 const static long LONG_SLEEP_TIME = 1000000 * 3; // 10 seconds
 
 RTC_DATA_ATTR struct ph_records_struct ph_records;
+
+void printDeepSleepWokeCause(esp_sleep_wakeup_cause_t cause) {
+    if (cause == ESP_SLEEP_WAKEUP_TIMER) {
+        ESP_LOGI(TAG, "Woke up from timer");
+    } else {
+        ESP_LOGI(TAG, "Woke up duo to unknown reason");
+    }
+}
 
 void store_ph_in_RTC_memory(struct ph_record* ph_record) {
     ESP_LOGE(TAG, "Storing pH...");
@@ -51,11 +60,11 @@ void print_ph_values() {
     }
 }
 
-void send_ph_values(esp_mqtt_client_handle_t client) {
+void send_ph_values(esp_mqtt_client_handle_t client, char* deviceID) {
     ESP_LOGE(TAG, "Sending pH values...");
     for (int i = 0; i < MAX_PH_VALUES; i++) {
         if (ph_records.ph_values[i].value != 0) {
-            mqtt_send_ph(client, &ph_records.ph_values[i]);
+            mqtt_send_ph(client, &ph_records.ph_values[i], deviceID);
             // delay necessary. Without it, the Backend server will not receive all messages. Not sure why...
             vTaskDelay(300 / portTICK_PERIOD_MS);
         }
@@ -86,6 +95,11 @@ void setup_wifi(void) {
     ESP_LOGE(TAG, "Finished setting up WiFi");
 }
 
+void sendWaterAlert(esp_mqtt_client_handle_t client, char* timestamp, char* deviceID) {
+    ESP_LOGE(TAG, "Sending water alert...");
+    mqtt_send_water_alert(client, timestamp, deviceID);
+}
+
 /**
  * The program starts here.
  * It will read the pH value every 0.3 seconds and store it in RTC memory.
@@ -96,24 +110,43 @@ void app_main(void) {
     ESP_LOGE(TAG, "Starting app_main...");
     ESP_ERROR_CHECK(nvs_flash_init());
 
-    printDeepSleepWokeCause();
+    char* deviceID;
+    get_device_id(&deviceID);
 
-    print_ph_values();
+    esp_sleep_wakeup_cause_t cause = esp_sleep_get_wakeup_cause();
+    printDeepSleepWokeCause(cause);
 
-    if (is_ph_reading_complete()) {
+    // Woker duo to water sensor
+    if (cause == ESP_SLEEP_WAKEUP_EXT0)
+    {
+        ESP_LOGE(TAG, "Woke up from water sensor");
+
         setup_wifi();
         esp_mqtt_client_handle_t client = setup_mqtt();
 
-        send_ph_values(client);
-        erase_ph_values();
+        char timestamp[64];
+        get_current_time(timestamp); // get current time
+        sendWaterAlert(client, timestamp, deviceID);
+    } 
+    // Normal woke up
+    else {
+        print_ph_values();
 
-        start_deep_sleep(LONG_SLEEP_TIME);
-    } else {
-        struct ph_record ph_record;
-        read_ph(&ph_record);
+        if (is_ph_reading_complete()) {
+            setup_wifi();
+            esp_mqtt_client_handle_t client = setup_mqtt();
 
-        store_ph_in_RTC_memory(&ph_record);
+            send_ph_values(client, deviceID);
+            erase_ph_values();
 
-        start_deep_sleep(READ_PH_INTERVAL);
+            start_deep_sleep(LONG_SLEEP_TIME);
+        } else {
+            struct ph_record ph_record;
+            read_ph(&ph_record);
+
+            store_ph_in_RTC_memory(&ph_record);
+
+            start_deep_sleep(READ_PH_INTERVAL);
+        }
     }
 }
