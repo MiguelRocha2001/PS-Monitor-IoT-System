@@ -108,7 +108,7 @@ class JdbiServerRepository(
             """
         )
             .bind("device_id", deviceId)
-            .bind("time", temperatureRecord.timestamp)
+            .bind("time", temperatureRecord.instant)
             .bind("value", temperatureRecord.value)
     }
 

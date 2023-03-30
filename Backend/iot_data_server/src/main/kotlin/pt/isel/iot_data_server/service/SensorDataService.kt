@@ -1,26 +1,25 @@
 package pt.isel.iot_data_server.service
 
 import org.eclipse.paho.client.mqttv3.MqttClient
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import pt.isel.iot_data_server.domain.DeviceId
-import pt.isel.iot_data_server.domain.PhRecord
-import pt.isel.iot_data_server.domain.TemperatureRecord
-import pt.isel.iot_data_server.repository.TransactionManager
+import pt.isel.iot_data_server.domain.*
 import pt.isel.iot_data_server.repository.jdbi.TSDBRepository
-import java.time.Instant
+
+// TODO -> SOLVE CONCURRENCY PROBLEMS
 
 @Service
 class SensorDataService(
   //  private val transactionManager: TransactionManager,
-    private val tsdbRepository: TSDBRepository
+    private val tsdbRepository: TSDBRepository,
+    client: MqttClient
 ) {
-    /*
-    init {//TODO SOLVE CONCURRENCY PROBLEMS
-        val client = MqttClient("tcp://localhost:1883", MqttClient.generateClientId())
-        client.connect()
+    private val logger = LoggerFactory.getLogger(SensorDataService::class.java)
+
+    init {
         subscribePhTopic(client)
     }
-*/
+
     fun savePhRecord(
         deviceId: DeviceId,
         phRecord: PhRecord,
@@ -62,9 +61,19 @@ class SensorDataService(
 
     private fun subscribePhTopic(client: MqttClient) {
         client.subscribe("/ph") { topic, message ->
+            logger.info("Received message from topic: $topic")
+
             val byteArray = message.payload
             val string = String(byteArray)
-            println("Received message on topic $topic: $string")
+
+            println(string)
+
+            val phRecord = fromJsonStringToPhRecord(string)
+            val deviceId = fromJsonStringToDeviceId(string)
+
+            savePhRecord(deviceId, phRecord)
+
+            logger.info("Saved ph record: $phRecord, from device: $deviceId")
         }
     }
 

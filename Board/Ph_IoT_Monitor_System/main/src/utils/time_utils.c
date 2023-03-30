@@ -2,18 +2,24 @@
 #include "esp_log.h"
 
 static const char *TAG = "MAIN";
+#define STRFTIME_BUF_SIZE 64
 
-void get_current_time(char *strftime_buf)
-{
-   time_t now;
+int get_current_time(char *strftime_buf) {
+    time_t now;
     struct tm timeinfo;
 
     time(&now);
-    // Set timezone to China Standard Time
-    setenv("TZ", "CST-8", 1);
+
+    // Set timezone to Lisbon, Portugal Standard Time
+    setenv("TZ", "WET0WEST,M3.5.0/01,M10.5.0/02", 1);
     tzset();
 
     localtime_r(&now, &timeinfo);
-    strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
-    ESP_LOGI(TAG, "The current date/time in Shanghai is: %s", strftime_buf);
+
+    size_t strftime_len = strftime(strftime_buf, STRFTIME_BUF_SIZE, "%Y-%m-%d %H:%M:%S", &timeinfo);
+    if (strftime_len == 0) {
+        ESP_LOGE(TAG, "strftime failed");
+        return -1;
+    }
+    return 0;
 }

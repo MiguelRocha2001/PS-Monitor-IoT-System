@@ -1,1 +1,1 @@
-void get_current_time(char *strftime_buf);
+int get_current_time(char *strftime_buf);

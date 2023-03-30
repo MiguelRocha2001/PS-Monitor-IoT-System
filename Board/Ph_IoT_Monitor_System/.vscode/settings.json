@@ -24,6 +24,7 @@
         "gpio.h": "c",
         "esp_sleep.h": "c",
         "nvs_flash.h": "c",
-        "ph_values_struct.h": "c"
+        "ph_values_struct.h": "c",
+        "time.h": "c"
     }
 }
