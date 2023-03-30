@@ -140,7 +140,6 @@ esp_err_t get_device_id(char** deviceID) {
         ESP_LOGE(TAG, "There is no saved deviceID!");
         return err;
     } else {
-
         *deviceID = malloc(required_size);
 
         err = nvs_get_str(my_handle, "device_id", *deviceID, &required_size);

@@ -86,11 +86,9 @@ void setup_wifi(void) {
     char* deviceID;
     wifi_config_t wifiConfig;
 
-    if (get_saved_wifi(&wifiConfig) == ESP_OK && get_device_id(&deviceID) == ESP_OK ) {
-        if(!connect_to_wifi(wifiConfig)) esp_touch_helper(&deviceID);
-    } else {
-        esp_touch_helper(&deviceID);
-    }
+    esp_touch_helper(&deviceID);
+
+    
 
     ESP_LOGE(TAG, "Finished setting up WiFi");
 }

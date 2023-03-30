@@ -30,6 +30,8 @@ void setup_wifi(void) {
     } else {
         esp_touch_helper(&deviceID);
     }
+    
+    ESP_LOGE(TAG, "Device ID: %s", deviceID);
 
     ESP_LOGE(TAG, "Finished setting up WiFi");
 }

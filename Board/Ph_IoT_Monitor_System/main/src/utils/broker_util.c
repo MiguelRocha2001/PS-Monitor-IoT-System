@@ -25,7 +25,7 @@
 
 static const char *TAG = "MQTT_MODULE";
 
-static const char *CONFIG_BROKER_URL = "mqtt://0.tcp.eu.ngrok.io:12698/";
+static const char *CONFIG_BROKER_URL = "mqtt://6.tcp.eu.ngrok.io:16634/";
 
 static void log_error_if_nonzero(const char *message, int error_code)
 {

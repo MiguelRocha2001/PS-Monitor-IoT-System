@@ -66,12 +66,14 @@ class SensorDataService(
             val byteArray = message.payload
             val string = String(byteArray)
 
+            println(string)
+
             val phRecord = fromJsonStringToPhRecord(string)
             val deviceId = fromJsonStringToDeviceId(string)
 
             savePhRecord(deviceId, phRecord)
 
-            logger.info("Saved ph record: $phRecord")
+            logger.info("Saved ph record: $phRecord, from device: $deviceId")
         }
     }
 }
