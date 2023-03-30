@@ -79,7 +79,7 @@ class TSDBRepository : CollectedDataRepository {
             .measurement("temperature")
             .addTag("device", deviceId.id.toString())
             .addField("temperature_value", temperatureRecord.value)
-            .time(temperatureRecord.timestamp, WritePrecision.NS)
+            .time(temperatureRecord.instant, WritePrecision.NS)
         getClient().getWriteKotlinApi().writePoint(point)
     }
 }

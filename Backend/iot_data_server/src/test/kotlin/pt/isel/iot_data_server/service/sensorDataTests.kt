@@ -42,7 +42,7 @@ class sensorDataTests {
         val temperatureRecords = sensorData.getTemperatureRecords(deviceId)
         assert(temperatureRecords.size == 1)
         assert(temperatureRecords[0].value == 7.5)
-        assert(temperatureRecords[0].timestamp.equals(time))
+        assert(temperatureRecords[0].instant.equals(time))
     }
 
 

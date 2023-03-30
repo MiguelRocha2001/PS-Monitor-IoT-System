@@ -1,13 +1,12 @@
 package pt.isel.iot_data_server.service
 
 import org.eclipse.paho.client.mqttv3.MqttClient
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import pt.isel.iot_data_server.domain.DeviceId
-import pt.isel.iot_data_server.domain.PhRecord
-import pt.isel.iot_data_server.domain.TemperatureRecord
-import pt.isel.iot_data_server.repository.TransactionManager
+import pt.isel.iot_data_server.domain.*
 import pt.isel.iot_data_server.repository.jdbi.TSDBRepository
-import java.time.Instant
+
+// TODO -> SOLVE CONCURRENCY PROBLEMS
 
 @Service
 class SensorDataService(
@@ -15,8 +14,8 @@ class SensorDataService(
     private val tsdbRepository: TSDBRepository,
     client: MqttClient
 ) {
+    private val logger = LoggerFactory.getLogger(SensorDataService::class.java)
 
-    //TODO SOLVE CONCURRENCY PROBLEMS
     init {
         subscribePhTopic(client)
     }
@@ -62,9 +61,17 @@ class SensorDataService(
 
     private fun subscribePhTopic(client: MqttClient) {
         client.subscribe("/ph") { topic, message ->
+            logger.info("Received message from topic: $topic")
+
             val byteArray = message.payload
             val string = String(byteArray)
-            println("Received message on topic $topic: $string")
+
+            val phRecord = fromJsonStringToPhRecord(string)
+            val deviceId = fromJsonStringToDeviceId(string)
+
+            savePhRecord(deviceId, phRecord)
+
+            logger.info("Saved ph record: $phRecord")
         }
     }
 }
