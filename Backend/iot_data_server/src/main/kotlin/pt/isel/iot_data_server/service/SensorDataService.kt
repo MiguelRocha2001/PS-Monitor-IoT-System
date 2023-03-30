@@ -12,15 +12,15 @@ import java.time.Instant
 @Service
 class SensorDataService(
   //  private val transactionManager: TransactionManager,
-    private val tsdbRepository: TSDBRepository
+    private val tsdbRepository: TSDBRepository,
+    client: MqttClient
 ) {
-    /*
-    init {//TODO SOLVE CONCURRENCY PROBLEMS
-        val client = MqttClient("tcp://localhost:1883", MqttClient.generateClientId())
-        client.connect()
+
+    //TODO SOLVE CONCURRENCY PROBLEMS
+    init {
         subscribePhTopic(client)
     }
-*/
+
     fun savePhRecord(
         deviceId: DeviceId,
         phRecord: PhRecord,
