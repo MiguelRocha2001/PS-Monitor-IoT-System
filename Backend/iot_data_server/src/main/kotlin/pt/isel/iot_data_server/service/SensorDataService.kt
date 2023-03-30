@@ -67,4 +67,13 @@ class SensorDataService(
             println("Received message on topic $topic: $string")
         }
     }
+
+    fun getAllPhRecords(): List<PhRecord> {
+        return tsdbRepository.getAllPhRecords()
+    }
+
+    fun getAllTemperatureRecords(): List<TemperatureRecord> {
+        return tsdbRepository.getAllTemperatureRecords()
+    }
+
 }

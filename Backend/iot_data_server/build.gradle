@@ -19,6 +19,9 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 // implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server:3.0.5'
 
+	implementation ("com.influxdb:influxdb-client-kotlin:1.16.3")//add influxdb client
+
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-webflux")
 
@@ -36,7 +39,7 @@ dependencies {
 	implementation("org.postgresql:postgresql:42.5.0")
 
 	// for TSDB
-	implementation "com.influxdb:influxdb-client-kotlin:6.3.0"
+	implementation 'com.influxdb:influxdb-client-kotlin:6.7.0'
 
 	implementation("com.hivemq:hivemq-community-edition-embedded:2023.2")
 	implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")

@@ -56,6 +56,25 @@ class TSDBRepository(
                 .toList()
     }
 
+    override fun getAllPhRecords(): List<PhRecord> = runBlocking {
+        val query =
+            """from(bucket: "my_bucket")
+            |> range(start: -7d)
+            |> filter(fn: (r) => r._measurement == "ph")
+            """
+        // Result is returned as a stream
+        val results = getClient().getQueryKotlinApi().query(query)
+
+        results
+            .consumeAsFlow()
+            .map { result ->
+                val value = result.value as Double
+                val timestamp = result.time ?: Instant.MIN
+                PhRecord(value, timestamp)
+            }
+            .toList()
+    }
+
     override fun getTemperatureRecords(deviceId: DeviceId): List<TemperatureRecord> = runBlocking {
             val query =
                 """from(bucket: "my_bucket")
@@ -74,6 +93,25 @@ class TSDBRepository(
                     TemperatureRecord(value, timestamp)
                 }
                 .toList()
+    }
+
+    override fun getAllTemperatureRecords(): List<TemperatureRecord> = runBlocking {
+        val query =
+            """from(bucket: "my_bucket")
+            |> range(start: -7d)
+«            |> filter(fn: (r) => r._measurement == "temperature")
+            """
+        // Result is returned as a stream
+        val results = getClient().getQueryKotlinApi().query(query)
+
+        results
+            .consumeAsFlow()
+            .map { result ->
+                val value = result.value as Double
+                val timestamp = result.time ?: Instant.MIN
+                TemperatureRecord(value, timestamp)
+            }
+            .toList()
     }
 
     override fun savePhRecord(deviceId: DeviceId, phRecord: PhRecord) = runBlocking {
