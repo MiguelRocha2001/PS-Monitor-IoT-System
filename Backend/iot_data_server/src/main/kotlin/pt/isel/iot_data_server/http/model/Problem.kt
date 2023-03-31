@@ -147,6 +147,11 @@ data class Problem(
             "User not in game queue",
             "User is not in game queue"
         )
+        val deviceAlreadyExists = Problem(
+            URI("https://github.com/isel-leic-daw/2022-daw-leic52d-2-22-daw-leic52d-g11/docs/problem/device-already-exists"),
+            "Device already exists",
+            "Device already exists"
+        )
     }
 }
 
@@ -184,4 +189,6 @@ val problems = mapOf(
     "NotAllShipsPlaced" to Problem.response(405, Problem.notAllShipsPlaced),
 
     "NotInGameQueue" to Problem.response(404, Problem.notInGameQueue),
+
+    "DeviceAlreadyExists" to Problem.response(400, Problem.deviceAlreadyExists),
 )

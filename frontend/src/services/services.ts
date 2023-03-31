@@ -19,4 +19,4 @@ export function deviceAdded(device: Device) {
     console.log(`Device added: ${JSON.stringify(device)}`)
 }
 
-export const services: Services = new MockServices()
+export const services: Services = new RealServices()

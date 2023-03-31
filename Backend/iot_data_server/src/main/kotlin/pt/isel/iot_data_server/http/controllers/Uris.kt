@@ -27,7 +27,11 @@ object Uris {
 
     object Devices {
         const val ALL = "/devices"
+        const val BY_ID1 = ALL + "/{id}"
+        private const val BY_ID2 = ALL + "/:id"
         fun all(): URI = URI(ALL)
+        fun byId(): URI = URI(BY_ID2)
+        fun byId(id: String): URI = UriTemplate(BY_ID1).expand(id)
 
         object PH {
             const val ALL = "/devices/{id}/ph"

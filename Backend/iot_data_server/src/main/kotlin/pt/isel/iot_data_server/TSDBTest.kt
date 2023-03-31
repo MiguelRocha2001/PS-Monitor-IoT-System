@@ -54,7 +54,7 @@ fun main() = runBlocking {
 */
 fun main() {
     val repository = TSDBRepository()
-    val uuid = java.util.UUID.randomUUID()
+    val uuid = "device1"
     val deviceId = DeviceId(uuid)
 
     // Save a ph record

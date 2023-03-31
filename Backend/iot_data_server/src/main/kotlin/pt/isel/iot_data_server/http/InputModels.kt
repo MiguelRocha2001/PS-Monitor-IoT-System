@@ -14,7 +14,7 @@ data class CreateTokenInputModel(val username: String, val password: String)
 data class InputDeviceModel(val id: String)
 
 fun InputDeviceModel.toDevice(): Device {
-    val deviceId = DeviceId(UUID.fromString(id))
+    val deviceId = DeviceId(id)
     return Device(deviceId)
 }
 

@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import pt.isel.iot_data_server.domain.*
 import pt.isel.iot_data_server.repository.jdbi.TSDBRepository
+import pt.isel.iot_data_server.service.device.DeviceService
 
 // TODO -> SOLVE CONCURRENCY PROBLEMS
 
@@ -12,6 +13,7 @@ import pt.isel.iot_data_server.repository.jdbi.TSDBRepository
 class SensorDataService(
   //  private val transactionManager: TransactionManager,
     private val tsdbRepository: TSDBRepository,
+    private val deviceService: DeviceService,
     client: MqttClient
 ) {
     private val logger = LoggerFactory.getLogger(SensorDataService::class.java)
@@ -61,19 +63,25 @@ class SensorDataService(
 
     private fun subscribePhTopic(client: MqttClient) {
         client.subscribe("/ph") { topic, message ->
-            logger.info("Received message from topic: $topic")
+            try {
+                logger.info("Received message from topic: $topic")
 
-            val byteArray = message.payload
-            val string = String(byteArray)
+                val byteArray = message.payload
+                val string = String(byteArray)
 
-            println(string)
+                val phRecord = fromJsonStringToPhRecord(string)
+                val deviceId = fromJsonStringToDeviceId(string)
 
-            val phRecord = fromJsonStringToPhRecord(string)
-            val deviceId = fromJsonStringToDeviceId(string)
-
-            savePhRecord(deviceId, phRecord)
-
-            logger.info("Saved ph record: $phRecord, from device: $deviceId")
+                val device = deviceService.getDeviceById(deviceId)
+                if (device != null) {
+                    savePhRecord(deviceId, phRecord)
+                    logger.info("Saved ph record: $phRecord, from device: $deviceId")
+                } else {
+                    logger.info("Received ph record from unknown device: $deviceId")
+                }
+            } catch (e: Exception) {
+                logger.error("Error while processing ph record: ${e.message}")
+            }
         }
     }
 

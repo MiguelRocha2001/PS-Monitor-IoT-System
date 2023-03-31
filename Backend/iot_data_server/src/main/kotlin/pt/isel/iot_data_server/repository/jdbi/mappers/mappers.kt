@@ -29,4 +29,4 @@ data class DeviceMapper(
 )
 
 fun DeviceMapper.toDevice() =
-    Device(DeviceId(UUID.fromString(id)))
+    Device(DeviceId(id))

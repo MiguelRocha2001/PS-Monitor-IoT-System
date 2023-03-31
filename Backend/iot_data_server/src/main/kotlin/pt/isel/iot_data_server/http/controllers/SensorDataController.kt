@@ -16,7 +16,7 @@ class SensorDataController(
     fun getPhRecords(
         @PathVariable device_id: String
     ) {
-        val deviceId = DeviceId(UUID.fromString(device_id))
+        val deviceId = DeviceId(device_id)
         service.getPhRecords(deviceId)
     }
 
@@ -25,7 +25,7 @@ class SensorDataController(
     fun getTemperatureRecords(
         @PathVariable device_id: String
     ) {
-        val deviceId = DeviceId(UUID.fromString(device_id))
+        val deviceId = DeviceId(device_id)
         service.getTemperatureRecords(deviceId)
     }
 }

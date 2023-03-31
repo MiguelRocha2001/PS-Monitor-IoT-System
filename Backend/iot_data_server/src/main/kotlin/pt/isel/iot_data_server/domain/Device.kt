@@ -4,7 +4,7 @@ import pt.isel.iot_data_server.utils.trimJsonString
 import java.util.*
 
 
-data class DeviceId(val id: UUID)
+data class DeviceId(val id: String)
 
 fun fromJsonStringToDeviceId(str: String): DeviceId {
     val split = str.trimJsonString().split(",")
@@ -15,9 +15,9 @@ fun fromJsonStringToDeviceId(str: String): DeviceId {
         ?.get(1)
         ?.trim()
         ?.replace("\"", "")
-        ?.toLong() ?: 0L
+        ?: throw IllegalArgumentException("Invalid json string")
 
-    return DeviceId(UUID(id, 0))
+    return DeviceId(id)
 }
 
 data class Device(val deviceId: DeviceId)
