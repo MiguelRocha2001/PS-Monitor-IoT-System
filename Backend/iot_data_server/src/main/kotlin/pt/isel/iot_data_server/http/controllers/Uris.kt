@@ -34,21 +34,24 @@ object Uris {
         fun byId(id: String): URI = UriTemplate(BY_ID1).expand(id)
 
         object PH {
-            const val ALL = "/devices/{id}/ph"
-            const val BY_ID1 = ALL + "/{id}"
+            const val ALL_1 = "/devices/{device_id}/ph"
+            const val BY_ID_1 = ALL_1 + "/{id}"
 
-            fun all(): URI = URI(ALL)
-            fun byId(id: Int): URI = UriTemplate(BY_ID1).expand(id)
+            private const val ALL_2 = "/devices/:device_id/ph"
+
+            fun all(): URI = URI(ALL_2)
+            fun byId(id: Int): URI = UriTemplate(BY_ID_1).expand(id)
 
         }
 
         object Temperature {
-            const val ALL = "/devices/{id}/temperature"
-            const val BY_ID1 = ALL + "/{id}"
+            const val ALL_1 = "/devices/{device_id}/temperature"
+            const val BY_ID_1 = ALL_1 + "/{id}"
 
-            fun all(): URI = URI(ALL)
-            fun byId(id: Int): URI = UriTemplate(BY_ID1).expand(id)
+            private const val ALL_2 = "/devices/:device_id/temperature"
 
+            fun all(): URI = URI(ALL_2)
+            fun byId(id: Int): URI = UriTemplate(BY_ID_1).expand(id)
         }
     }
 }

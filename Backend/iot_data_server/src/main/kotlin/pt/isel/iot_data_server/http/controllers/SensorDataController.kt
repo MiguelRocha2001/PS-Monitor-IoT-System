@@ -12,7 +12,7 @@ class SensorDataController(
     val service: SensorDataService
 ) {
 
-    @GetMapping("/device/{device_id}/ph")
+    @GetMapping(Uris.Devices.PH.ALL_1)
     fun getPhRecords(
         @PathVariable device_id: String
     ) {
@@ -21,7 +21,7 @@ class SensorDataController(
     }
 
 
-    @GetMapping("/device/{device_id}/temperature")
+    @GetMapping(Uris.Devices.Temperature.ALL_1)
     fun getTemperatureRecords(
         @PathVariable device_id: String
     ) {

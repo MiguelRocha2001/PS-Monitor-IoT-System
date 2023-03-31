@@ -144,7 +144,7 @@ export class RealServices implements Services {
         }
         const response = await doFetch(request)
         if (response instanceof Siren) {
-            return toDevices(response.entities)
+            return toDevices(response.properties)
         } else
             throw new Error(`Failed to get devices: ${response.status} ${response.message}`)
     }

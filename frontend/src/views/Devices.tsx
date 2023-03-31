@@ -26,9 +26,9 @@ export function Devices() {
                         <ListGroup>
                             {devices.map(device => (
                                 <ListGroup.Item key={device.id}>
-                                    <text style={{fontWeight: 'bold'}}>Device Id</text>
+                                    <b>Device Id</b>
                                     <br/>
-                                    <text> {device.id}</text>
+                                    {device.id}
                                 </ListGroup.Item>
                             ))}
                         </ListGroup>

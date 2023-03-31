@@ -19,20 +19,19 @@ export default NewDevice;
 function NewIoTDeviceForm() {
     return(
         <Form>
-            <fieldset disabled={true}>
+            <fieldset disabled={false}>
                 <Form.Group className="mb-3">
-                    <Form.Label htmlFor="disabledTextInput">Device Id</Form.Label>
-                    <Form.Control id="disabledTextInput" placeholder="Disabled input" />
+                    <Form.Label>Device Id</Form.Label>
+                    <Form.Control placeholder="Device Id" />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                    <Form.Label htmlFor="disabledTextInput">Email</Form.Label>
-                    <Form.Control id="disabledTextInput" placeholder="Disabled input" />
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control placeholder="Email" />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                    <Form.Label htmlFor="disabledTextInput">Cellular</Form.Label>
+                    <Form.Label>Mobile</Form.Label>
                     <Form.Control
-                        id="disabledTextInput"
-                        placeholder="Disabled input"
+                        placeholder="Mobile Number"
                         type={"number"}
                         min={100000000}
                         max={999999999}
