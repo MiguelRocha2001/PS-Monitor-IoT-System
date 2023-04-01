@@ -74,13 +74,13 @@ fun createPostDeviceAction(sirenBuilderScope: SirenBuilderScope<*>) =
 fun createGetPhLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
         href = Uris.Devices.PH.all(),
-        rel = Rels.PH
+        rel = Rels.PH_DATA
     )
 
 fun createGetTemperatureLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
         href = Uris.Devices.Temperature.all(),
-        rel = Rels.TEMPERATURE
+        rel = Rels.TEMPERATURE_DATA
     )
 
 fun createPostPhAction(sirenBuilderScope: SirenBuilderScope<*>) =

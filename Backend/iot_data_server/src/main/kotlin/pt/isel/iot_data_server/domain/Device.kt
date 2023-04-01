@@ -1,7 +1,6 @@
 package pt.isel.iot_data_server.domain
 
 import pt.isel.iot_data_server.utils.trimJsonString
-import java.util.*
 
 
 data class DeviceId(val id: String)
@@ -20,4 +19,4 @@ fun fromJsonStringToDeviceId(str: String): DeviceId {
     return DeviceId(id)
 }
 
-data class Device(val deviceId: DeviceId)
+data class Device(val deviceId: DeviceId, val email: String, val mobile: Long)

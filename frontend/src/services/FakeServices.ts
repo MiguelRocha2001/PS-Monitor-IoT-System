@@ -5,10 +5,13 @@ export class MockServices implements Services {
     private readonly users: User[] = []
     private user: User | null = null
 
+    private readonly email = 'some_email_1@gmail.com'
+    private readonly mobile = 1234567890
+
     private readonly devices: Device[] = [
-        new Device('e76996c8-c469-440c-bc2a-82eabbc3ca99'),
-        new Device('50947fb9-0367-41d2-a095-4d26fdc7a7f2'),
-        new Device('cd152448-04b2-473e-86b4-50521e30fb27')
+        new Device('e76996c8-c469-440c-bc2a-82eabbc3ca99', this.email, this.mobile),
+        new Device('50947fb9-0367-41d2-a095-4d26fdc7a7f2', this.email, this.mobile),
+        new Device('cd152448-04b2-473e-86b4-50521e30fb27', this.email, this.mobile)
     ]
 
     async getBackendSirenInfo() {

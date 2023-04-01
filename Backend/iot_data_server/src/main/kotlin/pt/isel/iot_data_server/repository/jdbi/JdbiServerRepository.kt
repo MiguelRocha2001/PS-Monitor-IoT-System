@@ -63,15 +63,17 @@ class JdbiServerRepository(
     override fun addDevice(device: Device) {
         handle.createUpdate(
             """
-            insert into device (id) values (:id)
+            insert into device (id, email, mobile) values (:id, :email, :mobile)
             """
         )
             .bind("id", device.deviceId.id)
+            .bind("email", device.email)
+            .bind("mobile", device.mobile)
             .execute()
     }
 
     override fun getAllDevices(): List<Device> {
-        return handle.createQuery("select id from device")
+        return handle.createQuery("select id, email, mobile from device")
             .mapTo<DeviceMapper>()
             .list()
             .map { it.toDevice() }

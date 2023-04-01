@@ -11,11 +11,15 @@ import {SomethingWentWrong} from "./views/SomethingWentWrong";
 import {useAuth} from "./auth/auth";
 import LoginView from "./views/auth/Login";
 import {DeviceSensorialData} from "./views/DeviceData";
+import {Logger} from "tslog";
+import {Loading} from "./views/Loading";
+
+const logger = new Logger({ name: "App" });
 
 function App() {
     const navigate = useNavigate();
     const {isAuthenticated} = useAuth();
-    const [componentToDisplay, setComponentToDisplay] = React.useState<JSX.Element>(<StillInProgressAlert></StillInProgressAlert>);
+    const [componentToDisplay, setComponentToDisplay] = React.useState<JSX.Element>(<Loading></Loading>);
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -27,11 +31,11 @@ function App() {
         if (isAuthenticated) {
             // Ensures that the Services module extracts all available Siren information, from the backend.
             services.getBackendSirenInfo().then(() => {
-                console.log("Siren information extracted from the backend.")
+                logger.info("Siren information extracted from the backend.")
                 setComponentToDisplay(getRouterComponent());
             }).catch((error) => {
                 const errorToLogAndDisplay = "Error while extracting Siren information from the backend: " + error
-                console.log(errorToLogAndDisplay)
+                logger.error(errorToLogAndDisplay)
                 setComponentToDisplay(<SomethingWentWrong details={errorToLogAndDisplay}/>);
             });
         }

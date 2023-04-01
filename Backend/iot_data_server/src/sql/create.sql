@@ -12,5 +12,7 @@ create table token(
 );
 
 create table device(
-    id varchar primary key
+    id varchar primary key,
+    email varchar,
+    mobile numeric
 );

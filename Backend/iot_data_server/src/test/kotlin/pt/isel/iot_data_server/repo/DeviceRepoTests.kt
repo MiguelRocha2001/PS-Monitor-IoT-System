@@ -14,7 +14,7 @@ class DeviceRepoTests {
         testWithTransactionManagerAndRollback { transactionManager ->
             transactionManager.run {transaction ->
                 val devicesRepo = transaction.repository
-                val device = Device(DeviceId(UUID.randomUUID()))
+                val device = Device(DeviceId(UUID.randomUUID()), name, mobile)
                 devicesRepo.addDevice(device)
                 val foundDevice = devicesRepo.getAllDevices().firstOrNull { it.deviceId == device.deviceId }
                 assertTrue("Device found", foundDevice != null)
@@ -27,9 +27,9 @@ class DeviceRepoTests {
         testWithTransactionManagerAndRollback { transactionManager ->
             transactionManager.run {transaction ->
                 val devicesRepo = transaction.repository
-                val device1 = Device(DeviceId(UUID.randomUUID()))
-                val device2 = Device(DeviceId(UUID.randomUUID()))
-                val device3 = Device(DeviceId(UUID.randomUUID()))
+                val device1 = Device(DeviceId(UUID.randomUUID()), name, mobile)
+                val device2 = Device(DeviceId(UUID.randomUUID()), name, mobile)
+                val device3 = Device(DeviceId(UUID.randomUUID()), name, mobile)
                 devicesRepo.addDevice(device1)
                 devicesRepo.addDevice(device2)
                 devicesRepo.addDevice(device3)

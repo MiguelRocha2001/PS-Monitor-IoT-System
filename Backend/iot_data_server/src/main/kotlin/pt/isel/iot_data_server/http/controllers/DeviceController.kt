@@ -5,11 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
-import pt.isel.iot_data_server.http.InputDeviceModel
+import pt.isel.iot_data_server.http.DeviceInputModel
 import pt.isel.iot_data_server.http.SirenMediaType
-import pt.isel.iot_data_server.http.hypermedia.createLogoutSirenAction
-import pt.isel.iot_data_server.http.hypermedia.createTokenSirenAction
-import pt.isel.iot_data_server.http.hypermedia.createUserSirenAction
 import pt.isel.iot_data_server.http.infra.siren
 import pt.isel.iot_data_server.http.model.DevicesOutputModel
 import pt.isel.iot_data_server.http.model.map
@@ -35,7 +32,7 @@ class DeviceController(
 
     @PostMapping(Uris.Devices.ALL)
     fun addDevice(
-        @RequestBody deviceModel: InputDeviceModel
+        @RequestBody deviceModel: DeviceInputModel
     ): ResponseEntity<*> {
         val result = service.addDevice(deviceModel.toDevice())
         return result.map {

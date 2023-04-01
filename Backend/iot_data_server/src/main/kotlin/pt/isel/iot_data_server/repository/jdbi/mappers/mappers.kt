@@ -26,7 +26,9 @@ internal fun UserMapper.toUser() = User(
 
 data class DeviceMapper(
     val id: String,
+    val email: String,
+    val mobile: Long
 )
 
 fun DeviceMapper.toDevice() =
-    Device(DeviceId(id))
+    Device(DeviceId(id), email, mobile)

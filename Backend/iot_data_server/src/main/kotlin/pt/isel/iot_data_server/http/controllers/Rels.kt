@@ -26,9 +26,11 @@ object Rels {
 
     // ------------------- PH -------------------
     val PH = LinkRelation("ph")
+    val PH_DATA = LinkRelation("ph-data")
     val PH_BY_ID = LinkRelation("ph-by-id")
 
     // ------------------- Temperature -------------------
     val TEMPERATURE = LinkRelation("temperature")
+    val TEMPERATURE_DATA = LinkRelation("temperature-data")
     val TEMPERATURE_BY_ID = LinkRelation("temperature-by-id")
 }

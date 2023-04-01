@@ -6,7 +6,7 @@ export class User {
 }
 
 export class Device {
-    constructor(public id: string) {}
+    constructor(public id: string, public email: string, public mobile: number) {}
 }
 
 export function toDevices(json: any): Device[] {
@@ -17,12 +17,12 @@ export function toDevices(json: any): Device[] {
     return devices.map(toDevice)
 }
 
-function toDevice(json: any): Device {
-    const id = json.id
+function toDevice(propertiesJson: any): Device {
+    const id = propertiesJson.id
     if (typeof id !== 'string') {
         throw new Error(`Invalid id: ${id}`)
     }
-    return new Device(id)
+    return new Device(id, propertiesJson.email, propertiesJson.mobile)
 }
 
 export class PhRecord {

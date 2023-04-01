@@ -2,20 +2,16 @@ package pt.isel.iot_data_server.http
 
 import pt.isel.iot_data_server.domain.Device
 import pt.isel.iot_data_server.domain.DeviceId
-import pt.isel.iot_data_server.domain.PhRecord
-import pt.isel.iot_data_server.domain.TemperatureRecord
-import java.sql.Timestamp
-import java.util.*
 
 data class CreateUserInputModel(val username: String, val password: String)
 
 data class CreateTokenInputModel(val username: String, val password: String)
 
-data class InputDeviceModel(val id: String)
+data class DeviceInputModel(val id: String, val email: String, val mobile: Long)
 
-fun InputDeviceModel.toDevice(): Device {
+fun DeviceInputModel.toDevice(): Device {
     val deviceId = DeviceId(id)
-    return Device(deviceId)
+    return Device(deviceId, email, mobile)
 }
 
 data class InputPhRecordModel(val ph: Double, val timestamp: Long)

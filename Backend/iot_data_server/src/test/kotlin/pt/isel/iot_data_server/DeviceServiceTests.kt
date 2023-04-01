@@ -16,7 +16,7 @@ class DeviceServiceTests {
 	fun `create device`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
 			val service = DeviceService(transactionManager)
-			val device = Device(DeviceId(UUID.randomUUID()))
+			val device = Device(DeviceId(UUID.randomUUID()), name, mobile)
 
 			service.addDevice(device)
 
@@ -29,9 +29,9 @@ class DeviceServiceTests {
 	fun `create multiple devices`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
 			val service = DeviceService(transactionManager)
-			val device1 = Device(DeviceId(UUID.randomUUID()))
-			val device2 = Device(DeviceId(UUID.randomUUID()))
-			val device3 = Device(DeviceId(UUID.randomUUID()))
+			val device1 = Device(DeviceId(UUID.randomUUID()), name, mobile)
+			val device2 = Device(DeviceId(UUID.randomUUID()), name, mobile)
+			val device3 = Device(DeviceId(UUID.randomUUID()), name, mobile)
 
 			service.addDevice(device1)
 			service.addDevice(device2)
