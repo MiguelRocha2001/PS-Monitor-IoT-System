@@ -1,5 +1,5 @@
-import { ReactElement, JSXElementConstructor, ReactFragment, ReactPortal } from "react";
-import {PhData, PhRecord} from "../services/domain";
+import {JSXElementConstructor, ReactElement, ReactFragment, ReactPortal} from "react";
+import {PhRecord} from "../services/domain";
 
 const {useChart} = require("./useChart");
 const {dataSet} = require("./data");

@@ -1,6 +1,5 @@
 import {Device, PhData, TemperatureData, User} from "./domain";
 import {RealServices} from "./RealServices";
-import {MockServices} from "./FakeServices";
 
 export interface Services {
     getBackendSirenInfo(): Promise<void>

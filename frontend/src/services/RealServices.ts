@@ -1,7 +1,6 @@
 import {doFetch, toBody} from "./fetch";
 import {Device, PhData, TemperatureData, toDevices, toPhData, toTemperatureData, User} from "./domain";
 import {deviceAdded, Services} from "./services";
-import {BackendError} from "./erros";
 import {Siren, SirenModule} from "./sirenModule";
 import {Logger} from "tslog";
 

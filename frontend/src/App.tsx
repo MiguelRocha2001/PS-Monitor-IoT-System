@@ -15,6 +15,7 @@ import {DeviceSensorialData} from "./views/DeviceData";
 function App() {
     const navigate = useNavigate();
     const {isAuthenticated} = useAuth();
+    const [componentToDisplay, setComponentToDisplay] = React.useState<JSX.Element>(<StillInProgressAlert></StillInProgressAlert>);
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -27,15 +28,16 @@ function App() {
             // Ensures that the Services module extracts all available Siren information, from the backend.
             services.getBackendSirenInfo().then(() => {
                 console.log("Siren information extracted from the backend.")
+                setComponentToDisplay(getRouterComponent());
             }).catch((error) => {
                 const errorToLogAndDisplay = "Error while extracting Siren information from the backend: " + error
                 console.log(errorToLogAndDisplay)
-                const errorComponent = <SomethingWentWrong details={errorToLogAndDisplay}/>;
+                setComponentToDisplay(<SomethingWentWrong details={errorToLogAndDisplay}/>);
             });
         }
     }, [isAuthenticated]);
 
-    return (getRouterComponent());
+    return componentToDisplay
 }
 
 export default App;
