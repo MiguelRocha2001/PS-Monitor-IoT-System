@@ -1,4 +1,4 @@
-package pt.isel.iot_data_server.repository.jdbi
+package pt.isel.iot_data_server.repository.tsdb
 
 import com.influxdb.client.domain.WritePrecision
 import com.influxdb.client.kotlin.InfluxDBClientKotlin
@@ -16,7 +16,7 @@ import java.time.Instant
 
 @Repository
 class TSDBRepository : CollectedDataRepository {
-    private val token = System.getenv()["INFLUX_TOKEN"]
+    private val token = "L5brw1qKQG1ftypa0yRvaEtA8e8B-woUD3ENroyzb8cs72FmZo9EwioUyrEOoq_QZrugEq2mXOWUD338svSMeg==" //System.getenv()["INFLUX_TOKEN"]
     private val org = "isel"
     private val bucket = "my_bucket"
     private val path = "http://localhost:8086"

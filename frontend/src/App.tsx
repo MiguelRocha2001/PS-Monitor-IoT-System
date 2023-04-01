@@ -57,7 +57,7 @@ function getRouterComponent() {
                     <Route path='/devices' element={<Devices />} />
                     <Route path='/add-new-device' element={<NewDevice />} />
                     <Route path='/device-data' element={<DeviceSensorialData />} />
-                    <Route path='*' element={<div>404</div>} />
+                    <Route path='*' element={<p>404</p>} />
                 </Routes>
             </Container>
         </div>

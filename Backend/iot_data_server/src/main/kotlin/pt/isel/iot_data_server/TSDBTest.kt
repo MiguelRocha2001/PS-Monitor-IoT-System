@@ -1,15 +1,9 @@
 package pt.isel.iot_data_server
 
-import com.influxdb.client.domain.WritePrecision
-import com.influxdb.client.kotlin.InfluxDBClientKotlinFactory
-import com.influxdb.client.write.Point
-import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.runBlocking
 import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.PhRecord
 import pt.isel.iot_data_server.domain.TemperatureRecord
-import pt.isel.iot_data_server.repository.jdbi.TSDBRepository
-import java.lang.Thread.sleep
+import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
 import java.time.Instant
 import kotlin.random.Random
 
@@ -58,11 +52,11 @@ fun main() {
     val deviceId = DeviceId(uuid)
 
     // Save a ph record
-    val phRecord = PhRecord(Random.nextDouble(0.0,10.0),Instant.now())
+    val phRecord = PhRecord(Random.nextDouble(0.0,10.0), Instant.now())
     repository.savePhRecord(deviceId, phRecord)
 
     // Save a temperature record
-    val temperatureRecord = TemperatureRecord(Random.nextDouble(0.0,10.0),Instant.now())
+    val temperatureRecord = TemperatureRecord(Random.nextDouble(0.0,10.0), Instant.now())
     repository.saveTemperatureRecord(deviceId, temperatureRecord)
 
     // Get temperature records

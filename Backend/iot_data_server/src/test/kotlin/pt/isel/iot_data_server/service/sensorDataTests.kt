@@ -1,16 +1,12 @@
 package pt.isel.iot_data_server.service
 
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.PhRecord
 import pt.isel.iot_data_server.domain.TemperatureRecord
-import pt.isel.iot_data_server.repository.jdbi.TSDBRepository
+import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
 import java.time.Instant
 import java.util.*
-import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ThreadLocalRandom
 
 class sensorDataTests {

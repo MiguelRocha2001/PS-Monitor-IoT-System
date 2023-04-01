@@ -2,7 +2,7 @@ import Card from 'react-bootstrap/Card';
 import React, {useEffect} from "react";
 import {Row} from "react-bootstrap";
 import {services} from "../services/services";
-import {PhRecord} from "../services/domain";
+import {PhRecord, TemperatureRecord} from "../services/domain";
 import {ChooseDevice} from "./Commons";
 import {MyChart} from "../chart/MyChart";
 import {SomethingWentWrong} from "./SomethingWentWrong";
@@ -25,7 +25,7 @@ export function DeviceSensorialData() {
 
 function Graph({deviceId}: { deviceId: string | undefined}) {
     const [phRecords, setPhRecords] = React.useState<PhRecord[]>([]);
-    const [tempRecords, setTempRecords] = React.useState<PhRecord[]>([]);
+    const [tempRecords, setTempRecords] = React.useState<TemperatureRecord[]>([]);
     const [errorMessage, setErrorMessage] = React.useState<string | undefined>(undefined);
 
     useEffect(() => {

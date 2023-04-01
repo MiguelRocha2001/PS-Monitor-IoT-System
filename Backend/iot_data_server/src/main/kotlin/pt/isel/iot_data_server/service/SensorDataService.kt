@@ -4,8 +4,10 @@ import org.eclipse.paho.client.mqttv3.MqttClient
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import pt.isel.iot_data_server.domain.*
-import pt.isel.iot_data_server.repository.jdbi.TSDBRepository
+import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
 import pt.isel.iot_data_server.service.device.DeviceService
+import pt.isel.iot_data_server.service.sensor_data.PhDataError
+import pt.isel.iot_data_server.service.sensor_data.PhDataResult
 
 // TODO -> SOLVE CONCURRENCY PROBLEMS
 
@@ -33,8 +35,11 @@ class SensorDataService(
             tsdbRepository.savePhRecord(deviceId, phRecord)
     }
 
-    fun getPhRecords(deviceId: DeviceId): List<PhRecord> {
-        return tsdbRepository.getPhRecords(deviceId)
+    fun getPhRecords(deviceId: DeviceId): PhDataResult {
+        return if (deviceService.getDeviceById(deviceId) == null)
+            Either.Left(PhDataError.DeviceNotFound)
+        else
+            Either.Right(tsdbRepository.getPhRecords(deviceId))
         /*
         return transactionManager.run {
             return@run it.repository.getPhRecords(deviceId)

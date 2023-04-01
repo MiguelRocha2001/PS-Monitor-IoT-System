@@ -60,35 +60,35 @@ export class MockServices implements Services {
 
     async getPhData(deviceId: string): Promise<PhData> {
         return new PhData(deviceId, [
-            new PhRecord(7.0, 1),
-            new PhRecord(7.1, 2),
-            new PhRecord(7.2, 3),
-            new PhRecord(7.3, 4),
-            new PhRecord(7.4, 5),
-            new PhRecord(7.5, 6),
-            new PhRecord(7.6, 7),
-            new PhRecord(7.7, 8),
-            new PhRecord(7.8, 9),
-            new PhRecord(7.9, 10),
-            new PhRecord(8.0, 11),
-            new PhRecord(8.1, 12)
+            new PhRecord(7.0, new Date('2019-01-01T00:00:00.000Z')),
+            new PhRecord(7.1, new Date('2019-01-01T01:00:00.000Z')),
+            new PhRecord(7.2, new Date('2019-01-01T02:00:00.000Z')),
+            new PhRecord(7.3, new Date('2019-01-01T03:00:00.000Z')),
+            new PhRecord(7.4, new Date('2019-01-01T04:00:00.000Z')),
+            new PhRecord(7.5, new Date('2019-01-01T05:00:00.000Z')),
+            new PhRecord(7.6, new Date('2019-01-01T06:00:00.000Z')),
+            new PhRecord(7.7, new Date('2019-01-01T07:00:00.000Z')),
+            new PhRecord(7.8, new Date('2019-01-01T08:00:00.000Z')),
+            new PhRecord(7.9, new Date('2019-01-01T09:00:00.000Z')),
+            new PhRecord(8.0, new Date('2019-01-01T10:00:00.000Z')),
+            new PhRecord(8.1, new Date('2019-01-01T11:00:00.000Z'))
         ])
     }
 
     async getTemperatureData(deviceId: string): Promise<TemperatureData> {
         return new TemperatureData(deviceId, [
-            new TemperatureRecord(20.0, 1),
-            new TemperatureRecord(20.1, 2),
-            new TemperatureRecord(20.2, 3),
-            new TemperatureRecord(20.3, 4),
-            new TemperatureRecord(20.4, 5),
-            new TemperatureRecord(20.5, 6),
-            new TemperatureRecord(20.6, 7),
-            new TemperatureRecord(20.7, 8),
-            new TemperatureRecord(20.8, 9),
-            new TemperatureRecord(20.9, 10),
-            new TemperatureRecord(21.0, 11),
-            new TemperatureRecord(21.1, 12)
+            new TemperatureRecord(20.0, new Date('2019-01-01T00:00:00.000Z')),
+            new TemperatureRecord(20.1, new Date('2019-01-01T01:00:00.000Z')),
+            new TemperatureRecord(20.2, new Date('2019-01-01T02:00:00.000Z')),
+            new TemperatureRecord(20.3, new Date('2019-01-01T03:00:00.000Z')),
+            new TemperatureRecord(20.4, new Date('2019-01-01T04:00:00.000Z')),
+            new TemperatureRecord(20.5, new Date('2019-01-01T05:00:00.000Z')),
+            new TemperatureRecord(20.6, new Date('2019-01-01T06:00:00.000Z')),
+            new TemperatureRecord(20.7, new Date('2019-01-01T07:00:00.000Z')),
+            new TemperatureRecord(20.8, new Date('2019-01-01T08:00:00.000Z')),
+            new TemperatureRecord(20.9, new Date('2019-01-01T09:00:00.000Z')),
+            new TemperatureRecord(21.0, new Date('2019-01-01T10:00:00.000Z')),
+            new TemperatureRecord(21.1, new Date('2019-01-01T11:00:00.000Z'))
         ])
     }
 }
