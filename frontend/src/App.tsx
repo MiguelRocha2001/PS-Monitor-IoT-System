@@ -50,9 +50,6 @@ function getRouterComponent() {
     return (
         <div>
             <NavBar/>
-            <Col style={{width: '90%', margin: 'auto', marginTop: '30px'}}>
-                <StillInProgressAlert />
-            </Col>
             <Container style={{width: '90%', margin: 'auto', marginTop: '30px'}}>
                 <Routes>
                     <Route path='/' element={<Home />} />

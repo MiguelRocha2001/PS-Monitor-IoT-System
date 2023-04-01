@@ -4,14 +4,18 @@ import {Card} from "react-bootstrap";
 import React from "react";
 import {services} from "../services/services";
 import {Device} from "../services/domain";
+import {SomethingWentWrong} from "./SomethingWentWrong";
 
 function NewDevice() {
-    return (
+    const [error, setError] = React.useState<string | undefined>(undefined)
+
+    if (error) return (<SomethingWentWrong details={error} />)
+    else return (
         <Card>
             <Card.Body>
                 <Card.Title>Add a new IoT Device</Card.Title>
                 <Card.Subtitle className="mb-2 text-muted">Fill in the form</Card.Subtitle>
-                <NewIoTDeviceForm />
+                <NewIoTDeviceForm onError={(msg) => setError(msg)}/>
             </Card.Body>
         </Card>
     );
@@ -19,17 +23,17 @@ function NewDevice() {
 
 export default NewDevice;
 
-function NewIoTDeviceForm() {
+function NewIoTDeviceForm({onError}: { onError: (error: string) => void }) {
     const [deviceId, setDeviceId] = React.useState<string>("");
     const [email, setEmail] = React.useState<string>("");
     const [mobile, setMobile] = React.useState<string>("");
 
-    function submitForm() {
+    async function submitForm() {
         try {
             const device = new Device(deviceId, email, +mobile)
-            services.addDevice(device)
-        } catch (e) {
-            console.error(e)
+            await services.addDevice(device)
+        } catch (e: any) {
+            onError(e.message)
         }
     }
 

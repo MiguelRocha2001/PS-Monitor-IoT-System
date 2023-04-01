@@ -6,6 +6,8 @@ import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {AuthProvider} from "./auth/auth";
 import {BrowserRouter} from "react-router-dom";
+import {StillInProgressAlert} from "./views/StillInProgressAlert";
+import {Col} from "react-bootstrap";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -15,6 +17,9 @@ root.render(
     <React.StrictMode>
         <AuthProvider>
             <BrowserRouter >
+                <Col style={{width: '90%', margin: 'auto', marginTop: '30px'}}>
+                    <StillInProgressAlert />
+                </Col>
                 <App />
             </BrowserRouter>
         </AuthProvider>
