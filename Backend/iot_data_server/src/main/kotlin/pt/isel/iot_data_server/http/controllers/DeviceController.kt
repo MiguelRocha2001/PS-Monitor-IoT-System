@@ -6,7 +6,8 @@ import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.http.DeviceInputModel
 import pt.isel.iot_data_server.http.SirenMediaType
 import pt.isel.iot_data_server.http.infra.siren
-import pt.isel.iot_data_server.http.model.DevicesOutputModel
+import pt.isel.iot_data_server.http.model.device.DevicesOutputModel
+import pt.isel.iot_data_server.http.model.device.toOutputModel
 import pt.isel.iot_data_server.http.model.map
 import pt.isel.iot_data_server.http.toDevice
 import pt.isel.iot_data_server.service.device.DeviceService
@@ -36,7 +37,7 @@ class DeviceController(
         return device.map {
             ResponseEntity.status(201)
                 .contentType(SirenMediaType)
-                .body(siren(Unit) {})
+                .body(siren(it.toOutputModel()) {})
         }
     }
 

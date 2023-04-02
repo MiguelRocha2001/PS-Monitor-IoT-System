@@ -1,9 +1,10 @@
 import React, {useEffect} from "react";
 import {useParams} from "react-router-dom";
 import {services} from "../../services/services";
-import {Device} from "../../services/domain";
 import {Loading} from "../Loading";
-import {MyCard} from "../Commons";
+import {MyCard, MyLink} from "../Commons";
+import {Device} from "../../services/domain";
+import {Col} from "react-bootstrap";
 
 export function DeviceInfo() {
     const { deviceId } = useParams<string>()
@@ -24,6 +25,21 @@ export function DeviceInfo() {
         return <Loading />
     else
         return (
-            <MyCard title={'Device Info'} children={<></>}/>
+            <MyCard title={'Device Info'} boldTitle={true} children={
+                <div>
+                    <DeviceInfoAux device={device}/>
+                    <MyLink to={`/device-data/${device.id}`} center={false} text={'Sensors'}/>
+                </div>
+            }/>
         );
+}
+
+function DeviceInfoAux({device}: { device: Device }) {
+    return (
+        <Col>
+            <p><b>Id:</b> {device.id}</p>
+            <p><b>Email:</b> {device.email}</p>
+            <p><b>Mobile:</b> {device.mobile}</p>
+        </Col>
+    );
 }

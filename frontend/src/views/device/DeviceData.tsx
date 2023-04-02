@@ -1,23 +1,18 @@
 import Card from 'react-bootstrap/Card';
 import React, {useEffect} from "react";
+import {useParams} from "react-router-dom";
 import {Row} from "react-bootstrap";
-import {services} from "../services/services";
-import {PhRecord, TemperatureRecord} from "../services/domain";
-import {ChooseDevice, MyCard} from "./Commons";
-import {MyChart} from "../chart/MyChart";
-import {SomethingWentWrong} from "./SomethingWentWrong";
+import {services} from "../../services/services";
+import {PhRecord, TemperatureRecord} from "../../services/domain";
+import {MyChart} from "../../chart/MyChart";
+import {SomethingWentWrong} from "../SomethingWentWrong";
 
 export function DeviceSensorialData() {
-    const [selectedDevice, setSelectedDevice] = React.useState<string | undefined>(undefined);
-    function onDeviceSelected(deviceId: string) {
-        setSelectedDevice(deviceId);
-    }
-
+    const { deviceId } = useParams<string>()
     return (
         <Card>
             <Card.Body>
-                <ChooseDevice onDeviceSelected={onDeviceSelected}/>
-                <Graph deviceId={selectedDevice} />
+                <Graph deviceId={deviceId} />
             </Card.Body>
         </Card>
     );
@@ -56,8 +51,8 @@ function Graph({deviceId}: { deviceId: string | undefined}) {
             <Card>
                 <Card.Body>
                     <Card.Title>Device Sensorial Data</Card.Title>
+                    <Card.Subtitle className="mb-2 text-muted">Device Id: {deviceId}</Card.Subtitle>
                     <Card.Text>
-                        Later, this will display the <b>real</b> device sensorial data.
                         <Row style={{width: '60%', margin: 'auto', marginTop: '30px'}}>
                             <MyChart phRecords={phRecords} tempRecords={tempRecords}/>
                         </Row>

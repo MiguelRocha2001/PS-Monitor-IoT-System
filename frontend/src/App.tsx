@@ -9,7 +9,7 @@ import {services} from "./services/services";
 import {SomethingWentWrong} from "./views/SomethingWentWrong";
 import {useAuth} from "./auth/auth";
 import LoginView from "./views/auth/Login";
-import {DeviceSensorialData} from "./views/DeviceData";
+import {DeviceSensorialData} from "./views/device/DeviceData";
 import {Logger} from "tslog";
 import {Loading} from "./views/Loading";
 import {DeviceInfo} from "./views/device/DeviceInfo";
@@ -57,7 +57,7 @@ function getRouterComponent() {
                     <Route path='/devices' element={<Devices />} />
                     <Route path={'/devices/:deviceId'} element={<DeviceInfo />} />
                     <Route path='/add-new-device' element={<NewDevice />} />
-                    <Route path='/device-data' element={<DeviceSensorialData />} />
+                    <Route path='/device-data/:deviceId' element={<DeviceSensorialData />} />
                     <Route path='*' element={<p>404</p>} />
                 </Routes>
             </Container>

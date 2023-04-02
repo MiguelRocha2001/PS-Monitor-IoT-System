@@ -101,8 +101,6 @@ export function MyChart({phRecords, tempRecords}: { phRecords: PhRecord[], tempR
 
     return (
         <div className="App">
-            <h1>React Hook for the Chart JS </h1>
-
             <canvas ref={canvasRef} width="400" height="200"/>
 
             {Object.keys(dataSet).map(key => (

@@ -1,7 +1,7 @@
 import {Device, PhData, PhRecord, TemperatureData, TemperatureRecord, User} from "./domain";
 import {deviceAdded, Services} from "./services";
 
-export class MockServices implements Services {
+export class FakeServices implements Services {
     private readonly users: User[] = []
     private user: User | null = null
 

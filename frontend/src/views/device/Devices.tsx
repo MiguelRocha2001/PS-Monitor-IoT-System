@@ -33,13 +33,23 @@ export function Devices() {
                             <ListGroup>
                                 {devices.map(device => (
                                     <ListGroup.Item key={device.id}>
-                                        <b>Device Id</b>
+                                        <MyLink
+                                            text={'Info Here'}
+                                            to={`/devices/${device.id}`}
+                                            center={false}
+                                        />
                                         <br/>
                                         {device.id}
                                     </ListGroup.Item>
                                 ))}
                             </ListGroup>
-                            <MyLink to="/add-new-device" text={'Add New Device'} color={'DodgerBlue'} bold={true} />
+                            <MyLink
+                                to="/add-new-device"
+                                text={'Add New Device'}
+                                color={'DodgerBlue'}
+                                bold={true}
+                                center={false}
+                            />
                         </Stack>
                     </Stack>
                 </Card.Body>
