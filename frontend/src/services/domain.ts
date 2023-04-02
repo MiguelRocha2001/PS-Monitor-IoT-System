@@ -1,5 +1,3 @@
-import {Runtime} from "inspector";
-
 export class User {
     constructor(
         public username: string,
@@ -19,7 +17,7 @@ export function toDevices(json: any): Device[] {
     return devices.map(toDevice)
 }
 
-function toDevice(propertiesJson: any): Device {
+export function toDevice(propertiesJson: any): Device {
     const id = propertiesJson.id
     if (typeof id !== 'string') {
         throw new Error(`Invalid id: ${id}`)

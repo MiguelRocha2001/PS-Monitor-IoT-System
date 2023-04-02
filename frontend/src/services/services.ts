@@ -9,6 +9,7 @@ export interface Services {
     getMe(): Promise<User>
     addDevice(device: Device): void
     getDevices(): Promise<Device[]>
+    getDevice(deviceId: string): Promise<Device>
     getPhData(deviceId: string): Promise<PhData>
     getTemperatureData(deviceId: string): Promise<TemperatureData>
     logout(): Promise<void>

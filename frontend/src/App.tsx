@@ -1,10 +1,9 @@
 import React, {useEffect} from "react";
 import {Route, Routes, useNavigate} from 'react-router-dom'
 import Home from "./views/Home";
-import NewDevice from "./views/NewDevice";
-import {Col, Container} from "react-bootstrap";
-import {Devices} from "./views/Devices";
-import {StillInProgressAlert} from "./views/StillInProgressAlert";
+import NewDevice from "./views/device/NewDevice";
+import {Container} from "react-bootstrap";
+import {Devices} from "./views/device/Devices";
 import NavBar from "./views/NavBar";
 import {services} from "./services/services";
 import {SomethingWentWrong} from "./views/SomethingWentWrong";
@@ -13,6 +12,7 @@ import LoginView from "./views/auth/Login";
 import {DeviceSensorialData} from "./views/DeviceData";
 import {Logger} from "tslog";
 import {Loading} from "./views/Loading";
+import {DeviceInfo} from "./views/device/DeviceInfo";
 
 const logger = new Logger({ name: "App" });
 
@@ -55,6 +55,7 @@ function getRouterComponent() {
                     <Route path='/' element={<Home />} />
                     <Route path='/login' element={<LoginView />} />
                     <Route path='/devices' element={<Devices />} />
+                    <Route path={'/devices/:deviceId'} element={<DeviceInfo />} />
                     <Route path='/add-new-device' element={<NewDevice />} />
                     <Route path='/device-data' element={<DeviceSensorialData />} />
                     <Route path='*' element={<p>404</p>} />

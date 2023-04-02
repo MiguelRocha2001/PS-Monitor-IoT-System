@@ -58,6 +58,15 @@ export class MockServices implements Services {
         return this.devices
     }
 
+    async getDevice(deviceId: string): Promise<Device> {
+        const device = this.devices.find(d => d.id === deviceId)
+        if (device) {
+            return device
+        } else {
+            throw new Error(`Device ${deviceId} not found`)
+        }
+    }
+
     async getPhData(deviceId: string): Promise<PhData> {
         return new PhData(deviceId, [
             new PhRecord(7.0, new Date('2019-01-01T00:00:00.000Z')),

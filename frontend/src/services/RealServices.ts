@@ -1,5 +1,5 @@
 import {doFetch, toBody} from "./fetch";
-import {Device, PhData, TemperatureData, toDevices, toPhData, toTemperatureData, User} from "./domain";
+import {Device, PhData, TemperatureData, toDevice, toDevices, toPhData, toTemperatureData, User} from "./domain";
 import {deviceAdded, Services} from "./services";
 import {Siren, SirenModule} from "./sirenModule";
 import {Logger} from "tslog";
@@ -20,6 +20,7 @@ export class RealServices implements Services {
             SirenModule.extractGetMeLink(response.links)
             SirenModule.extractAddDeviceAction(response.actions)
             SirenModule.extractGetDevicesLink(response.links)
+            SirenModule.extractGetDeviceLink(response.links)
             SirenModule.extractGetPhDataLink(response.links)
             SirenModule.extractGetTemperatureDataLink(response.links)
         }
@@ -144,6 +145,20 @@ export class RealServices implements Services {
         const response = await doFetch(request)
         if (response instanceof Siren) {
             return toDevices(response.properties)
+        } else
+            throw new Error(`Failed to get devices: ${response.status} ${response.message}`)
+    }
+
+    async getDevice(deviceId: string): Promise<Device> {
+        const getDeviceLink = SirenModule.getGetDeviceLink()
+        if (!getDeviceLink) throw new Error('Get devices link not found')
+        const request = {
+            url: getDeviceLink.href,
+            method: 'GET'
+        }
+        const response = await doFetch(request)
+        if (response instanceof Siren) {
+            return toDevice(response.properties)
         } else
             throw new Error(`Failed to get devices: ${response.status} ${response.message}`)
     }

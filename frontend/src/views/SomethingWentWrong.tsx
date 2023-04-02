@@ -1,7 +1,6 @@
 import Card from 'react-bootstrap/Card';
-import {Alert, Col, Container, Row} from "react-bootstrap";
+import {Container, Row} from "react-bootstrap";
 import React from "react";
-import {StillInProgressAlert} from "./StillInProgressAlert";
 
 // TODO: Still in progress alert component is duplicated (also placed in App.tsx). Refactor it.
 export function SomethingWentWrong({details} : {details: string}) {

@@ -3,7 +3,7 @@ import React, {useEffect} from "react";
 import {Row} from "react-bootstrap";
 import {services} from "../services/services";
 import {PhRecord, TemperatureRecord} from "../services/domain";
-import {ChooseDevice} from "./Commons";
+import {ChooseDevice, MyCard} from "./Commons";
 import {MyChart} from "../chart/MyChart";
 import {SomethingWentWrong} from "./SomethingWentWrong";
 
@@ -52,7 +52,7 @@ function Graph({deviceId}: { deviceId: string | undefined}) {
     if (errorMessage !== undefined) {
         return (<SomethingWentWrong details={errorMessage} />);
     } else {
-        return (
+        return ( // TODO -> maybe use <MyCard> here?
             <Card>
                 <Card.Body>
                     <Card.Title>Device Sensorial Data</Card.Title>

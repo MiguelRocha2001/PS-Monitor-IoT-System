@@ -1,11 +1,11 @@
-import {Device} from "../services/domain";
+import {Device} from "../../services/domain";
 import React, {useEffect, useState} from "react";
 import ListGroup from "react-bootstrap/ListGroup";
-import {services} from "../services/services";
+import {services} from "../../services/services";
 import Card from "react-bootstrap/Card";
 import {Stack} from "react-bootstrap";
-import {MyLink} from "./Commons";
-import {SomethingWentWrong} from "./SomethingWentWrong";
+import {MyLink} from "../Commons";
+import {SomethingWentWrong} from "../SomethingWentWrong";
 
 export function Devices() {
     const [devices, setDevices] = useState<Device[]>([])

@@ -25,7 +25,7 @@ export function MyLink({text, to, width, color, bold}: { text: string, to: strin
     )
 }
 
-export function MyCard({children, title, text}: { children: any, title?: string, text?: string }) {
+export function MyCard({children, title, text}: { children?: any, title?: string, text?: string }) {
     return (
         <Row className="justify-content-center">
             <Card>
