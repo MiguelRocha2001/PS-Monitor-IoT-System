@@ -24,6 +24,7 @@ function NavBar() {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
                         <MyLink text={'Devices'} to="/devices" center={true} margin={'1em'}/>
+                        <MyLink text={'Authentication'} to="/auth/login" center={true} margin={'1em'}/>
                         {logout}
                     </Nav>
                 </Navbar.Collapse>

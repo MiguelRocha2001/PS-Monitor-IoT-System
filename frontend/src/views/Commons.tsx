@@ -44,7 +44,7 @@ export function MyCard({children, title, boldTitle, text}:
                            }) {
     return (
         <Row className="justify-content-center">
-            <Card>
+            <Card style={{marginBottom: '3em'}}>
                 <Card.Body>
                     <Card.Title>
                         {title && <b style={{fontWeight: boldTitle ? 'bold' : 'normal'}}>{title}</b>}
