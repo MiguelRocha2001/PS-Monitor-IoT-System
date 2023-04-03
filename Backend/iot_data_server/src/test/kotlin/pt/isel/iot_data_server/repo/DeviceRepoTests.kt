@@ -8,7 +8,7 @@ import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 import java.util.*
 
 class DeviceRepoTests {
-
+//FIXME URGENTE METER BASE DE DADOS DE TESTS
     @Test
     fun `add device`() {
         testWithTransactionManagerAndRollback { transactionManager ->

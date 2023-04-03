@@ -1,9 +1,11 @@
 package pt.isel.iot_data_server
 
+import pt.isel.iot_data_server.domain.Device
 import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.PhRecord
 import pt.isel.iot_data_server.domain.TemperatureRecord
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
+import pt.isel.iot_data_server.service.email.EmailSender
 import java.time.Instant
 import kotlin.random.Random
 
@@ -46,7 +48,28 @@ fun main() = runBlocking {
     }
 }
 */
+
+val MIN_PH = 6.0
+val emailSenderService = EmailSender()
+private fun sendEmailIfPhExceedsLimit(deviceId: DeviceId, phRecord: PhRecord,device: Device) {
+    if (phRecord.value < MIN_PH) {
+        val bodyMessage = mapOf(
+            "device_id" to deviceId.id,
+            "ph_value" to phRecord.value.toString(),
+            "ph_limit" to MIN_PH.toString()
+        )
+        val subject = emptyMap<String, String>()
+        emailSenderService.sendEmail(device.ownerEmail, bodyMessage, subject, "phProblem")
+    }
+}
 fun main() {
+
+    val ph = PhRecord(1.0, Instant.now())
+    val device = Device(DeviceId("device1"), "psilva20019@gmail.com",2939939)
+    sendEmailIfPhExceedsLimit(DeviceId("device1"), ph,device)
+  //  val a = EmailSender()
+  //  a.sendEmail("psilva20019@gmail.com","another","another")
+/*
     val repository = TSDBRepository()
     val uuid = "device1"
     val deviceId = DeviceId(uuid)
@@ -66,6 +89,6 @@ fun main() {
     // Get ph records
     val phRecords = repository.getPhRecords(deviceId)
     println("Ph records: $phRecords")
-
+*/
 }
 

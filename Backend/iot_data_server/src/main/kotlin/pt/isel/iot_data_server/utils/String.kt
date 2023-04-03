@@ -5,3 +5,4 @@ fun String.trimJsonString() = this
     .replace("\r", "")
     .replace("{", "")
     .replace("}", "")
+

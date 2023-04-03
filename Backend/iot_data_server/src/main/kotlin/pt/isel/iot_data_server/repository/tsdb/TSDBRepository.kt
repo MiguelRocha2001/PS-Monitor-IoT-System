@@ -106,7 +106,7 @@ class TSDBRepository : CollectedDataRepository {
     override fun savePhRecord(deviceId: DeviceId, phRecord: PhRecord) = runBlocking {
        val point = Point
            .measurement("ph")
-           .addTag("device", deviceId.id.toString())
+           .addTag("device", deviceId.id)
            .addField("ph_value", phRecord.value)
            .time(phRecord.timestamp, WritePrecision.NS);
         getClient().getWriteKotlinApi().writePoint(point)
@@ -115,7 +115,7 @@ class TSDBRepository : CollectedDataRepository {
     override fun saveTemperatureRecord(deviceId: DeviceId, temperatureRecord: TemperatureRecord) = runBlocking {
         val point = Point
             .measurement("temperature")
-            .addTag("device", deviceId.id.toString())
+            .addTag("device", deviceId.id)
             .addField("temperature_value", temperatureRecord.value)
             .time(temperatureRecord.instant, WritePrecision.NS)
         getClient().getWriteKotlinApi().writePoint(point)

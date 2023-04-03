@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service
 import pt.isel.iot_data_server.domain.*
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
 import pt.isel.iot_data_server.service.device.DeviceService
+import pt.isel.iot_data_server.service.email.EmailSender
 import pt.isel.iot_data_server.service.sensor_data.PhDataError
 import pt.isel.iot_data_server.service.sensor_data.PhDataResult
 
@@ -14,12 +15,13 @@ import pt.isel.iot_data_server.service.sensor_data.PhDataResult
 @Service
 class SensorDataService(
   //  private val transactionManager: TransactionManager,
+    private val emailSenderService: EmailSender,
     private val tsdbRepository: TSDBRepository,
     private val deviceService: DeviceService,
     client: MqttClient
 ) {
     private val logger = LoggerFactory.getLogger(SensorDataService::class.java)
-
+    private final val MIN_PH = 6.0
     init {
         subscribePhTopic(client)
     }
@@ -63,6 +65,7 @@ class SensorDataService(
        /* return transactionManager.run {
             return@run it.repository.getTemperatureRecords(deviceId)
         }*/
+        val data = tsdbRepository.getTemperatureRecords(deviceId)
         return tsdbRepository.getTemperatureRecords(deviceId)
     }
 
@@ -76,9 +79,9 @@ class SensorDataService(
 
                 val phRecord = fromJsonStringToPhRecord(string)
                 val deviceId = fromJsonStringToDeviceId(string)
-
                 val device = deviceService.getDeviceById(deviceId)
                 if (device != null) {
+                   // sendEmailIfPhExceedsLimit(deviceId, phRecord,device)
                     savePhRecord(deviceId, phRecord)
                     logger.info("Saved ph record: $phRecord, from device: $deviceId")
                 } else {
@@ -97,5 +100,6 @@ class SensorDataService(
     fun getAllTemperatureRecords(): List<TemperatureRecord> {
         return tsdbRepository.getAllTemperatureRecords()
     }
+
 
 }

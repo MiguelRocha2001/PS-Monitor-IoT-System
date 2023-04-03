@@ -67,8 +67,8 @@ class JdbiServerRepository(
             """
         )
             .bind("id", device.deviceId.id)
-            .bind("email", device.email)
-            .bind("mobile", device.mobile)
+            .bind("email", device.ownerEmail)
+            .bind("mobile", device.ownerMobile)
             .execute()
     }
 
