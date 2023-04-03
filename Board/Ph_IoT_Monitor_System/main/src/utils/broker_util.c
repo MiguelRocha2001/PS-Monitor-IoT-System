@@ -25,7 +25,7 @@
 
 static const char *TAG = "MQTT_MODULE";
 
-static const char *CONFIG_BROKER_URL = "mqtt://6.tcp.eu.ngrok.io:16634/";
+static const char *CONFIG_BROKER_URL = "mqtt://2.tcp.eu.ngrok.io:11084/";
 
 static void log_error_if_nonzero(const char *message, int error_code)
 {
@@ -135,18 +135,18 @@ void mqtt_send_ph(esp_mqtt_client_handle_t client, struct ph_record *ph_record, 
 {
     // convert ph_record -> value to string
     char buf[100];
-    sprintf(buf, "{deviceId: %s, value: %f, timestamp: %u}", deviceID, ph_record -> value, ph_record -> timestamp);
+    sprintf(buf, "{deviceId: %s, value: %f, timestamp: %d}", deviceID, ph_record -> value, ph_record -> timestamp);
 
     int msg_id = esp_mqtt_client_publish(client, "/ph", buf, 0, 1, 0);
     
     ESP_LOGI(TAG, "Message: %s published on topic /ph", buf);
 }
 
-void mqtt_send_water_alert(esp_mqtt_client_handle_t client, char* timestamp, char* deviceID)
+void mqtt_send_water_alert(esp_mqtt_client_handle_t client, int timestamp, char* deviceID)
 {
     // convert ph_record -> value to string
     char buf[100];
-    sprintf(buf, "{deviceId: %s, timestamp: %u}", deviceID, timestamp);
+    sprintf(buf, "{deviceId: %s, timestamp: %d}", deviceID, timestamp);
 
     int msg_id = esp_mqtt_client_publish(client, "/water_alert", buf, 0, 1, 0);
     

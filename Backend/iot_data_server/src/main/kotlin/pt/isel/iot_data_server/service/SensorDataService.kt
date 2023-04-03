@@ -77,8 +77,8 @@ class SensorDataService(
                 val phRecord = fromJsonStringToPhRecord(string)
                 val deviceId = fromJsonStringToDeviceId(string)
 
-                val device = deviceService.getDeviceById(deviceId)
-                if (device != null) {
+                val deviceResult = deviceService.getDeviceById(deviceId)
+                if (deviceResult is Either.Right) {
                     savePhRecord(deviceId, phRecord)
                     logger.info("Saved ph record: $phRecord, from device: $deviceId")
                 } else {

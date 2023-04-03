@@ -25,6 +25,13 @@
         "esp_sleep.h": "c",
         "nvs_flash.h": "c",
         "ph_values_struct.h": "c",
-        "time.h": "c"
+        "time.h": "c",
+        "esp_attr.h": "c",
+        "time_util_ben.h": "c",
+        "time_utils.h": "c",
+        "mqtt_client.h": "c",
+        "protocol_examples_common.h": "c",
+        "wifi_connect_util.h": "c",
+        "esp_touch_util.h": "c"
     }
 }

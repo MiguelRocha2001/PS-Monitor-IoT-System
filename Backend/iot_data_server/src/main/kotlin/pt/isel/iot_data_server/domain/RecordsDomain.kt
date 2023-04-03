@@ -9,13 +9,15 @@ data class PhRecord(val value: Double, val timestamp: Instant)
 fun fromJsonStringToPhRecord(str: String): PhRecord {
     val split = str.trimJsonString().split(",")
 
-    val timestampString = split
+    val timestampInSeconds: Long = split
         .find { it.contains("timestamp") }
         ?.substringAfter(":")
         ?.replace("\"", "")
+        ?.trim()
+        ?.toLong() ?: throw IllegalArgumentException("Invalid json string")
 
     // String to Timestamp
-    val time = Timestamp.valueOf(timestampString).time
+    val time = Timestamp(timestampInSeconds * 1000).time
 
     val value = split
         .find { it.contains("value") }
