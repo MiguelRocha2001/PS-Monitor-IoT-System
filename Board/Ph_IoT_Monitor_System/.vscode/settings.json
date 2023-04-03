@@ -32,6 +32,18 @@
         "mqtt_client.h": "c",
         "protocol_examples_common.h": "c",
         "wifi_connect_util.h": "c",
-        "esp_touch_util.h": "c"
+        "esp_touch_util.h": "c",
+        "aes_util.h": "c",
+        "deep_sleep.h": "c",
+        "sha256_util.h": "c",
+        "entropy_poll.h": "c",
+        "uthash.h": "c",
+        "base64_util.h": "c",
+        "esp_system.h": "c",
+        "pkcs7.h": "c",
+        "utils.h": "c",
+        "rsa.h": "c",
+        "stdint.h": "c",
+        "pk.h": "c"
     }
 }
