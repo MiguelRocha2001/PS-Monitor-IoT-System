@@ -22,7 +22,8 @@ export type KeyValuePair = {
 }
 
 export async function fetchRequest(request: Request): Promise<Response> {
-    const accessToken = localStorage.getItem("access_token");
+    // const accessToken = localStorage.getItem("access_token") TODO: fixme later
+    const accessToken = "just_some_token";
     if (!accessToken)
         return Promise.reject(new NetworkError("No access token found"))
 

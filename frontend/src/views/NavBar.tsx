@@ -23,8 +23,8 @@ function NavBar() {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                        <MyLink text={'Devices'} to="/devices" />
-                        <MyLink text={'Device Data'} to="/device-data" />
+                        <MyLink text={'Devices'} to="/devices" center={true} margin={'1em'}/>
+                        <MyLink text={'Authentication'} to="/auth/login" center={true} margin={'1em'}/>
                         {logout}
                     </Nav>
                 </Navbar.Collapse>

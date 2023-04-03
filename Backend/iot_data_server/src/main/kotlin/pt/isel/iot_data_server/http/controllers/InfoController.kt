@@ -23,6 +23,7 @@ class InfoController(
                 createIsLoggedInLink(this)
                 createGetMeLink(this)
                 createGetDevicesLink(this)
+                createGetDeviceLink(this)
                 createPostDeviceAction(this)
                 createGetPhLink(this)
                 createGetTemperatureLink(this)

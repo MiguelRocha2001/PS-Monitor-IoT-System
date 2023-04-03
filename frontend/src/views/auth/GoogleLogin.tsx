@@ -40,7 +40,7 @@ const LoginView = () => {
     }
 
     return (
-        <MyCard title={'Login'} text={"Login"}>
+        <MyCard title={'Google Authentication'} >
             {progress && (
                 <Alert variant="info">
                     Signing in...

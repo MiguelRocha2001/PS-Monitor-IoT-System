@@ -16,7 +16,7 @@
 #include "nvs_util.h"
 #include "esp_touch_util.h"
 #include "ph_values_struct.h"
-#include "time_utils.h"
+#include "time_util.h"
 
 const static char* TAG = "MAIN";
 
@@ -93,7 +93,7 @@ void setup_wifi(void) {
     ESP_LOGE(TAG, "Finished setting up WiFi");
 }
 
-void sendWaterAlert(esp_mqtt_client_handle_t client, char* timestamp, char* deviceID) {
+void sendWaterAlert(esp_mqtt_client_handle_t client, int timestamp, char* deviceID) {
     ESP_LOGE(TAG, "Sending water alert...");
     mqtt_send_water_alert(client, timestamp, deviceID);
 }
@@ -122,9 +122,8 @@ void app_main(void) {
         setup_wifi();
         esp_mqtt_client_handle_t client = setup_mqtt();
 
-        char timestamp[64];
-        get_current_time(timestamp); // get current time
-        sendWaterAlert(client, timestamp, deviceID);
+        int current_timestamp = getNowTimestamp(); // get current time
+        sendWaterAlert(client, current_timestamp, deviceID);
     } 
     // Normal woke up
     else {
@@ -139,6 +138,8 @@ void app_main(void) {
 
             start_deep_sleep(LONG_SLEEP_TIME);
         } else {
+            setup_wifi(); // to get the current time
+
             struct ph_record ph_record;
             read_ph(&ph_record);
 

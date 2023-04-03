@@ -22,7 +22,7 @@ object Rels {
 
     // ------------------- Devices -------------------
     val DEVICES = LinkRelation("devices")
-    val DEVICE_BY_ID = LinkRelation("device")
+    val DEVICE = LinkRelation("device")
 
     // ------------------- PH -------------------
     val PH = LinkRelation("ph")

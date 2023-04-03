@@ -5,16 +5,26 @@ import Card from "react-bootstrap/Card";
 import {Device} from "../services/domain";
 import {services} from "../services/services";
 
-export function MyLink({text, to, width, color, bold}: { text: string, to: string, width?: string, color?: string, bold?: boolean }) {
+export function MyLink({text, to, width, color, bold, center, margin}:
+                           {
+                               text: string,
+                               to: string,
+                               width?: string,
+                               color?: string,
+                               bold?: boolean,
+                               center: boolean,
+                               margin?: string
+                           }) {
     const defaultWidth = 'auto';
+    const defaultMargin = '1em';
     return (
         <Link
             to={to}
             style={{
-                textAlign: 'center',
+                textAlign: center ? 'center' : 'left',
                 margin: 'auto',
-                marginLeft: '1em',
-                marginRight: '1em',
+                marginLeft: margin ?? 0,
+                marginRight: margin ?? 0,
                 width: width ?? defaultWidth,
                 textDecoration: 'none',
                 color: color ?? 'black',
@@ -25,13 +35,19 @@ export function MyLink({text, to, width, color, bold}: { text: string, to: strin
     )
 }
 
-export function MyCard({children, title, text}: { children: any, title?: string, text?: string }) {
+export function MyCard({children, title, boldTitle, text}:
+                           {
+                               children?: any,
+                               title?: string,
+                                 boldTitle?: boolean,
+                               text?: string
+                           }) {
     return (
         <Row className="justify-content-center">
-            <Card>
+            <Card style={{marginBottom: '3em'}}>
                 <Card.Body>
                     <Card.Title>
-                        {title}
+                        {title && <b style={{fontWeight: boldTitle ? 'bold' : 'normal'}}>{title}</b>}
                     </Card.Title>
                     <Card.Text>
                         {text}

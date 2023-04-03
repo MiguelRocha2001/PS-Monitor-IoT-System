@@ -86,7 +86,7 @@ class JdbiServerRepository(
             """
         )
             .bind("device_id", deviceId.id)
-            .bind("time", phRecord.timestamp)
+            .bind("time", phRecord.instant)
             .bind("value", phRecord.value)
     }
 

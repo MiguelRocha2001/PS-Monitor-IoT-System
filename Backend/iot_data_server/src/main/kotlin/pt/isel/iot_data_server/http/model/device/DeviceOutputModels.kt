@@ -1,4 +1,4 @@
-package pt.isel.iot_data_server.http.model
+package pt.isel.iot_data_server.http.model.device
 
 import pt.isel.iot_data_server.domain.Device
 
@@ -8,6 +8,6 @@ data class DevicesOutputModel(val devices: List<DeviceOutputModel>) {
         fun from(devices: List<Device>) = DevicesOutputModel(devices.map { it.toOutputModel() })
     }
 }
-fun Device.toOutputModel() = DeviceOutputModel(id = this.deviceId.id)
+fun Device.toOutputModel() = DeviceOutputModel(id = this.deviceId.id, email = this.email, mobile = this.mobile)
 
-data class DeviceOutputModel(val id: String)
+data class DeviceOutputModel(val id: String, val email: String, val mobile: Long)

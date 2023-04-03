@@ -1,1 +1,0 @@
-int get_current_time(char *strftime_buf);

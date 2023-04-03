@@ -34,14 +34,15 @@ class DeviceService (
         }
     }
 
-    fun getDeviceById(deviceId: DeviceId): Device? {
+    fun getDeviceById(deviceId: DeviceId): GetDeviceResult {
         return transactionManager.run {
             val device = it.repository.getAllDevices().find { it.deviceId == deviceId }
             if (device == null) {
                 logger.info("Device with id $deviceId not found")
-                return@run null
+                return@run Either.Left(GetDeviceError.DeviceNotFound)
             }
-            return@run device
+            logger.info("Device with id $deviceId found")
+            return@run Either.Right(device)
         }
     }
 }

@@ -4,6 +4,7 @@
 #include <esp_log.h>
 
 #include "ph_reader_fake.h"
+#include "time_util.h"
 
 const static char* TAG = "PH_READER_FAKE";
 
@@ -26,7 +27,8 @@ void read_ph(struct ph_record *ph_record)
 {
     ESP_LOGE(TAG, "Reading pH...");
     float ph_value = generate_random_float();
-    int timestamp = generate_random_int();
+    // int timestamp = generate_random_int();
+    int timestamp = getNowTimestamp();
     ph_record -> value = ph_value;
     ph_record -> timestamp = timestamp;
 }

@@ -1,11 +1,11 @@
-import {Device} from "../services/domain";
+import {Device} from "../../services/domain";
 import React, {useEffect, useState} from "react";
 import ListGroup from "react-bootstrap/ListGroup";
-import {services} from "../services/services";
+import {services} from "../../services/services";
 import Card from "react-bootstrap/Card";
 import {Stack} from "react-bootstrap";
-import {MyLink} from "./Commons";
-import {SomethingWentWrong} from "./SomethingWentWrong";
+import {MyLink} from "../Commons";
+import {SomethingWentWrong} from "../SomethingWentWrong";
 
 export function Devices() {
     const [devices, setDevices] = useState<Device[]>([])
@@ -33,13 +33,23 @@ export function Devices() {
                             <ListGroup>
                                 {devices.map(device => (
                                     <ListGroup.Item key={device.id}>
-                                        <b>Device Id</b>
+                                        <MyLink
+                                            text={'Info Here'}
+                                            to={`/devices/${device.id}`}
+                                            center={false}
+                                        />
                                         <br/>
                                         {device.id}
                                     </ListGroup.Item>
                                 ))}
                             </ListGroup>
-                            <MyLink to="/add-new-device" text={'Add New Device'} color={'DodgerBlue'} bold={true} />
+                            <MyLink
+                                to="/add-new-device"
+                                text={'Add New Device'}
+                                color={'DodgerBlue'}
+                                bold={true}
+                                center={false}
+                            />
                         </Stack>
                     </Stack>
                 </Card.Body>
