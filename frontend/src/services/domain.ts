@@ -49,21 +49,17 @@ function toPhRecord(json: any): PhRecord {
 
 export class PhData {
     constructor(
-        public deviceId: string,
         public records: PhRecord[]
     ) {}
 }
 
 export function toPhData(json: any): PhData {
-    const deviceId = json.deviceId
-    if (typeof deviceId !== 'string') {
-        throw new Error(`Invalid deviceId: ${deviceId}`)
-    }
+    console.log(`toPhData: ${JSON.stringify(json)}`)
     const records = json.records
     if (!Array.isArray(records)) {
         throw new Error(`Invalid records: ${records}`)
     }
-    return new PhData(deviceId, records.map(toPhRecord))
+    return new PhData(records.map(toPhRecord))
 }
 
 export class TemperatureRecord {
@@ -88,19 +84,14 @@ function toTemperatureRecord(json: any): TemperatureRecord {
 
 export class TemperatureData {
     constructor(
-        public deviceId: string,
         public records: TemperatureRecord[]
     ) {}
 }
 
 export function toTemperatureData(json: any): TemperatureData {
-    const deviceId = json.deviceId
-    if (typeof deviceId !== 'string') {
-        throw new Error(`Invalid deviceId: ${deviceId}`)
-    }
     const records = json.records
     if (!Array.isArray(records)) {
         throw new Error(`Invalid records: ${records}`)
     }
-    return new TemperatureData(deviceId, records.map(toTemperatureRecord))
+    return new TemperatureData(records.map(toTemperatureRecord))
 }

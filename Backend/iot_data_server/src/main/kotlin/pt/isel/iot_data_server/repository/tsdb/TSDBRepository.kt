@@ -108,7 +108,7 @@ class TSDBRepository : CollectedDataRepository {
            .measurement("ph")
            .addTag("device", deviceId.id.toString())
            .addField("ph_value", phRecord.value)
-           .time(phRecord.timestamp, WritePrecision.NS);
+           .time(phRecord.instant, WritePrecision.NS);
         getClient().getWriteKotlinApi().writePoint(point)
     }
 

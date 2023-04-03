@@ -4,7 +4,7 @@ import pt.isel.iot_data_server.utils.trimJsonString
 import java.sql.Timestamp
 import java.time.Instant
 
-data class PhRecord(val value: Double, val timestamp: Instant)
+data class PhRecord(val value: Double, val instant: Instant)
 
 fun fromJsonStringToPhRecord(str: String): PhRecord {
     val split = str.trimJsonString().split(",")

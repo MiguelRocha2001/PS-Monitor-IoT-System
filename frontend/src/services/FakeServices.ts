@@ -68,7 +68,7 @@ export class FakeServices implements Services {
     }
 
     async getPhData(deviceId: string): Promise<PhData> {
-        return new PhData(deviceId, [
+        return new PhData([
             new PhRecord(7.0, new Date('2019-01-01T00:00:00.000Z')),
             new PhRecord(7.1, new Date('2019-01-02T01:00:00.000Z')),
             new PhRecord(7.2, new Date('2019-01-03T02:00:00.000Z')),
@@ -85,7 +85,7 @@ export class FakeServices implements Services {
     }
 
     async getTemperatureData(deviceId: string): Promise<TemperatureData> {
-        return new TemperatureData(deviceId, [
+        return new TemperatureData( [
             new TemperatureRecord(20.0, new Date('2019-01-01T00:00:00.000Z')),
             new TemperatureRecord(20.1, new Date('2019-01-02T01:00:00.000Z')),
             new TemperatureRecord(20.2, new Date('2019-01-03T02:00:00.000Z')),

@@ -31,7 +31,6 @@ export class RealServices implements Services {
         }
         const response = await doFetch(request)
         if (response instanceof Siren) {
-            console.log(response.actions[0].method)
             extractSirenInfo(response)
             return
         } else
@@ -58,7 +57,6 @@ export class RealServices implements Services {
             method: createUserAction.method,
             body: toBody({username, password, email, mobile})
         }
-        console.log(createUserAction)
         try {
             const response = await doFetch(request)
             if (response instanceof Siren) {
@@ -152,8 +150,10 @@ export class RealServices implements Services {
     async getDevice(deviceId: string): Promise<Device> {
         const getDeviceLink = SirenModule.getGetDeviceLink()
         if (!getDeviceLink) throw new Error('Get devices link not found')
+
+        const urlWithId = getDeviceLink.href.replace(':device_id', deviceId)
         const request = {
-            url: getDeviceLink.href,
+            url: urlWithId,
             method: 'GET'
         }
         const response = await doFetch(request)
@@ -166,13 +166,15 @@ export class RealServices implements Services {
     async getPhData(deviceId: string): Promise<PhData> {
         const getPhDataLink = SirenModule.getGetPhDataLink()
         if (!getPhDataLink) throw new Error('Get ph data link not found')
+
+        const urlWithId = getPhDataLink.href.replace(':device_id', deviceId)
         const request = {
-            url: getPhDataLink.href,
+            url: urlWithId,
             method: 'GET'
         }
         const response = await doFetch(request)
         if (response instanceof Siren)
-            return toPhData(response)
+            return toPhData(response.properties)
         else
             throw new Error(`Failed to get ph data: ${response.status} ${response.message}`)
     }
@@ -180,13 +182,15 @@ export class RealServices implements Services {
     async getTemperatureData(deviceId: string): Promise<TemperatureData> {
         const getTemperatureDataLink = SirenModule.getGetTemperatureDataLink()
         if (!getTemperatureDataLink) throw new Error('Get temperature data link not found')
+
+        const urlWithId = getTemperatureDataLink.href.replace(':device_id', deviceId)
         const request = {
-            url: getTemperatureDataLink.href,
+            url: urlWithId,
             method: 'GET'
         }
         const response = await doFetch(request)
         if (response instanceof Siren)
-            return toTemperatureData(response)
+            return toTemperatureData(response.properties)
         else
             throw new Error(`Failed to get temperature data: ${response.status} ${response.message}`)
     }

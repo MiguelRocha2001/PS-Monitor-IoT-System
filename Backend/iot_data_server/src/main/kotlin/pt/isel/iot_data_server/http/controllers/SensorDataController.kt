@@ -10,6 +10,8 @@ import pt.isel.iot_data_server.http.infra.siren
 import pt.isel.iot_data_server.http.model.map
 import pt.isel.iot_data_server.http.model.sensor_data.PhRecordOutputModel
 import pt.isel.iot_data_server.http.model.sensor_data.PhRecordsOutputModel
+import pt.isel.iot_data_server.http.model.sensor_data.TemperatureRecordOutputModel
+import pt.isel.iot_data_server.http.model.sensor_data.TemperatureRecordsOutputModel
 import pt.isel.iot_data_server.http.toDevice
 import pt.isel.iot_data_server.service.SensorDataService
 import java.util.*
@@ -41,8 +43,18 @@ class SensorDataController(
     @GetMapping(Uris.Devices.Temperature.ALL_1)
     fun getTemperatureRecords(
         @PathVariable device_id: String
-    ) {
-        val deviceId = DeviceId(device_id)
-        service.getTemperatureRecords(deviceId)
+    ): ResponseEntity<*> {
+        val result = service.getTemperatureRecords(DeviceId(device_id))
+        return result.map {
+            ResponseEntity.status(201)
+                .contentType(SirenMediaType)
+                .header(
+                    "Location",
+                    Uris.Devices.Temperature.all().toASCIIString()
+                )
+                .body(
+                    siren(TemperatureRecordsOutputModel.from(it)) {}
+                )
+        }
     }
 }

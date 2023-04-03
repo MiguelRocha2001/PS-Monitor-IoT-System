@@ -60,7 +60,7 @@ fun createGetDevicesLink(sirenBuilderScope: SirenBuilderScope<*>) =
 
 fun createGetDeviceLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
-        href = Uris.Devices.byId("{device_id}"),
+        href = Uris.Devices.byId(),
         rel = Rels.DEVICE
     )
 

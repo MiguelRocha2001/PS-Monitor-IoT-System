@@ -46,7 +46,6 @@ export const AuthProvider = ({children} : {children: any}) => { // TODO: change 
                     }
                 }
             );
-            console.log(response.data);
             let tokenResponse: TokenResponse = response.data;
             setAccessToken(tokenResponse.access_token);
             // TODO Validate Token

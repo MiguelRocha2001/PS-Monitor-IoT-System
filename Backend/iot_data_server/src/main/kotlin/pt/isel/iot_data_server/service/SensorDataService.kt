@@ -8,6 +8,8 @@ import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
 import pt.isel.iot_data_server.service.device.DeviceService
 import pt.isel.iot_data_server.service.sensor_data.PhDataError
 import pt.isel.iot_data_server.service.sensor_data.PhDataResult
+import pt.isel.iot_data_server.service.sensor_data.TemperatureDataError
+import pt.isel.iot_data_server.service.sensor_data.TemperatureDataResult
 
 // TODO -> SOLVE CONCURRENCY PROBLEMS
 
@@ -36,7 +38,7 @@ class SensorDataService(
     }
 
     fun getPhRecords(deviceId: DeviceId): PhDataResult {
-        return if (deviceService.getDeviceById(deviceId) == null)
+        return if (deviceService.getDeviceById(deviceId) is Either.Left)
             Either.Left(PhDataError.DeviceNotFound)
         else
             Either.Right(tsdbRepository.getPhRecords(deviceId))
@@ -59,11 +61,14 @@ class SensorDataService(
         tsdbRepository.saveTemperatureRecord(deviceId, temperatureRecord)
     }
 
-    fun getTemperatureRecords(deviceId: DeviceId): List<TemperatureRecord> {
+    fun getTemperatureRecords(deviceId: DeviceId): TemperatureDataResult {
        /* return transactionManager.run {
             return@run it.repository.getTemperatureRecords(deviceId)
         }*/
-        return tsdbRepository.getTemperatureRecords(deviceId)
+        return if (deviceService.getDeviceById(deviceId) is Either.Left)
+            Either.Left(TemperatureDataError.DeviceNotFound)
+        else
+            Either.Right(tsdbRepository.getTemperatureRecords(deviceId))
     }
 
     private fun subscribePhTopic(client: MqttClient) {
