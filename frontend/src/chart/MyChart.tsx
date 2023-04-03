@@ -52,9 +52,35 @@ export function MyChart({phRecords, tempRecords}: { phRecords: PhRecord[], tempR
         }));
     };
 
+    const labels = phRecords.map((record: PhRecord) => {
+        const day = record.date.getDay();
+        if (day === 0) return "Sun";
+        if (day === 1) return "Mon";
+        if (day === 2) return "Tue";
+        if (day === 3) return "Wed";
+        if (day === 4) return "Thu";
+        if (day === 5) return "Fri";
+        if (day === 6) return "Sat";
+    })
+
+    const phData = phRecords.map((record: PhRecord) => {
+        return {
+            x: record.date.getDay(),
+            y: record.value
+        }
+    })
+
+    const tempData = tempRecords.map((record: PhRecord) => {
+        return {
+            x: record.date.getDay(),
+            y: record.value
+        }
+    })
+
     const phDataset = data["PH"].isVisible ? {
         label: data["PH"].label,
-        data: data["PH"].data,
+        // data: data["PH"].data,
+        data: phData,
         backgroundColor: data["PH"].bgColor,
         borderColor: data["PH"].borderColor,
         borderWidth: 1
@@ -62,7 +88,8 @@ export function MyChart({phRecords, tempRecords}: { phRecords: PhRecord[], tempR
 
     const tempDataset = data["Temperature"].isVisible ? {
         label: data["Temperature"].label,
-        data: data["Temperature"].data,
+        // data: data["Temperature"].data,
+        data: tempData,
         backgroundColor: data["Temperature"].bgColor,
         borderColor: data["Temperature"].borderColor,
         borderWidth: 1

@@ -1,4 +1,3 @@
-import Card from 'react-bootstrap/Card';
 import {Row} from "react-bootstrap";
 import React from "react";
 import {MyCard} from "./Commons";

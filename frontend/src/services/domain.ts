@@ -1,3 +1,5 @@
+import {Runtime} from "inspector";
+
 export class User {
     constructor(
         public username: string,
@@ -28,7 +30,7 @@ export function toDevice(propertiesJson: any): Device {
 export class PhRecord {
     constructor(
         public value: number,
-        public timestamp: Date
+        public date: Date
     ) {}
 }
 
@@ -38,10 +40,10 @@ function toPhRecord(json: any): PhRecord {
         throw new Error(`Invalid value: ${value}`)
     }
     const timestamp = json.timestamp
-    if (typeof timestamp !== 'string') {
+    if (typeof timestamp !== 'number') {
         throw new Error(`Invalid timestamp: ${timestamp}`)
     }
-    const date = new Date(timestamp)
+    const date = new Date(timestamp * 1000)
     return new PhRecord(value, date)
 }
 
@@ -67,7 +69,7 @@ export function toPhData(json: any): PhData {
 export class TemperatureRecord {
     constructor(
         public value: number,
-        public timestamp: Date
+        public date: Date
     ) {}
 }
 

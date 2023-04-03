@@ -1,9 +1,9 @@
 import {MyCard} from "../Commons";
 import React from "react";
 import {useParams} from "react-router-dom";
-import {Action, IoTServerAuthentication} from "./IoTServerAuthentication";
+import {IoTServerAuthentication} from "./IoTServerAuthentication";
 import Login from "./GoogleLogin";
-import {Alert, Col, Stack} from "react-bootstrap";
+import {Alert, Col} from "react-bootstrap";
 
 export function Authentication() {
     const {action} = useParams<string>()

@@ -8,13 +8,11 @@ import NavBar from "./views/NavBar";
 import {services} from "./services/services";
 import {SomethingWentWrong} from "./views/SomethingWentWrong";
 import {useAuth} from "./auth/auth";
-import LoginView from "./views/auth/GoogleLogin";
-import {DeviceSensorialData} from "./views/device/DeviceData";
 import {Logger} from "tslog";
 import {Loading} from "./views/Loading";
 import {DeviceInfo} from "./views/device/DeviceInfo";
-import {IoTServerAuthentication} from "./views/auth/IoTServerAuthentication";
 import {Authentication} from "./views/auth/Authentication";
+import {DeviceSensorialData} from "./views/device/DeviceData";
 
 const logger = new Logger({ name: "App" });
 
@@ -26,7 +24,11 @@ function App() {
 
     useEffect(() => {
         if (!isAuthenticated) {
+            logger.info("User is not authenticated, redirecting to login page.")
             navigate("/auth/login");
+        } else {
+            logger.info("User is authenticated, redirecting to home page.")
+            navigate("/");
         }
     }, [isAuthenticated]);
 

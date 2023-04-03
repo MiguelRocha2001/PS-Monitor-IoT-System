@@ -10,12 +10,12 @@ data class PhRecordsOutputModel(val records: List<PhRecordOutputModel>) {
 }
 data class PhRecordOutputModel(
     val value: Double,
-    val timestamp: String
+    val timestamp: Long
 )
 
 fun PhRecord.toOutputModel() = PhRecordOutputModel(
     value = this.value,
-    timestamp = this.timestamp.toString()
+    timestamp = this.timestamp.epochSecond
 )
 
 data class TemperatureRecordOutputModel(
