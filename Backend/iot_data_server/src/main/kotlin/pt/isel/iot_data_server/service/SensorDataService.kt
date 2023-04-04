@@ -76,6 +76,8 @@ class SensorDataService(
             try {
                 logger.info("Received message from topic: $topic")
 
+                // TODO -> DECRYPT MESSAGE FIRST
+
                 val byteArray = message.payload
                 val string = String(byteArray)
 

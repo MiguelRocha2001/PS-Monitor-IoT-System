@@ -45,10 +45,22 @@ void app_main(void) {
     esp_aes_context ctx = init_AES(key_256);
 
     char *plaintext = "Hello World";
+    ESP_LOGE(TAG, "Plaintext: %s", plaintext);
 
     char* res = encrypt_str_AES(ctx, plaintext);
     ESP_LOGE(TAG, "Encrypted: %s", res);
 
     char* res2 = decrypt_base64_AES(ctx, res);
     ESP_LOGE(TAG, "Decrypted: %s", res2);
+
+    char* plaintext2 = "migasrocha1@hotmail.com";
+    ESP_LOGE(TAG, "Plaintext: %s", plaintext2);
+
+    char* res3 = encrypt_str_AES(ctx, plaintext2);
+    ESP_LOGE(TAG, "Encrypted: %s", res3);
+
+    char* res4 = decrypt_base64_AES(ctx, res3);
+    ESP_LOGE(TAG, "Decrypted: %s", res4);
+
+    free_AES(ctx);
 }

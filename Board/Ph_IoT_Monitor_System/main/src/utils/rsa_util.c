@@ -42,7 +42,7 @@ char* sign_RSA(char* to_sign) {
     int res = 0;
 
     mbedtls_pk_init(&clientkey);
-    res = mbedtls_pk_parse_key(&clientkey, (const uint8_t *)privkey_2048_buf, sizeof(privkey_2048_buf), NULL, 0);
+    res = mbedtls_pk_parse_key(&clientkey, (const uint8_t *)privkey_2048_buf, sizeof(privkey_2048_buf), NULL, 0, NULL, NULL);
 
     if (res != 0) {
         ESP_LOGE(TAG, "Failed while parsing key. Code: %X", -res);
@@ -58,15 +58,14 @@ char* sign_RSA(char* to_sign) {
 
 
     res = mbedtls_rsa_rsassa_pss_sign(
-            &rsa,
-            myrand,
-            NULL,
-            MBEDTLS_RSA_PRIVATE,
-            MBEDTLS_MD_SHA256,
-            0,
-            (unsigned char*) hash,
-            signature_buf
-    );
+        &rsa,
+        myrand,
+        MBEDTLS_RSA_PRIVATE,
+        MBEDTLS_MD_SHA256,
+        (unsigned int) mbedtls_md_get_size(MBEDTLS_MD_SHA256),
+        (unsigned char*) hash,
+        signature_buf);
+
     if (res != 0) {
         ESP_LOGE(TAG, "Failed while sign. Code: %X", -res);
         return NULL;
@@ -97,7 +96,7 @@ RSA_Decrypted* decrypt_RSA(uint8_t* chipertext) {
     int res = 0;
 
     mbedtls_pk_init(&clientkey);
-    res = mbedtls_pk_parse_key(&clientkey, (const uint8_t *)privkey_2048_buf, sizeof(privkey_2048_buf), NULL, 0);
+    res = mbedtls_pk_parse_key(&clientkey, (const uint8_t *)privkey_2048_buf, sizeof(privkey_2048_buf), NULL, 0, NULL, NULL);
 
     if (res != 0) {
         ESP_LOGE(TAG, "Failed while parsing key. Code: %X", -res);
@@ -108,7 +107,7 @@ RSA_Decrypted* decrypt_RSA(uint8_t* chipertext) {
     mbedtls_rsa_set_padding(&rsa, MBEDTLS_RSA_PKCS_V21, MBEDTLS_MD_SHA256);
 
     size_t len_decrypted;
-    res = mbedtls_rsa_rsaes_oaep_decrypt(&rsa, myrand, NULL, MBEDTLS_RSA_PRIVATE, NULL, 0, &len_decrypted, chipertext, decrypted_buf, sizeof(unsigned char) * KEY_SIZE_BYTES_RSA);
+    res = mbedtls_rsa_rsaes_oaep_decrypt(&rsa, myrand, MBEDTLS_RSA_PRIVATE, NULL, 0, &len_decrypted, chipertext, decrypted_buf, sizeof(unsigned char) * KEY_SIZE_BYTES_RSA);
     if (res != 0) {
         ESP_LOGE(TAG, "Failed while decrypting. Code: %X", -res);
         return NULL;
