@@ -1,10 +1,10 @@
 {
   "phProblem": {
     "subject": "Ph Intervention needed",
-    "body": "Greetings ,\n\nThe ph level of your filter unit {{device_id}} is {{ph_level}} , since it is over the established limit {{ph_limit}} we recommend a maintenance for your filter.\n\nBest regards,\nOur Team"
+    "body": "Greetings,<p> The ph level of your filter unit <b>{{device_id}}</b> is <b>{{ph_level}}</b>, since it is over the established limit <b>{{ph_limit}}</b> we recommend a maintenance for your filter.<p>Best regards,<p>Our Team"
   },
   "TemperatureProblem": {
     "subject": "Temperature Intervention needed",
-    "body": "Greetings {{name}},\n\nThe temperature level of your filter unit {{device_id}} is {{temperature_level}} , since it is over the established limit {{temperature_limit}} we recommend a maintenance for your filter.\n\nBest regards,\nOur Team"
+    "body": "Greetings,<p>The temperature level of your filter unit <b>{{device_id}}</b> is <b>{{temperature_level}}</b> , since it is over the established limit <b>{{temperature_limit}}</b> we recommend a maintenance for your filter.<p>Best regards,<p>Our Team"
   }
 }

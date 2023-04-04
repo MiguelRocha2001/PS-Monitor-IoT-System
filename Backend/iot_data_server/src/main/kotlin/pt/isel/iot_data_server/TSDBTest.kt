@@ -51,22 +51,12 @@ fun main() = runBlocking {
 
 val MIN_PH = 6.0
 val emailSenderService = EmailSender()
-private fun sendEmailIfPhExceedsLimit(deviceId: DeviceId, phRecord: PhRecord,device: Device) {
-    if (phRecord.value < MIN_PH) {
-        val bodyMessage = mapOf(
-            "device_id" to deviceId.id,
-            "ph_value" to phRecord.value.toString(),
-            "ph_limit" to MIN_PH.toString()
-        )
-        val subject = emptyMap<String, String>()
-        emailSenderService.sendEmail(device.ownerEmail, bodyMessage, subject, "phProblem")
-    }
-}
+
 fun main() {
 
-    val ph = PhRecord(1.0, Instant.now())
-    val device = Device(DeviceId("device1"), "psilva20019@gmail.com",2939939)
-    sendEmailIfPhExceedsLimit(DeviceId("device1"), ph,device)
+  //  val ph = PhRecord(1.0, Instant.now())
+  //  val device = Device(DeviceId("device1"), "psilva20019@gmail.com",2939939)
+ //   sendEmailIfPhExceedsLimit(DeviceId("device1"), ph,device)
   //  val a = EmailSender()
   //  a.sendEmail("psilva20019@gmail.com","another","another")
 /*

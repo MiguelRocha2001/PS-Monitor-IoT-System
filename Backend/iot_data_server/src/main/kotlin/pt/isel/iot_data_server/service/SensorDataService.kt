@@ -3,7 +3,9 @@ package pt.isel.iot_data_server.service
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import pt.isel.iot_data_server.MIN_PH
 import pt.isel.iot_data_server.domain.*
+import pt.isel.iot_data_server.emailSenderService
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
 import pt.isel.iot_data_server.service.device.DeviceService
 import pt.isel.iot_data_server.service.sensor_data.PhDataError
@@ -84,6 +86,7 @@ class SensorDataService(
 
                 val deviceResult = deviceService.getDeviceById(deviceId)
                 if (deviceResult is Either.Right) {
+                    sendEmailIfPhExceedsLimit(deviceId, phRecord, deviceResult.value)
                     savePhRecord(deviceId, phRecord)
                     logger.info("Saved ph record: $phRecord, from device: $deviceId")
                 } else {
@@ -101,6 +104,18 @@ class SensorDataService(
 
     fun getAllTemperatureRecords(): List<TemperatureRecord> {
         return tsdbRepository.getAllTemperatureRecords()
+    }
+
+    private fun sendEmailIfPhExceedsLimit(deviceId: DeviceId, phRecord: PhRecord,device: Device) {
+        if (phRecord.value < MIN_PH) {
+            val bodyMessage = mapOf(
+                "device_id" to deviceId.id,
+                "ph_level" to phRecord.value.toString(),
+                "ph_limit" to MIN_PH.toString()
+            )
+            val subject = emptyMap<String, String>()
+            emailSenderService.sendEmail(device.ownerEmail, subject, bodyMessage,"phProblem")
+        }
     }
 
 }
