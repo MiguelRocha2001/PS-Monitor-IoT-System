@@ -1,6 +1,6 @@
 idf_component_register(
         SRCS
-            "src/main_aes_test.c"
+            "src/main.c"
             "src/utils/nvs_util.c"
             "src/utils/pushingbox_util.c"
             "src/utils/esp_touch_util.c"
@@ -16,6 +16,7 @@ idf_component_register(
             "src/utils/rsa_util.c"
             "src/utils/sha256_util.c"
             "src/utils/utils.c"
+            "src/utils/entropy_poll.c"
         INCLUDE_DIRS "include"
 )
 target_compile_options(${COMPONENT_LIB} PRIVATE  -Wno-format)

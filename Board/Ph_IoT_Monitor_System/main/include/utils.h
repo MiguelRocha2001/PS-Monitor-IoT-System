@@ -1,5 +1,6 @@
 #ifndef UTILS_H
 #define UTILS_H
+
 #include <stdint.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -22,3 +23,5 @@ typedef enum {
 void restart_esp(int delay_seconds);
 
 uint8_t* get_random_array(int len);
+
+#endif // UTILS_H
