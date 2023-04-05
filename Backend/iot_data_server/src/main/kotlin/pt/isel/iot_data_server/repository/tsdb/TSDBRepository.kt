@@ -1,5 +1,6 @@
 package pt.isel.iot_data_server.repository.tsdb
 
+import com.influxdb.client.domain.Bucket
 import com.influxdb.client.domain.WritePrecision
 import com.influxdb.client.kotlin.InfluxDBClientKotlin
 import com.influxdb.client.kotlin.InfluxDBClientKotlinFactory
@@ -8,14 +9,15 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 import pt.isel.iot_data_server.domain.*
 import pt.isel.iot_data_server.repository.CollectedDataRepository
 import java.time.Instant
 
-
+//TODO isto retorna os dados referentes a um nos ultimos 7 dias,se calhar devia ser possivel escolher o intervalo de tempo
 @Repository
-class TSDBRepository : CollectedDataRepository {
+class TSDBRepository(private val tsdbConfig: TSDBConfigProperties) : CollectedDataRepository {
     private val token = System.getenv()["INFLUX_TOKEN"]
     private val org = "isel"
     private val bucket = "my_bucket"
@@ -120,4 +122,5 @@ class TSDBRepository : CollectedDataRepository {
             .time(temperatureRecord.instant, WritePrecision.NS)
         getClient().getWriteKotlinApi().writePoint(point)
     }
+
 }

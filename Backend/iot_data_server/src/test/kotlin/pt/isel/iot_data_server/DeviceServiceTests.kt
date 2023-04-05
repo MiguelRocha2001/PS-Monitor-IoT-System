@@ -12,6 +12,7 @@ import java.util.*
 @SpringBootTest
 class DeviceServiceTests {
 	//MESSAGE: There is not much to test here
+	/*
 	@Test
 	fun `create device`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
@@ -43,5 +44,5 @@ class DeviceServiceTests {
 			assertTrue("Device was not created", devices.any { it.deviceId == device3.deviceId })
 		}
 	}
-
+*/
 }

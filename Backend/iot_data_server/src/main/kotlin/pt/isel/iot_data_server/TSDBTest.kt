@@ -49,7 +49,7 @@ fun main() = runBlocking {
 }
 */
 
-val MIN_PH = 6.0
+
 val emailSenderService = EmailSender()
 
 fun main() {

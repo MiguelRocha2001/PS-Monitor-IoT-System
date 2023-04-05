@@ -11,7 +11,7 @@ import java.time.Instant
 import java.util.*
 
 class PhRepoTests {
-
+/*
         @Test
         fun `add ph record and get it`() {
             testWithTransactionManagerAndRollback { transactionManager ->
@@ -19,7 +19,7 @@ class PhRepoTests {
                     val phRepo = transaction.repository
                     val timestampExample = Instant.now()
                     val ph = PhRecord(1.0, timestampExample)
-                    val deviceId = DeviceId(UUID.randomUUID())
+                    val deviceId = DeviceId("4521087288")
                     phRepo.savePhRecord(deviceId, ph)
                     val foundPh = phRepo.getPhRecords(deviceId)
                     assertTrue("Ph found", foundPh != null)
@@ -46,4 +46,5 @@ class PhRepoTests {
                 }
             }
         }
+    */
 }

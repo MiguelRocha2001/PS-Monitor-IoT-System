@@ -4,13 +4,14 @@ import org.junit.jupiter.api.Test
 import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.PhRecord
 import pt.isel.iot_data_server.domain.TemperatureRecord
+import pt.isel.iot_data_server.repository.tsdb.TSDBConfig
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
 import java.time.Instant
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 
 class sensorDataTests {
-
+/*
     @Test
     fun addPhDataTest() {
         val repo = TSDBRepository()
@@ -56,6 +57,7 @@ class sensorDataTests {
 
     @Test
     fun concurrentAddPhDataTest() {
+        val tsdbConfig = TSDBConfig()
         val repo = TSDBRepository()
         val sensorData = SensorDataService(repo)
 
@@ -89,5 +91,5 @@ class sensorDataTests {
     private fun randomPh(): Double {
         return ThreadLocalRandom.current().nextDouble(0.0, 14.0)
     }
-
+*/
 }

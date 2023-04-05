@@ -3,7 +3,6 @@ package pt.isel.iot_data_server.service
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import pt.isel.iot_data_server.MIN_PH
 import pt.isel.iot_data_server.domain.*
 import pt.isel.iot_data_server.emailSenderService
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
@@ -23,7 +22,8 @@ class SensorDataService(
     client: MqttClient
 ) {
     private val logger = LoggerFactory.getLogger(SensorDataService::class.java)
-
+    private val MIN_PH = 6.0
+    private val MAX_TEMPERATURE = 100.0//TODO -> CHANGE THIS VALUE
     init {
         subscribePhTopic(client)
     }
@@ -117,6 +117,18 @@ class SensorDataService(
             )
             val subject = emptyMap<String, String>()
             emailSenderService.sendEmail(device.ownerEmail, subject, bodyMessage,"phProblem")
+        }
+    }
+
+    private fun sendEmailIfTemperatureExceedsLimit(deviceId: DeviceId, temperatureRecord: TemperatureRecord,device: Device) {
+        if (temperatureRecord.value < MAX_TEMPERATURE) {
+            val bodyMessage = mapOf(
+                "device_id" to deviceId.id,
+                "temperature_level" to temperatureRecord.value.toString(),
+                "temperature_limit" to MAX_TEMPERATURE.toString()
+            )
+            val subject = emptyMap<String, String>()
+            emailSenderService.sendEmail(device.ownerEmail, subject, bodyMessage,"temperatureProblem")
         }
     }
 
