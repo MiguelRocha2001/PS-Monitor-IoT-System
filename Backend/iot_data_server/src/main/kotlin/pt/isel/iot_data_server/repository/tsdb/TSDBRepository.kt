@@ -1,14 +1,22 @@
 package pt.isel.iot_data_server.repository.tsdb
 
+import com.influxdb.client.InfluxDBClient
 import com.influxdb.client.domain.Bucket
+import com.influxdb.client.domain.Query
 import com.influxdb.client.domain.WritePrecision
 import com.influxdb.client.kotlin.InfluxDBClientKotlin
 import com.influxdb.client.kotlin.InfluxDBClientKotlinFactory
+import com.influxdb.client.service.DeleteService
 import com.influxdb.client.write.Point
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.internal.closeQuietly
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 import pt.isel.iot_data_server.domain.*
@@ -17,17 +25,23 @@ import java.time.Instant
 
 //TODO isto retorna os dados referentes a um nos ultimos 7 dias,se calhar devia ser possivel escolher o intervalo de tempo
 @Repository
-class TSDBRepository(private val tsdbConfig: TSDBConfigProperties) : CollectedDataRepository {
-    private val token = System.getenv()["INFLUX_TOKEN"]
-    private val org = "isel"
-    private val bucket = "my_bucket"
-    private val path = "http://localhost:8086"
+class TSDBRepository(tsdbConfig: TSDBConfigProperties) : CollectedDataRepository {
+    private val token = tsdbConfig.token
+    private val org = tsdbConfig.org
+    private val bucket = tsdbConfig.bucket
+    private val path = tsdbConfig.path
     private val clientThreadLocal = ThreadLocal<InfluxDBClientKotlin>()
+
+    init {
+        if (token.isBlank()) {
+            throw RuntimeException("INFLUX_TOKEN environment variable not set")
+        }
+    }
 
     private fun getClient(): InfluxDBClientKotlin {
         var client = clientThreadLocal.get()
         if (client == null) {
-            client = InfluxDBClientKotlinFactory.create(path, token!!.toCharArray(), org, bucket)
+            client = InfluxDBClientKotlinFactory.create(path, token.toCharArray(), org, bucket)
             clientThreadLocal.set(client)
         }
         return client
@@ -35,7 +49,7 @@ class TSDBRepository(private val tsdbConfig: TSDBConfigProperties) : CollectedDa
 
     override fun getPhRecords(deviceId: DeviceId): List<PhRecord> = runBlocking {
         val query =
-            """from(bucket: "my_bucket")
+            """from(bucket: "$bucket")
         |> range(start: -7d)
         |> filter(fn: (r) => r.device == "${deviceId.id}")
         |> filter(fn: (r) => r._measurement == "ph")
@@ -52,7 +66,7 @@ class TSDBRepository(private val tsdbConfig: TSDBConfigProperties) : CollectedDa
 
     override fun getAllPhRecords(): List<PhRecord> = runBlocking {
         val query =
-            """from(bucket: "my_bucket")
+            """from(bucket: "$bucket")
             |> range(start: -7d)
             |> filter(fn: (r) => r._measurement == "ph")
             """
@@ -71,7 +85,7 @@ class TSDBRepository(private val tsdbConfig: TSDBConfigProperties) : CollectedDa
 
     override fun getTemperatureRecords(deviceId: DeviceId): List<TemperatureRecord> = runBlocking {
         val query =
-            """from(bucket: "my_bucket")
+            """from(bucket: $bucket)
         |> range(start: -7d)
         |> filter(fn: (r) => r.device == "${deviceId.id}")
         |> filter(fn: (r) => r._measurement == "temperature")
@@ -88,7 +102,7 @@ class TSDBRepository(private val tsdbConfig: TSDBConfigProperties) : CollectedDa
 
     override fun getAllTemperatureRecords(): List<TemperatureRecord> = runBlocking {
         val query =
-            """from(bucket: "my_bucket")
+            """from(bucket: $bucket)
             |> range(start: -7d)
 «            |> filter(fn: (r) => r._measurement == "temperature")
             """
@@ -106,11 +120,11 @@ class TSDBRepository(private val tsdbConfig: TSDBConfigProperties) : CollectedDa
     }
 
     override fun savePhRecord(deviceId: DeviceId, phRecord: PhRecord) = runBlocking {
-       val point = Point
-           .measurement("ph")
-           .addTag("device", deviceId.id)
-           .addField("ph_value", phRecord.value)
-           .time(phRecord.instant, WritePrecision.NS);
+        val point = Point
+            .measurement("ph")
+            .addTag("device", deviceId.id)
+            .addField("ph_value", phRecord.value)
+            .time(phRecord.instant, WritePrecision.NS);
         getClient().getWriteKotlinApi().writePoint(point)
     }
 
@@ -124,3 +138,5 @@ class TSDBRepository(private val tsdbConfig: TSDBConfigProperties) : CollectedDa
     }
 
 }
+
+

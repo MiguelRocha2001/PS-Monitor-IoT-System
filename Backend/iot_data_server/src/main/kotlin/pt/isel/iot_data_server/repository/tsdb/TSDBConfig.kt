@@ -26,17 +26,17 @@ class TSDBConfig {
 @Configuration
 @ConfigurationProperties(prefix = "tsdb1")
 class TSDB1Config : TSDBConfigProperties {
-    override lateinit var token: String //is lateinit to allow for the token to be set by the environment variable, if is not defined, will be null
-    override var org: String = "isel"
-    override var bucket: String = "my_bucket"
-    override var path: String = "http://localhost:8086"
+    override val token: String = System.getenv()["INFLUX_TOKEN"]?:"" //same organization,same token
+    override val org: String = "isel"
+    override val bucket: String = "my_bucket"
+    override val path: String = "http://localhost:8086"
 }
 
 @Configuration
 @ConfigurationProperties(prefix = "tsdb2")
 class TSDB2Config : TSDBConfigProperties {
-    override lateinit var token: String
-    override var org: String = "isel"
-    override var bucket: String = "test_bucket"
-    override var path: String = "http://localhost:8086"
+    override val token: String = System.getenv()["INFLUX_TOKEN"]?:""
+    override val org: String = "isel"
+    override val bucket: String = "test_bucket"
+    override val path: String = "http://localhost:8086"
 }
