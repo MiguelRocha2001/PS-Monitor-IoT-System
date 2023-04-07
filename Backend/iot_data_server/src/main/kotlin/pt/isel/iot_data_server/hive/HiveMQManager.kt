@@ -1,4 +1,4 @@
-package hive
+package pt.isel.iot_data_server.hive
 
 import com.hivemq.embedded.EmbeddedHiveMQ
 import com.hivemq.embedded.EmbeddedHiveMQBuilder

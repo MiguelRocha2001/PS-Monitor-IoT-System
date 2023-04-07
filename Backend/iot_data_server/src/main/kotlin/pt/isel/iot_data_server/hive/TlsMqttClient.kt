@@ -1,4 +1,4 @@
-package hive
+package pt.isel.iot_data_server.hive
 
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions

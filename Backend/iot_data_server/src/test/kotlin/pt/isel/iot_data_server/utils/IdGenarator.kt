@@ -1,4 +1,12 @@
-package pt.isel.daw.dawbattleshipgame.utils
+package pt.isel.iot_data_server.utils
 
-//Only used for test purposes
-fun generateId() = (0..999999999).random()
+fun generateRandomName(): String {
+    val chars = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+    return (1..10)
+        .map { chars.random() }
+        .joinToString("")
+}
+
+fun generateRandomMobileNumber(): Long {
+    return (100000000..999999999).random().toLong()
+}
