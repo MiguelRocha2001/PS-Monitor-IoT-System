@@ -3,17 +3,12 @@ package pt.isel.iot_data_server.http.controllers
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pt.isel.iot_data_server.domain.DeviceId
-import pt.isel.iot_data_server.http.InputPhRecordModel
-import pt.isel.iot_data_server.http.InputTemperatureRecordModel
 import pt.isel.iot_data_server.http.SirenMediaType
 import pt.isel.iot_data_server.http.infra.siren
 import pt.isel.iot_data_server.http.model.map
-import pt.isel.iot_data_server.http.model.sensor_data.PhRecordOutputModel
 import pt.isel.iot_data_server.http.model.sensor_data.PhRecordsOutputModel
-import pt.isel.iot_data_server.http.model.sensor_data.TemperatureRecordOutputModel
 import pt.isel.iot_data_server.http.model.sensor_data.TemperatureRecordsOutputModel
-import pt.isel.iot_data_server.http.toDevice
-import pt.isel.iot_data_server.service.SensorDataService
+import pt.isel.iot_data_server.service.sensor_data.SensorDataService
 import java.util.*
 
 @RestController

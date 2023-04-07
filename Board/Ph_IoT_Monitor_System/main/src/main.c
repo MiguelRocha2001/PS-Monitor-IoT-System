@@ -88,8 +88,6 @@ void setup_wifi(void) {
 
     esp_touch_helper(&deviceID);
 
-    
-
     ESP_LOGE(TAG, "Finished setting up WiFi");
 }
 

@@ -1,5 +1,7 @@
 package pt.isel.iot_data_server
 
+import hive.HiveMQManager
+import hive.MqttClient.Companion.getMqttClient
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.jdbi.v3.core.Jdbi
 import org.postgresql.ds.PGSimpleDataSource
@@ -25,7 +27,7 @@ class IotDataServerApplication {
 	@Bean
 	@DependsOn("hiveMQManager")
 	fun mqttClient(): MqttClient {
-		val client = MqttClient("tcp://localhost:1883", MqttClient.generateClientId())
+		val client = getMqttClient()
 		client.connect()
 		return client
 	}

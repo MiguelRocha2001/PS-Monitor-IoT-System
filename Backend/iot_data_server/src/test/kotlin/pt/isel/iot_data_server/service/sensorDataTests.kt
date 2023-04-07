@@ -4,41 +4,32 @@ import org.junit.jupiter.api.Test
 import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.PhRecord
 import pt.isel.iot_data_server.domain.TemperatureRecord
-import pt.isel.iot_data_server.repository.tsdb.TSDBConfig
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
-import pt.isel.iot_data_server.service.device.DeviceService
-import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 import java.time.Instant
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 
 class sensorDataTests {
-/*
+
     @Test
     fun addPhDataTest() {
-        testWithTransactionManagerAndRollback {
-            val repoTest = TSDBConfig().tsdb2Properties()
-            val repo = TSDBRepository(repoTest)
-            val deviceService = DeviceService(it)
-            val sensorData = SensorDataService(repo, null)
-            val id = UUID.randomUUID()
-            val deviceId = DeviceId(id)
+        val repo = TSDBRepository()
+        val sensorData = SensorDataService(repo)
+        val id = UUID.randomUUID()
+        val deviceId = DeviceId(id)
 
-            //get ph records, should be empty
-            val emptyPhRecords = sensorData.getPhRecords(deviceId)
-            assert(emptyPhRecords.size == 0)
+        //get ph records, should be empty
+        val emptyPhRecords = sensorData.getPhRecords(deviceId)
+        assert(emptyPhRecords.size == 0)
 
-            val time = Instant.now()
-            val phRecord = PhRecord(7.5,time)
-            sensorData.savePhRecord(deviceId, phRecord)
+        val time = Instant.now()
+        val phRecord = PhRecord(7.5,time)
+        sensorData.savePhRecord(deviceId, phRecord)
 
-            val phRecords = sensorData.getPhRecords(deviceId)
-            assert(phRecords.size == 1)
-            assert(phRecords[0].value == 7.5)
-            assert(phRecords[0].timestamp.equals(time))
-
-        }
-
+        val phRecords = sensorData.getPhRecords(deviceId)
+        assert(phRecords.size == 1)
+        assert(phRecords[0].value == 7.5)
+        assert(phRecords[0].timestamp.equals(time))
     }
 
     @Test
@@ -65,7 +56,6 @@ class sensorDataTests {
 
     @Test
     fun concurrentAddPhDataTest() {
-        val tsdbConfig = TSDBConfig()
         val repo = TSDBRepository()
         val sensorData = SensorDataService(repo)
 
@@ -99,5 +89,5 @@ class sensorDataTests {
     private fun randomPh(): Double {
         return ThreadLocalRandom.current().nextDouble(0.0, 14.0)
     }
-*/
+
 }

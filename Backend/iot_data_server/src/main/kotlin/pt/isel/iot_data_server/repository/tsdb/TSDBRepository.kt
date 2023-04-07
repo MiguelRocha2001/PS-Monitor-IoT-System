@@ -19,7 +19,9 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.internal.closeQuietly
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
-import pt.isel.iot_data_server.domain.*
+import pt.isel.iot_data_server.domain.DeviceId
+import pt.isel.iot_data_server.domain.PhRecord
+import pt.isel.iot_data_server.domain.TemperatureRecord
 import pt.isel.iot_data_server.repository.CollectedDataRepository
 import java.time.Instant
 
