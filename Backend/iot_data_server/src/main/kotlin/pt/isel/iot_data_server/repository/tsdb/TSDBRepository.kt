@@ -9,7 +9,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Repository
-import pt.isel.iot_data_server.domain.*
+import pt.isel.iot_data_server.domain.DeviceId
+import pt.isel.iot_data_server.domain.PhRecord
+import pt.isel.iot_data_server.domain.TemperatureRecord
 import pt.isel.iot_data_server.repository.CollectedDataRepository
 import java.time.Instant
 

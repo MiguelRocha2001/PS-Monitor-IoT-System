@@ -1,7 +1,8 @@
 package pt.isel.iot_data_server.repository
 
-import pt.isel.iot_data_server.domain.*
-import java.time.Instant
+import pt.isel.iot_data_server.domain.DeviceId
+import pt.isel.iot_data_server.domain.PhRecord
+import pt.isel.iot_data_server.domain.TemperatureRecord
 
 interface CollectedDataRepository {
 

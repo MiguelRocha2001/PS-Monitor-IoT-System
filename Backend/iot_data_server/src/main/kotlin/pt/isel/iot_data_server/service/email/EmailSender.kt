@@ -1,8 +1,5 @@
 package pt.isel.iot_data_server.service.email
 
-import org.springframework.mail.javamail.JavaMailSender
-import org.springframework.mail.javamail.JavaMailSenderImpl
-import org.springframework.mail.javamail.MimeMessageHelper
 import org.json.JSONObject
 import org.springframework.stereotype.Service
 import java.nio.file.Files

@@ -1,7 +1,5 @@
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.IOException
+package pt.isel.iot_data_server.crypto
+
 import java.security.InvalidAlgorithmParameterException
 import java.security.InvalidKeyException
 import java.security.NoSuchAlgorithmException
@@ -15,7 +13,12 @@ import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
 
-class AESUtil {
+class AES(
+    private val secretKey: SecretKey,
+    private val algorithm: String,
+    private val separator: Char
+) {
+
     companion object {
         @Throws(NoSuchAlgorithmException::class)
         fun generateKey(n: Int): SecretKey {
@@ -98,5 +101,9 @@ class AESUtil {
             val cipherText = ivAndCipherText[0]
             return decrypt(algorithm, cipherText, key, iv)
         }
+    }
+
+    fun decrypt(cipherAndIvText: String): String {
+        return decrypt(algorithm, cipherAndIvText, secretKey, separator)
     }
 }

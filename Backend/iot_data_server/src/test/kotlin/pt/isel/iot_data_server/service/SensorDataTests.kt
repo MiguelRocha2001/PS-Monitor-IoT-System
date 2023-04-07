@@ -3,26 +3,17 @@ package pt.isel.iot_data_server.service
 import com.hivemq.embedded.EmbeddedHiveMQ
 import com.hivemq.embedded.EmbeddedHiveMQBuilder
 import org.eclipse.paho.client.mqttv3.MqttClient
-import org.jdbi.v3.core.Jdbi
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.postgresql.ds.PGSimpleDataSource
-import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.DependsOn
-import org.springframework.context.annotation.Primary
-import pt.isel.iot_data_server.HiveMQManager
 import pt.isel.iot_data_server.domain.Device
 import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.PhRecord
-import pt.isel.iot_data_server.domain.TemperatureRecord
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
 import pt.isel.iot_data_server.service.device.DeviceService
+import pt.isel.iot_data_server.service.sensor_data.SensorDataService
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 import java.time.Instant
-import java.util.*
-import java.util.concurrent.ThreadLocalRandom
 
 class SensorDataTests {
     companion object {

@@ -1,4 +1,4 @@
-package pt.isel.iot_data_server
+package pt.isel.iot_data_server.service
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -7,7 +7,6 @@ import pt.isel.iot_data_server.domain.Device
 import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.service.device.DeviceService
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
-import java.util.*
 
 @SpringBootTest
 class DeviceServiceTests {

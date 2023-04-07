@@ -2,13 +2,10 @@ package pt.isel.iot_data_server.repo
 
 import org.junit.jupiter.api.Test
 import org.springframework.test.util.AssertionErrors.assertTrue
-import pt.isel.iot_data_server.domain.Device
 import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.PhRecord
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
-import java.sql.Timestamp
 import java.time.Instant
-import java.util.*
 
 class PhRepoTests {
 

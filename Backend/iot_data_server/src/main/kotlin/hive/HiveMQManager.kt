@@ -1,4 +1,4 @@
-package pt.isel.iot_data_server
+package hive
 
 import com.hivemq.embedded.EmbeddedHiveMQ
 import com.hivemq.embedded.EmbeddedHiveMQBuilder
@@ -10,7 +10,7 @@ class HiveMQManager {
 
     private val embeddedHiveMQBuilder: EmbeddedHiveMQBuilder = EmbeddedHiveMQ.builder()
     private val hiveMQ: EmbeddedHiveMQ = embeddedHiveMQBuilder
-        .withConfigurationFolder(Path.of("src/main/resources/hivemq/conf"))
+        // .withConfigurationFolder(Path.of("src/main/resources/hivemq/conf")) // TODO: uncomment later
         .build()
 
     @PostConstruct

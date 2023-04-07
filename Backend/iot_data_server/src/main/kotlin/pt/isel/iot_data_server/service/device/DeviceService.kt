@@ -6,7 +6,6 @@ import pt.isel.iot_data_server.domain.Device
 import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.service.Either
-import pt.isel.iot_data_server.service.SensorDataService
 
 @Service
 class DeviceService (

@@ -1,15 +1,14 @@
-package pt.isel.iot_data_server.service
+package pt.isel.iot_data_server.service.sensor_data
 
+import pt.isel.iot_data_server.crypto.AES
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import pt.isel.iot_data_server.crypto.getAESCipherSuit
 import pt.isel.iot_data_server.domain.*
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
+import pt.isel.iot_data_server.service.Either
 import pt.isel.iot_data_server.service.device.DeviceService
-import pt.isel.iot_data_server.service.sensor_data.PhDataError
-import pt.isel.iot_data_server.service.sensor_data.PhDataResult
-import pt.isel.iot_data_server.service.sensor_data.TemperatureDataError
-import pt.isel.iot_data_server.service.sensor_data.TemperatureDataResult
 
 // TODO -> SOLVE CONCURRENCY PROBLEMS
 
@@ -72,17 +71,26 @@ class SensorDataService(
     }
 
     private fun subscribePhTopic(client: MqttClient) {
+        val aesCipherSuite = getAESCipherSuit()
+        val aes = AES(
+            aesCipherSuite.secretKey,
+            aesCipherSuite.algorithm,
+            aesCipherSuite.separator
+        )
+
         client.subscribe("/ph") { topic, message ->
             try {
                 logger.info("Received message from topic: $topic")
 
-                // TODO -> DECRYPT MESSAGE FIRST
-
                 val byteArray = message.payload
-                val string = String(byteArray)
+                // encoded message is in the form: cypherText + separator + ivText (base64)
+                val cypherAndIVText = String(byteArray)
 
-                val phRecord = fromJsonStringToPhRecord(string)
-                val deviceId = fromJsonStringToDeviceId(string)
+                // decrypts broker message
+                val msg = aes.decrypt(cypherAndIVText)
+
+                val phRecord = fromJsonStringToPhRecord(msg)
+                val deviceId = fromJsonStringToDeviceId(msg)
 
                 val deviceResult = deviceService.getDeviceById(deviceId)
                 if (deviceResult is Either.Right) {
@@ -104,5 +112,4 @@ class SensorDataService(
     fun getAllTemperatureRecords(): List<TemperatureRecord> {
         return tsdbRepository.getAllTemperatureRecords()
     }
-
 }

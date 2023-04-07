@@ -4,7 +4,6 @@ import pt.isel.iot_data_server.domain.Device
 import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.domain.UserInfo
-import java.util.*
 
 data class UserMapper(
     val id: Int,
