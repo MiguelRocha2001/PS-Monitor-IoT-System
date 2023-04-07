@@ -52,6 +52,9 @@ dependencies {
 
 	//to work with json
 	implementation("org.json:json:20210307")
+
+	implementation 'javax.xml.bind:jaxb-api:2.3.1'
+	implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
 }
 
 tasks.withType(KotlinCompile) {

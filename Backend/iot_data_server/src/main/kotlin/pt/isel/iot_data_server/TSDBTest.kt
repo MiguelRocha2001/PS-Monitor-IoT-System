@@ -3,11 +3,8 @@ package pt.isel.iot_data_server
 import pt.isel.iot_data_server.domain.Device
 import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.PhRecord
-import pt.isel.iot_data_server.domain.TemperatureRecord
-import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
 import pt.isel.iot_data_server.service.email.EmailSender
 import java.time.Instant
-import kotlin.random.Random
 
 /*
 fun main() = runBlocking {

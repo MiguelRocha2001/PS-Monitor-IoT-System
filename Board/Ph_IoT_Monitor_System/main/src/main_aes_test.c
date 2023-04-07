@@ -51,7 +51,7 @@ void app_main(void) {
     ESP_LOGE(TAG, "Encrypted: %s", res);
 
     char* res2 = decrypt_base64_AES(ctx, res);
-    ESP_LOGE(TAG, "Decrypted: %s", res2);
+    ESP_LOGE(TAG, "Decrypted: %s\n", res2);
 
     char* plaintext2 = "migasrocha1@hotmail.com";
     ESP_LOGE(TAG, "Plaintext: %s", plaintext2);

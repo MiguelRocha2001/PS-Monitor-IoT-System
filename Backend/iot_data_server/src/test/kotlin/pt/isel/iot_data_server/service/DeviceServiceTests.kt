@@ -1,4 +1,4 @@
-package pt.isel.iot_data_server
+package pt.isel.iot_data_server.service
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -7,7 +7,6 @@ import pt.isel.iot_data_server.domain.Device
 import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.service.device.DeviceService
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
-import java.util.*
 
 @SpringBootTest
 class DeviceServiceTests {
@@ -15,8 +14,12 @@ class DeviceServiceTests {
 	@Test
 	fun `create device`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
+			val deviceId = DeviceId("SomeId")
+			val ownerName = "owner"
+			val ownerMobile = 912345678L
+
 			val service = DeviceService(transactionManager)
-			val device = Device(DeviceId(UUID.randomUUID()), name, mobile)
+			val device = Device(deviceId, ownerName, ownerMobile)
 
 			service.addDevice(device)
 
@@ -28,10 +31,20 @@ class DeviceServiceTests {
 	@Test
 	fun `create multiple devices`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
+			val deviceId1 = DeviceId("SomeId1")
+			val ownerName1 = "owner1"
+			val ownerMobile1 = 912345678L
+			val deviceId2 = DeviceId("SomeId2")
+			val ownerName2 = "owner2"
+			val ownerMobile2 = 912345679L
+			val deviceId3 = DeviceId("SomeId3")
+			val ownerName3 = "owner3"
+			val ownerMobile3 = 912345670L
+
 			val service = DeviceService(transactionManager)
-			val device1 = Device(DeviceId(UUID.randomUUID()), name, mobile)
-			val device2 = Device(DeviceId(UUID.randomUUID()), name, mobile)
-			val device3 = Device(DeviceId(UUID.randomUUID()), name, mobile)
+			val device1 = Device(deviceId1, ownerName1, ownerMobile1)
+			val device2 = Device(deviceId2, ownerName2, ownerMobile2)
+			val device3 = Device(deviceId3, ownerName3, ownerMobile3)
 
 			service.addDevice(device1)
 			service.addDevice(device2)
@@ -43,5 +56,4 @@ class DeviceServiceTests {
 			assertTrue("Device was not created", devices.any { it.deviceId == device3.deviceId })
 		}
 	}
-
 }
