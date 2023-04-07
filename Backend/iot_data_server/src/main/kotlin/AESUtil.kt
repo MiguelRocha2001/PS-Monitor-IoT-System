@@ -86,5 +86,17 @@ class AESUtil {
             )
             return String(plainText)
         }
+
+        /**
+         * @param separator the separator between the iv and the cipher text
+         */
+        fun decrypt(
+            algorithm: String, cipherAndIvText: String, key: SecretKey, separator: Char
+        ): String {
+            val ivAndCipherText = cipherAndIvText.split(separator)
+            val iv = IvParameterSpec(Base64.getDecoder().decode(ivAndCipherText[1]))
+            val cipherText = ivAndCipherText[0]
+            return decrypt(algorithm, cipherText, key, iv)
+        }
     }
 }

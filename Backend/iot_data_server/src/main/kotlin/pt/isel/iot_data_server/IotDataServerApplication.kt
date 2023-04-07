@@ -7,7 +7,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.DependsOn
+import pt.isel.iot_data_server.MqttClient.Companion.getMqttClient
 import pt.isel.iot_data_server.repository.jdbi.configure
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 
 
 @SpringBootApplication
@@ -25,7 +30,7 @@ class IotDataServerApplication {
 	@Bean
 	@DependsOn("hiveMQManager")
 	fun mqttClient(): MqttClient {
-		val client = MqttClient("tcp://localhost:1883", MqttClient.generateClientId())
+		val client = getMqttClient()
 		client.connect()
 		return client
 	}
