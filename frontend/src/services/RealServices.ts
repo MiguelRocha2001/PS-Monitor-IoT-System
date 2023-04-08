@@ -1,6 +1,6 @@
 import {doFetch, toBody} from "./fetch";
 import {Device, PhData, TemperatureData, toDevice, toDevices, toPhData, toTemperatureData, User} from "./domain";
-import {deviceAdded, Services} from "./services";
+import {Services} from "./services";
 import {Siren, SirenModule} from "./sirenModule";
 import {Logger} from "tslog";
 
@@ -18,7 +18,6 @@ export class RealServices implements Services {
             SirenModule.extractLogoutAction(response.actions)
             SirenModule.extractIsLoggedInLink(response.links)
             SirenModule.extractGetMeLink(response.links)
-            SirenModule.extractGetNewDeviceIdLink(response.links)
             SirenModule.extractAddDeviceAction(response.actions)
             SirenModule.extractGetDevicesLink(response.links)
             SirenModule.extractGetDeviceLink(response.links)
@@ -118,34 +117,19 @@ export class RealServices implements Services {
         }
     }
 
-    async getNewDeviceId(): Promise<string> {
-        const getNewDeviceIdLink = SirenModule.getGetNewDeviceIdLink()
-        if (!getNewDeviceIdLink) throw new Error('Get new device id link not found')
-        const request = {
-            url: getNewDeviceIdLink.href,
-            method: 'GET'
-        }
-        const response = await doFetch(request)
-        if (response instanceof Siren) {
-            return response.properties.deviceId
-        }
-        else {
-            throw new Error(`Failed to get new device id: ${response.status} ${response.message}`)
-        }
-    }
-
-    async addDevice(device: Device) {
+    async createDevice(ownerEmail: string): Promise<string> {
         const addDeviceAction = SirenModule.getAddDeviceAction()
         if (!addDeviceAction) throw new Error('Add device action not found')
         const request = {
             url: addDeviceAction.href,
             method: addDeviceAction.method,
-            body: toBody(device)
+            body: toBody({ownerEmail})
         }
         const response = await doFetch(request)
         if (response instanceof Siren) {
-            deviceAdded(device)
-            return
+            const deviceId = response.properties.deviceId
+            if (deviceId) return deviceId
+            else throw new Error(`Device added, but no device id found`)
         } else
             throw new Error(`Failed to add device: ${response.status} ${response.message}`)
     }
