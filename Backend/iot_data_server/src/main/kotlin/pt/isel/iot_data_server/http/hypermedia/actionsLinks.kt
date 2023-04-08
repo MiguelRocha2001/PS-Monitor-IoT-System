@@ -40,31 +40,37 @@ fun createLogoutSirenAction(sirenBuilderScope: SirenBuilderScope<*>) =
         this.textField("password")
     }
 
-fun createIsLoggedInLink(sirenBuilderScope: SirenBuilderScope<*>) =
+fun isLoggedInLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
         href = Uris.Users.Me.loggedIn(),
         rel = Rels.IS_LOGGED_IN
     )
 
-fun createGetMeLink(sirenBuilderScope: SirenBuilderScope<*>) =
+fun getMeLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
         href = URI(Uris.Users.ME),
         rel = Rels.ME
     )
 
-fun createGetDevicesLink(sirenBuilderScope: SirenBuilderScope<*>) =
+fun getDevicesLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
         href = Uris.Devices.all(),
         rel = Rels.DEVICES
     )
 
-fun createGetDeviceLink(sirenBuilderScope: SirenBuilderScope<*>) =
+fun getNewDeviceLink(sirenBuilderScope: SirenBuilderScope<*>) =
+    sirenBuilderScope.link(
+        href = URI("/device-id"),
+        rel = Rels.NEW_DEVICE_ID
+    )
+
+fun getDeviceLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
         href = Uris.Devices.byId(),
         rel = Rels.DEVICE
     )
 
-fun createPostDeviceAction(sirenBuilderScope: SirenBuilderScope<*>) =
+fun postDeviceAction(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.action(
         name = "post-device",
         href = Uris.Devices.all(),
@@ -77,13 +83,13 @@ fun createPostDeviceAction(sirenBuilderScope: SirenBuilderScope<*>) =
         this.textField("type")
     }
 
-fun createGetPhLink(sirenBuilderScope: SirenBuilderScope<*>) =
+fun getPhLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
         href = Uris.Devices.PH.all(),
         rel = Rels.PH_DATA
     )
 
-fun createGetTemperatureLink(sirenBuilderScope: SirenBuilderScope<*>) =
+fun getTemperatureLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
         href = Uris.Devices.Temperature.all(),
         rel = Rels.TEMPERATURE_DATA

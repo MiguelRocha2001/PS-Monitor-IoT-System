@@ -21,6 +21,7 @@ object Rels {
     val ME = LinkRelation("me")
 
     // ------------------- Devices -------------------
+    val NEW_DEVICE_ID = LinkRelation("new-device-id")
     val DEVICES = LinkRelation("devices")
     val DEVICE = LinkRelation("device")
 
