@@ -8,6 +8,7 @@ export interface Services {
     authenticateUser(username: string, password: string): Promise<void>
     isLoggedIn(): Promise<boolean>
     getMe(): Promise<User>
+    getNewDeviceId(): Promise<string>
     addDevice(device: Device): void
     getDevices(): Promise<Device[]>
     getDevice(deviceId: string): Promise<Device>

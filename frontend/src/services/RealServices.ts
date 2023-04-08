@@ -18,6 +18,7 @@ export class RealServices implements Services {
             SirenModule.extractLogoutAction(response.actions)
             SirenModule.extractIsLoggedInLink(response.links)
             SirenModule.extractGetMeLink(response.links)
+            SirenModule.extractGetNewDeviceIdLink(response.links)
             SirenModule.extractAddDeviceAction(response.actions)
             SirenModule.extractGetDevicesLink(response.links)
             SirenModule.extractGetDeviceLink(response.links)
@@ -114,6 +115,22 @@ export class RealServices implements Services {
         }
         else {
             throw new Error(`Failed to get me: ${response.status} ${response.message}`)
+        }
+    }
+
+    async getNewDeviceId(): Promise<string> {
+        const getNewDeviceIdLink = SirenModule.getGetNewDeviceIdLink()
+        if (!getNewDeviceIdLink) throw new Error('Get new device id link not found')
+        const request = {
+            url: getNewDeviceIdLink.href,
+            method: 'GET'
+        }
+        const response = await doFetch(request)
+        if (response instanceof Siren) {
+            return response.properties.deviceId
+        }
+        else {
+            throw new Error(`Failed to get new device id: ${response.status} ${response.message}`)
         }
     }
 

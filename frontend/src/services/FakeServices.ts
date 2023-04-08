@@ -49,6 +49,32 @@ export class FakeServices implements Services {
         }
     }
 
+    async getNewDeviceId(): Promise<string> {
+        function generateDeviceId(): string {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const seed = new Date().getHours();
+            let id = '';
+
+            // Generate a 5-character string using the alphabet
+            for (let i = 0; i < 8; i++) {
+                const randomIndex = Math.floor(Math.random() * alphabet.length);
+                id += alphabet[randomIndex];
+            }
+
+            // Add the seed value to the end of the string
+            id += seed.toString();
+
+            return id;
+        }
+
+        while (true) { // loops while there is a device with the same id
+            const deviceId = generateDeviceId()
+            if (!this.devices.find(d => d.id === deviceId)) {
+                return deviceId
+            }
+        }
+    }
+
     async addDevice(device: Device) {
         this.devices.push(device)
         deviceAdded(device)

@@ -54,4 +54,4 @@ fun fromJsonStringToDeviceId(str: String): DeviceId {
     return DeviceId(id)
 }
 
-data class Device(val deviceId: DeviceId, val ownerEmail: String, val ownerMobile: Long)
+data class Device(val deviceId: DeviceId, val ownerEmail: String)

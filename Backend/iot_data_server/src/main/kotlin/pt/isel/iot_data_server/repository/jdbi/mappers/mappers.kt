@@ -30,4 +30,4 @@ data class DeviceMapper(
 )
 
 fun DeviceMapper.toDevice() =
-    Device(DeviceId(id), email, mobile)
+    Device(DeviceId(id), email)

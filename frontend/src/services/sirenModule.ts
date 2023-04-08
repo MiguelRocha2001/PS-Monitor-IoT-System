@@ -73,6 +73,7 @@ let CREATE_TOKEN_ACTION: Action
 let LOGOUT_ACTION: Action
 let IS_LOGGED_IN_LINK: Link
 let GET_ME_LINK: Link
+let GET_NEW_DEVICE_ID_LINK: Link
 let ADD_DEVICE_ACTION: Action
 let GET_DEVICES_LINK: Link
 let GET_DEVICE_LINK: Link
@@ -97,6 +98,10 @@ function getIsLoggedInLink(): Link {
 
 function getGetMeLink(): Link {
     return GET_ME_LINK
+}
+
+function getGetNewDeviceIdLink(): Link {
+    return GET_NEW_DEVICE_ID_LINK
 }
 
 function getAddDeviceAction(): Action {
@@ -140,8 +145,12 @@ function extractGetMeLink(links: Link[]) {
      GET_ME_LINK = extractLink(links, "me")
 }
 
+function extractGetNewDeviceIdLink(links: Link[]) {
+     GET_NEW_DEVICE_ID_LINK = extractLink(links, "new-device-id")
+}
+
 function extractAddDeviceAction(actions: any[]) {
-    ADD_DEVICE_ACTION = extractAction(actions, "post-device")
+    ADD_DEVICE_ACTION = extractAction(actions, "create-device")
 }
 
 function extractGetDevicesLink(links: Link[]) {
@@ -209,6 +218,8 @@ export const SirenModule = {
     extractGetMeLink,
     extractAddDeviceAction,
     getGetMeLink,
+    getGetNewDeviceIdLink,
+    extractGetNewDeviceIdLink,
     getAddDeviceAction,
     getGetDevicesLink,
     extractGetDevicesLink,

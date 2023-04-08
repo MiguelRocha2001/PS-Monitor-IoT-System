@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Primary
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpMethod
 import org.springframework.test.web.reactive.server.WebTestClient
+import pt.isel.iot_data_server.http.controllers.Uris
 import pt.isel.iot_data_server.http.infra.SirenModel
 import pt.isel.iot_data_server.http.model.device.DeviceIdOutputModel
 import pt.isel.iot_data_server.repository.jdbi.configure
@@ -40,18 +41,19 @@ class DeviceHttpTests {
     }
 
     @Test
-    fun `Can obtain a new Device Id`() {
+    fun `Can create a new Device`() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
-        val result = client.get().uri("/device-id")
+        val result = client.post().uri(Uris.Devices.ALL)
+            .bodyValue(mapOf("email" to "someEmail1@gmail.com"))
             .exchange()
-            .expectStatus().isOk
+            .expectStatus().isCreated
             .expectBody(SirenModel::class.java)
             .returnResult()
             .responseBody!!
 
         val properties = result.properties as LinkedHashMap<*, *>
-
+        assertEquals(1, properties.size)
         assertEquals(8, (properties["id"] as? String)?.length)
 
         // asserting links

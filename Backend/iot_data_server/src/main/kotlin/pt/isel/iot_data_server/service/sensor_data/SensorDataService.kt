@@ -1,17 +1,12 @@
-package pt.isel.iot_data_server.service
+package pt.isel.iot_data_server.service.sensor_data
 
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import pt.isel.iot_data_server.MIN_PH
 import pt.isel.iot_data_server.domain.*
-import pt.isel.iot_data_server.emailSenderService
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
+import pt.isel.iot_data_server.service.Either
 import pt.isel.iot_data_server.service.device.DeviceService
-import pt.isel.iot_data_server.service.sensor_data.PhDataError
-import pt.isel.iot_data_server.service.sensor_data.PhDataResult
-import pt.isel.iot_data_server.service.sensor_data.TemperatureDataError
-import pt.isel.iot_data_server.service.sensor_data.TemperatureDataResult
 
 // TODO -> SOLVE CONCURRENCY PROBLEMS
 
@@ -109,6 +104,7 @@ class SensorDataService(
     }
 
     private fun sendEmailIfPhExceedsLimit(deviceId: DeviceId, phRecord: PhRecord,device: Device) {
+        /*
         if (phRecord.value < MIN_PH) {
             val bodyMessage = mapOf(
                 "device_id" to deviceId.id,
@@ -118,6 +114,8 @@ class SensorDataService(
             val subject = emptyMap<String, String>()
             emailSenderService.sendEmail(device.ownerEmail, subject, bodyMessage,"phProblem")
         }
+
+         */
     }
 
 }
