@@ -5,6 +5,7 @@ import org.springframework.test.util.AssertionErrors.assertTrue
 import pt.isel.iot_data_server.domain.Device
 import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
+import java.util.*
 
 class DeviceRepoTests {
 //FIXME URGENTE METER BASE DE DADOS DE TESTS
@@ -12,12 +13,8 @@ class DeviceRepoTests {
     fun `add device`() {
         testWithTransactionManagerAndRollback { transactionManager ->
             transactionManager.run {transaction ->
-                val deviceId = DeviceId("someId")
-                val ownerName = "ownerName"
-                val ownerMobile = 912345678L
-
                 val devicesRepo = transaction.repository
-                val device = Device(deviceId, ownerName, ownerMobile)
+                val device = Device(DeviceId("4521087288"), "exampleEmail@pront.com", 934829492)
                 devicesRepo.addDevice(device)
                 val foundDevice = devicesRepo.getAllDevices().firstOrNull { it.deviceId == device.deviceId }
                 assertTrue("Device found", foundDevice != null)
@@ -29,25 +26,13 @@ class DeviceRepoTests {
     fun `add 3 devices and get the list`() {
         testWithTransactionManagerAndRollback { transactionManager ->
             transactionManager.run {transaction ->
-                val deviceId1 = DeviceId("SomeId1")
-                val ownerName1 = "owner1"
-                val ownerMobile1 = 912345678L
-                val deviceId2 = DeviceId("SomeId2")
-                val ownerName2 = "owner2"
-                val ownerMobile2 = 912345679L
-                val deviceId3 = DeviceId("SomeId3")
-                val ownerName3 = "owner3"
-                val ownerMobile3 = 912345670L
-
                 val devicesRepo = transaction.repository
-                val device1 = Device(deviceId1, ownerName1, ownerMobile1)
-                val device2 = Device(deviceId2, ownerName2, ownerMobile2)
-                val device3 = Device(deviceId3, ownerName3, ownerMobile3)
-
+                val device1 = Device(DeviceId("4521087288"), "exampleEmail@pront.com", 944829492)
+                val device2 = Device(DeviceId("4533387288"), "exampleEmail2@pront.com", 934829492)
+                val device3 = Device(DeviceId("4521555288"), "exampleEmail3@pront.com", 924829492)
                 devicesRepo.addDevice(device1)
                 devicesRepo.addDevice(device2)
                 devicesRepo.addDevice(device3)
-
                 val devices = devicesRepo.getAllDevices()
                 assertTrue("Device found", devices.size == 3)
             }

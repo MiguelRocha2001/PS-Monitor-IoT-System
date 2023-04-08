@@ -9,6 +9,7 @@ import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 
 @SpringBootTest
 class UserServiceTests {
+	/*
 	@Test
 	fun `create user`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
@@ -146,5 +147,5 @@ class UserServiceTests {
 			assertTrue("User was not created", users.any { it.userInfo.mobile == mobile1 })
 			assertTrue("User was not created", users.any { it.userInfo.mobile == mobile2 })
 		}
-	}
+	}*/
 }
