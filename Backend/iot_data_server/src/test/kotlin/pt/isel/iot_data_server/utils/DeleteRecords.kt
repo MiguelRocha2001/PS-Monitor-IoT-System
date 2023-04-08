@@ -47,7 +47,7 @@ fun deleteAllTemperatureMeasurements(config: TSDBConfigProperties) {
         {
             "start": "2020-03-01T00:00:00Z",
             "stop": "2025-11-14T00:00:00Z",
-            "predicate": "_measurement=\temperature\""
+            "predicate": "_measurement=\"temperature\""
         }
     """.trimIndent()
 

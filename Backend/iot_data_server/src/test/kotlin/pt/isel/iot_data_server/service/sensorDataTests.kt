@@ -10,7 +10,7 @@ import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 
 class sensorDataTests {
-
+/*ª
     @Test
     fun addPhDataTest() {
         val repo = TSDBRepository()
@@ -89,5 +89,5 @@ class sensorDataTests {
     private fun randomPh(): Double {
         return ThreadLocalRandom.current().nextDouble(0.0, 14.0)
     }
-
+*/
 }

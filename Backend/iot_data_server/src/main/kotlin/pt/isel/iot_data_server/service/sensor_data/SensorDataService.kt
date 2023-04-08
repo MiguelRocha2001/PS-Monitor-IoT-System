@@ -3,7 +3,6 @@ package pt.isel.iot_data_server.service
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import pt.isel.iot_data_server.MIN_PH
 import pt.isel.iot_data_server.domain.*
 import pt.isel.iot_data_server.emailSenderService
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
@@ -24,6 +23,7 @@ class SensorDataService(
 ) {
     private val logger = LoggerFactory.getLogger(SensorDataService::class.java)
 
+    val MIN_PH = 6.0 //todo change this to other place and make it configurable
     init {
         subscribePhTopic(client)
     }

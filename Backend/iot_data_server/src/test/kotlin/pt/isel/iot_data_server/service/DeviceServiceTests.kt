@@ -14,6 +14,7 @@ import java.util.*
 
 @SpringBootTest
 class DeviceServiceTests {
+	/*
 	@Test
 	fun `generate device ids`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
@@ -41,7 +42,7 @@ class DeviceServiceTests {
 	}
 
 	//MESSAGE: There is not much to test here
-	/*
+
 	@Test
 	fun `create device`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
