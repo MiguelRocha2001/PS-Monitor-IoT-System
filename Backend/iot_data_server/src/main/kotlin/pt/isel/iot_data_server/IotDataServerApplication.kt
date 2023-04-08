@@ -22,6 +22,8 @@ class IotDataServerApplication {
 		}
 	).configure()
 
+	// TODO: define Bean to create TS-Database (InfluxDB)
+
 	@Bean("hiveMQManager")
 	fun hiveMQManager() = HiveMQManager()
 

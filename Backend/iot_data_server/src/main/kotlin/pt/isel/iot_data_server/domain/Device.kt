@@ -32,7 +32,7 @@ fun generateRandomDeviceId(seedType: SEED): DeviceId {
     val sb = StringBuilder()
     val characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-    val length = 6
+    val length = 8
     for (i in 0 until length) {
         sb.append(characters[rand.nextInt(characters.length)])
     }

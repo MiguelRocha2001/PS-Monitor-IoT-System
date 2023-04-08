@@ -2,6 +2,8 @@ package pt.isel.iot_data_server.http.model.device
 
 import pt.isel.iot_data_server.domain.Device
 
+data class DeviceIdOutputModel(val id: String)
+
 data class DevicesOutputModel(val devices: List<DeviceOutputModel>) {
 
     companion object {

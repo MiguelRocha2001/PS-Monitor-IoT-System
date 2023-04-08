@@ -19,7 +19,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 // implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server:3.0.5'
 
-	implementation ("com.influxdb:influxdb-client-kotlin:1.16.3")//add influxdb client
+	implementation ("com.influxdb:influxdb-client-kotlin:1.16.3") // add influxdb client
 
 	implementation ("com.sun.mail:javax.mail:1.6.2")
 
@@ -27,6 +27,7 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-webflux")
 
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
