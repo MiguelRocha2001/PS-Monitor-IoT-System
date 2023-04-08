@@ -17,6 +17,14 @@ import java.util.*
 class DeviceController(
     val service: DeviceService
 ) {
+    @GetMapping("/device-id")
+    fun getDeviceId(): ResponseEntity<*> {
+        val deviceId = service.generateDeviceId()
+        return ResponseEntity.status(201)
+            .contentType(SirenMediaType)
+            .body(siren(UUID.randomUUID().toString()) {})
+    }
+
     @GetMapping(Uris.Devices.ALL)
     fun getDevices(): ResponseEntity<*> {
         val devices = service.getAllDevices()
