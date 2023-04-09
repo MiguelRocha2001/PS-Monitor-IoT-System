@@ -14,4 +14,4 @@ fun Device.toOutputModel() = DeviceOutputModel(id = this.deviceId.id, email = th
 
 data class DeviceOutputModel(val id: String, val email: String)
 
-data class DeviceCreateOutputModel(val id: String)
+data class DeviceCreateOutputModel(val deviceId: String)

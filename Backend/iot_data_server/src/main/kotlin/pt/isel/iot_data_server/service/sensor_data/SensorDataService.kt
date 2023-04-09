@@ -4,6 +4,7 @@ import org.eclipse.paho.client.mqttv3.MqttClient
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import pt.isel.iot_data_server.domain.*
+import pt.isel.iot_data_server.emailSenderService
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
 import pt.isel.iot_data_server.service.Either
 import pt.isel.iot_data_server.service.device.DeviceService
@@ -19,7 +20,7 @@ class SensorDataService(
 ) {
     private val logger = LoggerFactory.getLogger(SensorDataService::class.java)
 
-    val MIN_PH = 6.0 //todo change this to other place and make it configurable
+    val MIN_PH = 6.0 // TODO: change this to other place and make it configurable
     init {
         subscribePhTopic(client)
     }
@@ -84,7 +85,7 @@ class SensorDataService(
 
                 val deviceResult = deviceService.getDeviceById(deviceId)
                 if (deviceResult is Either.Right) {
-                    sendEmailIfPhExceedsLimit(deviceId, phRecord, deviceResult.value)
+                    // sendEmailIfPhExceedsLimit(deviceId, phRecord, deviceResult.value) TODO: uncomment this later
                     savePhRecord(deviceId, phRecord)
                     logger.info("Saved ph record: $phRecord, from device: $deviceId")
                 } else {
@@ -105,7 +106,6 @@ class SensorDataService(
     }
 
     private fun sendEmailIfPhExceedsLimit(deviceId: DeviceId, phRecord: PhRecord,device: Device) {
-        /*
         if (phRecord.value < MIN_PH) {
             val bodyMessage = mapOf(
                 "device_id" to deviceId.id,
@@ -115,8 +115,6 @@ class SensorDataService(
             val subject = emptyMap<String, String>()
             emailSenderService.sendEmail(device.ownerEmail, subject, bodyMessage,"phProblem")
         }
-
-         */
     }
 
 }

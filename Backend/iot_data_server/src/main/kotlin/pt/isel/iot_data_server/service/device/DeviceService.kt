@@ -13,7 +13,7 @@ import pt.isel.iot_data_server.service.Either
 @Service
 class DeviceService (
     private val transactionManager: TransactionManager,
-    private val seed: SEED = SEED.HOUR
+    private val seed: SEED
 ) {
     private val logger = LoggerFactory.getLogger(DeviceService::class.java)
 
@@ -36,13 +36,19 @@ class DeviceService (
 
     fun getDeviceById(deviceId: DeviceId): GetDeviceResult {
         return transactionManager.run {
-            val device = it.repository.getAllDevices().find { it.deviceId == deviceId }
+            val device = getDeviceById(deviceId.id)
             if (device == null) {
                 logger.info("Device with id $deviceId not found")
                 return@run Either.Left(GetDeviceError.DeviceNotFound)
             }
             logger.info("Device with id $deviceId found")
             return@run Either.Right(device)
+        }
+    }
+
+    private fun getDeviceById(deviceId: String): Device? {
+        return transactionManager.run {
+            return@run it.repository.getAllDevices().find<Device> { it.deviceId.id == deviceId }
         }
     }
 
@@ -53,14 +59,13 @@ class DeviceService (
      */
     fun generateDeviceId(): DeviceId {
         // loops until a unique ID is generated
-        while (true) {
+        while (true) { // TODO: change to a for loop with a max number of iterations
             val deviceId = generateRandomDeviceId(seed)
 
             // Check if the generated ID already exists
-            val exists = getDeviceById(deviceId) is Either.Right
+            val exists = getDeviceById(deviceId.id) != null
 
-            if (!exists)
-                return deviceId
+            if (!exists) return deviceId
         }
     }
 }

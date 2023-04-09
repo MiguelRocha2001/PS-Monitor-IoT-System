@@ -1,7 +1,7 @@
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import {Card} from "react-bootstrap";
-import {useNavigate} from "react-router-dom";
+import {Navigate, useLocation, useNavigate} from "react-router-dom"
 import React from "react";
 import {services} from "../../services/services";
 import {Device} from "../../services/domain";
@@ -25,13 +25,13 @@ function NewDevice() {
 export default NewDevice;
 
 function NewIoTDeviceForm({onError}: { onError: (error: string) => void }) {
-    const navigate = useNavigate();
+    const navigate = useNavigate()
 
     const [deviceId, setDeviceId] = React.useState<string | undefined>(undefined);
     const [email, setEmail] = React.useState<string>("");
 
     if (deviceId)
-        navigate(`/device-created/${deviceId}`)
+        return <Navigate to={`/device-created/${deviceId}`} replace={true}/>
 
     async function submitForm() {
         try {

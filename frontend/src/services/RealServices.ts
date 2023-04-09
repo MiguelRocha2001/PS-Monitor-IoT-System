@@ -123,11 +123,12 @@ export class RealServices implements Services {
         const request = {
             url: addDeviceAction.href,
             method: addDeviceAction.method,
-            body: toBody({ownerEmail})
+            body: toBody({email: ownerEmail})
         }
         const response = await doFetch(request)
         if (response instanceof Siren) {
             const deviceId = response.properties.deviceId
+            console.log(`Device added with id ${deviceId}`)
             if (deviceId) return deviceId
             else throw new Error(`Device added, but no device id found`)
         } else

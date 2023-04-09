@@ -37,7 +37,7 @@ class IotDataServerApplication {
 
 	/*** The seed type used to generate the device id */
 	@Bean
-	fun deviceIdSeed() = SEED.HOUR
+	fun deviceIdSeed() = SEED.MILLISECOND // TODO: change to SEED.HOUR, in final version
 }
 
 fun main(args: Array<String>) {
