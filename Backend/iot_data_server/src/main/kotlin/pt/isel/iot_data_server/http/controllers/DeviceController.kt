@@ -6,9 +6,9 @@ import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.http.DeviceInputModel
 import pt.isel.iot_data_server.http.SirenMediaType
 import pt.isel.iot_data_server.http.infra.siren
-import pt.isel.iot_data_server.http.model.device.DeviceCreateOutputModel
+import pt.isel.iot_data_server.http.model.device.CreateDeviceOutputModel
 import pt.isel.iot_data_server.http.model.device.DevicesOutputModel
-import pt.isel.iot_data_server.http.model.device.toOutputModel
+import pt.isel.iot_data_server.http.model.device.toDeviceOutputModel
 import pt.isel.iot_data_server.http.model.map
 import pt.isel.iot_data_server.service.device.DeviceService
 import java.util.*
@@ -37,7 +37,9 @@ class DeviceController(
         return device.map {
             ResponseEntity.status(201)
                 .contentType(SirenMediaType)
-                .body(siren(it.toOutputModel()) {})
+                .body(siren(it.toDeviceOutputModel()) {
+                    clazz("device")
+                })
         }
     }
 
@@ -49,13 +51,12 @@ class DeviceController(
         return result.map { deviceId ->
             ResponseEntity.status(201)
                 .contentType(SirenMediaType)
-                .header(
-                    "Location",
-                    Uris.Devices.byId(deviceId).toASCIIString()
-                )
+                .header("Location", Uris.Devices.byId(deviceId).toASCIIString())
                 .body(siren(
-                    DeviceCreateOutputModel(deviceId)
-                ) {})
+                    CreateDeviceOutputModel(deviceId)
+                ) {
+                    clazz("device-id")
+                })
         }
     }
 }

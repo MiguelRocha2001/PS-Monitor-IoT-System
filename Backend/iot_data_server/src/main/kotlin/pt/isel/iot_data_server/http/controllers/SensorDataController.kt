@@ -29,7 +29,9 @@ class SensorDataController(
                     Uris.Devices.PH.all().toASCIIString()
                 )
                 .body(
-                    siren(PhRecordsOutputModel.from(it)) {}
+                    siren(PhRecordsOutputModel.from(it)) {
+                        clazz("ph-records")
+                    }
                 )
         }
     }
@@ -48,7 +50,9 @@ class SensorDataController(
                     Uris.Devices.Temperature.all().toASCIIString()
                 )
                 .body(
-                    siren(TemperatureRecordsOutputModel.from(it)) {}
+                    siren(TemperatureRecordsOutputModel.from(it)) {
+                        clazz("temperature-records")
+                    }
                 )
         }
     }

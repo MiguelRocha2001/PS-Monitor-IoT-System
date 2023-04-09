@@ -59,7 +59,7 @@ class InfoHttpTests {
         links.any { it.rel.contains(Rels.ME.value) && it.href == URI(Uris.Users.ME).toASCIIString() }
         links.any { it.rel.contains(Rels.DEVICES.value) && it.href == Uris.Devices.all().toASCIIString() }
         links.any { it.rel.contains(Rels.NEW_DEVICE_ID.value) && it.href == URI("/device-id").toASCIIString() }
-        links.any { it.rel.contains(Rels.DEVICE.value) && it.href == Uris.Devices.byId().toASCIIString() }
+        links.any { it.rel.contains(Rels.DEVICE_BY_ID.value) && it.href == Uris.Devices.byId().toASCIIString() }
         links.any { it.rel.contains(Rels.PH_DATA.value) && it.href == Uris.Devices.PH.all().toASCIIString() }
         links.any { it.rel.contains(Rels.TEMPERATURE_DATA.value) && it.href == Uris.Devices.Temperature.all().toASCIIString() }
 

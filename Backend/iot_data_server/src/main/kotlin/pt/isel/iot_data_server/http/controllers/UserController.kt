@@ -31,10 +31,7 @@ class UserController(
             val token = it.second
             ResponseEntity.status(201)
                 .contentType(SirenMediaType)
-                .header(
-                    "Location",
-                    Uris.Users.byId(userId).toASCIIString()
-                )
+                .header("Location", Uris.Users.byId(userId).toASCIIString())
                 .body(siren(UserCreateOutputModel(userId, token)) {
                     clazz("users")
                     createUserSirenAction(this)
@@ -49,7 +46,7 @@ class UserController(
      * If the user is not authenticated, the interceptor will throw an exception and the method will not be called.
      * Because of this, the method will only be called if the user is authenticated, and thus, the user is logically logged.
      */
-    @GetMapping(Uris.Users.Me.loggedIn)
+    @GetMapping(Uris.NonSemantic.loggedIn)
     fun isLogged(
         request: HttpServletRequest
     ): ResponseEntity<*> {
@@ -61,7 +58,10 @@ class UserController(
             })
     }
 
-    @DeleteMapping(Uris.Users.TOKEN)
+    /**
+     * Get method, because it doesn't change anything in the server.
+     */
+    @GetMapping(Uris.NonSemantic.logout)
     fun logout(
         user: User,
         response: HttpServletResponse
@@ -72,17 +72,7 @@ class UserController(
         return ResponseEntity.status(204).build()
     }
 
-    private fun buildCookie(maxAge: Int, value: String?): Cookie {
-        val cookieWithToken = Cookie("token", value ?: "null")
-        cookieWithToken.path = "/"
-        cookieWithToken.isHttpOnly = true
-        cookieWithToken.secure = true
-        cookieWithToken.maxAge = maxAge
-
-        return cookieWithToken
-    }
-
-    @PostMapping(Uris.Users.TOKEN)
+    @PostMapping(Uris.Users.MY_TOKEN)
     fun createToken(
         response: HttpServletResponse,
         @RequestBody input: UserCreateTokenInputModel
@@ -96,19 +86,37 @@ class UserController(
         }
 
         return res.map {
-            ResponseEntity.status(201)
+            ResponseEntity.status(204) // no content
                 .contentType(SirenMediaType)
-                .body(
-                    siren(TokenOutputModel(it)) {
-                        clazz("user-token")
-                    }
-                )
+                // location is not needed, since the token it is not allowed to fetch the token
+                // instead, the user should create a new one, which will be put in the cookie
+                .build<Unit>()
         }
     }
 
+    private fun buildCookie(maxAge: Int, value: String?): Cookie {
+        val cookieWithToken = Cookie("token", value ?: "null")
+        cookieWithToken.path = "/"
+        cookieWithToken.isHttpOnly = true
+        cookieWithToken.secure = true
+        cookieWithToken.maxAge = maxAge
+
+        return cookieWithToken
+    }
+
     @GetMapping(Uris.Users.ALL)
-    fun getAllUsers(): List<User> {
-        return service.getAllUsers()
+    fun getAllUsers(): ResponseEntity<*> {
+        val users = service.getAllUsers()
+        return if (users.isEmpty())
+            ResponseEntity.status(204).build<Unit>()
+        else
+            ResponseEntity.status(200)
+                .contentType(SirenMediaType)
+                .body(
+                    siren(UsersOutputModel.fromUsers(users)) {
+                        clazz("users")
+                    }
+                )
     }
 
     @GetMapping(Uris.Users.ME)
@@ -124,7 +132,7 @@ class UserController(
         return ResponseEntity.status(200)
             .contentType(SirenMediaType)
             .body(siren(userOutputModel) {
-                clazz("user")
+                clazz("user-me")
             })
     }
 }
