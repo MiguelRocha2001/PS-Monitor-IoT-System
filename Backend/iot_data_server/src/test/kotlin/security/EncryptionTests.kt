@@ -1,4 +1,4 @@
-package pt.isel.iot_data_server
+package security
 
 import pt.isel.iot_data_server.crypto.AES
 import org.junit.jupiter.api.Test

@@ -146,4 +146,28 @@ class JdbiServerRepository(
             .mapTo<TemperatureRecord>()
             .list()
     }
+
+    override fun saveSalt(userId: Int, salt: ByteArray) {
+        handle.createUpdate(
+            """
+            insert into salt (user_id, salt) values (:user_id, :salt)
+            """
+        )
+            .bind("user_id", userId)
+            .bind("salt", salt)
+            .execute()
+    }
+
+    override fun getSalt(userId: Int): ByteArray {
+        return handle.createQuery(
+            """
+            select salt 
+            from salt 
+            where user_id = :user_id
+            """
+        )
+            .bind("user_id", userId)
+            .mapTo<ByteArray>()
+            .single()
+    }
 }

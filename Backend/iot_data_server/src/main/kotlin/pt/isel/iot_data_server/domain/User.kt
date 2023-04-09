@@ -25,3 +25,23 @@ data class UserInfo(val username: String, val password: String, val email: Strin
 }
 
 data class User(val id: Int, val userInfo: UserInfo)
+
+data class PasswordHash(val salt: ByteArray, val hashedPassword: String) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as PasswordHash
+
+        if (!salt.contentEquals(other.salt)) return false
+        if (hashedPassword != other.hashedPassword) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = salt.contentHashCode()
+        result = 31 * result + hashedPassword.hashCode()
+        return result
+    }
+}
