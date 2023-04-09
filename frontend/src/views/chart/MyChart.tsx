@@ -1,42 +1,16 @@
 import {JSXElementConstructor, ReactElement, ReactFragment, ReactPortal} from "react";
-import {PhRecord} from "../services/domain";
+import {PhRecord} from "../../services/domain";
+import {mapToLabel, toLabels} from "./chartLabels";
 
 const {useChart} = require("./useChart");
 const {dataSet} = require("./data");
 const React = require("react");
 
-const dataSample = [
-    {x: 'January', y: 10},
-    {x: 'February', y: 5},
-    {x: 'March', y: 15},
-    {x: 'April', y: 20},
-    {x: 'May', y: 30},
-    {x: 'June', y: 40},
-    {x: 'July', y: 20},
-    {x: 'August', y: 30},
-    {x: 'September', y: 50},
-    {x: 'October', y: 60},
-    {x: 'November', y: 30},
-    {x: 'December', y: 25},
-]
+export enum Period {SECOND, MINUTE, HOUR, DAY, MONTH, YEAR}
 
-// months
-const labels = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
-];
-
-export function MyChart({phRecords, tempRecords}: { phRecords: PhRecord[], tempRecords: PhRecord[] }) {
+export function MyChart(
+    {period, phRecords, tempRecords}: { period: Period, phRecords: PhRecord[], tempRecords: PhRecord[] }
+) {
     const canvasRef = React.useRef(null);
     const [data, setData] = React.useState(dataSet);
 
@@ -52,30 +26,17 @@ export function MyChart({phRecords, tempRecords}: { phRecords: PhRecord[], tempR
         }));
     };
 
-    const labels = phRecords.map((record: PhRecord) => {
-        const day = record.date.getDay();
-        if (day === 0) return "Sun";
-        if (day === 1) return "Mon";
-        if (day === 2) return "Tue";
-        if (day === 3) return "Wed";
-        if (day === 4) return "Thu";
-        if (day === 5) return "Fri";
-        if (day === 6) return "Sat";
-    })
+    const labels = toLabels(period)
 
-    const phData = phRecords.map((record: PhRecord) => {
-        return {
-            x: record.date.getDay(),
-            y: record.value
-        }
+    const phDates = phRecords.map((phRecord) => {
+        return phRecord.date
     })
+    const phData = mapToLabel(period, phDates)
 
-    const tempData = tempRecords.map((record: PhRecord) => {
-        return {
-            x: record.date.getDay(),
-            y: record.value
-        }
+    const tempDates = tempRecords.map((tempRecord) => {
+        return tempRecord.date
     })
+    const tempData = mapToLabel(period, tempDates)
 
     const phDataset = data["PH"].isVisible ? {
         label: data["PH"].label,

@@ -16,4 +16,4 @@ export interface Services {
     logout(): Promise<void>
 }
 
-export const services: Services = new RealServices()
+export const services: Services = new FakeServices()

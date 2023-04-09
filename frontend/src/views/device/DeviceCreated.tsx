@@ -4,7 +4,7 @@ import {useParams} from "react-router-dom";
 import {Row} from "react-bootstrap";
 import {services} from "../../services/services";
 import {PhRecord, TemperatureRecord} from "../../services/domain";
-import {MyChart} from "../../chart/MyChart";
+import {MyChart} from "../chart/MyChart";
 import {SomethingWentWrong} from "../SomethingWentWrong";
 import {MyCard} from "../Commons";
 

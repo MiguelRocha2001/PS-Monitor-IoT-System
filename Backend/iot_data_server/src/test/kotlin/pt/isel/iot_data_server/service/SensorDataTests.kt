@@ -5,15 +5,6 @@ import com.hivemq.embedded.EmbeddedHiveMQBuilder
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
-import pt.isel.iot_data_server.domain.Device
-import pt.isel.iot_data_server.domain.DeviceId
-import pt.isel.iot_data_server.domain.PhRecord
-import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
-import pt.isel.iot_data_server.service.device.DeviceService
-import pt.isel.iot_data_server.service.sensor_data.SensorDataService
-import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
-import java.time.Instant
 
 class SensorDataTests {
     companion object {
