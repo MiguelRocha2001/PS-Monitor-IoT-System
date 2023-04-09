@@ -20,29 +20,6 @@ class DeviceServiceTests {
 	}
 
 	@Test
-	fun `create multiple devices`() {
-		testWithTransactionManagerAndRollback { transactionManager ->
-			val deviceId1 = DeviceId("SomeId1")
-			val ownerEmail1 = "owner1"
-			val deviceId2 = DeviceId("SomeId2")
-			val ownerEmail2 = "owner2"
-			val deviceId3 = DeviceId("SomeId3")
-			val ownerEmail3 = "owner3"
-
-			val service = DeviceService(transactionManager, SEED.NANOSECOND)
-
-			service.addDevice(ownerEmail1)
-			service.addDevice(ownerEmail2)
-			service.addDevice(ownerEmail3)
-
-			val devices = service.getAllDevices()
-			assertTrue(devices.any { it.deviceId == deviceId1 })
-			assertTrue(devices.any { it.deviceId == deviceId2 })
-			assertTrue(devices.any { it.deviceId == deviceId3 })
-		}
-	}
-
-	@Test
 	fun `Create devices, and then assert if generated ids dont collide with already existent device ids`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
 			// will use a different seed, each nanosecond

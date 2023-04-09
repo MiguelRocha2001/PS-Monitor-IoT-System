@@ -47,7 +47,7 @@ class DeviceHttpTests {
 
         val properties = result.properties as LinkedHashMap<*, *>
         assertEquals(1, properties.size)
-        assertEquals(8, (properties["id"] as? String)?.length)
+        assertEquals(8, (properties["deviceId"] as? String)?.length)
 
         // asserting links
         val links = result.links

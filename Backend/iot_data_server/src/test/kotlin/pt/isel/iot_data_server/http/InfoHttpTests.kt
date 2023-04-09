@@ -54,11 +54,10 @@ class InfoHttpTests {
 
         // asserting links
         val links = result.links
-        assertEquals(7, links.size)
-        links.any { it.rel.contains(Rels.IS_LOGGED_IN.value) && it.href == Uris.Users.Me.loggedIn().toASCIIString() }
+        assertEquals(6, links.size)
+        links.any { it.rel.contains(Rels.IS_LOGGED_IN.value) && it.href == Uris.NonSemantic.loggedIn().toASCIIString() }
         links.any { it.rel.contains(Rels.ME.value) && it.href == URI(Uris.Users.ME).toASCIIString() }
         links.any { it.rel.contains(Rels.DEVICES.value) && it.href == Uris.Devices.all().toASCIIString() }
-        links.any { it.rel.contains(Rels.NEW_DEVICE_ID.value) && it.href == URI("/device-id").toASCIIString() }
         links.any { it.rel.contains(Rels.DEVICE_BY_ID.value) && it.href == Uris.Devices.byId().toASCIIString() }
         links.any { it.rel.contains(Rels.PH_DATA.value) && it.href == Uris.Devices.PH.all().toASCIIString() }
         links.any { it.rel.contains(Rels.TEMPERATURE_DATA.value) && it.href == Uris.Devices.Temperature.all().toASCIIString() }
@@ -75,14 +74,14 @@ class InfoHttpTests {
         }
 
         actions.any { action ->
-            action.name == "create-token" && action.href == URI(Uris.Users.TOKEN).toASCIIString() && action.method == HttpMethod.POST.name() &&
+            action.name == "create-token" && action.href == URI(Uris.Users.MY_TOKEN).toASCIIString() && action.method == HttpMethod.POST.name() &&
                     action.fields.size == 2 &&
                     action.fields.any { it.name == "username" && it.type == "text" } &&
                     action.fields.any { it.name == "password" && it.type == "password" }
         }
 
         actions.any { action ->
-            action.name == "logout" && action.href == URI(Uris.Users.TOKEN).toASCIIString() && action.method == HttpMethod.DELETE.name()
+            action.name == "logout" && action.href == URI(Uris.NonSemantic.logout).toASCIIString() && action.method == HttpMethod.DELETE.name()
         }
 
         actions.any { action ->
@@ -91,5 +90,4 @@ class InfoHttpTests {
                     action.fields.any { it.name == "email" && it.type == "text" }
         }
     }
-
 }
