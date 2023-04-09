@@ -137,7 +137,7 @@ function extractIsLoggedInLink(links: Link[]) {
 }
 
 function extractGetMeLink(links: Link[]) {
-     GET_ME_LINK = extractLink(links, "me")
+     GET_ME_LINK = extractLink(links, "users-me")
 }
 
 function extractAddDeviceAction(actions: any[]) {
@@ -149,7 +149,7 @@ function extractGetDevicesLink(links: Link[]) {
 }
 
 function extractGetDeviceLink(links: Link[]) {
-    GET_DEVICE_LINK = extractLink(links, "device")
+    GET_DEVICE_LINK = extractLink(links, "device-by-id")
 }
 
 function extractGetPhDataLink(links: Link[]) {

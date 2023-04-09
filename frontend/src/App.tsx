@@ -19,38 +19,47 @@ const logger = new Logger({ name: "App" });
 
 function App() {
     const navigate = useNavigate();
+    const [sirenInfoFetched, setSirenInfoFetched] = React.useState<boolean>(false);
+    const [sirenInfoFetchFailed, setSirenInfoFetchFailed] = React.useState<boolean>(false);
     const {isAuthenticated} = useAuth();
-    const [componentToDisplay, setComponentToDisplay]
-        = React.useState<JSX.Element>(<Loading></Loading>);
 
     useEffect(() => {
-        if (!isAuthenticated) {
-            logger.info("User is not authenticated, redirecting to login page.")
-            navigate("/auth/login");
-        } else {
-            logger.info("User is authenticated, redirecting to home page.")
-            navigate("/");
+        if (sirenInfoFetched) {
+            if (!isAuthenticated) {
+                logger.info("User is not authenticated, redirecting to login page.")
+                navigate("/auth/login")
+            } else {
+                logger.info("User is authenticated, redirecting to home page.")
+                navigate("/");
+            }
         }
-    }, [isAuthenticated]);
+    }, [sirenInfoFetched, isAuthenticated]);
 
     useEffect(() => {
         // Ensures that the Services module extracts all available Siren information, from the backend.
         services.getBackendSirenInfo().then(() => {
             logger.info("Siren information extracted from the backend.")
-            setComponentToDisplay(getRouterComponent());
+            setSirenInfoFetched(true);
         }).catch((error) => {
             const errorToLogAndDisplay = "Error while extracting Siren information from the backend: " + error
             logger.error(errorToLogAndDisplay)
-            setComponentToDisplay(<SomethingWentWrong details={errorToLogAndDisplay}/>);
+            setSirenInfoFetchFailed(true);
         });
     }, [isAuthenticated]);
 
-    return componentToDisplay
+    if (sirenInfoFetchFailed) {
+        return <SomethingWentWrong details={"Error while extracting Siren information from the backend."} />
+    } else if (!sirenInfoFetched) {
+        //return <Loading></Loading>;
+        return <div></div>
+    } else {
+        return <RouterApp />
+    }
 }
 
 export default App;
 
-function getRouterComponent() {
+function RouterApp() {
     return (
         <div>
             <NavBar/>
