@@ -1,18 +1,18 @@
 import {Device, PhData, PhRecord, TemperatureData, TemperatureRecord, User} from "./domain";
-import {deviceAdded, Services} from "./services";
+import {Services} from "./services";
 
 export class FakeServices implements Services {
     private readonly users: User[] = []
     private user: User | null = null
 
     private readonly email = 'some_email_1@gmail.com'
-    private readonly mobile = 1234567890
+    private readonly devices: Device[] = []
 
-    private readonly devices: Device[] = [
-        new Device('e76996c8-c469-440c-bc2a-82eabbc3ca99', this.email, this.mobile),
-        new Device('50947fb9-0367-41d2-a095-4d26fdc7a7f2', this.email, this.mobile),
-        new Device('cd152448-04b2-473e-86b4-50521e30fb27', this.email, this.mobile)
-    ]
+    constructor() {
+        this.devices.push(new Device(this.getNewDeviceId(), this.email))
+        this.devices.push(new Device(this.getNewDeviceId(), this.email))
+        this.devices.push(new Device(this.getNewDeviceId(), this.email))
+    }
 
     async getBackendSirenInfo() {
         // Nothing to do
@@ -49,9 +49,37 @@ export class FakeServices implements Services {
         }
     }
 
-    async addDevice(device: Device) {
+    getNewDeviceId(): string {
+        function generateDeviceId(): string {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const seed = new Date().getHours();
+            let id = '';
+
+            // Generate a 5-character string using the alphabet
+            for (let i = 0; i < 8; i++) {
+                const randomIndex = Math.floor(Math.random() * alphabet.length);
+                id += alphabet[randomIndex];
+            }
+
+            // Add the seed value to the end of the string
+            id += seed.toString();
+
+            return id;
+        }
+
+        while (true) { // loops while there is a device with the same id
+            const deviceId = generateDeviceId()
+            if (!this.devices.find(d => d.id === deviceId)) {
+                return deviceId
+            }
+        }
+    }
+
+    async createDevice(ownerEmail: string): Promise<string> {
+        const deviceId = this.getNewDeviceId()
+        const device = new Device(deviceId, ownerEmail)
         this.devices.push(device)
-        deviceAdded(device)
+        return deviceId
     }
 
     async getDevices(): Promise<Device[]> {

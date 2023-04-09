@@ -7,7 +7,7 @@ function Home() {
         <Row className="justify-content-center">
             <MyCard
                 title={'Home'}
-                text={'Welcome to Industrial IoT Solutions! In here you can see the available devices, the PH and temperature data.'}
+                text={['Welcome to Industrial IoT Solutions! In here you can see the available devices, the PH and temperature data.']}
             />
         </Row>
     );

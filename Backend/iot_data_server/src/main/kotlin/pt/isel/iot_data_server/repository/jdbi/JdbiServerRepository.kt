@@ -63,12 +63,11 @@ class JdbiServerRepository(
     override fun addDevice(device: Device) {
         handle.createUpdate(
             """
-            insert into device (id, email, mobile) values (:id, :email, :mobile)
+            insert into device (id, email) values (:id, :email)
             """
         )
             .bind("id", device.deviceId.id)
             .bind("email", device.ownerEmail)
-            .bind("mobile", device.ownerMobile)
             .execute()
     }
 

@@ -1,6 +1,6 @@
 import {doFetch, toBody} from "./fetch";
 import {Device, PhData, TemperatureData, toDevice, toDevices, toPhData, toTemperatureData, User} from "./domain";
-import {deviceAdded, Services} from "./services";
+import {Services} from "./services";
 import {Siren, SirenModule} from "./sirenModule";
 import {Logger} from "tslog";
 
@@ -117,18 +117,19 @@ export class RealServices implements Services {
         }
     }
 
-    async addDevice(device: Device) {
+    async createDevice(ownerEmail: string): Promise<string> {
         const addDeviceAction = SirenModule.getAddDeviceAction()
         if (!addDeviceAction) throw new Error('Add device action not found')
         const request = {
             url: addDeviceAction.href,
             method: addDeviceAction.method,
-            body: toBody(device)
+            body: toBody({ownerEmail})
         }
         const response = await doFetch(request)
         if (response instanceof Siren) {
-            deviceAdded(device)
-            return
+            const deviceId = response.properties.deviceId
+            if (deviceId) return deviceId
+            else throw new Error(`Device added, but no device id found`)
         } else
             throw new Error(`Failed to add device: ${response.status} ${response.message}`)
     }

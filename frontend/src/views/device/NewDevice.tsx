@@ -1,6 +1,7 @@
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import {Card} from "react-bootstrap";
+import {useNavigate} from "react-router-dom";
 import React from "react";
 import {services} from "../../services/services";
 import {Device} from "../../services/domain";
@@ -24,14 +25,18 @@ function NewDevice() {
 export default NewDevice;
 
 function NewIoTDeviceForm({onError}: { onError: (error: string) => void }) {
-    const [deviceId, setDeviceId] = React.useState<string>("");
+    const navigate = useNavigate();
+
+    const [deviceId, setDeviceId] = React.useState<string | undefined>(undefined);
     const [email, setEmail] = React.useState<string>("");
-    const [mobile, setMobile] = React.useState<string>("");
+
+    if (deviceId)
+        navigate(`/device-created/${deviceId}`)
 
     async function submitForm() {
         try {
-            const device = new Device(deviceId, email, +mobile)
-            await services.addDevice(device)
+            const deviceId = await services.createDevice(email)
+            setDeviceId(deviceId)
         } catch (e: any) {
             onError(e.message)
         }
@@ -41,28 +46,10 @@ function NewIoTDeviceForm({onError}: { onError: (error: string) => void }) {
         <Form>
             <fieldset disabled={false}>
                 <Form.Group className="mb-3">
-                    <Form.Label>Device Id</Form.Label>
-                    <Form.Control placeholder="Device Id" onChange={(ev) => {
-                        setDeviceId(ev.target.value)
-                    }} />
-                </Form.Group>
-                <Form.Group className="mb-3">
                     <Form.Label>Email</Form.Label>
                     <Form.Control placeholder="Email" onChange={(ev) => {
                         setEmail(ev.target.value)
                     }} />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                    <Form.Label>Mobile</Form.Label>
-                    <Form.Control
-                        placeholder="Mobile Number"
-                        type={"number"}
-                        min={100000000}
-                        max={999999999}
-                        onChange={(ev) => {
-                            setMobile(ev.target.value)
-                        }}
-                    />
                 </Form.Group>
                 <Button onClick={submitForm}>Submit</Button>
             </fieldset>

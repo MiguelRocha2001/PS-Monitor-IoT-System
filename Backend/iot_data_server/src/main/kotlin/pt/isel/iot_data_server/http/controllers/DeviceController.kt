@@ -6,11 +6,10 @@ import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.http.DeviceInputModel
 import pt.isel.iot_data_server.http.SirenMediaType
 import pt.isel.iot_data_server.http.infra.siren
-import pt.isel.iot_data_server.http.model.device.DeviceIdOutputModel
+import pt.isel.iot_data_server.http.model.device.DeviceCreateOutputModel
 import pt.isel.iot_data_server.http.model.device.DevicesOutputModel
 import pt.isel.iot_data_server.http.model.device.toOutputModel
 import pt.isel.iot_data_server.http.model.map
-import pt.isel.iot_data_server.http.toDevice
 import pt.isel.iot_data_server.service.device.DeviceService
 import java.util.*
 
@@ -18,16 +17,6 @@ import java.util.*
 class DeviceController(
     val service: DeviceService
 ) {
-    @GetMapping("/device-id")
-    fun getNewDeviceId(): ResponseEntity<*> {
-        val deviceId = service.generateDeviceId()
-        return ResponseEntity.status(200)
-            .contentType(SirenMediaType)
-            .body(siren(
-                DeviceIdOutputModel(deviceId.id)
-            ) {})
-    }
-
     @GetMapping(Uris.Devices.ALL)
     fun getDevices(): ResponseEntity<*> {
         val devices = service.getAllDevices()
@@ -56,15 +45,17 @@ class DeviceController(
     fun addDevice(
         @RequestBody deviceModel: DeviceInputModel
     ): ResponseEntity<*> {
-        val result = service.addDevice(deviceModel.toDevice())
-        return result.map {
+        val result = service.addDevice(deviceModel.email)
+        return result.map { deviceId ->
             ResponseEntity.status(201)
                 .contentType(SirenMediaType)
                 .header(
                     "Location",
-                    Uris.Devices.byId(deviceModel.id).toASCIIString()
+                    Uris.Devices.byId(deviceId).toASCIIString()
                 )
-                .body(siren(Unit) {})
+                .body(siren(
+                    DeviceCreateOutputModel(deviceId)
+                ) {})
         }
     }
 }

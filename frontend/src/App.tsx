@@ -13,6 +13,7 @@ import {Loading} from "./views/Loading";
 import {DeviceInfo} from "./views/device/DeviceInfo";
 import {Authentication} from "./views/auth/Authentication";
 import {DeviceSensorialData} from "./views/device/DeviceData";
+import {DeviceCreated} from "./views/device/DeviceCreated";
 
 const logger = new Logger({ name: "App" });
 
@@ -61,6 +62,7 @@ function getRouterComponent() {
                     <Route path={'/devices/:deviceId'} element={<DeviceInfo />} />
                     <Route path='/add-new-device' element={<NewDevice />} />
                     <Route path='/device-data/:deviceId' element={<DeviceSensorialData />} />
+                    <Route path='/device-created/:deviceId' element={<DeviceCreated />} />
                     <Route path='*' element={<p>404</p>} />
                 </Routes>
             </Container>

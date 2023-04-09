@@ -1,7 +1,6 @@
 package pt.isel.iot_data_server.service.device
 
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import pt.isel.iot_data_server.domain.Device
 import pt.isel.iot_data_server.domain.DeviceId
@@ -9,8 +8,6 @@ import pt.isel.iot_data_server.domain.SEED
 import pt.isel.iot_data_server.domain.generateRandomDeviceId
 import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.service.Either
-import java.time.LocalDateTime
-import kotlin.random.Random
 
 
 @Service
@@ -20,17 +17,14 @@ class DeviceService (
 ) {
     private val logger = LoggerFactory.getLogger(DeviceService::class.java)
 
-    fun addDevice(device: Device): CreateDeviceResult {
+    fun addDevice(ownerEmail: String): CreateDeviceResult {
         return transactionManager.run {
-            val devices = it.repository.getAllDevices()
-            if (devices.any { it.deviceId == device.deviceId }) {
-                logger.info("Device with id ${device.deviceId} already exists")
-                return@run Either.Left(CreateDeviceError.DeviceAlreadyExists)
+            return@run generateDeviceId().let { deviceId ->
+                val device = Device(deviceId, ownerEmail)
+                it.repository.addDevice(device)
+                logger.info("Device with id ${device.deviceId} added")
+                Either.Right(deviceId.id)
             }
-            it.repository.addDevice(device)
-
-            logger.info("Device with id ${device.deviceId} added")
-            return@run Either.Right(Unit)
         }
     }
 

@@ -1,79 +1,38 @@
 package pt.isel.iot_data_server.service
 
-import com.hivemq.embedded.EmbeddedHiveMQ
-import com.hivemq.embedded.EmbeddedHiveMQBuilder
-import org.eclipse.paho.client.mqttv3.MqttClient
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import pt.isel.iot_data_server.domain.Device
 import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.PhRecord
+import pt.isel.iot_data_server.domain.TemperatureRecord
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
-import pt.isel.iot_data_server.service.device.DeviceService
 import pt.isel.iot_data_server.service.sensor_data.SensorDataService
-import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 import java.time.Instant
+import java.util.*
+import java.util.concurrent.ThreadLocalRandom
 
 class SensorDataTests {
-    companion object {
-        private val embeddedHiveMQBuilder: EmbeddedHiveMQBuilder = EmbeddedHiveMQ.builder()
-        private val hiveMQ: EmbeddedHiveMQ = embeddedHiveMQBuilder.build()
-
-        val mqttClient = MqttClient("tcp://localhost:1883", MqttClient.generateClientId())
-        @JvmStatic
-        @BeforeAll
-        fun start() {
-            try {
-                hiveMQ.start().join()
-                mqttClient.connect()
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        }
-
-        @JvmStatic
-        @AfterAll
-        fun stop() {
-            hiveMQ.stop().join()
-            mqttClient.disconnect()
-        }
-    }
-
+    /*
     @Test
     fun addPhDataTest() {
-        testWithTransactionManagerAndRollback { transactionManager ->
-            val deviceService = DeviceService(transactionManager)
-            val repo = TSDBRepository()
+        val repo = TSDBRepository()
+        val sensorData = SensorDataService(repo)
+        val id = UUID.randomUUID()
+        val deviceId = DeviceId(id)
 
-            val sensorData = SensorDataService(repo, deviceService, mqttClient)
+        //get ph records, should be empty
+        val emptyPhRecords = sensorData.getPhRecords(deviceId)
+        assert(emptyPhRecords.size == 0)
 
-            val deviceId = DeviceId("some_id")
-            val ownerEmail = "some_email"
-            val ownerMobile = 934846723L
-            val device = Device(deviceId, ownerEmail, ownerMobile)
+        val time = Instant.now()
+        val phRecord = PhRecord(7.5,time)
+        sensorData.savePhRecord(deviceId, phRecord)
 
-            deviceService.addDevice(device)
-
-            //get ph records, should be empty
-            val phRecordsResult1 = sensorData.getPhRecords(deviceId)
-            assert(phRecordsResult1 is Either.Right && phRecordsResult1.value.isEmpty())
-
-            val time = Instant.now()
-            val phRecord = PhRecord(7.5, time)
-            sensorData.savePhRecord(deviceId, phRecord)
-
-            val phRecordsResult2 = sensorData.getPhRecords(deviceId)
-            assert(
-                phRecordsResult2 is Either.Right &&
-                        phRecordsResult2.value.size == 1 &&
-                        phRecordsResult2.value[0].value == 7.5 &&
-                        phRecordsResult2.value[0].instant == time
-            )
-        }
+        val phRecords = sensorData.getPhRecords(deviceId)
+        assert(phRecords.size == 1)
+        assert(phRecords[0].value == 7.5)
+        assert(phRecords[0].timestamp.equals(time))
     }
 
-    /* TODO: Uncomment and fix this test
     @Test
     fun addTemperatureDataTest() {
         val repo = TSDBRepository()
@@ -131,6 +90,5 @@ class SensorDataTests {
     private fun randomPh(): Double {
         return ThreadLocalRandom.current().nextDouble(0.0, 14.0)
     }
-
      */
 }

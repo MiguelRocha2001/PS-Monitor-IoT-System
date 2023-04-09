@@ -35,10 +35,7 @@ fun createLogoutSirenAction(sirenBuilderScope: SirenBuilderScope<*>) =
         href = URI(Uris.Users.TOKEN),
         method = HttpMethod.DELETE,
         type = MediaType.APPLICATION_JSON
-    ) {
-        this.textField("username")
-        this.textField("password")
-    }
+    ) {}
 
 fun isLoggedInLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
@@ -70,17 +67,14 @@ fun getDeviceLink(sirenBuilderScope: SirenBuilderScope<*>) =
         rel = Rels.DEVICE
     )
 
-fun postDeviceAction(sirenBuilderScope: SirenBuilderScope<*>) =
+fun createDeviceAction(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.action(
-        name = "post-device",
+        name = "create-device",
         href = Uris.Devices.all(),
         method = HttpMethod.POST,
         type = MediaType.APPLICATION_JSON
     ) {
-        this.textField("name")
-        this.textField("description")
-        this.textField("location")
-        this.textField("type")
+        this.textField("email")
     }
 
 fun getPhLink(sirenBuilderScope: SirenBuilderScope<*>) =

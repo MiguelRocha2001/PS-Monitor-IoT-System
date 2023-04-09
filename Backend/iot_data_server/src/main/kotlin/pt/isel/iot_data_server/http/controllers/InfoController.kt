@@ -13,10 +13,10 @@ class InfoController(
 ) {
     @GetMapping("/siren-info")
     fun getSirenInfo(): ResponseEntity<*> {
-        return ResponseEntity.status(201)
+        return ResponseEntity.status(200)
             .contentType(SirenMediaType)
             .body(siren(Unit) {
-                clazz("users")
+                clazz("siren-info")
                 createUserSirenAction(this)
                 createTokenSirenAction(this)
                 createLogoutSirenAction(this)
@@ -25,7 +25,7 @@ class InfoController(
                 getDevicesLink(this)
                 getNewDeviceLink(this)
                 getDeviceLink(this)
-                postDeviceAction(this)
+                createDeviceAction(this)
                 getPhLink(this)
                 getTemperatureLink(this)
             })

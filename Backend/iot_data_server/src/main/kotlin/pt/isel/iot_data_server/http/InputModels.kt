@@ -7,12 +7,7 @@ data class CreateUserInputModel(val username: String, val password: String)
 
 data class CreateTokenInputModel(val username: String, val password: String)
 
-data class DeviceInputModel(val id: String, val email: String, val mobile: Long)
-
-fun DeviceInputModel.toDevice(): Device {
-    val deviceId = DeviceId(id)
-    return Device(deviceId, email, mobile)
-}
+data class DeviceInputModel(val email: String)
 
 data class InputPhRecordModel(val ph: Double, val timestamp: Long)
 
