@@ -23,8 +23,9 @@ class UserService(
             if (it.repository.exists(userInfo.username))
                 return@run Either.Left(CreateUserError.UserAlreadyExists)
 
-            val passwordHash = hashPassword(userInfo.password)
-            it.repository.saveSalt(userId, passwordHash.salt)
+            val passwordHash = hashPassword(userInfo.password) //TODO; Put on a function
+            val salt = Base64.getEncoder().encodeToString(passwordHash.salt) // FIXME: Should be some form of byte array in the db,i added string for now because i dont know how to store byte array in db,tried with BYTEA but it didnt work
+            it.repository.saveSalt(userId,salt)
             val newUserInfo = UserInfo(userInfo.username, passwordHash.hashedPassword, userInfo.email, userInfo.mobile)
             val newUser = User(userId, newUserInfo)
             it.repository.createUser(newUser)
@@ -47,6 +48,18 @@ class UserService(
     fun getUserByToken(token: String): User? {
         return transactionManager.run {
             return@run it.repository.getUserByToken(token)
+        }
+    }
+
+    fun getUserByEmailAddress(email: String): User? {
+        return transactionManager.run {
+            return@run it.repository.getUserByEmailAddress(email)
+        }
+    }
+
+    private fun saveSalt(userId: Int, salt: String) {
+        return transactionManager.run {
+            return@run it.repository.saveSalt(userId, salt)
         }
     }
 
@@ -82,11 +95,13 @@ class UserService(
     }
 
     //Used in login to verify if the password is correct
+    //username is used to get the stored pass from the database
+    //password is the password received from the user (CLEAR TEXT)
     fun verifyPassword(username: String, password: String): Boolean = transactionManager.run {
-        val storedSalt = it.repository.getSalt(it.repository.getUserByUsername(username).id)
-        val receivedHashPassword = hashPassword(password,storedSalt)
+        val storedSalt = Base64.getDecoder().decode(it.repository.getSalt(it.repository.getUserByUsername(username).id))
+        val receivedHashPassword = hashPassword(password,storedSalt).hashedPassword
         val storedHashedPassword = it.repository.getUserByUsername(username).userInfo.password
-        return@run storedHashedPassword == receivedHashPassword.hashedPassword
+        return@run storedHashedPassword == receivedHashPassword
        }
     }
 

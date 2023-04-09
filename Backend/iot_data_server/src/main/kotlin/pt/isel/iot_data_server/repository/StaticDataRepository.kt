@@ -16,6 +16,7 @@ interface StaticDataRepository {
     fun saveTemperatureRecord(deviceId: DeviceId, temperatureRecord: TemperatureRecord)
     fun exists(username: String): Boolean
     fun getUserByUsername(username: String): User
-    fun saveSalt(userId: Int, salt: ByteArray)
-    fun getSalt(userId: Int): ByteArray
+    fun saveSalt(userId: Int, salt: String)
+    fun getSalt(userId: Int): String
+    fun getUserByEmailAddress(email: String): User?
 }

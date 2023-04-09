@@ -18,6 +18,6 @@ create table device(
 );
 
 create table salt(
-    salt varchar,
+    salt varchar primary key,
     user_id int
 );

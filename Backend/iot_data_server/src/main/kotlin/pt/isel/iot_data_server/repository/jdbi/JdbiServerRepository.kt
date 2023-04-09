@@ -147,7 +147,7 @@ class JdbiServerRepository(
             .list()
     }
 
-    override fun saveSalt(userId: Int, salt: ByteArray) {
+    override fun saveSalt(userId: Int, salt: String) {
         handle.createUpdate(
             """
             insert into salt (user_id, salt) values (:user_id, :salt)
@@ -158,16 +158,32 @@ class JdbiServerRepository(
             .execute()
     }
 
-    override fun getSalt(userId: Int): ByteArray {
+    override fun getSalt(userId: Int): String {
         return handle.createQuery(
             """
-            select salt 
-            from salt 
-            where user_id = :user_id
-            """
+        SELECT salt 
+        FROM salt 
+        WHERE user_id = :user_id
+        """
         )
             .bind("user_id", userId)
-            .mapTo<ByteArray>()
+            .mapTo<String>() // Retrieve the salt as a String
             .single()
     }
+
+    override fun getUserByEmailAddress(email: String): User? {
+        return handle.createQuery(
+            """
+            select _id, username, password, email, mobile 
+            from _USER 
+            where email = :email
+            """
+        )
+            .bind("email", email)
+            .mapTo<UserMapper>()
+            .singleOrNull()
+            ?.toUser()
+    }
+
+
 }
