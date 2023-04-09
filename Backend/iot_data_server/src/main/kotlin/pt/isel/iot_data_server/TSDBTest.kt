@@ -1,10 +1,6 @@
 package pt.isel.iot_data_server
 
-import pt.isel.iot_data_server.domain.Device
-import pt.isel.iot_data_server.domain.DeviceId
-import pt.isel.iot_data_server.domain.PhRecord
 import pt.isel.iot_data_server.service.email.EmailSender
-import java.time.Instant
 
 /*
 fun main() = runBlocking {

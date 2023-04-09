@@ -1,11 +1,6 @@
 package pt.isel.iot_data_server.service
 
-import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.util.AssertionErrors.assertTrue
-import pt.isel.iot_data_server.domain.UserInfo
-import pt.isel.iot_data_server.service.user.UserService
-import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 
 @SpringBootTest
 class UserServiceTests {

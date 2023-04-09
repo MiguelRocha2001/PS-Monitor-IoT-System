@@ -1,8 +1,5 @@
 package pt.isel.iot_data_server.http
 
-import pt.isel.iot_data_server.domain.Device
-import pt.isel.iot_data_server.domain.DeviceId
-
 data class CreateUserInputModel(val username: String, val password: String)
 
 data class CreateTokenInputModel(val username: String, val password: String)

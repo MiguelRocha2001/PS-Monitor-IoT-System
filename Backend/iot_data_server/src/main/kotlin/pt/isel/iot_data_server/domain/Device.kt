@@ -1,6 +1,5 @@
 package pt.isel.iot_data_server.domain
 
-import org.springframework.stereotype.Component
 import pt.isel.iot_data_server.utils.trimJsonString
 import java.time.LocalDateTime
 import kotlin.random.Random

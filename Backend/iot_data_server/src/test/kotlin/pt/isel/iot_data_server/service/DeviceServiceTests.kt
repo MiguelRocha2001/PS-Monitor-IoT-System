@@ -1,10 +1,8 @@
 package pt.isel.iot_data_server.service
 
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
-import pt.isel.iot_data_server.domain.Device
 import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.SEED
 import pt.isel.iot_data_server.service.device.DeviceService
@@ -16,7 +14,7 @@ class DeviceServiceTests {
 	@Test
 	fun `generate device ids`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
-			val service = DeviceService(transactionManager)
+			val service = DeviceService(transactionManager, SEED.NANOSECOND)
 			repeat(1000) { service.generateDeviceId() }
 		}
 	}
@@ -31,7 +29,7 @@ class DeviceServiceTests {
 			val deviceId3 = DeviceId("SomeId3")
 			val ownerEmail3 = "owner3"
 
-			val service = DeviceService(transactionManager)
+			val service = DeviceService(transactionManager, SEED.NANOSECOND)
 
 			service.addDevice(ownerEmail1)
 			service.addDevice(ownerEmail2)

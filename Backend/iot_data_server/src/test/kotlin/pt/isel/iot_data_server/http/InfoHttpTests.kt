@@ -1,9 +1,6 @@
 package pt.isel.iot_data_server.http
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.jdbi.v3.core.Jdbi
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.postgresql.ds.PGSimpleDataSource
@@ -12,16 +9,13 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
-import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpMethod
 import org.springframework.test.web.reactive.server.WebTestClient
 import pt.isel.iot_data_server.http.controllers.Rels
 import pt.isel.iot_data_server.http.controllers.Uris
 import pt.isel.iot_data_server.http.infra.SirenModel
-import pt.isel.iot_data_server.http.model.device.DeviceIdOutputModel
 import pt.isel.iot_data_server.repository.jdbi.configure
 import java.net.URI
-import java.util.LinkedHashMap
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
