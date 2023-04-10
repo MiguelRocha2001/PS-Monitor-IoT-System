@@ -1,10 +1,9 @@
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import {Card} from "react-bootstrap";
-import {Navigate, useLocation, useNavigate} from "react-router-dom"
+import {Navigate, useNavigate} from "react-router-dom"
 import React from "react";
 import {services} from "../../services/services";
-import {Device} from "../../services/domain";
 import {SomethingWentWrong} from "../SomethingWentWrong";
 
 function NewDevice() {

@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useReducer} from "react";
 import {Route, Routes, useNavigate} from 'react-router-dom'
 import Home from "./views/Home";
 import NewDevice from "./views/device/NewDevice";
@@ -17,40 +17,69 @@ import {DeviceCreated} from "./views/device/DeviceCreated";
 
 const logger = new Logger({ name: "App" });
 
-function App() {
-    const navigate = useNavigate();
-    const {isAuthenticated} = useAuth();
-    const [componentToDisplay, setComponentToDisplay]
-        = React.useState<JSX.Element>(<Loading></Loading>);
+export type State =
+    {
+        type : 'fetchingSirenInfo',
+    }
+    |
+    {
+        type : "sirenInfoFetched",
+    }
+    |
+    {
+        type : "sirenInfoFetchFailed",
+    }
 
-    useEffect(() => {
-        if (!isAuthenticated) {
-            logger.info("User is not authenticated, redirecting to login page.")
-            navigate("/auth/login");
-        } else {
-            logger.info("User is authenticated, redirecting to home page.")
-            navigate("/");
-        }
-    }, [isAuthenticated]);
+type Action =
+    {
+        type : "setSirenInfoFetched",
+    }
+    |
+    {
+        type : "setSirenInfoFetchFailed",
+    }
+
+function reducer(state:State, action:Action): State {
+    switch(action.type){
+        case "setSirenInfoFetched" : return {type: "sirenInfoFetched"}
+        case "setSirenInfoFetchFailed" : return {type: "sirenInfoFetchFailed"}
+    }
+}
+
+export function App() {
+    const [state, dispatcher] = useReducer(reducer, {type : "fetchingSirenInfo"})
 
     useEffect(() => {
         // Ensures that the Services module extracts all available Siren information, from the backend.
         services.getBackendSirenInfo().then(() => {
             logger.info("Siren information extracted from the backend.")
-            setComponentToDisplay(getRouterComponent());
+            dispatcher({type: "setSirenInfoFetched"})
         }).catch((error) => {
             const errorToLogAndDisplay = "Error while extracting Siren information from the backend: " + error
             logger.error(errorToLogAndDisplay)
-            setComponentToDisplay(<SomethingWentWrong details={errorToLogAndDisplay}/>);
+            dispatcher({type: "setSirenInfoFetchFailed"})
         });
-    }, [isAuthenticated]);
+    }, []);
 
-    return componentToDisplay
+    if (state.type === "fetchingSirenInfo") {
+        return <Loading />
+    } else if (state.type === "sirenInfoFetchFailed") {
+        return <SomethingWentWrong details={"Error while extracting Siren information from the backend."} />
+    } else {
+        return <Router />
+    }
 }
 
-export default App;
+function Router() {
+    const navigate = useNavigate();
+    const {isAuthenticated} = useAuth();
 
-function getRouterComponent() {
+    useEffect(() => {
+        if (!isAuthenticated) {
+            navigate("/auth/login")
+        }
+    }, [isAuthenticated])
+
     return (
         <div>
             <NavBar/>
