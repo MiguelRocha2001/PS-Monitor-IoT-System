@@ -7,6 +7,10 @@ fun generateRandomName(): String {
         .joinToString("")
 }
 
+fun generateRandomEmail(): String {
+    return "${generateRandomName()}@${generateRandomName()}.com"
+}
+
 fun generateRandomMobileNumber(): Long {
     return (100000000..999999999).random().toLong()
 }

@@ -1,30 +1,26 @@
-package pt.isel.iot_data_server.service
+package pt.isel.iot_data_server.service.sensor_data
 
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import pt.isel.iot_data_server.domain.*
+import pt.isel.iot_data_server.emailSenderService
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
+import pt.isel.iot_data_server.service.Either
 import pt.isel.iot_data_server.service.device.DeviceService
-import pt.isel.iot_data_server.service.email.EmailSender
-import pt.isel.iot_data_server.service.sensor_data.PhDataError
-import pt.isel.iot_data_server.service.sensor_data.PhDataResult
-import pt.isel.iot_data_server.service.sensor_data.TemperatureDataError
-import pt.isel.iot_data_server.service.sensor_data.TemperatureDataResult
 
 // TODO -> SOLVE CONCURRENCY PROBLEMS
 
 @Service
 class SensorDataService(
   //  private val transactionManager: TransactionManager,
-    private val emailSenderService: EmailSender,
     private val tsdbRepository: TSDBRepository,
     private val deviceService: DeviceService,
     client: MqttClient
 ) {
     private val logger = LoggerFactory.getLogger(SensorDataService::class.java)
 
-    val MIN_PH = 6.0 //todo change this to other place and make it configurable
+    val MIN_PH = 6.0 // TODO: change this to other place and make it configurable
     init {
         subscribePhTopic(client)
     }
@@ -89,7 +85,7 @@ class SensorDataService(
 
                 val deviceResult = deviceService.getDeviceById(deviceId)
                 if (deviceResult is Either.Right) {
-                    sendEmailIfPhExceedsLimit(deviceId, phRecord, deviceResult.value)
+                    // sendEmailIfPhExceedsLimit(deviceId, phRecord, deviceResult.value) TODO: uncomment this later
                     savePhRecord(deviceId, phRecord)
                     logger.info("Saved ph record: $phRecord, from device: $deviceId")
                 } else {

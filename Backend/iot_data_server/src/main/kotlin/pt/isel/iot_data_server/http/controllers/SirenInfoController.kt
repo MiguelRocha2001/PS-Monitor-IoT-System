@@ -8,24 +8,23 @@ import pt.isel.iot_data_server.http.hypermedia.*
 import pt.isel.iot_data_server.http.infra.siren
 
 @RestController
-class InfoController(
+class SirenInfoController(
 
 ) {
-    @GetMapping("/siren-info")
+    @GetMapping(Uris.SirenInfo.SIREN_INFO)
     fun getSirenInfo(): ResponseEntity<*> {
-        return ResponseEntity.status(201)
+        return ResponseEntity.status(200)
             .contentType(SirenMediaType)
             .body(siren(Unit) {
-                clazz("users")
+                clazz("siren-info")
                 createUserSirenAction(this)
                 createTokenSirenAction(this)
                 createLogoutSirenAction(this)
                 isLoggedInLink(this)
                 getMeLink(this)
                 getDevicesLink(this)
-                getNewDeviceLink(this)
                 getDeviceLink(this)
-                postDeviceAction(this)
+                createDeviceAction(this)
                 getPhLink(this)
                 getTemperatureLink(this)
             })

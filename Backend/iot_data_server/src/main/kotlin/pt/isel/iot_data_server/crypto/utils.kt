@@ -1,7 +1,6 @@
 package pt.isel.iot_data_server.crypto
 
 import javax.crypto.SecretKey
-import javax.crypto.spec.IvParameterSpec
 
 data class AESCipherSuit(
     val algorithm: String,

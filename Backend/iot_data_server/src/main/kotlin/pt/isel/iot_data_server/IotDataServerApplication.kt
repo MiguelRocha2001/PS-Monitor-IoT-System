@@ -1,7 +1,5 @@
 package pt.isel.iot_data_server
 
-import pt.isel.iot_data_server.hive.HiveMQManager
-import pt.isel.iot_data_server.hive.MqttClient.Companion.getMqttClient
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.jdbi.v3.core.Jdbi
 import org.postgresql.ds.PGSimpleDataSource
@@ -10,6 +8,8 @@ import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.DependsOn
 import pt.isel.iot_data_server.domain.SEED
+import pt.isel.iot_data_server.hive.HiveMQManager
+import pt.isel.iot_data_server.hive.MqttClient.Companion.getMqttClient
 import pt.isel.iot_data_server.repository.jdbi.configure
 
 
@@ -37,7 +37,7 @@ class IotDataServerApplication {
 
 	/*** The seed type used to generate the device id */
 	@Bean
-	fun deviceIdSeed() = SEED.HOUR
+	fun deviceIdSeed() = SEED.MILLISECOND // TODO: change to SEED.HOUR, in final version
 }
 
 fun main(args: Array<String>) {

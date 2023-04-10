@@ -4,25 +4,32 @@ import org.springframework.web.util.UriTemplate
 import java.net.URI
 
 object Uris {
+
+    /**
+     * Uris that doesn't follow the semantic of the rest api (nouns that represent objects),
+     * but rather the semantic of the application (verbs that represent actions).
+     */
+    object NonSemantic {
+        const val logout = "logout"
+        const val loggedIn = "logged-in"
+
+        fun logout(): URI = URI(logout)
+        fun loggedIn(): URI = URI(loggedIn)
+    }
+
+    object SirenInfo {
+        const val SIREN_INFO = "/siren-info"
+    }
+
     object Users {
         const val ALL = "/users"
-        const val TOKEN = "/users/token"
-        const val BY_ID1 = "/users/{id}"
-        private const val BY_ID2 = "/users/:id"
-        const val ME = "/users/me"
-
-        object Me {
-            const val loggedIn = "/users/me/loggedIn"
-
-            fun loggedIn(): URI = URI(loggedIn)
-        }
+        private const val BY_ID1 = "$ALL/{id}"
+        const val ME = "$ALL/me"
+        const val MY_TOKEN = "$ME/token"
 
         fun all(): URI = URI(ALL)
         fun create() = URI(ALL)
-        fun byId() = URI(BY_ID2)
         fun byId(id: Int) = UriTemplate(BY_ID1).expand(id)
-        fun createToken(): URI = URI(TOKEN)
-        fun token(): URI = URI(TOKEN)
     }
 
     object Devices {
@@ -34,24 +41,17 @@ object Uris {
         fun byId(id: String): URI = UriTemplate(BY_ID1).expand(id)
 
         object PH {
-            const val ALL_1 = "/devices/{device_id}/ph"
-            const val BY_ID_1 = ALL_1 + "/{id}"
-
-            private const val ALL_2 = "/devices/:device_id/ph"
+            const val ALL_1 = "${BY_ID1}/ph-data"
+            private const val ALL_2 = "${BY_ID2}/ph"
 
             fun all(): URI = URI(ALL_2)
-            fun byId(id: Int): URI = UriTemplate(BY_ID_1).expand(id)
-
         }
 
         object Temperature {
-            const val ALL_1 = "/devices/{device_id}/temperature"
-            const val BY_ID_1 = ALL_1 + "/{id}"
-
-            private const val ALL_2 = "/devices/:device_id/temperature"
+            const val ALL_1 = "${BY_ID1}/temperature-data"
+            private const val ALL_2 = "${BY_ID2}/temperature"
 
             fun all(): URI = URI(ALL_2)
-            fun byId(id: Int): URI = UriTemplate(BY_ID_1).expand(id)
         }
     }
 }

@@ -4,7 +4,6 @@ import com.hivemq.embedded.EmbeddedHiveMQ
 import com.hivemq.embedded.EmbeddedHiveMQBuilder
 import jakarta.annotation.PostConstruct
 import jakarta.annotation.PreDestroy
-import java.nio.file.Path
 
 class HiveMQManager {
 

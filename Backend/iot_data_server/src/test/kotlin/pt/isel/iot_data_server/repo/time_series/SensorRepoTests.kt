@@ -14,10 +14,7 @@ import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.*
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.thread
-import kotlin.concurrent.withLock
 
 //TEST THE INFLUXDB
 class TsdbRepoTests {

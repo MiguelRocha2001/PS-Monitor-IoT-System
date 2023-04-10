@@ -7,9 +7,11 @@ data class DeviceIdOutputModel(val id: String)
 data class DevicesOutputModel(val devices: List<DeviceOutputModel>) {
 
     companion object {
-        fun from(devices: List<Device>) = DevicesOutputModel(devices.map { it.toOutputModel() })
+        fun from(devices: List<Device>) = DevicesOutputModel(devices.map { it.toDeviceOutputModel() })
     }
 }
-fun Device.toOutputModel() = DeviceOutputModel(id = this.deviceId.id, email = this.ownerEmail, mobile = this.ownerMobile)
+fun Device.toDeviceOutputModel() = DeviceOutputModel(id = this.deviceId.id, email = this.ownerEmail)
 
-data class DeviceOutputModel(val id: String, val email: String, val mobile: Long)
+data class DeviceOutputModel(val id: String, val email: String)
+
+data class CreateDeviceOutputModel(val deviceId: String)

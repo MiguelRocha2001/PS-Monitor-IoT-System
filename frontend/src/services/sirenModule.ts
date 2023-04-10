@@ -141,7 +141,7 @@ function extractGetMeLink(links: Link[]) {
 }
 
 function extractAddDeviceAction(actions: any[]) {
-    ADD_DEVICE_ACTION = extractAction(actions, "post-device")
+    ADD_DEVICE_ACTION = extractAction(actions, "create-device")
 }
 
 function extractGetDevicesLink(links: Link[]) {

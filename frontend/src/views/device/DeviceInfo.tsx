@@ -39,7 +39,6 @@ function DeviceInfoAux({device}: { device: Device }) {
         <Col>
             <p><b>Id:</b> {device.id}</p>
             <p><b>Email:</b> {device.email}</p>
-            <p><b>Mobile:</b> {device.mobile}</p>
         </Col>
     );
 }

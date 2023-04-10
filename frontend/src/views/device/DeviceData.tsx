@@ -1,11 +1,14 @@
 import Card from 'react-bootstrap/Card';
 import React, {useEffect} from "react";
 import {useParams} from "react-router-dom";
-import {Row} from "react-bootstrap";
+import {Row, Stack} from "react-bootstrap";
 import {services} from "../../services/services";
 import {PhRecord, TemperatureRecord} from "../../services/domain";
-import {MyChart} from "../../chart/MyChart";
+import {MyChart, Period} from "../chart/MyChart";
 import {SomethingWentWrong} from "../SomethingWentWrong";
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
+import Button from "react-bootstrap/Button";
 
 export function DeviceSensorialData() {
     const { deviceId } = useParams<string>()
@@ -22,6 +25,7 @@ function Graph({deviceId}: { deviceId: string | undefined}) {
     const [phRecords, setPhRecords] = React.useState<PhRecord[]>([]);
     const [tempRecords, setTempRecords] = React.useState<TemperatureRecord[]>([]);
     const [errorMessage, setErrorMessage] = React.useState<string | undefined>(undefined);
+    const [period, setPeriod] = React.useState<Period>(Period.DAY);
 
     useEffect(() => {
         async function fetchPh() {
@@ -54,7 +58,10 @@ function Graph({deviceId}: { deviceId: string | undefined}) {
                     <Card.Subtitle className="mb-2 text-muted">Device Id: {deviceId}</Card.Subtitle>
                     <Card.Text>
                         <Row style={{width: '60%', margin: 'auto', marginTop: '30px'}}>
-                            <MyChart phRecords={phRecords} tempRecords={tempRecords}/>
+                            <Stack gap={3} style={{width: '100%'}}>
+                                <MyChart period={period} phRecords={phRecords} tempRecords={tempRecords}/>
+                                <PeriodSelector setPeriod={(period: Period) => setPeriod(period)}/>
+                            </Stack>
                         </Row>
                     </Card.Text>
                 </Card.Body>
@@ -62,3 +69,19 @@ function Graph({deviceId}: { deviceId: string | undefined}) {
         )
     }
 }
+
+// TODO -> add more options, later
+function PeriodSelector({setPeriod}: { setPeriod: (period: Period) => void }) {
+    return (
+        <ButtonToolbar aria-label="Toolbar with button groups" style={{alignContent: 'center', margin: 'auto'}}>
+            <ButtonGroup aria-label="Basic example">
+                <Button variant={"secondary"} onClick={() => setPeriod(Period.YEAR)}>Year</Button>
+                <Button variant={"secondary"} onClick={() => setPeriod(Period.MONTH)}>Month</Button>
+                <Button variant={"secondary"} onClick={() => setPeriod(Period.DAY)}>Day</Button>
+                <Button variant={"secondary"} onClick={() => setPeriod(Period.HOUR)}>Hour</Button>
+            </ButtonGroup>
+        </ButtonToolbar>
+    );
+}
+
+export default PeriodSelector;

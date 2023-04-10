@@ -127,7 +127,7 @@ export function IoTServerAuthentication({title, action}: { title: string, action
     )
 
     return (
-        <MyCard title={title} text={"Insert credentials under..."}>
+        <MyCard title={title} text={["Insert credentials under..."]}>
             <Stack gap={2}>
                 <Form>
                     <Form.Group className="mb-3" controlId="formBasicEmail">

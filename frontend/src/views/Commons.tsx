@@ -35,12 +35,13 @@ export function MyLink({text, to, width, color, bold, center, margin}:
     )
 }
 
-export function MyCard({children, title, boldTitle, text}:
+export function MyCard({children, title, boldTitle, text, subtitle }:
                            {
                                children?: any,
                                title?: string,
-                                 boldTitle?: boolean,
-                               text?: string
+                               boldTitle?: boolean,
+                               text?: string[],
+                               subtitle?: string
                            }) {
     return (
         <Row className="justify-content-center">
@@ -49,9 +50,14 @@ export function MyCard({children, title, boldTitle, text}:
                     <Card.Title>
                         {title && <b style={{fontWeight: boldTitle ? 'bold' : 'normal'}}>{title}</b>}
                     </Card.Title>
-                    <Card.Text>
-                        {text}
-                    </Card.Text>
+                    <Card.Subtitle className="mb-2 text-muted">
+                        {subtitle}
+                    </Card.Subtitle>
+                    {text && text.map((line, index) => (
+                        <Card.Text key={index}>
+                            {line}
+                        </Card.Text>
+                    ))}
                     {children}
                 </Card.Body>
             </Card>

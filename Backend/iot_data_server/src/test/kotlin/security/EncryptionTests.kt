@@ -1,8 +1,8 @@
 package security
 
-import pt.isel.iot_data_server.crypto.AES
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
+import pt.isel.iot_data_server.crypto.AES
 
 
 class EncryptionTests {

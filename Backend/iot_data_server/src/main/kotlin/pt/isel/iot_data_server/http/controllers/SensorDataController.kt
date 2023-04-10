@@ -8,7 +8,7 @@ import pt.isel.iot_data_server.http.infra.siren
 import pt.isel.iot_data_server.http.model.map
 import pt.isel.iot_data_server.http.model.sensor_data.PhRecordsOutputModel
 import pt.isel.iot_data_server.http.model.sensor_data.TemperatureRecordsOutputModel
-import pt.isel.iot_data_server.service.SensorDataService
+import pt.isel.iot_data_server.service.sensor_data.SensorDataService
 import java.util.*
 
 @RestController
@@ -29,7 +29,9 @@ class SensorDataController(
                     Uris.Devices.PH.all().toASCIIString()
                 )
                 .body(
-                    siren(PhRecordsOutputModel.from(it)) {}
+                    siren(PhRecordsOutputModel.from(it)) {
+                        clazz("ph-records")
+                    }
                 )
         }
     }
@@ -48,7 +50,9 @@ class SensorDataController(
                     Uris.Devices.Temperature.all().toASCIIString()
                 )
                 .body(
-                    siren(TemperatureRecordsOutputModel.from(it)) {}
+                    siren(TemperatureRecordsOutputModel.from(it)) {
+                        clazz("temperature-records")
+                    }
                 )
         }
     }
