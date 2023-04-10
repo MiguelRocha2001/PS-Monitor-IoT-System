@@ -1,14 +1,23 @@
 package pt.isel.iot_data_server.service
 
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.util.AssertionErrors.assertTrue
+import pt.isel.iot_data_server.domain.UserInfo
+import pt.isel.iot_data_server.service.user.CreateUserError
+import pt.isel.iot_data_server.service.user.SaltPasswordOperations
+import pt.isel.iot_data_server.service.user.UserService
+import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 
 @SpringBootTest
 class UserServiceTests {
-	/*
+
 	@Test
 	fun `create user`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
-			val service = UserService(transactionManager)
+			val saltPasswordOperations = SaltPasswordOperations(transactionManager)
+			val service = UserService(transactionManager,saltPasswordOperations)
 			val username = "userGood"
 			val password = "LKMSDOVCJ09Jouin09JN@"
 			val email = "testSubject@email.com"
@@ -17,18 +26,19 @@ class UserServiceTests {
 			service.createUser(newUser)
 			val users = service.getAllUsers()
 			//assertValues of every property of student with the expected values
-			assertTrue("User was created", users.any { it.userInfo.username == username })
-			assertTrue("User was created", users.any { it.userInfo.password == password })
-			assertTrue("User was created", users.any { it.userInfo.email == email })
-			assertTrue("User was created", users.any { it.userInfo.mobile == mobile })
+			val retrievedUser = users.first { it.userInfo.username == username}
+			assertTrue("User was created", retrievedUser.userInfo.username == username)
+			assertTrue("User was created", retrievedUser.userInfo.email == email)
+			assertTrue("User was created", retrievedUser.userInfo.mobile == mobile)
 		}
 	}
 
 	@Test
 	fun `create user with invalid short name`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
-			val service = UserService(transactionManager)
-			val username = "us"
+			val saltPasswordOperations = SaltPasswordOperations(transactionManager)
+			val service = UserService(transactionManager,saltPasswordOperations)
+			val username = "ustg"
 			val password = "LKMSDOVCJ09Jouin09JN@"
 			val email = "testSubject@email.com"
 			val mobile = "123456789"
@@ -39,15 +49,14 @@ class UserServiceTests {
 				assertTrue("User was not created", e.message == "Username must be at least 5 characters long")
 				assert(true)
 			}
-
 		}
-
 	}
 
 	@Test
 	fun `create user with invalid email`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
-			val service = UserService(transactionManager)
+			val saltPasswordOperations = SaltPasswordOperations(transactionManager)
+			val service = UserService(transactionManager,saltPasswordOperations)
 			val username = "userGood"
 			val password = "LKMSDOVCJ09Jouin09JN@"
 			val email = "testSubjectemail.com"
@@ -65,7 +74,8 @@ class UserServiceTests {
 	@Test
 	fun `create user with invalid mobile`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
-			val service = UserService(transactionManager)
+			val saltPasswordOperations = SaltPasswordOperations(transactionManager)
+			val service = UserService(transactionManager,saltPasswordOperations)
 			val username = "userGood"
 			val password = "LKMSDOVCJ09Jouin09JN@"
 			val email = "testSubject@email.com"
@@ -84,7 +94,8 @@ class UserServiceTests {
 	@Test
 	fun `create multiple users`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
-			val service = UserService(transactionManager)
+			val saltPasswordOperations = SaltPasswordOperations(transactionManager)
+			val service = UserService(transactionManager,saltPasswordOperations)
 			val username1 = "userGood1"
 			val password1 = "LKMSDOVCJ09Jouin09JN@1"
 			val email1 = "testSubject1@email.com"
@@ -116,10 +127,11 @@ class UserServiceTests {
 		}
 	}
 
-	@Test //FIXME ;) chanhe this test
+	@Test
 	fun `create multiple users with same email`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
-			val service = UserService(transactionManager)
+			val saltPasswordOperations = SaltPasswordOperations(transactionManager)
+			val service = UserService(transactionManager,saltPasswordOperations)
 			val username1 = "userGood1"
 			val password1 = "LKMSDOVCJ09Jouin09JN@1"
 			val email1 = "sameemail@email.com"
@@ -133,14 +145,10 @@ class UserServiceTests {
 			val mobile2 = "123435559"
 			val newUser2 = UserInfo(username2, password2,email2,mobile2)
 
-
 			service.createUser(newUser1)
-			service.createUser(newUser2)
+			val result = service.createUser(newUser2)
+			assertTrue("User was not created", result is Either.Left)
 
-			val users = service.getAllUsers()
-			//we can use mobile because it is unique for each user
-			assertTrue("User was not created", users.any { it.userInfo.mobile == mobile1 })
-			assertTrue("User was not created", users.any { it.userInfo.mobile == mobile2 })
 		}
-	}*/
+	}
 }

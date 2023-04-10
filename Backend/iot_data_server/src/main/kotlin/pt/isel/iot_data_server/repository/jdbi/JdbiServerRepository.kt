@@ -114,7 +114,7 @@ class JdbiServerRepository(
     }
 
     //  TODO - Optimize using the power of relational database queries
-    override fun exists(username: String): Boolean {
+    override fun existsUsername(username: String): Boolean {
         getAllUsers().forEach {
             if (it.userInfo.username == username) {
                 return true
@@ -131,6 +131,15 @@ class JdbiServerRepository(
             }
         }
         throw Exception("User not found")
+    }
+
+    override fun existsEmail(email: String): Boolean {
+        getAllUsers().forEach {
+            if (it.userInfo.email == email) {
+                return true
+            }
+        }
+        return false
     }
 
     override fun getTemperatureRecords(deviceId: DeviceId): List<TemperatureRecord> {
@@ -186,6 +195,20 @@ class JdbiServerRepository(
 
     override fun removeAllDevices() {
         handle.createUpdate("delete from device").execute()
+    }
+
+    override fun getDevicesByOwnerEmail(email:String): List<Device> {
+        return handle.createQuery(
+            """
+            select id, email, mobile 
+            from device 
+            where email = :email
+            """
+        )
+            .bind("email", email)
+            .mapTo<DeviceMapper>()
+            .list()
+            .map { it.toDevice() }
     }
 
 

@@ -1,33 +1,30 @@
 package pt.isel.iot_data_server.service.user
 
 import org.springframework.stereotype.Service
-import pt.isel.iot_data_server.crypto.AES
 import pt.isel.iot_data_server.crypto.AESCipher
-import pt.isel.iot_data_server.domain.PasswordHash
 import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.domain.UserInfo
 import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.service.Either
-import java.security.MessageDigest
-import java.security.SecureRandom
 import java.util.*
-import javax.crypto.spec.IvParameterSpec
 
 @Service
 class UserService(
     private val transactionManager: TransactionManager,
+    private val saltPasswordOperations: SaltPasswordOperations
 ) {
     fun createUser(userInfo: UserInfo): UserCreationResult {
         return transactionManager.run {
             // generate random int
             val userId = Random().nextInt()
 
-            if (it.repository.exists(userInfo.username))
+            if (it.repository.existsUsername(userInfo.username))
                 return@run Either.Left(CreateUserError.UserAlreadyExists)
 
-            val passwordHash = hashPassword(userInfo.password) //TODO; Put on a function
-            val salt = Base64.getEncoder().encodeToString(passwordHash.salt) // FIXME: Should be some form of byte array in the db,i added string for now because i dont know how to store byte array in db,tried with BYTEA but it didnt work
-            it.repository.saveSalt(userId,salt)
+            if (it.repository.existsEmail(userInfo.email))
+                return@run Either.Left(CreateUserError.EmailAlreadyExists)
+
+            val passwordHash = saltPasswordOperations.saltAndHashPass(userInfo.password,userId)
             val newUserInfo = UserInfo(userInfo.username, passwordHash.hashedPassword, userInfo.email, userInfo.mobile)
             val newUser = User(userId, newUserInfo)
             it.repository.createUser(newUser)
@@ -59,12 +56,6 @@ class UserService(
         }
     }
 
-    private fun saveSalt(userId: Int, salt: String) {
-        return transactionManager.run {
-            return@run it.repository.saveSalt(userId, salt)
-        }
-    }
-
     /**
      * Creates a token for the user with the given username and password.
      * @throws RuntimeException if the user does not exist.
@@ -80,32 +71,6 @@ class UserService(
             return@run Either.Right(token)
         }
     }
-
-    private fun generateSalt(): ByteArray {
-        val salt = ByteArray(16)
-        val secureRandom = SecureRandom()
-        secureRandom.nextBytes(salt)
-        return salt
-    }
-
-    private fun hashPassword(password: String, receivedSalt:ByteArray = ByteArray(0)): PasswordHash {
-        val salt = receivedSalt.takeIf { it.isNotEmpty() } ?: generateSalt()
-        val md = MessageDigest.getInstance("SHA-256")
-        md.update(salt)
-        val hashedPassword = md.digest(password.toByteArray())
-        val hashedPasswordString = Base64.getEncoder().encodeToString(hashedPassword)
-        return PasswordHash(salt, hashedPasswordString)
-    }
-
-    //Used in login to verify if the password is correct
-    //username is used to get the stored pass from the database
-    //password is the password received from the user (CLEAR TEXT)
-    fun verifyPassword(username: String, password: String): Boolean = transactionManager.run {
-        val storedSalt = Base64.getDecoder().decode(it.repository.getSalt(it.repository.getUserByUsername(username).id))
-        val receivedHashPassword = hashPassword(password,storedSalt).hashedPassword
-        val storedHashedPassword = it.repository.getUserByUsername(username).userInfo.password
-        return@run storedHashedPassword == receivedHashPassword
-       }
 
     fun saveEncryptedToken(aesCipher: AESCipher,plainToken :String, userId:Int) = transactionManager.run {
         val encryptedToken = aesCipher.encrypt(plainToken)

@@ -14,10 +14,12 @@ interface StaticDataRepository {//todo all the sensor data needs to go away
     fun savePhRecord(deviceId: DeviceId, phRecord: PhRecord)
     fun getTemperatureRecords(deviceId: DeviceId): List<TemperatureRecord>
     fun saveTemperatureRecord(deviceId: DeviceId, temperatureRecord: TemperatureRecord)
-    fun exists(username: String): Boolean
+    fun existsUsername(username: String): Boolean
+    fun existsEmail(email: String): Boolean
     fun getUserByUsername(username: String): User
     fun saveSalt(userId: Int, salt: String)
     fun getSalt(userId: Int): String
     fun getUserByEmailAddress(email: String): User?
     fun removeAllDevices(): Unit
+    fun getDevicesByOwnerEmail(email: String): List<Device>
 }

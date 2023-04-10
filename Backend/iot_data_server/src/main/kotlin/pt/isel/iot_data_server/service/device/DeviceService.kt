@@ -80,4 +80,10 @@ class DeviceService (
             return@run it.repository.removeAllDevices()
         }
     }
+
+    fun getDevicesByOwnerEmail(ownerEmail: String): List<Device> {
+        return transactionManager.run {
+            return@run it.repository.getDevicesByOwnerEmail(ownerEmail)
+        }
+    }
 }

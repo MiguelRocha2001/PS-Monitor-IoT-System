@@ -5,6 +5,7 @@ import org.springframework.test.util.AssertionErrors.assertFalse
 import org.springframework.test.util.AssertionErrors.assertTrue
 import pt.isel.iot_data_server.domain.UserInfo
 import pt.isel.iot_data_server.repository.TransactionManager
+import pt.isel.iot_data_server.service.user.SaltPasswordOperations
 import pt.isel.iot_data_server.service.user.UserService
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 
@@ -13,7 +14,8 @@ class SaltTests{
     @Test
     fun `verify if two equal passwords are stored the same`(){
         testWithTransactionManagerAndRollback { transactionManager ->
-            val service = UserService(transactionManager)
+            val salt = SaltPasswordOperations(transactionManager)
+            val service = UserService(transactionManager,salt)
 
             //create user
             val pass = "LKMSDOVCJ09Jouin09JN@"
@@ -37,7 +39,8 @@ class SaltTests{
     @Test
     fun `verify correct password`(){
         testWithTransactionManagerAndRollback { transactionManager ->
-            val service = UserService(transactionManager)
+            val salt = SaltPasswordOperations(transactionManager)
+            val service = UserService(transactionManager,salt)
 
             //create user
             val pass = "LKMSDOVCJ09Jouin09JN@"
@@ -49,7 +52,7 @@ class SaltTests{
             if(user == null) throw Exception("User not found")
 
             //verify password
-            val resultOfVerify = service.verifyPassword(user.username,pass)//storedPassword is not null
+            val resultOfVerify = salt.verifyPassword(user.username,pass)//storedPassword is not null
             assertTrue("Password is correct", resultOfVerify)
         }
     }
@@ -57,7 +60,8 @@ class SaltTests{
     @Test
     fun `verify incorrect password`() {
         testWithTransactionManagerAndRollback { transactionManager ->
-            val service = UserService(transactionManager)
+            val salt = SaltPasswordOperations(transactionManager)
+            val service = UserService(transactionManager,salt)
 
             //create user
             val pass = "LKMSDOVCJ09Jouin09JN@"
@@ -70,7 +74,7 @@ class SaltTests{
 
             val fakePass = "LKMSDOVCJ09Jouin0fake"
             //verify password
-            val resultOfVerify = service.verifyPassword(user.username,fakePass)//storedPassword is not null
+            val resultOfVerify = salt.verifyPassword(user.username,fakePass)//storedPassword is not null
             assertFalse("Password is correct", resultOfVerify)
         }
     }
