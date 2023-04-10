@@ -2,7 +2,7 @@ package pt.isel.iot_data_server.repository
 
 import pt.isel.iot_data_server.domain.*
 
-interface StaticDataRepository {
+interface StaticDataRepository {//todo all the sensor data needs to go away
 
     fun createUser(user: User)
     fun getAllUsers(): List<User>
@@ -19,4 +19,5 @@ interface StaticDataRepository {
     fun saveSalt(userId: Int, salt: String)
     fun getSalt(userId: Int): String
     fun getUserByEmailAddress(email: String): User?
+    fun removeAllDevices(): Unit
 }

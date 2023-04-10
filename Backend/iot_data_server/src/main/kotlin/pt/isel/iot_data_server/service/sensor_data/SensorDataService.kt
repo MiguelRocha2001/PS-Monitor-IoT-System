@@ -7,14 +7,14 @@ import pt.isel.iot_data_server.domain.*
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
 import pt.isel.iot_data_server.service.Either
 import pt.isel.iot_data_server.service.device.DeviceService
-import pt.isel.iot_data_server.service.email.EmailSender
+import pt.isel.iot_data_server.service.email.EmailService
 
 // TODO -> SOLVE CONCURRENCY PROBLEMS
 
 @Service
 class SensorDataService(
   //  private val transactionManager: TransactionManager,
-    private val emailSenderService: EmailSender,
+    private val emailSenderService: EmailService,
     private val tsdbRepository: TSDBRepository,
     private val deviceService: DeviceService,
     client: MqttClient

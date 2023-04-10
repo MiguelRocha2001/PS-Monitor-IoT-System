@@ -10,7 +10,8 @@ import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
 
 @Service
-class EmailSender {
+class EmailService {
+
     fun sendEmail(to: String, subject: Map<String,String>, body: Map<String,String>,templateName: String) {
 
         val sender = System.getenv("SENDER_EMAIL")

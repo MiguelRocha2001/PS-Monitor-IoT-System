@@ -184,5 +184,9 @@ class JdbiServerRepository(
             ?.toUser()
     }
 
+    override fun removeAllDevices() {
+        handle.createUpdate("delete from device").execute()
+    }
+
 
 }

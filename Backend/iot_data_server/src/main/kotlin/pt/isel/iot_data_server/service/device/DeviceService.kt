@@ -8,6 +8,8 @@ import pt.isel.iot_data_server.domain.SEED
 import pt.isel.iot_data_server.domain.generateRandomDeviceId
 import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.service.Either
+import pt.isel.iot_data_server.service.email.EmailService
+import pt.isel.iot_data_server.utils.emailVerifier
 
 
 @Service
@@ -18,6 +20,10 @@ class DeviceService (
     private val logger = LoggerFactory.getLogger(DeviceService::class.java)
 
     fun addDevice(ownerEmail: String): CreateDeviceResult {
+        if (!emailVerifier(ownerEmail) ) {
+            logger.info("Invalid owner email")
+            return Either.Left(CreateDeviceError.InvalidOwnerEmail)
+        }
         return transactionManager.run {
             return@run generateDeviceId().let { deviceId ->
                 val device = Device(deviceId, ownerEmail)
@@ -66,6 +72,12 @@ class DeviceService (
             val exists = getDeviceById(deviceId.id) != null
 
             if (!exists) return deviceId
+        }
+    }
+
+    fun removeAllDevices() {
+        return transactionManager.run {
+            return@run it.repository.removeAllDevices()
         }
     }
 }

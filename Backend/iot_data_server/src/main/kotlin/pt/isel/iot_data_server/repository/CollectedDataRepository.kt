@@ -15,4 +15,5 @@ interface CollectedDataRepository {
     fun saveTemperatureRecord(deviceId: DeviceId, temperatureRecord: TemperatureRecord)
     fun getAllPhRecords(): List<PhRecord>
     fun getAllTemperatureRecords(): List<TemperatureRecord>
+
 }
