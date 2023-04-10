@@ -20,7 +20,6 @@ class SaltTests{
             val newUser = UserInfo("userGood", pass,"testSubject@email.com","123456789")
             service.createUser(newUser)
 
-            val samePass = "LKMSDOVCJ09Jouin09JN@"
             val newUser2 = UserInfo("userGood2", pass,"testSubject2@email.com","1234567892")
             service.createUser(newUser2)
 
