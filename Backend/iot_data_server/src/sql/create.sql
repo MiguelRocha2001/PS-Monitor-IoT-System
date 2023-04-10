@@ -8,7 +8,8 @@ create table _user(
 
 create table token(
     user_id serial primary key,
-    token varchar
+    token varchar,
+    iv varchar
 );
 
 create table device(

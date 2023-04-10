@@ -1,7 +1,8 @@
 package pt.isel.iot_data_server.service.user
 
-import okhttp3.internal.userAgent
 import org.springframework.stereotype.Service
+import pt.isel.iot_data_server.crypto.AES
+import pt.isel.iot_data_server.crypto.AESCipher
 import pt.isel.iot_data_server.domain.PasswordHash
 import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.domain.UserInfo
@@ -10,6 +11,7 @@ import pt.isel.iot_data_server.service.Either
 import java.security.MessageDigest
 import java.security.SecureRandom
 import java.util.*
+import javax.crypto.spec.IvParameterSpec
 
 @Service
 class UserService(
@@ -71,7 +73,8 @@ class UserService(
         return transactionManager.run {
             val user = it.repository.getUserByUsername(username)
             val token = UUID.randomUUID().toString()
-
+           // val aesCipher = AESCipher("AES/CBC/PKCS5Padding", AES.generateIv())// todo store the iv in the db
+          //  saveEncryptedToken(aesCipher,token,user.id)
             it.repository.addToken(user.id, token)
 
             return@run Either.Right(token)
@@ -103,5 +106,21 @@ class UserService(
         val storedHashedPassword = it.repository.getUserByUsername(username).userInfo.password
         return@run storedHashedPassword == receivedHashPassword
        }
+
+    fun saveEncryptedToken(aesCipher: AESCipher,plainToken :String, userId:Int) = transactionManager.run {
+        val encryptedToken = aesCipher.encrypt(plainToken)
+        return@run it.repository.addToken(userId, encryptedToken)
     }
+
+    fun decryptToken(aesCipher: AESCipher,encryptedToken: String): String {
+        return aesCipher.decrypt(encryptedToken)
+    }
+
+
+}
+
+
+
+
+
 
