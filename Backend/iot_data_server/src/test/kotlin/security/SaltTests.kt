@@ -1,5 +1,6 @@
 package security
 
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.test.util.AssertionErrors.assertFalse
 import org.springframework.test.util.AssertionErrors.assertTrue
@@ -8,6 +9,7 @@ import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.service.user.SaltPasswordOperations
 import pt.isel.iot_data_server.service.user.UserService
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
+import java.util.*
 
 class SaltTests{
 
@@ -19,10 +21,10 @@ class SaltTests{
 
             //create user
             val pass = "LKMSDOVCJ09Jouin09JN@"
-            val newUser = UserInfo("userGood", pass,"testSubject@email.com","123456789")
+            val newUser = UserInfo("userGood", pass,"testSubject@email.com")
             service.createUser(newUser)
 
-            val newUser2 = UserInfo("userGood2", pass,"testSubject2@email.com","1234567892")
+            val newUser2 = UserInfo("userGood2", pass,"testSubject2@email.com")
             service.createUser(newUser2)
 
 
@@ -44,7 +46,7 @@ class SaltTests{
 
             //create user
             val pass = "LKMSDOVCJ09Jouin09JN@"
-            val newUser = UserInfo("userGood", pass,"testSubject@email.com","123456789")
+            val newUser = UserInfo("userGood", pass,"testSubject@email.com")
             service.createUser(newUser)
 
             //stored user password
@@ -65,7 +67,7 @@ class SaltTests{
 
             //create user
             val pass = "LKMSDOVCJ09Jouin09JN@"
-            val newUser = UserInfo("userGood", pass,"testSubject@email.com","123456789")
+            val newUser = UserInfo("userGood", pass,"testSubject@email.com")
             service.createUser(newUser)
 
             //stored user password
@@ -79,5 +81,16 @@ class SaltTests{
         }
     }
 
+    @Test
+    fun `save a valid salt`() {
+        testWithTransactionManagerAndRollback { transactionManager ->
+            val saltPasswordOperations = SaltPasswordOperations(transactionManager)
+            val id = Random().nextInt()
+            val password = "foefmefew43ok@skdkK"
+            saltPasswordOperations.saltAndHashPass(password,id)
+            val salt = saltPasswordOperations.getSalt(id)
+            Assertions.assertTrue(salt.isNotEmpty())
+        }
+    }
 
 }

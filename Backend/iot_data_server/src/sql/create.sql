@@ -3,7 +3,6 @@ create table _user(
     username varchar,
     password varchar,
     email varchar unique,
-    mobile varchar unique
 );
 
 create table token(
@@ -15,7 +14,6 @@ create table token(
 create table device(
     id varchar primary key,
     email varchar,
-    mobile numeric
 );
 
 create table salt(

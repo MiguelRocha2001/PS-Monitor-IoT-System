@@ -21,15 +21,13 @@ class UserServiceTests {
 			val username = "userGood"
 			val password = "LKMSDOVCJ09Jouin09JN@"
 			val email = "testSubject@email.com"
-			val mobile = "123456789"
-			val newUser = UserInfo(username, password,email,mobile)
+			val newUser = UserInfo(username, password,email)
 			service.createUser(newUser)
 			val users = service.getAllUsers()
 			//assertValues of every property of student with the expected values
 			val retrievedUser = users.first { it.userInfo.username == username}
 			assertTrue("User was created", retrievedUser.userInfo.username == username)
 			assertTrue("User was created", retrievedUser.userInfo.email == email)
-			assertTrue("User was created", retrievedUser.userInfo.mobile == mobile)
 		}
 	}
 
@@ -41,9 +39,8 @@ class UserServiceTests {
 			val username = "ustg"
 			val password = "LKMSDOVCJ09Jouin09JN@"
 			val email = "testSubject@email.com"
-			val mobile = "123456789"
 			try {
-				val newInvalidUser = UserInfo(username, password,email,mobile)
+				val newInvalidUser = UserInfo(username, password,email)
 				assert(false) //should not reach this line
 			}catch (e: IllegalArgumentException){
 				assertTrue("User was not created", e.message == "Username must be at least 5 characters long")
@@ -60,9 +57,8 @@ class UserServiceTests {
 			val username = "userGood"
 			val password = "LKMSDOVCJ09Jouin09JN@"
 			val email = "testSubjectemail.com"
-			val mobile = "123456789"
 			try {
-				val newInvalidUser = UserInfo(username, password,email,mobile)
+				val newInvalidUser = UserInfo(username, password,email)
 				assert(false) //should not reach this line
 			}catch (e: IllegalArgumentException){
 				assertTrue("User was not created", e.message == "Invalid email address")
@@ -72,26 +68,6 @@ class UserServiceTests {
 	}
 
 	@Test
-	fun `create user with invalid mobile`() {
-		testWithTransactionManagerAndRollback { transactionManager ->
-			val saltPasswordOperations = SaltPasswordOperations(transactionManager)
-			val service = UserService(transactionManager,saltPasswordOperations)
-			val username = "userGood"
-			val password = "LKMSDOVCJ09Jouin09JN@"
-			val email = "testSubject@email.com"
-			val mobile = "123"
-			try {
-				val newInvalidUser = UserInfo(username, password, email, mobile)
-				assert(false) //should not reach this line
-			} catch (e: IllegalArgumentException) {
-				assertTrue("User was not created", e.message == "Invalid mobile number")
-				assert(true)
-			}
-		}
-	}
-
-
-	@Test
 	fun `create multiple users`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
 			val saltPasswordOperations = SaltPasswordOperations(transactionManager)
@@ -99,31 +75,28 @@ class UserServiceTests {
 			val username1 = "userGood1"
 			val password1 = "LKMSDOVCJ09Jouin09JN@1"
 			val email1 = "testSubject1@email.com"
-			val mobile1 = "123466666"
-			val newUser1 = UserInfo(username1, password1,email1,mobile1)
+			val newUser1 = UserInfo(username1, password1,email1)
 
 
 			val username2 = "userGood2"
 			val password2 = "LKMSDOVCJ09Jouin09JN@"
 			val email2 = "testSubject2@email.com"
-			val mobile2 = "123435559"
-			val newUser2 = UserInfo(username2, password2,email2,mobile2)
+			val newUser2 = UserInfo(username2, password2,email2)
 
 			val username3 = "userGood3"
 			val password3 = "LKMSDOVCJ09Jouin09JN@"
 			val email3 = "testSubject3@email.com"
-			val mobile3 = "123499999"
-			val newUser3 = UserInfo(username3, password3,email3,mobile3)
+			val newUser3 = UserInfo(username3, password3,email3)
 
 			service.createUser(newUser1)
 			service.createUser(newUser2)
 			service.createUser(newUser3)
 
 			val users = service.getAllUsers()
-			//we can use mobile because it is unique for each user
-			assertTrue("User was not created", users.any { it.userInfo.mobile == mobile1 })
-			assertTrue("User was not created", users.any { it.userInfo.mobile == mobile2 })
-			assertTrue("User was not created", users.any { it.userInfo.mobile == mobile3 })
+
+			assertTrue("User was not created", users.any { it.userInfo.email == email1 })
+			assertTrue("User was not created", users.any { it.userInfo.email == email2 })
+			assertTrue("User was not created", users.any { it.userInfo.email == email3 })
 		}
 	}
 
@@ -135,20 +108,18 @@ class UserServiceTests {
 			val username1 = "userGood1"
 			val password1 = "LKMSDOVCJ09Jouin09JN@1"
 			val email1 = "sameemail@email.com"
-			val mobile1 = "123466666"
-			val newUser1 = UserInfo(username1, password1,email1,mobile1)
+			val newUser1 = UserInfo(username1, password1,email1)
 
 
 			val username2 = "userGood2"
 			val password2 = "LKMSDOVCJ09Jouin09JN@"
 			val email2 = "sameemail@email.com"
-			val mobile2 = "123435559"
-			val newUser2 = UserInfo(username2, password2,email2,mobile2)
+			val newUser2 = UserInfo(username2, password2,email2)
 
 			service.createUser(newUser1)
 			val result = service.createUser(newUser2)
 			assertTrue("User was not created", result is Either.Left)
-
 		}
 	}
+
 }

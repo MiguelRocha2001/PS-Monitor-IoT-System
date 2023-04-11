@@ -15,19 +15,18 @@ class JdbiServerRepository(
     override fun createUser(user: User) {
         handle.createUpdate(
             """
-            insert into _USER (_id, username, password, email, mobile) values (:_id, :username, :password, :email, :mobile)
+            insert into _USER (_id, username, password, email) values (:_id, :username, :password, :email)
             """
         )
             .bind("_id", user.id)
             .bind("username", user.userInfo.username)
             .bind("password", user.userInfo.password)
             .bind("email", user.userInfo.email)
-            .bind("mobile", user.userInfo.mobile)
             .execute()
     }
 
     override fun getAllUsers(): List<User> {
-        return handle.createQuery("select _id, username, password, email, mobile from _USER")
+        return handle.createQuery("select _id, username, password, email from _USER")
             .mapTo<UserMapper>()
             .list()
             .map { it.toUser() }
@@ -72,7 +71,7 @@ class JdbiServerRepository(
     }
 
     override fun getAllDevices(): List<Device> {
-        return handle.createQuery("select id, email, mobile from device")
+        return handle.createQuery("select id, email from device")
             .mapTo<DeviceMapper>()
             .list()
             .map { it.toDevice() }
@@ -182,7 +181,7 @@ class JdbiServerRepository(
     override fun getUserByEmailAddress(email: String): User? {
         return handle.createQuery(
             """
-            select _id, username, password, email, mobile 
+            select _id, username, password, email 
             from _USER 
             where email = :email
             """
@@ -200,7 +199,7 @@ class JdbiServerRepository(
     override fun getDevicesByOwnerEmail(email:String): List<Device> {
         return handle.createQuery(
             """
-            select id, email, mobile 
+            select id, email 
             from device 
             where email = :email
             """

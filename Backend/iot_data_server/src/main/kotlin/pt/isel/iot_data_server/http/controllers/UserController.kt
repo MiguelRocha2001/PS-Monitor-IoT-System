@@ -127,7 +127,6 @@ class UserController(
             user.id,
             user.userInfo.username,
             user.userInfo.email,
-            user.userInfo.mobile
         )
         return ResponseEntity.status(200)
             .contentType(SirenMediaType)

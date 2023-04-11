@@ -10,7 +10,6 @@ data class UserMapper(
     val username: String,
     val password: String,
     val email: String,
-    val mobile: String
 )
 
 internal fun UserMapper.toUser() = User(
@@ -19,14 +18,12 @@ internal fun UserMapper.toUser() = User(
         username = username,
         password = password,
         email = email,
-        mobile = mobile
     )
 )
 
 data class DeviceMapper(
     val id: String,
     val email: String,
-    val mobile: Long
 )
 
 fun DeviceMapper.toDevice() =
