@@ -31,7 +31,7 @@ class SensorDataService(
     ) {
        // transactionManager.run {
         if(phRecord.value < 0 || phRecord.value > 14)
-            throw Exception("Not a valid ph value")
+            throw IllegalArgumentException("Invalid pH value")
         else
             tsdbRepository.savePhRecord(deviceId, phRecord)
     }

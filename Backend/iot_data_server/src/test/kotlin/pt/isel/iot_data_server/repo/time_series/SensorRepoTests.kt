@@ -11,11 +11,9 @@ import pt.isel.iot_data_server.domain.PhRecord
 import pt.isel.iot_data_server.domain.TemperatureRecord
 import pt.isel.iot_data_server.repository.tsdb.TSDBConfig
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
-import pt.isel.iot_data_server.utils.generateRandomDouble
+import pt.isel.iot_data_server.utils.generateRandomPh
 import pt.isel.iot_data_server.utils.getRandomInstantWithinLastWeek
 import java.time.Instant
-import java.time.temporal.ChronoUnit
-import java.util.*
 import kotlin.concurrent.thread
 
 //TEST THE INFLUXDB
@@ -35,7 +33,7 @@ class TsdbRepoTests {
         val deviceId = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120002")
         val phsBefore = repo.getPhRecords(deviceId)
         assertTrue("Ph found", phsBefore.isEmpty())
-        repo.savePhRecord(deviceId, PhRecord(generateRandomDouble(), Instant.now()))
+        repo.savePhRecord(deviceId, PhRecord(generateRandomPh(), Instant.now()))
         val phs = repo.getPhRecords(deviceId)
         // assertTrue("Ph found", phs.size == 1)
         assertTrue("Ph found", phs.size == 1)
@@ -48,9 +46,9 @@ class TsdbRepoTests {
         val deviceId = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120002")
         val phsBefore = repo.getPhRecords(deviceId)
         assertTrue("Ph found", phsBefore.isEmpty())
-        repo.savePhRecord(deviceId, PhRecord(generateRandomDouble(), Instant.now()))
-        repo.savePhRecord(deviceId, PhRecord(generateRandomDouble(), Instant.now()))
-        repo.savePhRecord(deviceId, PhRecord(generateRandomDouble(), Instant.now()))
+        repo.savePhRecord(deviceId, PhRecord(generateRandomPh(), Instant.now()))
+        repo.savePhRecord(deviceId, PhRecord(generateRandomPh(), Instant.now()))
+        repo.savePhRecord(deviceId, PhRecord(generateRandomPh(), Instant.now()))
         val phs = repo.getPhRecords(deviceId)
         assertTrue("Ph found", phs.size == 3)
     }
@@ -61,9 +59,9 @@ class TsdbRepoTests {
         val repo = TSDBRepository(testDBConfig)
         val deviceId = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120002")
         val deviceId2 = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120003")
-        repo.savePhRecord(deviceId, PhRecord(generateRandomDouble(), Instant.now()))
-        repo.savePhRecord(deviceId, PhRecord(generateRandomDouble(), Instant.now()))
-        repo.savePhRecord(deviceId2, PhRecord(generateRandomDouble(), Instant.now()))
+        repo.savePhRecord(deviceId, PhRecord(generateRandomPh(), Instant.now()))
+        repo.savePhRecord(deviceId, PhRecord(generateRandomPh(), Instant.now()))
+        repo.savePhRecord(deviceId2, PhRecord(generateRandomPh(), Instant.now()))
         val phs = repo.getPhRecords(deviceId)
         val phs2 = repo.getPhRecords(deviceId2)
         assertTrue("Ph found", phs.size == 2)
@@ -80,7 +78,7 @@ class TsdbRepoTests {
         val deviceId = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120002")
         val recordedTemperature = repo.getTemperatureRecords(deviceId)
         assertTrue("Temperature found", recordedTemperature.isEmpty())
-        repo.saveTemperatureRecord(deviceId, TemperatureRecord(generateRandomDouble(), Instant.now()))
+        repo.saveTemperatureRecord(deviceId, TemperatureRecord(generateRandomPh(), Instant.now()))
         val phs = repo.getTemperatureRecords(deviceId)
         assertTrue("Temperature found", phs.size == 1)
     }
@@ -92,9 +90,9 @@ class TsdbRepoTests {
         val deviceId = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120002")
         val recordedTemperature = repo.getTemperatureRecords(deviceId)
         assertTrue("Temperature found", recordedTemperature.isEmpty())
-        repo.saveTemperatureRecord(deviceId, TemperatureRecord(generateRandomDouble(), Instant.now()))
-        repo.saveTemperatureRecord(deviceId, TemperatureRecord(generateRandomDouble(), Instant.now()))
-        repo.saveTemperatureRecord(deviceId, TemperatureRecord(generateRandomDouble(), Instant.now()))
+        repo.saveTemperatureRecord(deviceId, TemperatureRecord(generateRandomPh(), Instant.now()))
+        repo.saveTemperatureRecord(deviceId, TemperatureRecord(generateRandomPh(), Instant.now()))
+        repo.saveTemperatureRecord(deviceId, TemperatureRecord(generateRandomPh(), Instant.now()))
         val phs = repo.getTemperatureRecords(deviceId)
         assertTrue("Temperature found", phs.size == 3)
     }
@@ -105,9 +103,9 @@ class TsdbRepoTests {
         val repo = TSDBRepository(testDBConfig)
         val deviceId = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120002")
         val deviceId2 = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120003")
-        repo.saveTemperatureRecord(deviceId, TemperatureRecord(generateRandomDouble(), Instant.now()))
-        repo.saveTemperatureRecord(deviceId, TemperatureRecord(generateRandomDouble(), Instant.now()))
-        repo.saveTemperatureRecord(deviceId2, TemperatureRecord(generateRandomDouble(), Instant.now()))
+        repo.saveTemperatureRecord(deviceId, TemperatureRecord(generateRandomPh(), Instant.now()))
+        repo.saveTemperatureRecord(deviceId, TemperatureRecord(generateRandomPh(), Instant.now()))
+        repo.saveTemperatureRecord(deviceId2, TemperatureRecord(generateRandomPh(), Instant.now()))
         val phs = repo.getTemperatureRecords(deviceId)
         val phs2 = repo.getTemperatureRecords(deviceId2)
         assertTrue("Temperature found", phs.size == 2)
@@ -121,9 +119,9 @@ class TsdbRepoTests {
         val testDBConfig = TSDBConfig().tsdb2Properties()
         val repo = TSDBRepository(testDBConfig)
         val deviceId = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120002")
-        repo.savePhRecord(deviceId, PhRecord(generateRandomDouble(), Instant.now()))
-        repo.savePhRecord(deviceId, PhRecord(generateRandomDouble(), Instant.now()))
-        repo.saveTemperatureRecord(deviceId, TemperatureRecord(generateRandomDouble(), Instant.now()))
+        repo.savePhRecord(deviceId, PhRecord(generateRandomPh(), Instant.now()))
+        repo.savePhRecord(deviceId, PhRecord(generateRandomPh(), Instant.now()))
+        repo.saveTemperatureRecord(deviceId, TemperatureRecord(generateRandomPh(), Instant.now()))
         val phs = repo.getPhRecords(deviceId)
         val temperatures = repo.getTemperatureRecords(deviceId)
         assertTrue("Ph found", phs.size == 2)
@@ -136,10 +134,10 @@ class TsdbRepoTests {
         val repo = TSDBRepository(testDBConfig)
         val deviceId = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120002")
         val deviceId2 = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120003")
-        repo.savePhRecord(deviceId, PhRecord(generateRandomDouble(), Instant.now()))
-        repo.saveTemperatureRecord(deviceId, TemperatureRecord(generateRandomDouble(), Instant.now()))
-        repo.savePhRecord(deviceId2, PhRecord(generateRandomDouble(), Instant.now()))
-        repo.saveTemperatureRecord(deviceId2, TemperatureRecord(generateRandomDouble(), Instant.now()))
+        repo.savePhRecord(deviceId, PhRecord(generateRandomPh(), Instant.now()))
+        repo.saveTemperatureRecord(deviceId, TemperatureRecord(generateRandomPh(), Instant.now()))
+        repo.savePhRecord(deviceId2, PhRecord(generateRandomPh(), Instant.now()))
+        repo.saveTemperatureRecord(deviceId2, TemperatureRecord(generateRandomPh(), Instant.now()))
         val phs1 = repo.getPhRecords(deviceId)
         val temperatures1 = repo.getTemperatureRecords(deviceId)
         val phs2 = repo.getPhRecords(deviceId2)
@@ -150,6 +148,7 @@ class TsdbRepoTests {
         assertTrue("Temperature found", temperatures2.size == 1)
     }
 
+    //FIXME:THESE TESTS NEED FIXING
     @Test
     fun `add ph record and get it concurrently`(){ //THIS TEST CAN FAIL IF TWO INSTANTS ARE GENERATED ARE EQUAL (HIGHLY UNLIKELY)
         val testDBConfig = TSDBConfig().tsdb2Properties()
@@ -158,14 +157,14 @@ class TsdbRepoTests {
 
         // Number of threads for concurrent execution
         val numThreads = 10
-        val repetitions = 5
+        val repetitions = 100
 
         // Start multiple threads to concurrently add ph records
         val threads = List(numThreads) {
             thread(start = true) {
                 repeat(repetitions){
                     // generate random instant
-                    val ph = generateRandomDouble()
+                    val ph = generateRandomPh()
                     val randomInstant = getRandomInstantWithinLastWeek()
                     repo.savePhRecord(deviceId, PhRecord(ph, randomInstant))
                     }
@@ -191,14 +190,14 @@ class TsdbRepoTests {
 
         // Number of threads for concurrent execution
         val numThreads = 10
-        val repetitions = 5
+        val repetitions = 100
 
         // Start multiple threads to concurrently add ph records
         val threads = List(numThreads) {
             thread(start = true) {
                 repeat(repetitions){
                     // generate random instant
-                    val temperature = generateRandomDouble()
+                    val temperature = generateRandomPh()
                     val randomInstant = getRandomInstantWithinLastWeek()
                     repo.saveTemperatureRecord(deviceId, TemperatureRecord(temperature, randomInstant))
                 }
@@ -224,7 +223,7 @@ class TsdbRepoTests {
 
         // Number of threads for concurrent execution
         val numThreads = 10
-        val repetitions = 5
+        val repetitions = 100
 
         // Start multiple threads to concurrently add ph records
         val threads = List(numThreads) {
@@ -232,8 +231,8 @@ class TsdbRepoTests {
                 repeat(repetitions){
                     // generate random instant
                     val deviceId = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120002")
-                    val ph = generateRandomDouble()
-                    val temperature = generateRandomDouble()
+                    val ph = generateRandomPh()
+                    val temperature = generateRandomPh()
                     val randomInstant = getRandomInstantWithinLastWeek()
                     repo.savePhRecord(deviceId, PhRecord(ph, randomInstant))
                     repo.saveTemperatureRecord(deviceId, TemperatureRecord(temperature, randomInstant))

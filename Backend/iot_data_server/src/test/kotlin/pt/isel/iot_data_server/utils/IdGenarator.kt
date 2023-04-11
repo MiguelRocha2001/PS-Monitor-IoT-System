@@ -34,9 +34,9 @@ fun generateRandomPassword(): String {
     return password.toString()
 }
 
-fun generateRandomDouble(): Double {
+fun generateRandomPh(): Double {
     val random = Random()
-    return random.nextDouble(-10.0, 10.0)
+    return random.nextDouble(0.1, 13.9)
 }
 
 fun getRandomInstantWithinLastWeek(): Instant {
@@ -46,10 +46,13 @@ fun getRandomInstantWithinLastWeek(): Instant {
     // Calculate the timestamp exactly one week ago from now
     val oneWeekAgo = now.minus(7, ChronoUnit.DAYS).epochSecond
 
+    // Calculate the total number of seconds in the last week
+    val totalSecondsLastWeek = ChronoUnit.SECONDS.between(Instant.ofEpochSecond(oneWeekAgo), now)
+
     // Generate a random number of seconds within the last week
-    val randomSeconds = Random().nextLong(oneWeekAgo, now.epochSecond)
+    val randomSeconds = Random().nextLong(totalSecondsLastWeek)
 
     // Return the randomly generated instant
-    return Instant.ofEpochSecond(randomSeconds)
+    return Instant.ofEpochSecond(oneWeekAgo + randomSeconds)
 }
 

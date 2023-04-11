@@ -1,10 +1,16 @@
 package pt.isel.iot_data_server.service
 
+import deleteAllPhMeasurements
+import deleteAllTemperatureMeasurements
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.util.AssertionErrors.assertTrue
 import pt.isel.iot_data_server.domain.UserInfo
+import pt.isel.iot_data_server.repository.tsdb.TSDBConfig
+import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
 import pt.isel.iot_data_server.service.user.CreateUserError
 import pt.isel.iot_data_server.service.user.SaltPasswordOperations
 import pt.isel.iot_data_server.service.user.UserService
