@@ -13,6 +13,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import pt.isel.iot_data_server.http.controllers.Uris
 import pt.isel.iot_data_server.http.infra.SirenModel
 import pt.isel.iot_data_server.repository.jdbi.configure
+import pt.isel.iot_data_server.utils.generateRandomEmail
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -33,12 +34,12 @@ class DeviceHttpTests {
         ).configure()
     }
 
-    @Test
-    fun `Can create a new Device`() {
+
+    fun create_device(email:String) {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         val result = client.post().uri(Uris.Devices.ALL)
-            .bodyValue(mapOf("email" to "someEmail1@gmail.com"))
+            .bodyValue(mapOf("email" to email))
             .exchange()
             .expectStatus().isCreated
             .expectBody(SirenModel::class.java)
@@ -57,5 +58,23 @@ class DeviceHttpTests {
         val actions = result.actions
         assertEquals(0, actions.size)
     }
+
+    @Test
+    fun `Can get all Devices`() {
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+        create_device(generateRandomEmail())
+        create_device(generateRandomEmail())
+        create_device(generateRandomEmail())
+        val result = client.get().uri(Uris.Devices.ALL)
+            .exchange()
+            .expectStatus().isCreated
+            .expectBody(SirenModel::class.java)
+            .returnResult()
+            .responseBody!!
+        val properties = result.properties as LinkedHashMap<*, *>
+        val devices = properties["devices"] as ArrayList<*>
+        assertEquals(3,devices.size == 3)
+    }
+
 
 }

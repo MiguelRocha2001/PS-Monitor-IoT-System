@@ -77,7 +77,7 @@ class JdbiServerRepository(
             .map { it.toDevice() }
     }
 
-    override fun savePhRecord(deviceId: DeviceId, phRecord: PhRecord) {
+     fun savePhRecord(deviceId: DeviceId, phRecord: PhRecord) {
         handle.createUpdate(
             """
             insert into ph_record (device_id, time, value) values (:device_id, :time, :value)
@@ -88,7 +88,7 @@ class JdbiServerRepository(
             .bind("value", phRecord.value)
     }
 
-    override fun getPhRecords(deviceId: DeviceId): List<PhRecord> {
+     fun getPhRecords(deviceId: DeviceId): List<PhRecord> {
         return handle.createQuery(
             """
             select time, value 
@@ -101,7 +101,7 @@ class JdbiServerRepository(
             .list()
     }
 
-    override fun saveTemperatureRecord(deviceId: DeviceId, temperatureRecord: TemperatureRecord) {
+     fun saveTemperatureRecord(deviceId: DeviceId, temperatureRecord: TemperatureRecord) {
         handle.createUpdate(
             """
             insert into temperature_record (device_id, time, value) values (:device_id, :time, :value)
@@ -141,7 +141,7 @@ class JdbiServerRepository(
         return false
     }
 
-    override fun getTemperatureRecords(deviceId: DeviceId): List<TemperatureRecord> {
+     fun getTemperatureRecords(deviceId: DeviceId): List<TemperatureRecord> {
         return handle.createQuery(
             """
             select time, value 

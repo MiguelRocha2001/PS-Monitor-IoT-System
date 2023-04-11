@@ -1,10 +1,13 @@
 package pt.isel.iot_data_server.repo.static_content
 
 import org.junit.jupiter.api.Test
+import org.springframework.test.util.AssertionErrors.assertNull
 import org.springframework.test.util.AssertionErrors.assertTrue
 import pt.isel.iot_data_server.domain.Device
 import pt.isel.iot_data_server.domain.DeviceId
+import pt.isel.iot_data_server.utils.generateRandomEmail
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
+import kotlin.random.Random
 
 class DeviceRepoTests {
 
@@ -13,10 +16,10 @@ class DeviceRepoTests {
         testWithTransactionManagerAndRollback { transactionManager ->
             transactionManager.run {transaction ->
                 val devicesRepo = transaction.repository
-                val device = Device(DeviceId("4521087288"), "exampleEmail@pront.com")
+                val device = Device(DeviceId(Random.nextInt().toString()), "exampleEmail@pront.com")
                 devicesRepo.addDevice(device)
-                val foundDevice = devicesRepo.getAllDevices().firstOrNull { it.deviceId == device.deviceId }
-                assertTrue("Device found", foundDevice != null)
+                val foundDevice = devicesRepo.getAllDevices().any { it.deviceId.id == device.deviceId.id }
+                assertTrue("Device found", foundDevice)
             }
         }
     }
@@ -26,13 +29,16 @@ class DeviceRepoTests {
         testWithTransactionManagerAndRollback { transactionManager ->
             transactionManager.run {transaction ->
                 val devicesRepo = transaction.repository
-                val device1 = Device(DeviceId("4521087288"), "exampleEmail@pront.com")
-                val device2 = Device(DeviceId("4533387288"), "exampleEmail2@pront.com")
-                val device3 = Device(DeviceId("4521555288"), "exampleEmail3@pront.com")
+                var devices = devicesRepo.getAllDevices()
+                assertTrue("Device found", devices.isEmpty())
+
+                val device1 = Device(DeviceId(Random.nextInt().toString()), generateRandomEmail())
+                val device2 = Device(DeviceId(Random.nextInt().toString()), generateRandomEmail())
+                val device3 = Device(DeviceId(Random.nextInt().toString()), generateRandomEmail())
                 devicesRepo.addDevice(device1)
                 devicesRepo.addDevice(device2)
                 devicesRepo.addDevice(device3)
-                val devices = devicesRepo.getAllDevices()
+                devices = devicesRepo.getAllDevices()
                 assertTrue("Device found", devices.size == 3)
             }
         }

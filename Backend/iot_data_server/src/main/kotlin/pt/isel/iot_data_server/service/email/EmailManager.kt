@@ -1,7 +1,7 @@
 package pt.isel.iot_data_server.service.email
 
 import org.json.JSONObject
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
@@ -9,8 +9,8 @@ import javax.mail.*
 import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
 
-@Service
-class EmailService {
+@Component
+class EmailManager {
 
     fun sendEmail(to: String, subject: Map<String,String>, body: Map<String,String>,templateName: String) {
 

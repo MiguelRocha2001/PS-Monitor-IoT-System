@@ -11,6 +11,8 @@ import pt.isel.iot_data_server.domain.PhRecord
 import pt.isel.iot_data_server.domain.TemperatureRecord
 import pt.isel.iot_data_server.repository.tsdb.TSDBConfig
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
+import pt.isel.iot_data_server.utils.generateRandomDouble
+import pt.isel.iot_data_server.utils.getRandomInstantWithinLastWeek
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.*
@@ -252,22 +254,5 @@ class TsdbRepoTests {
         assertEquals(temperatures.size, numThreads * repetitions)
     }
 
-    fun generateRandomDouble(): Double {
-        val random = Random()
-        return random.nextDouble(-10.0, 10.0)
-    }
 
-    fun getRandomInstantWithinLastWeek(): Instant {
-        // Get the current instant
-        val now = Instant.now()
-
-        // Calculate the timestamp exactly one week ago from now
-        val oneWeekAgo = now.minus(7, ChronoUnit.DAYS).epochSecond
-
-        // Generate a random number of seconds within the last week
-        val randomSeconds = Random().nextLong(oneWeekAgo, now.epochSecond)
-
-        // Return the randomly generated instant
-        return Instant.ofEpochSecond(randomSeconds)
-    }
 }

@@ -72,3 +72,5 @@ fun deleteAllTemperatureMeasurements(config: TSDBConfigProperties) {
     // Close the response
     response.close()
 }
+
+

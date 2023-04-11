@@ -8,7 +8,6 @@ import pt.isel.iot_data_server.domain.SEED
 import pt.isel.iot_data_server.domain.generateRandomDeviceId
 import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.service.Either
-import pt.isel.iot_data_server.service.email.EmailService
 import pt.isel.iot_data_server.utils.emailVerifier
 
 
