@@ -1,7 +1,9 @@
 package pt.isel.iot_data_server.http
 
+import deleteAllDeviceRecords
 import org.jdbi.v3.core.Jdbi
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.postgresql.ds.PGSimpleDataSource
 import org.springframework.boot.test.context.SpringBootTest
@@ -9,7 +11,9 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
+import org.springframework.test.annotation.Rollback
 import org.springframework.test.web.reactive.server.WebTestClient
+import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.http.controllers.Uris
 import pt.isel.iot_data_server.http.infra.SirenModel
 import pt.isel.iot_data_server.repository.jdbi.configure
@@ -34,10 +38,12 @@ class DeviceHttpTests {
         ).configure()
     }
 
+    @BeforeEach
+    fun setup() {
+        deleteAllDeviceRecords()
+    }
 
-    fun create_device(email:String) {
-        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
-
+    fun create_device(email:String, client: WebTestClient): DeviceId{
         val result = client.post().uri(Uris.Devices.ALL)
             .bodyValue(mapOf("email" to email))
             .exchange()
@@ -57,24 +63,99 @@ class DeviceHttpTests {
         // asserting actions
         val actions = result.actions
         assertEquals(0, actions.size)
+
+        return DeviceId(properties["deviceId"] as String)
     }
+
 
     @Test
     fun `Can get all Devices`() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
-        create_device(generateRandomEmail())
-        create_device(generateRandomEmail())
-        create_device(generateRandomEmail())
+        create_device(generateRandomEmail(), client)
+        create_device(generateRandomEmail(), client)
+        create_device(generateRandomEmail(), client)
         val result = client.get().uri(Uris.Devices.ALL)
             .exchange()
-            .expectStatus().isCreated
+            .expectStatus().isOk
             .expectBody(SirenModel::class.java)
             .returnResult()
             .responseBody!!
         val properties = result.properties as LinkedHashMap<*, *>
         val devices = properties["devices"] as ArrayList<*>
-        assertEquals(3,devices.size == 3)
+        assertEquals(3,devices.size)
+
+        val links = result.links
+        assertEquals(0, links.size)
+
+        // asserting actions
+        val actions = result.actions
+        assertEquals(0, actions.size)
     }
 
+    @Test
+    fun `get device by id`(){
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+        val email = generateRandomEmail()
+        val deviceId = create_device(email, client)
+        val result = client.get().uri(Uris.Devices.BY_ID1,deviceId.id)
+            .exchange()
+            .expectStatus().isOk
+            .expectBody(SirenModel::class.java)
+            .returnResult()
+            .responseBody!!
+
+        val properties = result.properties as LinkedHashMap<*, *>
+
+        assertEquals(deviceId.id,properties["id"])
+        assertEquals(email,properties["email"])
+    }
+
+    @Test
+    fun `get invalid device by id`(){ //TODO: change to 404
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+        val email = generateRandomEmail()
+        create_device(email, client)
+        client.get().uri(Uris.Devices.BY_ID1,"INVALID_ID")
+            .exchange()
+            .expectStatus().isBadRequest
+    }
+
+    @Test
+    fun `get all devices`(){
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+        val email = generateRandomEmail()
+        create_device(email, client)
+        create_device(email, client)
+        create_device(email, client)
+        val result = client.get().uri(Uris.Devices.ALL)
+            .exchange()
+            .expectStatus().isOk
+            .expectBody(SirenModel::class.java)
+            .returnResult()
+            .responseBody!!
+
+        val properties = result.properties as LinkedHashMap<*, *>
+        val devices = properties["devices"] as ArrayList<*>
+        assertEquals(3,devices.size)
+    }
+
+    @Test
+    fun `get all devices by email`(){
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+        val email = generateRandomEmail()
+        create_device(email, client)
+        create_device(email, client)
+        create_device(email, client)
+        val result = client.get().uri(Uris.Devices.BY_EMAIL,email)
+            .exchange()
+            .expectStatus().isOk
+            .expectBody(SirenModel::class.java)
+            .returnResult()
+            .responseBody!!
+
+        val properties = result.properties as LinkedHashMap<*, *>
+        val devices = properties["devices"] as ArrayList<*>
+        assertEquals(3,devices.size)
+    }
 
 }

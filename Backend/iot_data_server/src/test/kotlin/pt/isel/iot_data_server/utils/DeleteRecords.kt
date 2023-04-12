@@ -2,7 +2,10 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import pt.isel.iot_data_server.domain.SEED
 import pt.isel.iot_data_server.repository.tsdb.TSDBConfigProperties
+import pt.isel.iot_data_server.service.device.DeviceService
+import pt.isel.iot_data_server.utils.testWithTransactionManagerAndDontRollback
 
 fun deleteAllPhMeasurements(config: TSDBConfigProperties) {
     val client = OkHttpClient()
@@ -53,7 +56,7 @@ fun deleteAllTemperatureMeasurements(config: TSDBConfigProperties) {
 
     // Build the request
     val request = Request.Builder()
-        .url("http://localhost:8086/api/v2/delete?org=${config.org}&bucket=${config.bucket}")
+        .url("http://localhost:8086/api/v2/delete?org=${config.org}&bucket=${config.bucket}") //Substitute the URL
         .addHeader("Authorization", "Token ${config.token}")
         .addHeader("Content-Type", "application/json")
         .post(json.toRequestBody("application/json".toMediaTypeOrNull()))
@@ -73,4 +76,11 @@ fun deleteAllTemperatureMeasurements(config: TSDBConfigProperties) {
     response.close()
 }
 
+
+fun deleteAllDeviceRecords(){
+    testWithTransactionManagerAndDontRollback {
+        val service = DeviceService(it, SEED.NANOSECOND)
+        service.removeAllDevices()
+    }
+}
 

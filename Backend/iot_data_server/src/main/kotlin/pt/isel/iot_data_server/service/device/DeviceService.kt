@@ -85,4 +85,18 @@ class DeviceService (
             return@run it.repository.getDevicesByOwnerEmail(ownerEmail)
         }
     }
+
+    fun deleteDevice(deviceId: DeviceId): DeleteDeviceResult {
+        return transactionManager.run {
+            val device = getDeviceById(deviceId.id)
+            if (device == null) {
+                logger.info("Device with id $deviceId not found")
+                return@run Either.Left(DeleteDeviceError.DeviceNotFound)
+            }
+            it.repository.deleteDevice(deviceId)
+            logger.info("Device with id $deviceId deleted")
+            return@run Either.Right(Unit)
+        }
+    }
+
 }

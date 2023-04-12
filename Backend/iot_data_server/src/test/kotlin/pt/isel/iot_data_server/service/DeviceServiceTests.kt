@@ -1,8 +1,11 @@
 package pt.isel.iot_data_server.service
 
 import ch.qos.logback.core.pattern.util.RegularEscapeUtil
+import deleteAllDeviceRecords
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import pt.isel.iot_data_server.domain.DeviceId
@@ -14,6 +17,11 @@ import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 
 @SpringBootTest
 class DeviceServiceTests {
+
+	@BeforeEach
+	fun `remove all devices`() {
+		deleteAllDeviceRecords()
+	}
 	@Test
 	fun `generate device ids`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
@@ -28,7 +36,7 @@ class DeviceServiceTests {
 
 			val service = DeviceService(it, SEED.NANOSECOND)
 
-			service.removeAllDevices()// just in case there are any devices in the database
+			//service.removeAllDevices()// just in case there are any devices in the database
 
 			var devices = service.getAllDevices()
 			assertTrue(devices.isEmpty())
@@ -47,7 +55,7 @@ class DeviceServiceTests {
 	fun `create invalid device`(){
 		testWithTransactionManagerAndRollback {
 			val service = DeviceService(it, SEED.NANOSECOND)
-			service.removeAllDevices()// just in case there are any devices in the database
+		//	service.removeAllDevices()// just in case there are any devices in the database
 			val result = service.addDevice("")
 			assertTrue(result is Either.Left)
 		}
@@ -57,7 +65,7 @@ class DeviceServiceTests {
 	fun `get valid device by email`(){
 		testWithTransactionManagerAndRollback {
 			val service = DeviceService(it, SEED.NANOSECOND)
-			service.removeAllDevices()// just in case there are any devices in the database
+		//	service.removeAllDevices()// just in case there are any devices in the database
 			val ownerEmail = generateRandomEmail()
 			service.addDevice(ownerEmail)
 			service.addDevice(ownerEmail)
@@ -73,7 +81,7 @@ class DeviceServiceTests {
 	fun `get device by invalid email`(){
 		testWithTransactionManagerAndRollback {
 			val service = DeviceService(it, SEED.NANOSECOND)
-			service.removeAllDevices()// just in case there are any devices in the database
+		//	service.removeAllDevices()// just in case there are any devices in the database
 			val ownerEmail = generateRandomEmail()+"incorrect"
 			val deviceFound = service.getDevicesByOwnerEmail(ownerEmail)
 			assertTrue(deviceFound.isEmpty())

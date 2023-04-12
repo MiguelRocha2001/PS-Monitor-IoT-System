@@ -9,7 +9,7 @@ import pt.isel.iot_data_server.repository.jdbi.mappers.UserMapper
 import pt.isel.iot_data_server.repository.jdbi.mappers.toDevice
 import pt.isel.iot_data_server.repository.jdbi.mappers.toUser
 
-class JdbiServerRepository(
+class JdbiServerRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN,DEVICE...)
     private val handle: Handle
 ) : StaticDataRepository {
     override fun createUser(user: User) {
@@ -75,6 +75,12 @@ class JdbiServerRepository(
             .mapTo<DeviceMapper>()
             .list()
             .map { it.toDevice() }
+    }
+
+    override fun deleteDevice(deviceId: DeviceId) {
+        handle.createUpdate("delete from device where id = :id")
+            .bind("id", deviceId.id)
+            .execute()
     }
 
      fun savePhRecord(deviceId: DeviceId, phRecord: PhRecord) {

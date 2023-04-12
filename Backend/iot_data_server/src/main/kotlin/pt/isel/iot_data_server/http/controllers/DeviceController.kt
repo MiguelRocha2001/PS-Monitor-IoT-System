@@ -20,7 +20,7 @@ class DeviceController(
     @GetMapping(Uris.Devices.ALL)
     fun getDevices(): ResponseEntity<*> {
         val devices = service.getAllDevices()
-        return ResponseEntity.status(201)
+        return ResponseEntity.status(200)
             .contentType(SirenMediaType)
             .body(siren(
                 DevicesOutputModel.from(devices)
@@ -35,7 +35,7 @@ class DeviceController(
     ): ResponseEntity<*> {
         val device = service.getDeviceById(DeviceId(device_id))
         return device.map {
-            ResponseEntity.status(201)
+            ResponseEntity.status(200)
                 .contentType(SirenMediaType)
                 .body(siren(it.toDeviceOutputModel()) {
                     clazz("device")
@@ -58,5 +58,19 @@ class DeviceController(
                     clazz("device-id")
                 })
         }
+    }
+
+    @GetMapping(Uris.Devices.BY_EMAIL)
+    fun getDevicesByEmail(
+        @PathVariable email: String
+    ): ResponseEntity<*> {
+        val devices = service.getDevicesByOwnerEmail(email)
+        return ResponseEntity.status(200)
+            .contentType(SirenMediaType)
+            .body(siren(
+                DevicesOutputModel.from(devices)
+            ) {
+                clazz("devices")
+            })
     }
 }
