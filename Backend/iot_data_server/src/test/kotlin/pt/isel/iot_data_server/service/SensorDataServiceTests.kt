@@ -11,6 +11,7 @@ import org.springframework.util.Assert
 import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.PhRecord
 import pt.isel.iot_data_server.domain.SEED
+import pt.isel.iot_data_server.domain.TemperatureRecord
 import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.repository.tsdb.TSDBConfig
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
@@ -75,7 +76,6 @@ class SensorDataServiceTest {
 
     @Test
     fun testSavePhRecordWithInvalidPhValue() {
-
         testWithTransactionManagerAndRollback { tra: TransactionManager ->
 
             val testDBConfig = TSDBConfig().tsdb2Properties()
@@ -102,10 +102,127 @@ class SensorDataServiceTest {
                 // Assert that the exception message is as expected
                 assertEquals("Invalid pH value", errorMessage)
             }
+        }
+    }
 
+    @Test
+    fun testSavePhRecordWithInvalidDeviceId() {
+        testWithTransactionManagerAndRollback { tra: TransactionManager ->
+
+            val testDBConfig = TSDBConfig().tsdb2Properties()
+            val tsdbRepository = TSDBRepository(testDBConfig)
+            val emailSenderService = EmailManager()
+            val deviceService = DeviceService( tra,SEED.NANOSECOND)
+
+            // Create SensorDataService instance
+            val sensorDataService = SensorDataService(emailSenderService, tsdbRepository, deviceService, mqttClient)
+
+            // Invoke savePhRecord with invalid pH value
+            val email = generateRandomEmail()
+            deviceService.addDevice(email)
+            val deviceId = DeviceId("invalid")
+            val phRecord = PhRecord(generateRandomPh(), getRandomInstantWithinLastWeek())
+
+            try {
+                // Code that may throw an exception
+                sensorDataService.savePhRecord(deviceId, phRecord)
+            } catch (e: IllegalArgumentException) {
+                // Access the exception message
+                val errorMessage = e.message
+
+                // Assert that the exception message is as expected
+                assertEquals("Invalid device id", errorMessage)
+            }
+        }
+    }
+
+    @Test
+    fun testGetTemperatureRecordWithInvalidDeviceId(){
+        testWithTransactionManagerAndRollback { tra: TransactionManager ->
+
+            val testDBConfig = TSDBConfig().tsdb2Properties()
+            val tsdbRepository = TSDBRepository(testDBConfig)
+            val emailSenderService = EmailManager()
+            val deviceService = DeviceService( tra,SEED.NANOSECOND)
+
+            // Create SensorDataService instance
+            val sensorDataService = SensorDataService(emailSenderService, tsdbRepository, deviceService, mqttClient)
+
+            // Invoke savePhRecord with invalid pH value
+            val email = generateRandomEmail()
+            deviceService.addDevice(email)
+            val deviceId = DeviceId("invalid")
+
+            try {
+                // Code that may throw an exception
+                sensorDataService.getTemperatureRecords(deviceId)
+            } catch (e: IllegalArgumentException) {
+                // Access the exception message
+                val errorMessage = e.message
+
+                // Assert that the exception message is as expected
+                assertEquals("Invalid device id", errorMessage)
+            }
+        }
+    }
+
+    @Test
+    fun testSaveValidTemperatureRecord(){
+        testWithTransactionManagerAndRollback { tra: TransactionManager ->
+            val testDBConfig = TSDBConfig().tsdb2Properties()
+            val tsdbRepository = TSDBRepository(testDBConfig)
+            val emailSenderService = EmailManager()
+            val deviceService = DeviceService( tra,SEED.NANOSECOND)
+
+            val sensorDataService = SensorDataService(emailSenderService, tsdbRepository, deviceService, mqttClient)
+
+            val email = generateRandomEmail()
+            deviceService.addDevice(email)
+            val deviceId = deviceService.getDevicesByOwnerEmail(email).first().deviceId
+            val temperatureRecord = TemperatureRecord(20.0, getRandomInstantWithinLastWeek())
+            val temperatureRecord2 = TemperatureRecord(20.0, getRandomInstantWithinLastWeek())
+            val temperatureRecord3 = TemperatureRecord(20.0, getRandomInstantWithinLastWeek())
+            sensorDataService.saveTemperatureRecord(deviceId, temperatureRecord)
+            sensorDataService.saveTemperatureRecord(deviceId, temperatureRecord2)
+            sensorDataService.saveTemperatureRecord(deviceId, temperatureRecord3)
+
+            val result = sensorDataService.getTemperatureRecords(deviceId)
+            assert(result is Either.Right)
+            val temperatureRecords = (result as Either.Right).value
+            assert(temperatureRecords.size == 3)
+            assert(temperatureRecords.contains(temperatureRecord))
+            assert(temperatureRecords.contains(temperatureRecord2))
+            assert(temperatureRecords.contains(temperatureRecord3))
 
         }
+    }
 
 
+    @Test
+    fun testSaveInvalidTemperatureRecord(){
+        testWithTransactionManagerAndRollback { tra: TransactionManager ->
+            val testDBConfig = TSDBConfig().tsdb2Properties()
+            val tsdbRepository = TSDBRepository(testDBConfig)
+            val emailSenderService = EmailManager()
+            val deviceService = DeviceService( tra,SEED.NANOSECOND)
+
+            val sensorDataService = SensorDataService(emailSenderService, tsdbRepository, deviceService, mqttClient)
+
+            val email = generateRandomEmail()
+            deviceService.addDevice(email)
+            val deviceId = deviceService.getDevicesByOwnerEmail(email).first().deviceId
+            val temperatureRecord = TemperatureRecord(-100.0, getRandomInstantWithinLastWeek())
+
+            try {
+                // Code that may throw an exception
+                sensorDataService.saveTemperatureRecord(deviceId, temperatureRecord)
+            } catch (e: IllegalArgumentException) {
+                // Access the exception message
+                val errorMessage = e.message
+
+                // Assert that the exception message is as expected
+                assertEquals("Invalid temperature value", errorMessage)
+            }
+        }
     }
 }
