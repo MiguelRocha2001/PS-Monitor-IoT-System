@@ -36,7 +36,6 @@ fun deleteAllPhMeasurements(config: TSDBConfigProperties) {
     } else {
         println("Failed to delete data. Response code: ${response.code}")
     }
-
     // Close the response
     response.close()
 }
