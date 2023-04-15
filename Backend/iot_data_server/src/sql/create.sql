@@ -1,12 +1,12 @@
 create table _user(
     _id varchar primary key,
-    username varchar,
+    username varchar unique,
     password varchar,
     email varchar unique
 );
 
 create table token(
-    user_id serial primary key,
+    user_id varchar primary key,
     token varchar,
     iv varchar
 );
@@ -18,5 +18,5 @@ create table device(
 
 create table salt(
     salt varchar primary key,
-    user_id int
+    user_id varchar
 );
