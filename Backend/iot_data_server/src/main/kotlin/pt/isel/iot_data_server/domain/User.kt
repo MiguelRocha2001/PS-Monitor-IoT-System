@@ -22,7 +22,7 @@ data class UserInfo(val username: String, val password: String, val email: Strin
     }
 }
 
-data class User(val id: Int, val userInfo: UserInfo)
+data class User(val id: String, val userInfo: UserInfo)
 
 data class PasswordHash(val salt: ByteArray, val hashedPassword: String) {
     override fun equals(other: Any?): Boolean {

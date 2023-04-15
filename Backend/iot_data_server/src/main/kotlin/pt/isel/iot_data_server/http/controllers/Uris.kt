@@ -34,7 +34,7 @@ object Uris {
 
         fun all(): URI = URI(ALL)
         fun create() = URI(ALL)
-        fun byId(id: Int) = UriTemplate(BY_ID1).expand(id)
+        fun byId(id: String) = UriTemplate(BY_ID1).expand(id)
     }
 
     object Devices {

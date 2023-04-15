@@ -48,7 +48,7 @@ class JdbiServerRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN
             ?.toUser()
     }
 
-    override fun addToken(userId: Int, token: String) {
+    override fun addToken(userId: String, token: String) {
         handle.createUpdate("delete from TOKEN where user_id = :user_id")
             .bind("user_id", userId)
             .execute()
@@ -83,41 +83,6 @@ class JdbiServerRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN
             .execute()
     }
 
-     fun savePhRecord(deviceId: DeviceId, phRecord: PhRecord) {
-        handle.createUpdate(
-            """
-            insert into ph_record (device_id, time, value) values (:device_id, :time, :value)
-            """
-        )
-            .bind("device_id", deviceId.id)
-            .bind("time", phRecord.instant)
-            .bind("value", phRecord.value)
-    }
-
-     fun getPhRecords(deviceId: DeviceId): List<PhRecord> {
-        return handle.createQuery(
-            """
-            select time, value 
-            from ph_record 
-            where device_id = :device_id
-            """
-        )
-            .bind("device_id", deviceId.id)
-            .mapTo<PhRecord>()
-            .list()
-    }
-
-     fun saveTemperatureRecord(deviceId: DeviceId, temperatureRecord: TemperatureRecord) {
-        handle.createUpdate(
-            """
-            insert into temperature_record (device_id, time, value) values (:device_id, :time, :value)
-            """
-        )
-            .bind("device_id", deviceId)
-            .bind("time", temperatureRecord.instant)
-            .bind("value", temperatureRecord.value)
-    }
-
     //  TODO - Optimize using the power of relational database queries
     override fun existsUsername(username: String): Boolean {
         getAllUsers().forEach {
@@ -147,20 +112,7 @@ class JdbiServerRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN
         return false
     }
 
-     fun getTemperatureRecords(deviceId: DeviceId): List<TemperatureRecord> {
-        return handle.createQuery(
-            """
-            select time, value 
-            from temperature_record 
-            where device_id = :device_id
-            """
-        )
-            .bind("device_id", deviceId)
-            .mapTo<TemperatureRecord>()
-            .list()
-    }
-
-    override fun saveSalt(userId: Int, salt: String) {
+    override fun saveSalt(userId: String, salt: String) {
         handle.createUpdate(
             """
             insert into salt (user_id, salt) values (:user_id, :salt)
@@ -171,7 +123,7 @@ class JdbiServerRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN
             .execute()
     }
 
-    override fun getSalt(userId: Int): String {
+    override fun getSalt(userId: String): String {
         return handle.createQuery(
             """
         SELECT salt 
@@ -202,7 +154,7 @@ class JdbiServerRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN
         handle.createUpdate("delete from device").execute()
     }
 
-    override fun getDevicesByOwnerEmail(email:String): List<Device> {
+    override fun getDevicesByOwnerEmail(email: String): List<Device> {
         return handle.createQuery(
             """
             select id, email 

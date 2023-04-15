@@ -16,7 +16,7 @@ class UserService(
     fun createUser(userInfo: UserInfo): UserCreationResult {
         return transactionManager.run {
             // generate random int
-            val userId = Random().nextInt()
+            val userId = UUID.randomUUID().toString()
 
             if (it.repository.existsUsername(userInfo.username))
                 return@run Either.Left(CreateUserError.UserAlreadyExists)
@@ -73,12 +73,12 @@ class UserService(
         }
     }
 
-    fun saveEncryptedToken(aesCipher: AESCipher,plainToken :String, userId:Int) = transactionManager.run {
+    fun saveEncryptedToken(aesCipher: AESCipher, plainToken: String, userId: String) = transactionManager.run {
         val encryptedToken = aesCipher.encrypt(plainToken)
         return@run it.repository.addToken(userId, encryptedToken)
     }
 
-    fun decryptToken(aesCipher: AESCipher,encryptedToken: String): String {
+    fun decryptToken(aesCipher: AESCipher, encryptedToken: String): String {
         return aesCipher.decrypt(encryptedToken)
     }
 }

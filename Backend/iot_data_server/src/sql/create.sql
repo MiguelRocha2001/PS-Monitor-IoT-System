@@ -1,5 +1,5 @@
 create table _user(
-    _id int primary key,
+    _id varchar primary key,
     username varchar,
     password varchar,
     email varchar unique

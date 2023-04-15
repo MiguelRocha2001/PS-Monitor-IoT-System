@@ -6,7 +6,7 @@ import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.domain.UserInfo
 
 data class UserMapper(
-    val _id: Int,
+    val _id: String,
     val username: String,
     val password: String,
     val email: String,

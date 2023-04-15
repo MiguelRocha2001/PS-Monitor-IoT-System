@@ -3,7 +3,7 @@ package pt.isel.iot_data_server.http.model.user
 import pt.isel.iot_data_server.domain.User
 
 
-data class UserCreateOutputModel(val userId: Int, val token: String)
+data class UserCreateOutputModel(val userId: String, val token: String)
 
 data class UsersOutputModel(val users: List<UserOutputModel>) {
     companion object {
@@ -11,7 +11,7 @@ data class UsersOutputModel(val users: List<UserOutputModel>) {
     }
 }
 
-data class UserOutputModel(val id: Int, val username: String, val email: String)
+data class UserOutputModel(val id: String, val username: String, val email: String)
 
 fun User.toOutputModel() = UserOutputModel(id, userInfo.username, userInfo.email)
 

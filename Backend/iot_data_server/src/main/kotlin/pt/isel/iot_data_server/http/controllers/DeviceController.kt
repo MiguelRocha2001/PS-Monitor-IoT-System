@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiResponses
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pt.isel.iot_data_server.domain.DeviceId
+import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.http.DeviceInputModel
 import pt.isel.iot_data_server.http.SirenMediaType
 import pt.isel.iot_data_server.http.infra.siren
@@ -29,7 +30,9 @@ class DeviceController(
         ApiResponse(code = 404, message = "Not found - The devices were not found")
     ])
     @GetMapping(Uris.Devices.ALL)
-    fun getDevices(): ResponseEntity<*> {
+    fun getDevices(
+        user: User
+    ): ResponseEntity<*> {
         val devices = service.getAllDevices()
         return ResponseEntity.status(200)
             .contentType(SirenMediaType)

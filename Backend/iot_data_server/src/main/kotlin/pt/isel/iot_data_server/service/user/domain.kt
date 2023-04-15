@@ -10,7 +10,7 @@ sealed class CreateUserError: Error() {
     object EmailAlreadyExists: CreateUserError()
 }
 /** returns the newly created User userId, and token for authentication */
-typealias UserCreationResult = Either<CreateUserError, Pair<Int, String>>
+typealias UserCreationResult = Either<CreateUserError, Pair<String, String>>
 
 sealed class TokenCreationError: Error() {
     object UserOrPasswordAreInvalid: TokenCreationError()

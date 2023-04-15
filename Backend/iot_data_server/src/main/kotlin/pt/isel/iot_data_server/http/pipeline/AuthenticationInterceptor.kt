@@ -13,7 +13,6 @@ import pt.isel.iot_data_server.service.user.UserService
 class AuthenticationInterceptor(
     val service: UserService
 ) : HandlerInterceptor {
-
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         if (handler is HandlerMethod && handler.methodParameters.any { it.parameterType == User::class.java }) {
             // enforce authentication

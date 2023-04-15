@@ -27,16 +27,16 @@ class SaltPasswordOperations(
         return salt
     }
 
-      fun saveSalt(userId: Int, salt: String) {
+      fun saveSalt(userId: String, salt: String) {
         return transactionManager.run {
             return@run it.repository.saveSalt(userId, salt)
         }
     }
 
-    fun saltAndHashPass(password: String, userId: Int): PasswordHash {
+    fun saltAndHashPass(password: String, userId: String): PasswordHash {
         val passwordHash = hashPassword(password)
         val salt = Base64.getEncoder().encodeToString(passwordHash.salt) // FIXME: Should be some form of byte array in the db,i added string for now because i dont know how to store byte array in db,tried with BYTEA but it didnt work
-        saveSalt(userId,salt)
+        saveSalt(userId, salt)
         return passwordHash
     }
 
@@ -51,7 +51,7 @@ class SaltPasswordOperations(
         return@run storedHashedPassword == receivedHashPassword
     }
 
-    fun getSalt(userId: Int): ByteArray = transactionManager.run {
+    fun getSalt(userId: String): ByteArray = transactionManager.run {
         return@run Base64.getDecoder().decode(it.repository.getSalt(userId))
     }
 
