@@ -29,7 +29,7 @@ class UserService(
             val newUser = User(userId, newUserInfo)
             it.repository.createUser(newUser)
 
-            val tokenCreationResult = createAndGetTokenWithUsername(userInfo.username)
+            val tokenCreationResult = createAndGetToken(userInfo.username)
             if (tokenCreationResult is Either.Left)
                 throw RuntimeException("Failed to create token for user ${userInfo.username}")
 
@@ -60,7 +60,7 @@ class UserService(
      * Creates a token for the user with the given username and password.
      * @throws RuntimeException if the user does not exist.
      */
-    fun createAndGetTokenWithUsername(username: String): TokenCreationResult {
+    fun createAndGetToken(username: String): TokenCreationResult {
         return transactionManager.run {
             val user = it.repository.getUserByUsernameOrNull(username)
                 ?: return@run Either.Left(TokenCreationError.UserOrPasswordAreInvalid)
@@ -73,29 +73,6 @@ class UserService(
         }
     }
 
-    /**
-     * Creates a token for the user with the given username and password.
-     * @throws RuntimeException if the user does not exist.
-     */
-    fun createAndGetTokenWithGoogleEmail(email: String): TokenCreationResult {
-        return transactionManager.run {
-            val user = it.repository.getUserByEmailAddressOrNull(email)
-            return@run if (user != null)
-                createAndGetTokenWithUsername(user.userInfo.username)
-            else {
-                val userCreateRes = createUser(UserInfo("some_username", "Some=password1", email))
-                if (userCreateRes is Either.Left)
-                    Either.Left(TokenCreationError.UserOrPasswordAreInvalid)
-                else {
-                    val res = createAndGetTokenWithUsername(email) // TODO: this is a shortcut
-                    if (res is Either.Left)
-                        Either.Left(TokenCreationError.UserOrPasswordAreInvalid)
-                    else res
-                }
-            }
-        }
-    }
-
     fun saveEncryptedToken(aesCipher: AESCipher,plainToken :String, userId:Int) = transactionManager.run {
         val encryptedToken = aesCipher.encrypt(plainToken)
         return@run it.repository.addToken(userId, encryptedToken)
@@ -104,8 +81,6 @@ class UserService(
     fun decryptToken(aesCipher: AESCipher,encryptedToken: String): String {
         return aesCipher.decrypt(encryptedToken)
     }
-
-
 }
 
 

@@ -1,9 +1,8 @@
 import {Device, PhData, TemperatureData, User} from "./domain";
-import {FakeServices} from "./FakeServices";
 import {RealServices} from "./RealServices";
 
 export interface Services {
-    googleLogin(idToken: string): Promise<void>
+    googleLogin(): Promise<void>
     getBackendSirenInfo(): Promise<void>
     createUser(username: string, password: string, email: string, mobile: string): Promise<void>
     authenticateUser(username: string, password: string): Promise<void>

@@ -15,10 +15,6 @@ fun generateRandomEmail(): String {
     return "${generateRandomName()}@${generateRandomName()}.com"
 }
 
-fun generateRandomMobileNumber(): Long {
-    return (100000000..999999999).random().toLong()
-}
-
 fun generateRandomPassword(): String {
     val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#\$%^&+=" // caracteres permitidos na senha
     val passwordRegexPattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#\$%^&+=])(?=\\S+\$).{8,}\$" // padrão de expressão regular

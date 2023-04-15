@@ -78,7 +78,7 @@ export function IoTServerAuthentication({title, action}: { title: string, action
                     if (result instanceof Error) {
                         setError(result.message)
                     } else {
-                        setUser(new User(username, password))
+                        setUser(true)
                         setRedirect("/")
                     }
                 })
@@ -95,7 +95,7 @@ export function IoTServerAuthentication({title, action}: { title: string, action
                         setError(result.message)
                     else {
                         setSuccessSignUp("User created successfully!")
-                        setUser(new User(username, password))
+                        setUser(false)
                         setError("")
                         navigate("/")
                     }

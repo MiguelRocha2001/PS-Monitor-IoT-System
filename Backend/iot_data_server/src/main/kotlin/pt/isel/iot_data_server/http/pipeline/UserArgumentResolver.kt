@@ -1,4 +1,4 @@
-package pt.isel.daw.dawbattleshipgame.http.pipeline
+package pt.isel.iot_data_server.http.pipeline
 
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.core.MethodParameter

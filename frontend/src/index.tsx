@@ -3,12 +3,10 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {AuthProvider} from "./auth/auth";
 import {BrowserRouter} from "react-router-dom";
 import {StillInProgressAlert} from "./views/StillInProgressAlert";
 import {Col} from "react-bootstrap";
 import {App} from "./App";
-import {RequireAuthn} from "./views/auth/RequireAuthn";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

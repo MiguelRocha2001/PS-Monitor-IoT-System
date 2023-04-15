@@ -22,14 +22,11 @@ export type KeyValuePair = {
 }
 
 export async function fetchRequest(
-    request: Request,
-    token: string | undefined = undefined
+    request: Request
 ): Promise<Response> {
     const headers: any = {
         'Content-Type': CONTENT_TYPE_JSON
     }
-    if (token)
-        headers['Authorization'] = `Bearer ${token}`
     return await fetch(toFullUrl(request), {
         method: request.method,
         headers,

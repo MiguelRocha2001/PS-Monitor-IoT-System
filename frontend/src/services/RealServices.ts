@@ -36,7 +36,7 @@ export class RealServices implements Services {
             throw new Error(`Failed to get backend siren info: ${response.status} ${response.message}`)
     }
 
-    async googleLogin(idToken: string): Promise<void> {
+    async googleLogin(): Promise<void> {
         const googleLoginLink = SirenModule.getGoogleLoginLink()
         if (!googleLoginLink) {
             const msg = 'Google login link not found'
@@ -48,7 +48,7 @@ export class RealServices implements Services {
             method: 'GET'
         }
         try {
-            await fetchRequest(request, idToken)
+            await fetchRequest(request)
         } catch (e) {
             logger.error(`Failed to login with google: ${e}`)
         }

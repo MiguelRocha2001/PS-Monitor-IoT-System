@@ -12,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.oauth2.core.oidc.user.OidcUser
 import org.springframework.web.bind.annotation.*
 import pt.isel.iot_data_server.domain.User
+import pt.isel.iot_data_server.domain.UserInfo
 import pt.isel.iot_data_server.http.SirenMediaType
 import pt.isel.iot_data_server.http.hypermedia.createLogoutSirenAction
 import pt.isel.iot_data_server.http.hypermedia.createTokenSirenAction
@@ -103,7 +104,7 @@ class UserController(
         response: HttpServletResponse,
         @RequestBody @ApiParam(value = "User to create", required = true) input: UserCreateTokenInputModel
     ): ResponseEntity<*> {
-        val res = service.createAndGetTokenWithUsername(input.username)
+        val res = service.createAndGetToken(input.username)
 
         // adds cookie to response
         if (res is Either.Right) {
@@ -122,10 +123,27 @@ class UserController(
 
     @GetMapping(Uris.GoogleAuth.GOOGLE_AUTH)
     fun loginWithGoogleAuth(
-        @AuthenticationPrincipal user: OidcUser?,
+        @AuthenticationPrincipal oidcUser: OidcUser?,
         response: HttpServletResponse
     ) {
-        val res = service.createAndGetTokenWithGoogleEmail(user?.email!!)
+        val email = oidcUser?.userInfo?.email
+        val username = email?.substringBefore('@')
+
+        if (email == null || username == null) {
+            throw RuntimeException("Error getting user info")
+        }
+
+        val password = "Static=password1"
+
+        val user = service.getUserByEmailAddress(email)
+        if (user == null) {
+            val userCreationResult = service.createUser(UserInfo(username, password, email))
+            if (userCreationResult is Either.Left) {
+                throw RuntimeException("Error creating user")
+            }
+        }
+
+        val res = service.createAndGetToken(username)
 
         // adds cookie to response
         if (res is Either.Right) {
@@ -133,7 +151,6 @@ class UserController(
             response.addCookie(cookie)
         }
 
-        println("user = ${user?.claims}")
         response.sendRedirect("http://localhost:8080/auth/login")
     }
 

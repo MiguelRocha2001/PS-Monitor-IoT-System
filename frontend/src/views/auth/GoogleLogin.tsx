@@ -1,16 +1,12 @@
 import {useLocation, useNavigate} from "react-router-dom";
 import React, {useEffect, useMemo, useRef} from "react";
-import {useAuth} from "../../auth/auth";
 import Button from "react-bootstrap/Button";
-import {Alert} from "react-bootstrap";
 import {MyCard} from "../Commons";
-import {services} from "../../services/services";
-import {authConfig} from "../../config";
 
 const LoginView = () => {
     const {search} = useLocation();
     const navigate = useNavigate();
-    const {progress, signInError, isAuthenticated, handleSignIn, signIn} = useAuth();
+    // const {progress, signInError, isAuthenticated, handleSignIn, signIn} = useAuth();
     const signInRef = useRef(false);
 
     const authCode = useMemo(() => {
@@ -28,14 +24,16 @@ const LoginView = () => {
             return;
         }
         signInRef.current = true;
-        signIn(authCode).finally(() => signInRef.current = false);
+        // signIn(authCode).finally(() => signInRef.current = false);
     }, [authCode]);
 
+    /*
     useEffect(() => {
         if (isAuthenticated) {
             navigate("/");
         }
     }, [isAuthenticated]);
+     */
 
     const handleLoginClick = async () => {
         window.location.href = "http://localhost:9000/oidc-principal"
@@ -43,22 +41,10 @@ const LoginView = () => {
 
     return (
         <MyCard title={'Google Authentication'} >
-            {progress && (
-                <Alert variant="info">
-                    Signing in...
-                </Alert>
-            )}
-
-            {!!signInError && (
-                <Alert>
-                    {signInError}
-                </Alert>
-            )}
 
             <Button
                 variant="contained"
                 onClick={handleLoginClick}
-                disabled={progress}
             >
                 Sign In
             </Button>

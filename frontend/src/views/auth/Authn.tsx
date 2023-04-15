@@ -4,40 +4,39 @@ import {services} from "../../services/services";
 import {User} from "../../services/domain";
 
 type ContextType = {
-    user: User | undefined,
-    setUser: (v: User | undefined) => void
+    logged: boolean,
+    setLogged: (logged: boolean) => void
 }
 const LoggedInContext = createContext<ContextType>({
-    user: undefined,
-    setUser: () => { },
+    logged: false,
+    setLogged: (logged: boolean) => { }
 })
 
 export function AuthnContainer({ children }: { children: React.ReactNode }) {
-    const [user, setUser] = useState<User | undefined>(undefined)
+    const [logged, setLogged] = useState<boolean>(false)
 
     useEffect( () => {
         async function fetchUser () {
             const isLogged = await services.isLoggedIn()
             if (isLogged) {
-                console.log("User is logged in, fetching user information.")
-                const user = await services.getMe()
-                setUser(user)
+                console.log("User is logged in already")
+                setLogged(true)
             }
         }
         fetchUser()
     }, [])
 
     return (
-        <LoggedInContext.Provider value={{ user: user, setUser: setUser }}>
+        <LoggedInContext.Provider value={{ logged: logged, setLogged: setLogged }}>
             {children}
         </LoggedInContext.Provider>
     )
 }
 
 export function useCurrentUser() {
-    return useContext(LoggedInContext).user
+    return useContext(LoggedInContext).logged
 }
 
 export function useSetUser() {
-    return useContext(LoggedInContext).setUser
+    return useContext(LoggedInContext).setLogged
 }
