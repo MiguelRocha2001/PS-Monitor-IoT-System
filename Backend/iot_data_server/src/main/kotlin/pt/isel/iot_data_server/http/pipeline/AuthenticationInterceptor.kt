@@ -16,8 +16,7 @@ class AuthenticationInterceptor(
 ) : HandlerInterceptor {
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
-        if (handler is HandlerMethod && handler.methodParameters.any { it.parameterType == User::class.java }
-        ) {
+        if (handler is HandlerMethod && handler.methodParameters.any { it.parameterType == User::class.java }) {
             // enforce authentication
             val token = request.cookies?.find { it.name == "token" }?.value
             if (token != null) {

@@ -22,16 +22,16 @@ export type KeyValuePair = {
 }
 
 export async function fetchRequest(request: Request): Promise<Response> {
-    // const accessToken = localStorage.getItem("access_token") TODO: fixme later
-    const accessToken = "just_some_token";
-    if (!accessToken)
-        return Promise.reject(new NetworkError("No access token found"))
+    const idToken = localStorage.getItem('idToken')
+    if (!idToken) {
+        throw new Error('No token found')
+    }
 
     return await fetch(toFullUrl(request), {
         method: request.method,
         headers: {
             'Content-Type': CONTENT_TYPE_JSON,
-            'Authorization': `Bearer ${accessToken}`
+            'Authorization': `Bearer ${idToken}`
         },
         credentials: 'include',
         body: request.body ? buildBody(request.body) : undefined

@@ -1,13 +1,12 @@
 package pt.isel.iot_data_server.service
 
-import org.eclipse.paho.client.mqttv3.MqttClient
 import deleteAllPhMeasurements
 import deleteAllTemperatureMeasurements
+import org.eclipse.paho.client.mqttv3.MqttClient
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
-import org.springframework.util.Assert
 import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.PhRecord
 import pt.isel.iot_data_server.domain.SEED
@@ -22,7 +21,6 @@ import pt.isel.iot_data_server.utils.generateRandomEmail
 import pt.isel.iot_data_server.utils.generateRandomPh
 import pt.isel.iot_data_server.utils.getRandomInstantWithinLastWeek
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
-import java.lang.AssertionError
 
 
 class SensorDataServiceTest {

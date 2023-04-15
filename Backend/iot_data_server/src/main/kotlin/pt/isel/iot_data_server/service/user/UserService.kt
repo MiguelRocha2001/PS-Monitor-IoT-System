@@ -24,7 +24,7 @@ class UserService(
             if (it.repository.existsEmail(userInfo.email))
                 return@run Either.Left(CreateUserError.EmailAlreadyExists)
 
-            val passwordHash = saltPasswordOperations.saltAndHashPass(userInfo.password,userId)
+            val passwordHash = saltPasswordOperations.saltAndHashPass(userInfo.password, userId)
             val newUserInfo = UserInfo(userInfo.username, passwordHash.hashedPassword, userInfo.email)
             val newUser = User(userId, newUserInfo)
             it.repository.createUser(newUser)

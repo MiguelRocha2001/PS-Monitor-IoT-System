@@ -1,7 +1,6 @@
 package pt.isel.iot_data_server.repo.static_content
 
 import org.junit.jupiter.api.Test
-import org.springframework.test.util.AssertionErrors.assertNull
 import org.springframework.test.util.AssertionErrors.assertTrue
 import pt.isel.iot_data_server.domain.Device
 import pt.isel.iot_data_server.domain.DeviceId

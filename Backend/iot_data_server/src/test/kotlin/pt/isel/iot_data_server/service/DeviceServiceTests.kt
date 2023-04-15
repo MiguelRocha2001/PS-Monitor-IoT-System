@@ -1,16 +1,11 @@
 package pt.isel.iot_data_server.service
 
-import ch.qos.logback.core.pattern.util.RegularEscapeUtil
 import deleteAllDeviceRecords
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
-import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.SEED
-import pt.isel.iot_data_server.repository.jdbi.JdbiServerRepository
 import pt.isel.iot_data_server.service.device.DeviceService
 import pt.isel.iot_data_server.utils.generateRandomEmail
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback

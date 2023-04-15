@@ -1,6 +1,8 @@
 package pt.isel.iot_data_server.repository
 
-import pt.isel.iot_data_server.domain.*
+import pt.isel.iot_data_server.domain.Device
+import pt.isel.iot_data_server.domain.DeviceId
+import pt.isel.iot_data_server.domain.User
 
 interface StaticDataRepository {//todo all the sensor data needs to go away
 

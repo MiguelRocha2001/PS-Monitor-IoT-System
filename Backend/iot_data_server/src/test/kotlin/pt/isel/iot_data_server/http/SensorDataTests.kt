@@ -2,20 +2,12 @@ package pt.isel.iot_data_server.http
 
 import deleteAllPhMeasurements
 import deleteAllTemperatureMeasurements
-import org.jdbi.v3.core.Jdbi
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.postgresql.ds.PGSimpleDataSource
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.web.server.LocalServerPort
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Primary
 import org.springframework.test.web.reactive.server.WebTestClient
 import pt.isel.iot_data_server.http.controllers.Uris
-import pt.isel.iot_data_server.repository.jdbi.configure
 import pt.isel.iot_data_server.repository.tsdb.TSDBConfig
 
 

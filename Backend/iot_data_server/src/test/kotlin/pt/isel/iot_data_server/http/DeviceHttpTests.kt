@@ -11,7 +11,6 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
-import org.springframework.test.annotation.Rollback
 import org.springframework.test.web.reactive.server.WebTestClient
 import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.http.controllers.Uris

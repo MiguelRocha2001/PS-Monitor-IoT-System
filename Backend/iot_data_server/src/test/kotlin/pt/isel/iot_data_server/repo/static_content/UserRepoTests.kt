@@ -1,16 +1,13 @@
 package pt.isel.iot_data_server.repo.static_content
 
-import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 
-
-
-import org.junit.jupiter.api.Test;
-import pt.isel.iot_data_server.domain.Device
+import org.junit.jupiter.api.Test
 import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.domain.UserInfo
 import pt.isel.iot_data_server.utils.generateRandomEmail
 import pt.isel.iot_data_server.utils.generateRandomName
 import pt.isel.iot_data_server.utils.generateRandomPassword
+import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 import kotlin.random.Random
 
 

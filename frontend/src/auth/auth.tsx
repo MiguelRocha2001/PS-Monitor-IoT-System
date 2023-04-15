@@ -13,7 +13,8 @@ export class TokenResponse {
 const AuthContext = createContext({});
 
 export const AuthProvider = ({children} : {children: any}) => { // TODO: change param children type
-    const {accessToken, setAccessToken, removeAccessToken} = useAccessToken();
+    // const {accessToken, setAccessToken, removeAccessToken} = useAccessToken();
+    const [idToken, setIdToken] = useState<string | undefined>(undefined);
     const [isAuthenticated, setAuthenticated] = useState(false);
     const [tokenFetching, setTokenFetching] = useState(false);
     const [tokenError, setTokenError]: [string | undefined, any] = useState();
@@ -47,7 +48,12 @@ export const AuthProvider = ({children} : {children: any}) => { // TODO: change 
                 }
             );
             let tokenResponse: TokenResponse = response.data;
-            setAccessToken(tokenResponse.access_token);
+            // setAccessToken(tokenResponse.access_token);
+
+            // console.log(tokenResponse.id_token);
+            console.log(tokenResponse.access_token)
+
+            setIdToken(tokenResponse.id_token);
             // TODO Validate Token
             setAuthenticated(true);
         } catch (e: any) {
@@ -59,12 +65,13 @@ export const AuthProvider = ({children} : {children: any}) => { // TODO: change 
     };
 
     const signOut = () => {
-        removeAccessToken();
+        // removeAccessToken();
+        setIdToken(undefined);
         setAuthenticated(false);
     }
 
     useEffect(() => {
-        if (accessToken) {
+        if (idToken) {
             setAuthenticated(true);
         }
     }, []);
@@ -72,7 +79,7 @@ export const AuthProvider = ({children} : {children: any}) => { // TODO: change 
     return (
         <AuthContext.Provider
             value={{
-                idToken: accessToken,
+                idToken: idToken,
                 isAuthenticated,
                 progress: tokenFetching,
                 signInError: tokenError,
@@ -117,5 +124,25 @@ export const useAccessToken = () => {
         accessToken: accessToken,
         setAccessToken: saveAccessToken,
         removeAccessToken: removeAccessToken
+    };
+};
+
+export const useIdToken = () => {
+    const [idToken, setIdToken] = useState(localStorage.getItem("id_token"));
+
+    const saveIdToken = (token: string) => {
+        localStorage.setItem("id_token", token);
+        setIdToken(token);
+    }
+
+    const removeIdToken = () => {
+        localStorage.removeItem("id_token");
+        setIdToken(null);
+    }
+
+    return {
+        idToken: idToken,
+        setIdToken: saveIdToken,
+        removeIdToken: removeIdToken
     };
 };

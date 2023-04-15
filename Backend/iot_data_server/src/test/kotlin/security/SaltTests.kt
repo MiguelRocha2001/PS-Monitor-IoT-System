@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.test.util.AssertionErrors.assertFalse
 import org.springframework.test.util.AssertionErrors.assertTrue
 import pt.isel.iot_data_server.domain.UserInfo
-import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.service.user.SaltPasswordOperations
 import pt.isel.iot_data_server.service.user.UserService
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback

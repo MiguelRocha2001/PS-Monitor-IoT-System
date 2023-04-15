@@ -11,7 +11,6 @@ import java.util.*
 class SaltPasswordOperations(
     private val transactionManager: TransactionManager
 ) {
-
     private fun hashPassword(password: String, receivedSalt:ByteArray = ByteArray(0)): PasswordHash {
         val salt = receivedSalt.takeIf { it.isNotEmpty() } ?: generateSalt()
         val md = MessageDigest.getInstance("SHA-256")
@@ -34,7 +33,7 @@ class SaltPasswordOperations(
         }
     }
 
-    fun saltAndHashPass(password: String,userId: Int): PasswordHash {
+    fun saltAndHashPass(password: String, userId: Int): PasswordHash {
         val passwordHash = hashPassword(password)
         val salt = Base64.getEncoder().encodeToString(passwordHash.salt) // FIXME: Should be some form of byte array in the db,i added string for now because i dont know how to store byte array in db,tried with BYTEA but it didnt work
         saveSalt(userId,salt)

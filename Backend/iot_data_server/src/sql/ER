@@ -1,0 +1,8 @@
+//////////////////////////////////////////////////////////
+All relations are normalized to the third normal form!
+//////////////////////////////////////////////////////////
+
+USER({id}, username, hashed_pass, pass_salt, token)
+
+DEVICE({id, user_id}, email)
+    FK: {user_id} -> {USER.id}
