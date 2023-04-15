@@ -1,5 +1,9 @@
 package pt.isel.iot_data_server.http.controllers
 
+import io.swagger.annotations.ApiOperation
+import io.swagger.annotations.ApiParam
+import io.swagger.annotations.ApiResponse
+import io.swagger.annotations.ApiResponses
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pt.isel.iot_data_server.domain.DeviceId
@@ -16,9 +20,15 @@ class SensorDataController(
     val service: SensorDataService
 ) {
 
+    @ApiOperation(value = "All ph records", notes = "Get all ph records associated with our system associated with a device", response = PhRecordsOutputModel::class)
+    @ApiResponses(value = [
+        ApiResponse(code = 200, message = "Successfully retrieved"),
+        ApiResponse(code = 400, message = "Bad request - The request was not understood by the server"),
+        ApiResponse(code = 404, message = "Not found - The ph records were not found")
+    ])
     @GetMapping(Uris.Devices.PH.ALL_1)
     fun getPhRecords(
-        @PathVariable device_id: String
+        @PathVariable @ApiParam(name ="ID", value = "Device ID", required = true) device_id: String
     ): ResponseEntity<*> {
         val result = service.getPhRecords(DeviceId(device_id))
         return result.map {
@@ -37,9 +47,15 @@ class SensorDataController(
     }
 
 
+    @ApiOperation(value = "All temperature records", notes = "Get all temperature records associated with our system associated with a device", response = TemperatureRecordsOutputModel::class)
+    @ApiResponses(value = [
+        ApiResponse(code = 200, message = "Successfully retrieved"),
+        ApiResponse(code = 400, message = "Bad request - The request was not understood by the server"),
+        ApiResponse(code = 404, message = "Not found - The temperature records were not found")
+    ])
     @GetMapping(Uris.Devices.Temperature.ALL_1)
     fun getTemperatureRecords(
-        @PathVariable device_id: String
+        @PathVariable @ApiParam(name ="ID", value = "Device ID", required = true) device_id: String
     ): ResponseEntity<*> {
         val result = service.getTemperatureRecords(DeviceId(device_id))
         return result.map {
