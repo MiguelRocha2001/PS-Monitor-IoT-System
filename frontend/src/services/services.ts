@@ -1,7 +1,9 @@
 import {Device, PhData, TemperatureData, User} from "./domain";
 import {FakeServices} from "./FakeServices";
+import {RealServices} from "./RealServices";
 
 export interface Services {
+    googleLogin(): Promise<void>
     getBackendSirenInfo(): Promise<void>
     createUser(username: string, password: string, email: string, mobile: string): Promise<void>
     authenticateUser(username: string, password: string): Promise<void>
@@ -15,4 +17,4 @@ export interface Services {
     logout(): Promise<void>
 }
 
-export const services: Services = new FakeServices()
+export const services: Services = new RealServices()

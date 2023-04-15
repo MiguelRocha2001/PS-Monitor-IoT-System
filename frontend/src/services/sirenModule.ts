@@ -68,6 +68,7 @@ export function fromJson(json: any): Siren {
     );
 }
 
+let GOOGLE_LOGIN_LINK: Link
 let CREATE_USER_ACTION: Action
 let CREATE_TOKEN_ACTION: Action
 let LOGOUT_ACTION: Action
@@ -78,6 +79,11 @@ let GET_DEVICES_LINK: Link
 let GET_DEVICE_LINK: Link
 let GET_PH_DATA_LINK: Link
 let GET_TEMPERATURE_DATA_LINK: Link
+
+
+function getGoogleLoginLink(): Link {
+    return GOOGLE_LOGIN_LINK
+}
 
 function getCreateUserAction(): Action {
     return CREATE_USER_ACTION
@@ -119,6 +125,10 @@ function getGetTemperatureDataLink(): Link {
     return GET_TEMPERATURE_DATA_LINK
 }
 
+
+function extractGoogleLoginLink(links: Link[]) {
+    GOOGLE_LOGIN_LINK = extractLink(links, "google-login")
+}
 
 function extractCreateUserAction(actions: any[]) {
     CREATE_USER_ACTION = extractAction(actions, "create-user")
@@ -198,7 +208,9 @@ function extractAction(actions: any[], name: string): Action {
 }
 
 export const SirenModule = {
-     getCreateTokenAction,
+    getGoogleLoginLink,
+    extractGoogleLoginLink,
+    getCreateTokenAction,
     getCreateUserAction,
     getLogoutAction,
     getIsLoggedInLink,

@@ -4,7 +4,6 @@ import org.springframework.web.util.UriTemplate
 import java.net.URI
 
 object Uris {
-
     /**
      * Uris that doesn't follow the semantic of the rest api (nouns that represent objects),
      * but rather the semantic of the application (verbs that represent actions).
@@ -15,6 +14,12 @@ object Uris {
 
         fun logout(): URI = URI(logout)
         fun loggedIn(): URI = URI(loggedIn)
+    }
+
+    object GoogleAuth {
+        const val GOOGLE_AUTH = "/oidc-principal"
+
+        fun googleAuth(): URI = URI(GOOGLE_AUTH)
     }
 
     object SirenInfo {

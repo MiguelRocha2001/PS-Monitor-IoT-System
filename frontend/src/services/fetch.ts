@@ -2,7 +2,7 @@ import {BackendError, NetworkError} from "./erros";
 import {Logger} from "tslog";
 import {fromJson, Siren} from "./sirenModule";
 
-const host = 'http://localhost:8080'
+const host = 'http://localhost:8080/api'
 const CONTENT_TYPE_JSON = 'application/json'
 
 const logger = new Logger({name: "Fetch Module"});
@@ -22,8 +22,8 @@ export type KeyValuePair = {
 }
 
 export async function fetchRequest(request: Request): Promise<Response> {
-    const idToken = localStorage.getItem('idToken')
-    if (!idToken) {
+    const token = "some_token"
+    if (!token) {
         throw new Error('No token found')
     }
 
@@ -31,7 +31,7 @@ export async function fetchRequest(request: Request): Promise<Response> {
         method: request.method,
         headers: {
             'Content-Type': CONTENT_TYPE_JSON,
-            'Authorization': `Bearer ${idToken}`
+            'Authorization': `Bearer ${token}`
         },
         credentials: 'include',
         body: request.body ? buildBody(request.body) : undefined

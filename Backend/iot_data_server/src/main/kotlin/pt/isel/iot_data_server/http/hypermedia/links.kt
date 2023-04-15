@@ -5,6 +5,12 @@ import pt.isel.iot_data_server.http.controllers.Uris
 import pt.isel.iot_data_server.http.infra.SirenBuilderScope
 import java.net.URI
 
+fun createGoogleAuthLink(sirenBuilderScope: SirenBuilderScope<*>) =
+    sirenBuilderScope.link(
+        href = Uris.GoogleAuth.googleAuth(),
+        rel = Rels.GOOGLE_AUTH
+    )
+
 fun isLoggedInLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
         href = Uris.NonSemantic.loggedIn(),

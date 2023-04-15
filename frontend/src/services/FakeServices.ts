@@ -18,6 +18,10 @@ export class FakeServices implements Services {
         // Nothing to do
     }
 
+    async googleLogin(): Promise<void> {
+        // Nothing to do
+    }
+
     async createUser(username: string, password: string, email: string, mobile: string): Promise<void> {
         const newUser = new User(username, password)
         this.users.push(newUser)

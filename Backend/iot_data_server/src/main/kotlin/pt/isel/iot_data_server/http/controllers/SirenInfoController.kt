@@ -17,6 +17,7 @@ class SirenInfoController(
             .contentType(SirenMediaType)
             .body(siren(Unit) {
                 clazz("siren-info")
+                createGoogleAuthLink(this)
                 createUserSirenAction(this)
                 createTokenSirenAction(this)
                 createLogoutSirenAction(this)

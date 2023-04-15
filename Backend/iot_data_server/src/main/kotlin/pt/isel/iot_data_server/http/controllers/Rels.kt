@@ -6,6 +6,9 @@ object Rels {
 
     val SELF = LinkRelation("self")
 
+    // ------------------- Google Auth -------------------
+    val GOOGLE_AUTH = LinkRelation("google-login")
+
     // ------------------- USERS -------------------
     val IS_LOGGED_IN = LinkRelation("is-logged-in")
     val ME = LinkRelation("users-me")

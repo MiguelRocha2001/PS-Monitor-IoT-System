@@ -1,4 +1,4 @@
-import {doFetch, toBody} from "./fetch";
+import {doFetch, fetchRequest, toBody} from "./fetch";
 import {Device, PhData, TemperatureData, toDevice, toDevices, toPhData, toTemperatureData, User} from "./domain";
 import {Services} from "./services";
 import {Siren, SirenModule} from "./sirenModule";
@@ -9,10 +9,9 @@ const logger = new Logger({name: "Real Services"});
 logger.settings.minLevel = 3 // LogLevel: INFO
 
 export class RealServices implements Services {
-    private readonly API_HOST = 'http://localhost:8080'
-
     async getBackendSirenInfo() {
         function extractSirenInfo(response: Siren) {
+            SirenModule.extractGoogleLoginLink(response.links)
             SirenModule.extractCreateUserAction(response.actions)
             SirenModule.extractCreateTokenAction(response.actions)
             SirenModule.extractLogoutAction(response.actions)
@@ -35,6 +34,25 @@ export class RealServices implements Services {
             return
         } else
             throw new Error(`Failed to get backend siren info: ${response.status} ${response.message}`)
+    }
+
+    async googleLogin(): Promise<void> {
+        const googleLoginLink = SirenModule.getGoogleLoginLink()
+        if (!googleLoginLink) {
+            const msg = 'Google login link not found'
+            logger.error(msg)
+            throw new Error(msg)
+        }
+        const request = {
+            url: googleLoginLink.href,
+            method: 'GET'
+        }
+        try {
+            const response = await fetchRequest(request)
+            console.log(response)
+        } catch (e) {
+            logger.error(`Failed to login with google: ${e}`)
+        }
     }
 
     /**

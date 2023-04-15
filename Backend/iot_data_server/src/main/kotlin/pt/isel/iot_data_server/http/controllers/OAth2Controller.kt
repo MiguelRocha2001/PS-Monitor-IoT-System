@@ -8,7 +8,7 @@ import java.util.*
 
 @RestController
 class OAth2Controller {
-    @GetMapping("/oidc-principal")
+    @GetMapping(Uris.GoogleAuth.GOOGLE_AUTH)
     fun getOidcUserPrincipal(
         @AuthenticationPrincipal principal: OidcUser?
     ): OidcUser? {

@@ -4,6 +4,8 @@ import {useAuth} from "../../auth/auth";
 import Button from "react-bootstrap/Button";
 import {Alert} from "react-bootstrap";
 import {MyCard} from "../Commons";
+import {services} from "../../services/services";
+import {authConfig} from "../../config";
 
 const LoginView = () => {
     const {search} = useLocation();
@@ -35,7 +37,7 @@ const LoginView = () => {
         }
     }, [isAuthenticated]);
 
-    const handleLoginClick = () => {
+    const handleLoginClick = async () => {
         handleSignIn();
     }
 

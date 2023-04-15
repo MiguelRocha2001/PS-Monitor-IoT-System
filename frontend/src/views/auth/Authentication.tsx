@@ -2,7 +2,7 @@ import {MyCard} from "../Commons";
 import React from "react";
 import {useParams} from "react-router-dom";
 import {IoTServerAuthentication} from "./IoTServerAuthentication";
-import Login from "./GoogleLogin";
+import GoogleAuthentication from "./GoogleLogin";
 import {Alert, Col} from "react-bootstrap";
 
 export function Authentication() {
@@ -12,7 +12,7 @@ export function Authentication() {
             <MyCard title={'Authentication'} boldTitle={true} children={
                 <Col>
                     <IoTServerAuthentication title={`IoT Server ${action}`} action={action}/>
-                    <Login/>
+                    <GoogleAuthentication/>
                 </Col>
             }/>
         );
