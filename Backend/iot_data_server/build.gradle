@@ -56,8 +56,16 @@ dependencies {
 	//to work with json
 	implementation("org.json:json:20210307")
 
-	implementation 'javax.xml.bind:jaxb-api:2.3.1'
-	implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
+	implementation 'javax.xml.bind:jaxb-api:2.4.0-b180830.0359'
+	implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.2'
+
+	//swagger
+	implementation 'javax.servlet:javax.servlet-api:4.0.1'
+	implementation 'io.springfox:springfox-swagger2:3.0.0'
+
+
+
+
 }
 
 tasks.withType(KotlinCompile) {

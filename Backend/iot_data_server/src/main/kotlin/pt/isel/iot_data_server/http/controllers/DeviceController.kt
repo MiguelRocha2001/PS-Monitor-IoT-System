@@ -1,5 +1,10 @@
 package pt.isel.iot_data_server.http.controllers
 
+import io.swagger.annotations.Api
+import io.swagger.annotations.ApiOperation
+import io.swagger.annotations.ApiParam
+import io.swagger.annotations.ApiResponse
+import io.swagger.annotations.ApiResponses
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pt.isel.iot_data_server.domain.DeviceId
@@ -17,6 +22,12 @@ import java.util.*
 class DeviceController(
     val service: DeviceService
 ) {
+    @ApiOperation(value = "All devices", notes = "Get all devices associated with our system", response = DevicesOutputModel::class)
+    @ApiResponses(value = [
+        ApiResponse(code = 200, message = "Successfully retrieved"),
+        ApiResponse(code = 400, message = "Bad request - The request was not understood by the server"),
+        ApiResponse(code = 404, message = "Not found - The devices were not found")
+    ])
     @GetMapping(Uris.Devices.ALL)
     fun getDevices(): ResponseEntity<*> {
         val devices = service.getAllDevices()
@@ -31,7 +42,7 @@ class DeviceController(
 
     @GetMapping(Uris.Devices.BY_ID1)
     fun getDeviceById(
-        @PathVariable device_id: String
+        @PathVariable @ApiParam(name ="ID", value = "Device ID", required = true) device_id: String
     ): ResponseEntity<*> {
         val device = service.getDeviceById(DeviceId(device_id))
         return device.map {
@@ -43,6 +54,11 @@ class DeviceController(
         }
     }
 
+    @ApiOperation(value = "Add device", notes = "Add a new device to our system", response = CreateDeviceOutputModel::class)
+    @ApiResponses(value = [
+        ApiResponse(code = 201, message = "Successfully created"),
+        ApiResponse(code = 400, message = "Bad request - The request was not understood by the server")
+    ])
     @PostMapping(Uris.Devices.ALL)
     fun addDevice(
         @RequestBody deviceModel: DeviceInputModel
@@ -60,9 +76,15 @@ class DeviceController(
         }
     }
 
+    @ApiOperation(value = "Get devices by email", notes = "Get all devices associated with a given email", response = DevicesOutputModel::class)
+    @ApiResponses(value = [
+        ApiResponse(code = 200, message = "Successfully retrieved"),
+        ApiResponse(code = 400, message = "Bad request - The request was not understood by the server"),
+        ApiResponse(code = 404, message = "Not found - The devices were not found")
+    ])
     @GetMapping(Uris.Devices.BY_EMAIL)
     fun getDevicesByEmail(
-        @PathVariable email: String
+        @PathVariable @ApiParam(name = "email", value = "Owner's email", example = "exampleemail@email.com", required = true) email: String
     ): ResponseEntity<*> {
         val devices = service.getDevicesByOwnerEmail(email)
         return ResponseEntity.status(200)

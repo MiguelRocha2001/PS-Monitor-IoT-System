@@ -1,5 +1,9 @@
 package pt.isel.iot_data_server.http.controllers
 
+import io.swagger.annotations.ApiOperation
+import io.swagger.annotations.ApiParam
+import io.swagger.annotations.ApiResponse
+import io.swagger.annotations.ApiResponses
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -21,9 +25,14 @@ import java.util.*
 class UserController(
     val service: UserService
 ) {
+    @ApiOperation(value = "Create User", notes = "Create a new user", response = Unit::class)
+    @ApiResponses(value = [
+        ApiResponse(code = 201, message = "Successfully created"),
+        ApiResponse(code = 400, message = "Bad request - The request was not understood by the server")
+    ])
     @PostMapping(Uris.Users.ALL)
     fun create(
-        @RequestBody input: UserCreateInputModel
+        @RequestBody @ApiParam(value = "User to create", required = true) input: UserCreateInputModel
     ): ResponseEntity<*> {
         val res = service.createUser(input.toUserInfo())
         return res.map {
@@ -46,6 +55,11 @@ class UserController(
      * If the user is not authenticated, the interceptor will throw an exception and the method will not be called.
      * Because of this, the method will only be called if the user is authenticated, and thus, the user is logically logged.
      */
+    @ApiOperation(value = "logged", notes = "Check if the user is logged", response = Unit::class)
+    @ApiResponses(value = [
+        ApiResponse(code = 200, message = "Successfully retrieved"),
+        ApiResponse(code = 400, message = "Bad request - The request was not understood by the server")
+    ])
     @GetMapping(Uris.NonSemantic.loggedIn)
     fun isLogged(
         request: HttpServletRequest
@@ -61,6 +75,11 @@ class UserController(
     /**
      * Get method, because it doesn't change anything in the server.
      */
+    @ApiOperation(value = "Logout", notes = "Logout the user", response = Unit::class)
+    @ApiResponses(value = [
+        ApiResponse(code = 204, message = "Successfully logged out"),
+        ApiResponse(code = 400, message = "Bad request - The request was not understood by the server")
+    ])
     @GetMapping(Uris.NonSemantic.logout)
     fun logout(
         user: User,
@@ -72,10 +91,15 @@ class UserController(
         return ResponseEntity.status(204).build()
     }
 
+    @ApiOperation(value = "Get User", notes = "Get a user by id", response = UserOutputModel::class)
+    @ApiResponses(value = [
+        ApiResponse(code = 204, message = "Successfully created"),
+        ApiResponse(code = 400, message = "Bad request - The request was not understood by the server")
+    ])
     @PostMapping(Uris.Users.MY_TOKEN)
     fun createToken(
         response: HttpServletResponse,
-        @RequestBody input: UserCreateTokenInputModel
+        @RequestBody @ApiParam(value = "User to create", required = true) input: UserCreateTokenInputModel
     ): ResponseEntity<*> {
         val res = service.createAndGetToken(input.username)
 
@@ -104,6 +128,11 @@ class UserController(
         return cookieWithToken
     }
 
+    @ApiOperation(value = "Get Users", notes = "Get all users registered in our system", response = UsersOutputModel::class)
+    @ApiResponses(value = [
+        ApiResponse(code = 204, message = "No content"),
+        ApiResponse(code = 400, message = "Bad request - The request was not understood by the server")
+    ])
     @GetMapping(Uris.Users.ALL)
     fun getAllUsers(): ResponseEntity<*> {
         val users = service.getAllUsers()
@@ -119,6 +148,7 @@ class UserController(
                 )
     }
 
+    //TODO:  NAO ENTENDO MUITO BEM COMO ESTE FUNCIONA E POR ISSO NAO VOU COMENTAR AGORA
     @GetMapping(Uris.Users.ME)
     fun getMe(
         user: User
