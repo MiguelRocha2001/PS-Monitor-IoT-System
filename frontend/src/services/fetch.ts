@@ -21,18 +21,18 @@ export type KeyValuePair = {
     value: string
 }
 
-export async function fetchRequest(request: Request): Promise<Response> {
-    const token = "some_token"
-    if (!token) {
-        throw new Error('No token found')
+export async function fetchRequest(
+    request: Request,
+    token: string | undefined = undefined
+): Promise<Response> {
+    const headers: any = {
+        'Content-Type': CONTENT_TYPE_JSON
     }
-
+    if (token)
+        headers['Authorization'] = `Bearer ${token}`
     return await fetch(toFullUrl(request), {
         method: request.method,
-        headers: {
-            'Content-Type': CONTENT_TYPE_JSON,
-            'Authorization': `Bearer ${token}`
-        },
+        headers,
         credentials: 'include',
         body: request.body ? buildBody(request.body) : undefined
     })

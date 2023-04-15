@@ -14,6 +14,8 @@ import {DeviceInfo} from "./views/device/DeviceInfo";
 import {Authentication} from "./views/auth/Authentication";
 import {DeviceSensorialData} from "./views/device/DeviceData";
 import {DeviceCreated} from "./views/device/DeviceCreated";
+import {RequireAuthn} from "./views/auth/RequireAuthn";
+import {AuthnContainer} from "./views/auth/Authn";
 
 const logger = new Logger({ name: "App" });
 
@@ -71,29 +73,22 @@ export function App() {
 }
 
 function Router() {
-    const navigate = useNavigate();
-    const {isAuthenticated} = useAuth();
-
-    useEffect(() => {
-        if (!isAuthenticated) {
-            navigate("/auth/login")
-        }
-    }, [isAuthenticated])
-
     return (
         <div>
             <NavBar/>
             <Container style={{width: '90%', margin: 'auto', marginTop: '30px'}}>
-                <Routes>
-                    <Route path='/' element={<Home />} />
-                    <Route path='/auth/:action' element={<Authentication />} />
-                    <Route path='/devices' element={<Devices />} />
-                    <Route path={'/devices/:deviceId'} element={<DeviceInfo />} />
-                    <Route path='/add-new-device' element={<NewDevice />} />
-                    <Route path='/device-data/:deviceId' element={<DeviceSensorialData />} />
-                    <Route path='/device-created/:deviceId' element={<DeviceCreated />} />
-                    <Route path='*' element={<p>404</p>} />
-                </Routes>
+                <AuthnContainer>
+                    <Routes>
+                        <Route path='/' element={<Home />} />
+                        <Route path='/auth/:action' element={<Authentication />} />
+                        <Route path='/devices' element={<Devices />} />
+                        <Route path={'/devices/:deviceId'} element={<DeviceInfo />} />
+                        <Route path='/add-new-device' element={<NewDevice />} />
+                        <Route path='/device-data/:deviceId' element={<DeviceSensorialData />} />
+                        <Route path='/device-created/:deviceId' element={<DeviceCreated />} />
+                        <Route path='*' element={<p>404</p>} />
+                    </Routes>
+                </AuthnContainer>
             </Container>
         </div>
     );

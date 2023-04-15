@@ -35,10 +35,10 @@ class JdbiServerRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN
     override fun getUserByToken(token: String): User? {
         return handle.createQuery(
             """
-            select id, username 
+            select _id, username, password, email 
             from _USER as users 
             inner join TOKEN as tokens
-            on users.id = tokens.user_id
+            on users._id = tokens.user_id
             where token = :token
             """
         )
@@ -129,13 +129,13 @@ class JdbiServerRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN
     }
 
     //  TODO - Optimize using the power of relational database queries
-    override fun getUserByUsername(username: String): User {
+    override fun getUserByUsernameOrNull(username: String): User? {
         getAllUsers().forEach {
             if (it.userInfo.username == username) {
                 return it
             }
         }
-        throw Exception("User not found")
+        return null
     }
 
     override fun existsEmail(email: String): Boolean {
@@ -184,7 +184,7 @@ class JdbiServerRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN
             .single()
     }
 
-    override fun getUserByEmailAddress(email: String): User? {
+    override fun getUserByEmailAddressOrNull(email: String): User? {
         return handle.createQuery(
             """
             select _id, username, password, email 

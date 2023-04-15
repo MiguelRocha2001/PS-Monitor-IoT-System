@@ -13,6 +13,6 @@ export function RequireAuthn({ children }: { children: React.ReactNode }): React
         return <>{children}</>
     } else {
         logger.debug("Redirecting to login page")
-        return <Navigate to="/sign-in" state={{source: location.pathname}} replace={true}/>
+        return <Navigate to="/auth/login" state={{source: location.pathname}} replace={true}/>
     }
 }

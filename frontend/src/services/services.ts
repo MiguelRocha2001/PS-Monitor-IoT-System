@@ -3,7 +3,7 @@ import {FakeServices} from "./FakeServices";
 import {RealServices} from "./RealServices";
 
 export interface Services {
-    googleLogin(): Promise<void>
+    googleLogin(idToken: string): Promise<void>
     getBackendSirenInfo(): Promise<void>
     createUser(username: string, password: string, email: string, mobile: string): Promise<void>
     authenticateUser(username: string, password: string): Promise<void>

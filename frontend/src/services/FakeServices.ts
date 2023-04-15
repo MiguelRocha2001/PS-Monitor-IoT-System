@@ -18,7 +18,7 @@ export class FakeServices implements Services {
         // Nothing to do
     }
 
-    async googleLogin(): Promise<void> {
+    async googleLogin(idToken: string): Promise<void> {
         // Nothing to do
     }
 

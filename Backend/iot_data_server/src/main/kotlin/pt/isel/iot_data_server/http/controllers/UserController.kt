@@ -4,6 +4,8 @@ import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.oauth2.core.oidc.user.OidcUser
 import org.springframework.web.bind.annotation.*
 import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.http.SirenMediaType
@@ -73,11 +75,11 @@ class UserController(
     }
 
     @PostMapping(Uris.Users.MY_TOKEN)
-    fun createToken(
+    fun login(
         response: HttpServletResponse,
         @RequestBody input: UserCreateTokenInputModel
     ): ResponseEntity<*> {
-        val res = service.createAndGetToken(input.username)
+        val res = service.createAndGetTokenWithUsername(input.username)
 
         // adds cookie to response
         if (res is Either.Right) {
@@ -92,6 +94,23 @@ class UserController(
                 // instead, the user should create a new one, which will be put in the cookie
                 .build<Unit>()
         }
+    }
+
+    @GetMapping(Uris.GoogleAuth.GOOGLE_AUTH)
+    fun loginWithGoogleAuth(
+        @AuthenticationPrincipal user: OidcUser?,
+        response: HttpServletResponse
+    ) {
+        val res = service.createAndGetTokenWithGoogleEmail(user?.email!!)
+
+        // adds cookie to response
+        if (res is Either.Right) {
+            val cookie = buildCookie(60 * 60 * 24 * 7, res.value)
+            response.addCookie(cookie)
+        }
+
+        println("user = ${user?.claims}")
+        response.sendRedirect("http://localhost:8080/auth/login")
     }
 
     private fun buildCookie(maxAge: Int, value: String?): Cookie {

@@ -25,33 +25,29 @@ class OAuth2LoginSecurityConfig {
     @Bean
     @Throws(Exception::class)
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
-        http.authorizeHttpRequests { authorizeRequests ->
-            authorizeRequests
-                .requestMatchers(Uris.GoogleAuth.GOOGLE_AUTH)
-                .authenticated()
-                .and().oauth2ResourceServer().jwt()
-            authorizeRequests.anyRequest().anonymous()
-        }
-        /*
         val googleScopes: MutableSet<String> = HashSet()
         googleScopes.add("https://www.googleapis.com/auth/userinfo.email")
         googleScopes.add("https://www.googleapis.com/auth/userinfo.profile")
+        googleScopes.add("https://www.googleapis.com/auth/userinfo.openid")
         val googleUserService = OidcUserService()
         googleUserService.setAccessibleScopes(googleScopes)
 
-        .oauth2Login { oauthLogin: OAuth2LoginConfigurer<HttpSecurity?> ->
-            oauthLogin.userInfoEndpoint()
-                .oidcUserService(googleUserService)
+        http.authorizeHttpRequests { authorizeRequests ->
+            authorizeRequests
+                .requestMatchers(Uris.GoogleAuth.GOOGLE_AUTH).authenticated()
+                .and().oauth2ResourceServer().jwt()
+            authorizeRequests.anyRequest().permitAll()
         }
-
+            .oauth2Login { oauthLogin: OAuth2LoginConfigurer<HttpSecurity?> ->
+                oauthLogin.userInfoEndpoint()
+                    .oidcUserService(googleUserService)
+            }
         .logout { logout ->
             logout.logoutSuccessHandler(oidcLogoutSuccessHandler())
         }
-         */
         return http.build()
     }
 
-    /*
     @Autowired
     private val clientRegistrationRepository: ClientRegistrationRepository? = null
     private fun oidcLogoutSuccessHandler(): LogoutSuccessHandler {
@@ -61,7 +57,6 @@ class OAuth2LoginSecurityConfig {
         oidcLogoutSuccessHandler.setPostLogoutRedirectUri("http://localhost:8081/home")
         return oidcLogoutSuccessHandler
     }
-     */
 
     @Bean
     fun jwtValidator(): OAuth2TokenValidator<Jwt> {

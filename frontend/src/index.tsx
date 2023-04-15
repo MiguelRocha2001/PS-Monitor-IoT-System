@@ -8,6 +8,7 @@ import {BrowserRouter} from "react-router-dom";
 import {StillInProgressAlert} from "./views/StillInProgressAlert";
 import {Col} from "react-bootstrap";
 import {App} from "./App";
+import {RequireAuthn} from "./views/auth/RequireAuthn";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -15,14 +16,12 @@ const root = ReactDOM.createRoot(
 
 root.render(
     <React.StrictMode>
-        <AuthProvider>
-            <BrowserRouter >
-                <Col style={{width: '90%', margin: 'auto', marginTop: '30px'}}>
-                    <StillInProgressAlert />
-                    <App />
-                </Col>
-            </BrowserRouter>
-        </AuthProvider>
+        <BrowserRouter >
+            <Col style={{width: '90%', margin: 'auto', marginTop: '30px'}}>
+                <StillInProgressAlert />
+                <App />
+            </Col>
+        </BrowserRouter>
     </React.StrictMode>
 );
 

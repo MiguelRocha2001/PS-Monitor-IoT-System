@@ -38,7 +38,7 @@ const LoginView = () => {
     }, [isAuthenticated]);
 
     const handleLoginClick = async () => {
-        handleSignIn();
+        window.location.href = "http://localhost:9000/oidc-principal"
     }
 
     return (

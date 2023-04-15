@@ -1,6 +1,7 @@
 import {createContext, useContext, useEffect, useState} from "react";
 import {authConfig} from "../config";
 import axios from "axios";
+import {services} from "../services/services";
 
 export class TokenResponse {
     constructor(
@@ -51,11 +52,14 @@ export const AuthProvider = ({children} : {children: any}) => { // TODO: change 
             // setAccessToken(tokenResponse.access_token);
 
             // console.log(tokenResponse.id_token);
-            console.log(tokenResponse.access_token)
+            console.log(tokenResponse.id_token)
 
             setIdToken(tokenResponse.id_token);
             // TODO Validate Token
             setAuthenticated(true);
+
+            await services.googleLogin(tokenResponse.id_token)
+            console.log("Successfully logged in");
         } catch (e: any) {
             console.log("Failed to fetch token", e.response?.data);
             setTokenError("Failed to obtain a token with provided auth code");

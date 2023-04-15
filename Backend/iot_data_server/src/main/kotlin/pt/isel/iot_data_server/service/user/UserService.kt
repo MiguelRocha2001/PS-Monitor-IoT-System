@@ -29,7 +29,7 @@ class UserService(
             val newUser = User(userId, newUserInfo)
             it.repository.createUser(newUser)
 
-            val tokenCreationResult = createAndGetToken(userInfo.username)
+            val tokenCreationResult = createAndGetTokenWithUsername(userInfo.username)
             if (tokenCreationResult is Either.Left)
                 throw RuntimeException("Failed to create token for user ${userInfo.username}")
 
@@ -52,7 +52,7 @@ class UserService(
 
     fun getUserByEmailAddress(email: String): User? {
         return transactionManager.run {
-            return@run it.repository.getUserByEmailAddress(email)
+            return@run it.repository.getUserByEmailAddressOrNull(email)
         }
     }
 
@@ -60,15 +60,39 @@ class UserService(
      * Creates a token for the user with the given username and password.
      * @throws RuntimeException if the user does not exist.
      */
-    fun createAndGetToken(username: String): TokenCreationResult {
+    fun createAndGetTokenWithUsername(username: String): TokenCreationResult {
         return transactionManager.run {
-            val user = it.repository.getUserByUsername(username)
+            val user = it.repository.getUserByUsernameOrNull(username)
+                ?: return@run Either.Left(TokenCreationError.UserOrPasswordAreInvalid)
             val token = UUID.randomUUID().toString()
            // val aesCipher = AESCipher("AES/CBC/PKCS5Padding", AES.generateIv())// todo store the iv in the db
           //  saveEncryptedToken(aesCipher,token,user.id)
             it.repository.addToken(user.id, token)
 
             return@run Either.Right(token)
+        }
+    }
+
+    /**
+     * Creates a token for the user with the given username and password.
+     * @throws RuntimeException if the user does not exist.
+     */
+    fun createAndGetTokenWithGoogleEmail(email: String): TokenCreationResult {
+        return transactionManager.run {
+            val user = it.repository.getUserByEmailAddressOrNull(email)
+            return@run if (user != null)
+                createAndGetTokenWithUsername(user.userInfo.username)
+            else {
+                val userCreateRes = createUser(UserInfo("some_username", "Some=password1", email))
+                if (userCreateRes is Either.Left)
+                    Either.Left(TokenCreationError.UserOrPasswordAreInvalid)
+                else {
+                    val res = createAndGetTokenWithUsername(email) // TODO: this is a shortcut
+                    if (res is Either.Left)
+                        Either.Left(TokenCreationError.UserOrPasswordAreInvalid)
+                    else res
+                }
+            }
         }
     }
 
