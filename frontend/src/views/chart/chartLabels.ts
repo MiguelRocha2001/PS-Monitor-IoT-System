@@ -1,4 +1,5 @@
 import {Period} from "./MyChart";
+import {PhRecord} from "../../services/domain";
 
 export function toLabels(period: Period) {
     switch (period) {
@@ -38,53 +39,52 @@ export function yearLabels(): string[] {
     return ['2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027', '2028', '2029', '2030']
 }
 
-export function mapDataToDayOfMonthLabel(period: Period, date: Date[]): any[] {
-    return date.map((d) => {
+export function mapRecordToDayOfMonthLabel(period: Period, records: PhRecord[]): any[] {
+    return records.map((record) => {
         return {
-            x: d.getDate(),
-            y: d.getDate().toString()
+            x: record.date.getDay().toString(),
+            y: record.value
         }
     })
 }
 
-export function mapDataToMonthLabel(period: Period, date: Date[]): any[] {
-    const labels = monthLabels()
-    return date.map((d) => {
+export function mapRecordToMonthLabel(period: Period, records: PhRecord[]): any[] {
+    return records.map((record) => {
         return {
-            x: d.getMonth(),
-            y: labels[d.getMonth()]
+            x: record.date.getMonth().toString(),
+            y: record.value
         }
     })
 }
 
-function mapDataToYearLabel(period: Period, date: Date[]): any[] {
-    return date.map((d) => {
+function mapRecordToYearLabel(period: Period, records: PhRecord[]): any[] {
+    return records.map((record) => {
         return {
-            x: d.getFullYear(),
-            y: d.getFullYear().toString()
+            x: record.date.getFullYear().toString(),
+            y: record.value
         }
     })
 }
 
-function mapDataToHourLabel(period: Period, date: Date[]): any[] {
-    return date.map((d) => {
+function mapRecordToHourLabel(period: Period, records: PhRecord[]): any[] {
+    return records.map((record) => {
         return {
-            x: d.getHours(),
-            y: d.getHours().toString()
+            x: record.date.getHours().toString(),
+            y: record.value
         }
     })
 }
 
-export function mapToLabel(period: Period, date: Date[]): any[] {
+export function mapToLabel(period: Period, record: PhRecord[]): any[] {
     switch (period) {
         case Period.HOUR:
-            return mapDataToHourLabel(period, date)
+            return mapRecordToHourLabel(period, record)
         case Period.DAY:
-            return mapDataToDayOfMonthLabel(period, date)
+            return mapRecordToDayOfMonthLabel(period, record)
         case Period.MONTH:
-            return mapDataToMonthLabel(period, date)
+            return mapRecordToMonthLabel(period, record)
         case Period.YEAR:
-            return mapDataToYearLabel(period, date)
+            return mapRecordToYearLabel(period, record)
         default:
             throw new Error(`Invalid period: ${period}`)
     }

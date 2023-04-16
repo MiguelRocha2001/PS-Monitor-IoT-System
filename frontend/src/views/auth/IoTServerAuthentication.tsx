@@ -97,7 +97,6 @@ export function IoTServerAuthentication({title, action}: { title: string, action
                         setSuccessSignUp("User created successfully!")
                         setUser(false)
                         setError("")
-                        navigate("/")
                     }
                     // setRedirect(location.state?.source?.pathname || "/sign-in") // fixme - results in endless loop
                 })
