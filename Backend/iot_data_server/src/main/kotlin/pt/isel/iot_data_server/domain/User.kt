@@ -12,7 +12,6 @@ data class UserInfo(val username: String, val password: String, val email: Strin
 
         val passwordRegexPattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#\$%^&+=])(?=\\S+\$).{8,}\$"
         require(patternMatches(password, passwordRegexPattern)) { "Password must contain at least 8 characters, including at least one uppercase letter, one lowercase letter, one number, and one special character" }
-
     }
 
     private fun patternMatches(emailAddress: String, regexPattern: String): Boolean {

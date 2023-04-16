@@ -36,7 +36,7 @@ class UserControllerTests {
         ).configure()
     }
 
-    private fun create_user(username:String, password:String, email:String, client: WebTestClient){
+    private fun create_user(username: String, password: String, email: String, client: WebTestClient){
         val result = client.post().uri(Uris.Users.ALL)
             .bodyValue(mapOf(
                 "username" to username,

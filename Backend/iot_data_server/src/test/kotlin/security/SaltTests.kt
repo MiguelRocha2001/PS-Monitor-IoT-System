@@ -84,7 +84,7 @@ class SaltTests{
     fun `save a valid salt`() {
         testWithTransactionManagerAndRollback { transactionManager ->
             val saltPasswordOperations = SaltPasswordOperations(transactionManager)
-            val id = Random().nextInt()
+            val id = UUID.randomUUID().toString()
             val password = "foefmefew43ok@skdkK"
             saltPasswordOperations.saltAndHashPass(password,id)
             val salt = saltPasswordOperations.getSalt(id)
