@@ -19,10 +19,14 @@ export class FakeServices implements Services {
     }
 
     async googleLogin(): Promise<void> {
-        // Nothing to do
+        throw new Error('Dont call this method in fake mode')
     }
 
     async createUser(username: string, password: string, email: string, mobile: string): Promise<void> {
+        const existingUser = this.users.find(u => u.username === username)
+        if (existingUser) {
+            throw new Error('Username already exists')
+        }
         const newUser = new User(username, password)
         this.users.push(newUser)
         this.user = newUser

@@ -56,14 +56,12 @@ function Graph({deviceId}: { deviceId: string | undefined}) {
                 <Card.Body>
                     <Card.Title>Device Sensorial Data</Card.Title>
                     <Card.Subtitle className="mb-2 text-muted">Device Id: {deviceId}</Card.Subtitle>
-                    <Card.Text>
-                        <Row style={{width: '60%', margin: 'auto', marginTop: '30px'}}>
-                            <Stack gap={3} style={{width: '100%'}}>
-                                <MyChart period={period} phRecords={phRecords} tempRecords={tempRecords}/>
-                                <PeriodSelector setPeriod={(period: Period) => setPeriod(period)}/>
-                            </Stack>
-                        </Row>
-                    </Card.Text>
+                    <Row style={{width: '60%', margin: 'auto', marginTop: '30px'}}>
+                        <Stack gap={3} style={{width: '100%'}}>
+                            <MyChart period={period} phRecords={phRecords} tempRecords={tempRecords}/>
+                            <PeriodSelector setPeriod={(period: Period) => setPeriod(period)}/>
+                        </Stack>
+                    </Row>
                 </Card.Body>
             </Card>
         )

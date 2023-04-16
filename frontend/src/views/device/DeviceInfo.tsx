@@ -22,7 +22,7 @@ export function DeviceInfo() {
     }, [deviceId]);
 
     if (device == null)
-        return <Loading />
+        return <></>
     else
         return (
             <MyCard title={'Device Info'} boldTitle={true} children={
