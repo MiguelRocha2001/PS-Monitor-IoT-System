@@ -1,12 +1,15 @@
 import {JSXElementConstructor, ReactElement, ReactFragment, ReactPortal} from "react";
 import {PhRecord} from "../../services/domain";
 import {mapToLabel, toLabels} from "./chartLabels";
-
 const {useChart} = require("./useChart");
 const {dataSet} = require("./data");
 const React = require("react");
 
-export enum Period {SECOND, MINUTE, HOUR, DAY, MONTH, YEAR}
+export interface Period {}
+export class Year implements Period {constructor(public year: number) {}}
+export class Month implements Period {constructor(public year: Year) {}}
+export class Day implements Period {constructor(public month: Month) {}}
+export class Hour implements Period {constructor(public day: Day) {}}
 
 export function MyChart(
     {period, phRecords, tempRecords}: { period: Period, phRecords: PhRecord[], tempRecords: PhRecord[] }
@@ -29,9 +32,6 @@ export function MyChart(
     const labels = toLabels(period)
 
     const phData = mapToLabel(period, phRecords)
-    phData.forEach((d: any) => {
-        console.log("x: " + d.x + ", y: " + d.y)
-    })
 
     const tempData = mapToLabel(period, tempRecords)
 
