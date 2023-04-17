@@ -1,6 +1,6 @@
 import {JSXElementConstructor, ReactElement, ReactFragment, ReactPortal} from "react";
 import {PhRecord} from "../../services/domain";
-import {mapToLabel, toLabels} from "./chartLabels";
+import {mapToData, toLabels} from "./chartLabels";
 const {useChart} = require("./useChart");
 const {dataSet} = require("./data");
 const React = require("react");
@@ -31,9 +31,9 @@ export function MyChart(
 
     const labels = toLabels(period)
 
-    const phData = mapToLabel(period, phRecords)
+    const phData = mapToData(period, phRecords)
 
-    const tempData = mapToLabel(period, tempRecords)
+    const tempData = mapToData(period, tempRecords)
 
     const phDataset = metadata["PH"].isVisible ? {
         label: metadata["PH"].label,

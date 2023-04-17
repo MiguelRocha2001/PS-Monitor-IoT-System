@@ -1,7 +1,7 @@
 import Card from 'react-bootstrap/Card';
-import React, {useEffect} from "react";
+import React, {useEffect, useReducer} from "react";
 import {useParams} from "react-router-dom";
-import {Row, Stack} from "react-bootstrap";
+import {Alert, Col, Row, Stack} from "react-bootstrap";
 import {services} from "../../services/services";
 import {PhRecord, TemperatureRecord} from "../../services/domain";
 import {Day, Hour, Month, MyChart, Period, Year} from "../chart/MyChart";
@@ -10,6 +10,67 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import Button from "react-bootstrap/Button";
 import Form from 'react-bootstrap/Form';
+
+export type State =
+    {
+        type : "periodNotSelected"
+    }
+    |
+    {
+        type : "setYearPeriod",
+        year : number
+    }
+    |
+    {
+        type : "setMonthPeriod",
+        year: Year
+    }
+    |
+    {
+        type : "setDayPeriod",
+        month: Month
+    }
+    |
+    {
+        type : "setHourPeriod",
+        day: Day
+    }
+    |
+    {
+        type : "boundsNotSelected",
+        periodType : PeriodType
+    }
+
+
+type Action =
+    {
+        type : "setYearPeriod",
+        year : number
+    }
+    |
+    {
+        type : "setMonthPeriod",
+        year: Year
+    }
+    |
+    {
+        type : "setDayPeriod",
+        month: Month
+    }
+    |
+    {
+        type : "setHourPeriod",
+        day: Day
+    }
+
+function reducer(state:State, action:Action): State {
+    switch(action.type){
+        case "setYearPeriod": return {type: "setYearPeriod", year: action.year};
+        case "setMonthPeriod": return {type: "setMonthPeriod", year: action.year};
+        case "setDayPeriod": return {type: "setDayPeriod", month: action.month};
+        case "setHourPeriod": return {type: "setHourPeriod", day: action.day};
+    }
+}
 
 export function DeviceSensorialData() {
     const { deviceId } = useParams<string>()
@@ -28,11 +89,7 @@ function Graph({deviceId}: { deviceId: string | undefined}) {
     const [phRecords, setPhRecords] = React.useState<PhRecord[]>([]);
     const [tempRecords, setTempRecords] = React.useState<TemperatureRecord[]>([]);
     const [errorMessage, setErrorMessage] = React.useState<string | undefined>(undefined);
-    const [period, setPeriod] = React.useState<Period | undefined>(undefined);
-    const [periodType, setPeriodType] = React.useState<PeriodType | undefined>(undefined);
-    const [year, setYear] = React.useState<number | undefined>(undefined);
-    const [month, setMonth] = React.useState<number | undefined>(undefined);
-    const [day, setDay] = React.useState<number | undefined>(undefined);
+    const [state, dispatcher] = useReducer(reducer, {type : "periodNotSelected"});
 
     useEffect(() => {
         async function fetchPh() {
@@ -55,9 +112,8 @@ function Graph({deviceId}: { deviceId: string | undefined}) {
         }
     }, [deviceId]);
 
-    function onPeriodChange(periodType: PeriodType) {
-        setPeriodType(periodType);
-        if (periodType === PeriodType.YEAR && year !== undefined) {
+    function onBoundChange() {
+        if (state.type === PeriodType.YEAR && year !== undefined) {
             setPeriod(new Year(year));
         } else if (periodType === PeriodType.MONTH && year !== undefined && month !== undefined) {
             const yearObj = new Year(year);
@@ -71,6 +127,12 @@ function Graph({deviceId}: { deviceId: string | undefined}) {
             const monthObj = new Month(yearObj);
             const dayObj = new Day(monthObj);
             setPeriod(new Hour(dayObj));
+        } else if (periodType === PeriodType.HOUR && year !== undefined && month !== undefined && day !== undefined && hour !== undefined) {
+            const yearObj = new Year(year);
+            const monthObj = new Month(yearObj);
+            const dayObj = new Day(monthObj);
+            const hourObj = new Hour(dayObj);
+            setPeriod(hourObj);
         }
     }
 
@@ -80,11 +142,12 @@ function Graph({deviceId}: { deviceId: string | undefined}) {
         return ( // TODO -> maybe use <MyCard> here?
             <Common
                 deviceId={deviceId}
-                periodType={periodType}
-                periodHandler={(periodType: PeriodType) => onPeriodChange(periodType)}
+                periodType={state.type}
+                periodHandler={(periodType: PeriodType) => setPeriodType(periodType)}
                 setYear={(year: number) => setYear(year)}
                 setMonth={(month: number) => setMonth(month)}
                 setDay={(day: number) => setDay(day)}
+                setHour={(hour: number) => setHour(hour)}
                 child={
                     <MyChart period={period} phRecords={phRecords} tempRecords={tempRecords}
                 />}
@@ -95,12 +158,18 @@ function Graph({deviceId}: { deviceId: string | undefined}) {
             <Common
                 deviceId={deviceId}
                 periodType={periodType}
-                periodHandler={(periodType) => onPeriodChange(periodType)}
+                periodHandler={(periodType) => setPeriod(periodType)}
                 setYear={(year: number) => setYear(year)}
                 setMonth={(month: number) => setMonth(month)}
                 setDay={(day: number) => setDay(day)}
+                setHour={(hour: number) => setHour(hour)}
                 child={
-                    <p>Choose a period to see the data</p>
+                    <Alert variant="info">
+                        <Alert.Heading>Choose a period</Alert.Heading>
+                        <p>
+                            Please choose a period to display the data.
+                        </p>
+                    </Alert>
                 }
             />
         )
@@ -108,7 +177,7 @@ function Graph({deviceId}: { deviceId: string | undefined}) {
 }
 
 function Common(
-    {deviceId, child, periodType, periodHandler, setYear, setMonth, setDay}:
+    {deviceId, child, periodType, periodHandler, setYear, setMonth, setDay, setHour}:
     {
         deviceId: string | undefined,
         child: React.ReactNode,
@@ -116,28 +185,33 @@ function Common(
         periodHandler: (periodType: PeriodType) => void,
         setYear: (year: number) => void,
         setMonth: (month: number) => void,
-        setDay: (day: number) => void
+        setDay: (day: number) => void,
+        setHour: (hour: number) => void
     }
 ) {
     const displayYearSelector = periodType != undefined
     const displayMonthSelector = periodType !== undefined && periodType !== PeriodType.YEAR
     const displayDaySelector = periodType !== undefined && periodType !== PeriodType.YEAR && periodType !== PeriodType.MONTH
-    const displayHourSelector = periodType !== undefined && PeriodType.YEAR && periodType !== PeriodType.MONTH && periodType !== PeriodType.DAY
+    const displayHourSelector = periodType !== undefined && periodType !== PeriodType.YEAR && periodType !== PeriodType.MONTH && periodType !== PeriodType.DAY
 
     return (
         <Card>
             <Card.Body>
                 <Card.Title>Device Sensorial Data</Card.Title>
                 <Card.Subtitle className="mb-2 text-muted">Device Id: {deviceId}</Card.Subtitle>
-                <Row style={{width: '60%', margin: 'auto', marginTop: '30px'}}>
-                    <Stack gap={3} style={{width: '100%'}}>
-                        <PeriodSelector handler={(periodType) => periodHandler(periodType)}/>
-                        {displayYearSelector && <YearSelector setYear={(year: number) => setYear(year)}/>}
-                        {displayMonthSelector && <MonthSelector setMonth={(month: number) => setMonth(month)}/>}
-                        {displayDaySelector && <DaySelector setDay={(day: number) => setDay(day)}/>}
-                        {child}
-                    </Stack>
-                </Row>
+                <br/>
+                <Stack gap={5}>
+                    {child}
+                    <Col style={{width: '100%', alignContent: 'center'}}>
+                        <Stack gap={3} style={{width: '70%'}}>
+                            <PeriodSelector handler={(periodType) => periodHandler(periodType)}/>
+                            {displayYearSelector && <YearSelector setYear={(year: number) => setYear(year)}/>}
+                            {displayMonthSelector && <MonthSelector setMonth={(month: number) => setMonth(month)}/>}
+                            {displayDaySelector && <DaySelector setDay={(day: number) => setDay(day)}/>}
+                            {displayHourSelector && <HourSelector setHour={(hour: number) => setHour(hour)}/>}
+                        </Stack>
+                    </Col>
+                </Stack>
             </Card.Body>
         </Card>
     )
@@ -194,8 +268,20 @@ function MonthSelector({setMonth}: { setMonth: (month: number) => void }) {
 function DaySelector({setDay}: { setDay: (day: number) => void }) {
     return (
         <Form.Select aria-label="Default select example">
-            {Array.from(Array(31).keys()).map((day) => {
+            {Array.from(Array(30).keys()).map((day) => {
+                day = day + 1
                 return <option key={day} onSelect={() => setDay(day)} value={day}>{day}</option>
+            })}
+        </Form.Select>
+    );
+}
+
+function HourSelector({setHour}: { setHour: (hour: number) => void }) {
+    return (
+        <Form.Select aria-label="Default select example">
+            {Array.from(Array(24).keys()).map((hour) => {
+                hour = hour + 1
+                return <option key={hour} onSelect={() => setHour(hour)} value={hour}>{hour}</option>
             })}
         </Form.Select>
     );

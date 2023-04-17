@@ -5,11 +5,11 @@ export function toLabels(period: Period) {
     if (period instanceof Hour) {
         return hourLabels()
     } else if (period instanceof Day) {
-        return dayLabels()
+        return hourLabels()
     } else if (period instanceof Month) {
-        return monthLabels()
+        return dayLabels()
     } else if (period instanceof Year) {
-        return yearLabels()
+        return monthLabels()
     } else {
         throw new Error(`Invalid period: ${period}`)
     }
@@ -47,13 +47,18 @@ export function mapRecordToDayOfMonthLabel(period: Period, records: PhRecord[]):
     })
 }
 
-export function mapRecordToMonthLabel(period: Period, records: PhRecord[]): any[] {
+export function mapRecordToMonthLabel(period: Year, records: PhRecord[]): any[] {
+    console.log("mapRecordToMonthLabel size: " + records.length)
     return records.map((record) => {
-        return {
-            x: record.date.getMonth().toString(),
-            y: record.value
+        if (record.date.getFullYear() !== period.year)  {
+            console.log(`mapRecordToMonthLabel: ${record.date.getFullYear()} !== ${period.year}`)
+            return null
         }
-    })
+        else return {
+                x: record.date.getMonth().toString(),
+                y: record.value
+        }
+    }).filter((record) => record !== null)
 }
 
 function mapRecordToYearLabel(period: Period, records: PhRecord[]): any[] {
@@ -74,15 +79,15 @@ function mapRecordToHourLabel(period: Period, records: PhRecord[]): any[] {
     })
 }
 
-export function mapToLabel(period: Period, record: PhRecord[]): any[] {
+export function mapToData(period: Period, record: PhRecord[]): any[] {
     if (period instanceof Hour) {
-        return mapRecordToHourLabel(period, record)
+        return mapRecordToHourLabel(period, record) // TODO: fix
     } else if (period instanceof Day) {
-        return mapRecordToDayOfMonthLabel(period, record)
+        return mapRecordToHourLabel(period, record)
     } else if (period instanceof Month) {
-        return mapRecordToMonthLabel(period, record)
+        return mapRecordToDayOfMonthLabel(period, record)
     } else if (period instanceof Year) {
-        return mapRecordToYearLabel(period, record)
+        return mapRecordToMonthLabel(period, record)
     } else {
         throw new Error(`Invalid period: ${period}`)
     }
