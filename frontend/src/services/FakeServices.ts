@@ -105,13 +105,13 @@ export class FakeServices implements Services {
 
     async getPhData(deviceId: string): Promise<PhData> {
         return new PhData([
-            new PhRecord(7.0, new Date('2019-01-01T00:00:00.000Z')),
-            new PhRecord(7.1, new Date('2019-01-02T01:00:00.000Z')),
-            new PhRecord(7.2, new Date('2019-01-03T02:00:00.000Z')),
-            new PhRecord(7.3, new Date('2019-01-04T03:00:00.000Z')),
-            new PhRecord(7.4, new Date('2019-01-05T04:00:00.000Z')),
-            new PhRecord(7.5, new Date('2019-01-06T05:00:00.000Z')),
-            new PhRecord(7.6, new Date('2019-01-07T06:00:00.000Z')),
+            new PhRecord(7.0, new Date('2019-02-01T00:00:00.000Z')),
+            new PhRecord(7.1, new Date('2019-01-01T01:00:01.000Z')),
+            new PhRecord(7.2, new Date('2019-01-01T02:00:02.000Z')),
+            new PhRecord(7.3, new Date('2019-01-01T03:00:03.000Z')),
+            new PhRecord(7.4, new Date('2019-01-01T04:00:04.000Z')),
+            new PhRecord(7.5, new Date('2019-01-01T05:00:05.000Z')),
+            new PhRecord(7.6, new Date('2019-01-07T06:00:06.000Z')),
             new PhRecord(7.7, new Date('2019-01-08T07:00:00.000Z')),
             new PhRecord(7.8, new Date('2019-01-09T08:00:00.000Z')),
             new PhRecord(7.9, new Date('2019-01-10T09:00:00.000Z')),
