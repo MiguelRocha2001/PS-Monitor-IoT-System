@@ -25,6 +25,8 @@ class OAuth2LoginSecurityConfig {
     @Bean
     @Throws(Exception::class)
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
+        http.csrf().disable() // TODO: review this later
+
         val googleScopes: MutableSet<String> = HashSet()
         googleScopes.add("https://www.googleapis.com/auth/userinfo.email")
         googleScopes.add("https://www.googleapis.com/auth/userinfo.profile")

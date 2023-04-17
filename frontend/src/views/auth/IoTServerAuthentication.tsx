@@ -1,7 +1,7 @@
 import * as React from "react"
 import {useState} from "react"
 import {Navigate, useLocation, useNavigate} from "react-router-dom"
-import {useCurrentUser, useSetUser} from "./Authn"
+import {useIsLoggedIn, useSetUser} from "./Authn"
 import {Logger} from "tslog";
 import {services} from "../../services/services";
 import {User} from "../../services/domain";
@@ -44,7 +44,7 @@ export function IoTServerAuthentication({title, action}: { title: string, action
     const [successSignUp, setSuccessSignUp] = useState("")
     const [redirect, setRedirect] = useState<string | undefined>(undefined)
     const setUser = useSetUser()
-    const user = useCurrentUser()
+    const user = useIsLoggedIn()
     const navigate = useNavigate()
     const location = useLocation()
 
@@ -91,13 +91,12 @@ export function IoTServerAuthentication({title, action}: { title: string, action
             createUser(username, password, email, mobile)
                 .then((result) => {
                     setIsSubmitting(false)
-                    if(result instanceof Error)
+                    if(result instanceof Error) {
                         setError(result.message)
-                    else {
+                    } else {
                         setSuccessSignUp("User created successfully!")
                         setUser(false)
                         setError("")
-                        navigate("/")
                     }
                     // setRedirect(location.state?.source?.pathname || "/sign-in") // fixme - results in endless loop
                 })
@@ -114,14 +113,6 @@ export function IoTServerAuthentication({title, action}: { title: string, action
             <Form.Label>Email</Form.Label>
             <Form.Control type="email" placeholder="Email" onChange={(ev) => {
                 handleChange("email", ev.target.value)
-            }} />
-        </Form.Group>
-    )
-    const mobileComponent = action === "login" ? <></> : (
-        <Form.Group className="mb-3" controlId="formBasicPassword">
-            <Form.Label>Mobile</Form.Label>
-            <Form.Control type="number" placeholder="Mobile Number" onChange={(ev) => {
-                handleChange("mobile", ev.target.value)
             }} />
         </Form.Group>
     )
@@ -145,7 +136,6 @@ export function IoTServerAuthentication({title, action}: { title: string, action
                     </Form.Group>
 
                     {emailComponent}
-                    {mobileComponent}
 
                     <Button variant="primary" style={{width: '10%'}} onClick={handleSubmit}>
                         Submit

@@ -19,10 +19,14 @@ export class FakeServices implements Services {
     }
 
     async googleLogin(): Promise<void> {
-        // Nothing to do
+        throw new Error('Dont call this method in fake mode')
     }
 
     async createUser(username: string, password: string, email: string, mobile: string): Promise<void> {
+        const existingUser = this.users.find(u => u.username === username)
+        if (existingUser) {
+            throw new Error('Username already exists')
+        }
         const newUser = new User(username, password)
         this.users.push(newUser)
         this.user = newUser
@@ -118,18 +122,18 @@ export class FakeServices implements Services {
 
     async getTemperatureData(deviceId: string): Promise<TemperatureData> {
         return new TemperatureData( [
-            new TemperatureRecord(20.0, new Date('2019-01-01T00:00:00.000Z')),
-            new TemperatureRecord(20.1, new Date('2019-01-02T01:00:00.000Z')),
-            new TemperatureRecord(20.2, new Date('2019-01-03T02:00:00.000Z')),
-            new TemperatureRecord(20.3, new Date('2019-01-04T03:00:00.000Z')),
-            new TemperatureRecord(20.4, new Date('2019-01-05T04:00:00.000Z')),
-            new TemperatureRecord(20.5, new Date('2019-01-06T05:00:00.000Z')),
-            new TemperatureRecord(20.6, new Date('2019-01-07T06:00:00.000Z')),
-            new TemperatureRecord(20.7, new Date('2019-01-08T07:00:00.000Z')),
-            new TemperatureRecord(20.8, new Date('2019-01-09T08:00:00.000Z')),
-            new TemperatureRecord(20.9, new Date('2019-01-10T09:00:00.000Z')),
-            new TemperatureRecord(21.0, new Date('2019-01-11T10:00:00.000Z')),
-            new TemperatureRecord(21.1, new Date('2019-01-12T11:00:00.000Z'))
+            new TemperatureRecord(21, new Date('2019-01-01T00:00:00.000Z')),
+            new TemperatureRecord(24, new Date('2019-01-02T01:00:00.000Z')),
+            new TemperatureRecord(20, new Date('2019-01-03T02:00:00.000Z')),
+            new TemperatureRecord(22, new Date('2019-01-04T03:00:00.000Z')),
+            new TemperatureRecord(20, new Date('2019-01-05T04:00:00.000Z')),
+            new TemperatureRecord(45, new Date('2019-01-06T05:00:00.000Z')),
+            new TemperatureRecord(23, new Date('2019-01-07T06:00:00.000Z')),
+            new TemperatureRecord(21, new Date('2019-01-08T07:00:00.000Z')),
+            new TemperatureRecord(20, new Date('2019-01-09T08:00:00.000Z')),
+            new TemperatureRecord(20, new Date('2019-01-10T09:00:00.000Z')),
+            new TemperatureRecord(26, new Date('2019-01-11T10:00:00.000Z')),
+            new TemperatureRecord(29, new Date('2019-01-27T11:00:00.000Z'))
         ])
     }
 }

@@ -81,7 +81,7 @@ function Router() {
                         <Route path='/' element={<Home />} />
                         <Route path='/auth/:action' element={<Authentication />} />
                         <Route path='/devices' element={<RequireAuthn children={<Devices />} />} />
-                        <Route path='/device-info/:deviceId' element={<RequireAuthn children={<DeviceInfo />} />} />
+                        <Route path='/devices/:deviceId' element={<RequireAuthn children={<DeviceInfo />} />} />
                         <Route path='/add-new-device' element={<RequireAuthn children={<NewDevice />} />} />
                         <Route path='/device-data/:deviceId' element={<RequireAuthn children={<DeviceSensorialData />} />} />
                         <Route path='/device-created/:deviceId' element={<RequireAuthn children={<DeviceCreated />} />} />

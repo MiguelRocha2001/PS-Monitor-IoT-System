@@ -3,12 +3,12 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import React from "react";
 import {MyLink} from "./Commons";
-import {useCurrentUser} from "./auth/Authn";
+import {useIsLoggedIn} from "./auth/Authn";
 import {services} from "../services/services";
 import Button from "react-bootstrap/Button";
 
 function NavBar() {
-    const currentUser = useCurrentUser()
+    const currentUser = useIsLoggedIn()
 
     const logout =
         currentUser ?

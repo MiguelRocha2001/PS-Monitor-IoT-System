@@ -12,10 +12,10 @@ export function MyChart(
     {period, phRecords, tempRecords}: { period: Period, phRecords: PhRecord[], tempRecords: PhRecord[] }
 ) {
     const canvasRef = React.useRef(null);
-    const [data, setData] = React.useState(dataSet);
+    const [metadata, setMetadata] = React.useState(dataSet);
 
     const handleToggleBars = (property: string) => {
-        setData((prev: { [x: string]: { isVisible: any; }; }) => ({
+        setMetadata((prev: { [x: string]: { isVisible: any; }; }) => ({
             ...prev,
 
             [property]: {
@@ -28,31 +28,26 @@ export function MyChart(
 
     const labels = toLabels(period)
 
-    const phDates = phRecords.map((phRecord) => {
-        return phRecord.date
+    const phData = mapToLabel(period, phRecords)
+    phData.forEach((d: any) => {
+        console.log("x: " + d.x + ", y: " + d.y)
     })
-    const phData = mapToLabel(period, phDates)
 
-    const tempDates = tempRecords.map((tempRecord) => {
-        return tempRecord.date
-    })
-    const tempData = mapToLabel(period, tempDates)
+    const tempData = mapToLabel(period, tempRecords)
 
-    const phDataset = data["PH"].isVisible ? {
-        label: data["PH"].label,
-        // data: data["PH"].data,
+    const phDataset = metadata["PH"].isVisible ? {
+        label: metadata["PH"].label,
         data: phData,
-        backgroundColor: data["PH"].bgColor,
-        borderColor: data["PH"].borderColor,
+        backgroundColor: metadata["PH"].bgColor,
+        borderColor: metadata["PH"].borderColor,
         borderWidth: 1
     } : {};
 
-    const tempDataset = data["Temperature"].isVisible ? {
-        label: data["Temperature"].label,
-        // data: data["Temperature"].data,
+    const tempDataset = metadata["Temperature"].isVisible ? {
+        label: metadata["Temperature"].label,
         data: tempData,
-        backgroundColor: data["Temperature"].bgColor,
-        borderColor: data["Temperature"].borderColor,
+        backgroundColor: metadata["Temperature"].bgColor,
+        borderColor: metadata["Temperature"].borderColor,
         borderWidth: 1
     } : {};
 
@@ -97,9 +92,9 @@ export function MyChart(
                     handleToggleBars={handleToggleBars}
                     options={{
                         caption: key,
-                        bgColor: data[key].bgColor,
-                        borderColor: data[key].borderColor,
-                        isVisible: data[key].isVisible
+                        bgColor: metadata[key].bgColor,
+                        borderColor: metadata[key].borderColor,
+                        isVisible: metadata[key].isVisible
                     }}
                 />
             ))}

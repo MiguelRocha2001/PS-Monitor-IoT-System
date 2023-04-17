@@ -8,6 +8,7 @@ import pt.isel.iot_data_server.utils.generateRandomEmail
 import pt.isel.iot_data_server.utils.generateRandomName
 import pt.isel.iot_data_server.utils.generateRandomPassword
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
+import java.util.*
 import kotlin.random.Random
 
 
@@ -18,8 +19,11 @@ class UserRepoTests {
         testWithTransactionManagerAndRollback { transactionManager ->
             transactionManager.run {transaction ->
                 val usersRepo = transaction.repository
+
+                val userId = UUID.randomUUID().toString()
                 val userInfo = UserInfo(generateRandomName(), generateRandomPassword(), generateRandomEmail())
-                val user = User(Random.nextInt(), userInfo)
+
+                val user = User(userId, userInfo)
                 usersRepo.createUser(user)
                 val users = usersRepo.getAllUsers()
                 assert(users.size == 1)

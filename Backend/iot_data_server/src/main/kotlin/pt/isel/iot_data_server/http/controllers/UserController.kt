@@ -44,12 +44,7 @@ class UserController(
             ResponseEntity.status(201)
                 .contentType(SirenMediaType)
                 .header("Location", Uris.Users.byId(userId).toASCIIString())
-                .body(siren(UserCreateOutputModel(userId, token)) {
-                    clazz("users")
-                    createUserSirenAction(this)
-                    createTokenSirenAction(this)
-                    createLogoutSirenAction(this)
-                })
+                .body(siren(UserCreateOutputModel(userId, token)) { clazz("users") })
         }
     }
 

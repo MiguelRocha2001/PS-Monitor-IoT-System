@@ -42,7 +42,37 @@ class DeviceHttpTests {
         deleteAllDeviceRecords()
     }
 
-    fun create_device(email:String, client: WebTestClient): DeviceId{
+    fun createUserAndLogin(email: String, client: WebTestClient) {
+        val username = email.split("@")[0]
+        val password = "Static=password1"
+
+        client.post().uri(Uris.Users.ALL)
+            .bodyValue(mapOf(
+                "username" to username,
+                "password" to password,
+                "email" to email
+            ))
+            .exchange()
+            .expectStatus().isCreated
+            .expectBody(SirenModel::class.java)
+            .returnResult()
+            .responseBody
+
+        client.post().uri(Uris.Users.MY_TOKEN)
+            .bodyValue(mapOf(
+                "username" to username,
+                "password" to password,
+            ))
+            .exchange()
+            .expectStatus().isNoContent
+            .expectBody(SirenModel::class.java)
+            .returnResult()
+            .responseBody
+    }
+
+    fun create_device(email:String, client: WebTestClient): DeviceId {
+        createUserAndLogin(email, client)
+
         val result = client.post().uri(Uris.Devices.ALL)
             .bodyValue(mapOf("email" to email))
             .exchange()
@@ -92,7 +122,7 @@ class DeviceHttpTests {
     }
 
     @Test
-    fun `get device by id`(){
+    fun `get device by id`() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
         val email = generateRandomEmail()
         val deviceId = create_device(email, client)
