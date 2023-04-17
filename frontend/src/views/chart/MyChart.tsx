@@ -7,9 +7,9 @@ const React = require("react");
 
 export interface Period {}
 export class Year implements Period {constructor(public year: number) {}}
-export class Month implements Period {constructor(public year: Year) {}}
-export class Day implements Period {constructor(public month: Month) {}}
-export class Hour implements Period {constructor(public day: Day) {}}
+export class Month implements Period {constructor(public month: number, public year: Year) {}}
+export class Day implements Period {constructor(public day: number, public month: Month) {}}
+export class Hour implements Period {constructor(public hour: number, public day: Day) {}}
 
 export function MyChart(
     {period, phRecords, tempRecords}: { period: Period, phRecords: PhRecord[], tempRecords: PhRecord[] }

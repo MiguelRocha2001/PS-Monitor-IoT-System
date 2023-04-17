@@ -3,7 +3,7 @@ import {Day, Hour, Month, Period, Year} from "./MyChart";
 
 export function toLabels(period: Period) {
     if (period instanceof Hour) {
-        return hourLabels()
+        return hourLabels() // TODO: fix this later
     } else if (period instanceof Day) {
         return hourLabels()
     } else if (period instanceof Month) {
@@ -38,20 +38,57 @@ export function yearLabels(): string[] {
     return ['2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027', '2028', '2029', '2030']
 }
 
-export function mapRecordToDayOfMonthLabel(period: Period, records: PhRecord[]): any[] {
+function mapRecordToMinuteLabel(period: Hour, records: PhRecord[]): any[] {
     return records.map((record) => {
+        if (
+            record.date.getFullYear() !== period.day.month.year.year ||
+            record.date.getMonth() !== period.day.month.month ||
+            record.date.getDate() !== period.day.day ||
+            record.date.getHours() !== period.hour
+        ) {
+            return null
+        }
         return {
-            x: record.date.getDay().toString(),
+            x: record.date.getMinutes().toString(),
             y: record.value
         }
-    })
+    }).filter((record) => record !== null)
+}
+
+function mapRecordToHourLabel(period: Day, records: PhRecord[]): any[] {
+    return records.map((record) => {
+        if (
+            record.date.getFullYear() !== period.month.year.year ||
+            record.date.getMonth() !== period.month.month ||
+            record.date.getDate() !== period.day
+        ) {
+            return null
+        }
+        return {
+            x: record.date.getHours().toString(),
+            y: record.value
+        }
+    }).filter((record) => record !== null)
+}
+
+export function mapRecordToDayOfMonthLabel(period: Month, records: PhRecord[]): any[] {
+    return records.map((record) => {
+        if (
+            record.date.getFullYear() !== period.year.year ||
+            record.date.getMonth() !== period.month
+        )  {
+            return null
+        }
+        return {
+            x: record.date.getDate().toString(),
+            y: record.value
+        }
+    }).filter((record) => record !== null)
 }
 
 export function mapRecordToMonthLabel(period: Year, records: PhRecord[]): any[] {
-    console.log("mapRecordToMonthLabel size: " + records.length)
     return records.map((record) => {
         if (record.date.getFullYear() !== period.year)  {
-            console.log(`mapRecordToMonthLabel: ${record.date.getFullYear()} !== ${period.year}`)
             return null
         }
         else return {
@@ -67,21 +104,12 @@ function mapRecordToYearLabel(period: Period, records: PhRecord[]): any[] {
             x: record.date.getFullYear().toString(),
             y: record.value
         }
-    })
-}
-
-function mapRecordToHourLabel(period: Period, records: PhRecord[]): any[] {
-    return records.map((record) => {
-        return {
-            x: record.date.getHours().toString(),
-            y: record.value
-        }
-    })
+    }).filter((record) => record !== null)
 }
 
 export function mapToData(period: Period, record: PhRecord[]): any[] {
     if (period instanceof Hour) {
-        return mapRecordToHourLabel(period, record) // TODO: fix
+        return mapRecordToMinuteLabel(period, record)
     } else if (period instanceof Day) {
         return mapRecordToHourLabel(period, record)
     } else if (period instanceof Month) {
