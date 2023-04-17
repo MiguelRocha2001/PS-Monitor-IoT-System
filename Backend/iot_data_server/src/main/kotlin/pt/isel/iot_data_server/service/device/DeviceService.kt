@@ -43,10 +43,10 @@ class DeviceService (
         return transactionManager.run {
             val device = getDeviceById(deviceId.id)
             if (device == null) {
-                logger.info("Device with id $deviceId not found")
+                logger.debug("Device with id $deviceId not found")
                 return@run Either.Left(GetDeviceError.DeviceNotFound)
             }
-            logger.info("Device with id $deviceId found")
+            logger.debug("Device with id $deviceId found")
             return@run Either.Right(device)
         }
     }
