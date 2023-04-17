@@ -13,6 +13,7 @@ import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.http.DeviceInputModel
 import pt.isel.iot_data_server.http.SirenMediaType
 import pt.isel.iot_data_server.http.infra.siren
+import pt.isel.iot_data_server.http.model.Problem
 import pt.isel.iot_data_server.http.model.device.CreateDeviceOutputModel
 import pt.isel.iot_data_server.http.model.device.DeviceOutputModel
 import pt.isel.iot_data_server.http.model.device.DevicesOutputModel
@@ -29,8 +30,7 @@ class DeviceController(
 
     @Operation(summary = "All devices", description = "Get all devices associated with our system")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved", content = [Content(mediaType = "application/vnd.siren+json", schema = Schema(implementation = DevicesOutputModel::class))])
-    @ApiResponse(responseCode = "400", description = "Bad request - The devices were not found")
-    @ApiResponse(responseCode = "404", description = "Not found - The devices were not found") //FIXME: o QUE RETONAR SE FOR ERRO
+    @ApiResponse(responseCode = "401", description = "Not authorized", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
     @GetMapping(Uris.Devices.ALL)
     fun getDevices(
         user: User
@@ -47,7 +47,7 @@ class DeviceController(
 
     @Operation(summary = "Device by id", description = "Get a device associated with  id")
     @ApiResponse(responseCode = "200", description = "Device found", content = [Content(mediaType = "application/vnd.siren+json", schema = Schema(implementation = DeviceOutputModel::class))])
-    @ApiResponse(responseCode = "404", description = "Device not found", content = [Content(mediaType = "application/vnd.siren+json", schema = Schema(implementation = DeviceOutputModel::class))])
+    @ApiResponse(responseCode = "400", description = "Device not found", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
     @GetMapping(Uris.Devices.BY_ID1)
     fun getDeviceById(
         @PathVariable device_id: String
@@ -64,7 +64,7 @@ class DeviceController(
 
     @Operation(summary = "Add device", description = "Add a device associated with  email")
     @ApiResponse(responseCode = "201", description = "Device created", content = [Content(mediaType = "application/vnd.siren+json", schema = Schema(implementation = CreateDeviceOutputModel::class))])
-    @ApiResponse(responseCode = "400", description = "Bad request - The device was not created, check if given parameters are valid")
+    @ApiResponse(responseCode = "400", description = "Bad request - Invalid email", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
     @PostMapping(Uris.Devices.ALL)
     fun addDevice(
         @RequestBody deviceModel: DeviceInputModel
@@ -85,7 +85,7 @@ class DeviceController(
 
     @Operation(summary = "Device by email", description = "Get a device associated with  email")
     @ApiResponse(responseCode = "200", description = "Device found", content = [Content(mediaType = "application/vnd.siren+json", schema = Schema(implementation = DeviceOutputModel::class))])
-    @ApiResponse(responseCode = "400", description = "Bad request - The request was not valid, check the given email")
+    @ApiResponse(responseCode = "400", description = "Bad request - The request was not valid, check the given email", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
     @GetMapping(Uris.Devices.BY_EMAIL)
     fun getDevicesByEmail(
         @PathVariable email: String

@@ -1,6 +1,8 @@
 package pt.isel.iot_data_server.http.controllers
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
@@ -8,6 +10,8 @@ import org.springframework.web.bind.annotation.*
 import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.http.SirenMediaType
 import pt.isel.iot_data_server.http.infra.siren
+import pt.isel.iot_data_server.http.model.Problem
+import pt.isel.iot_data_server.http.model.device.DeviceOutputModel
 import pt.isel.iot_data_server.http.model.map
 import pt.isel.iot_data_server.http.model.sensor_data.PhRecordsOutputModel
 import pt.isel.iot_data_server.http.model.sensor_data.TemperatureRecordsOutputModel
@@ -21,9 +25,14 @@ class SensorDataController(
 ) {
 
     @Operation(summary = "Get Ph records", description = "Get all ph records associated with a device")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved")
-    @ApiResponse(responseCode = "400", description = "Bad request - The request was not valid")
-    @ApiResponse(responseCode = "404", description = "Not found - The ph records were not found")
+    @ApiResponse(responseCode = "200", description = "Ph successfully retrieved", content = [Content(
+        mediaType = "application/vnd.siren+json",
+        schema = Schema(implementation = PhRecordsOutputModel::class)
+    )])
+    @ApiResponse(responseCode = "400", description = "Device not found", content = [Content(
+        mediaType = "application/problem+json",
+        schema = Schema(implementation = Problem::class)
+    )])
     @GetMapping(Uris.Devices.PH.ALL_1)
     fun getPhRecords(
         @PathVariable device_id: String
@@ -47,8 +56,14 @@ class SensorDataController(
 
 
     @Operation(summary = "Get temperature records", description = "Get all temperature records associated with a device")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved")
-    @ApiResponse(responseCode = "400", description = "Bad request - The request was not valid")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved", content = [Content(
+        mediaType = "application/vnd.siren+json",
+        schema = Schema(implementation = TemperatureRecordsOutputModel::class)
+    )])
+    @ApiResponse(responseCode = "400", description = "Device not found", content = [Content(
+        mediaType = "application/problem+json",
+        schema = Schema(implementation = Problem::class)
+    )])
     @GetMapping(Uris.Devices.Temperature.ALL_1)
     fun getTemperatureRecords(
         @PathVariable device_id: String

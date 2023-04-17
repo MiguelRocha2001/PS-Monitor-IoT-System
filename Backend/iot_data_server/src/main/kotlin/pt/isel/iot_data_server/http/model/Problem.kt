@@ -157,6 +157,12 @@ data class Problem(
             "Device not found",
             "Device not found"
         )
+
+        val invalidOwnerEmail = Problem(
+            URI("https://github.com/isel-leic-daw/2022-daw-leic52d-2-22-daw-leic52d-g11/docs/problem/device-not-found"),
+            "Invalid owner email",
+            "Invalid owner email",
+        )
     }
 }
 
@@ -198,4 +204,7 @@ val problems = mapOf(
     "DeviceAlreadyExists" to Problem.response(400, Problem.deviceAlreadyExists),
 
     "DeviceNotFound" to Problem.response(400, Problem.deviceNotFound),
+
+    "InvalidOwnerEmail" to Problem.response(400, Problem.invalidOwnerEmail),
+
 )

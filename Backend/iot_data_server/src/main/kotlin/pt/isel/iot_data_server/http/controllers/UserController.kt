@@ -1,6 +1,8 @@
 package pt.isel.iot_data_server.http.controllers
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.Cookie
@@ -17,6 +19,7 @@ import pt.isel.iot_data_server.http.hypermedia.createLogoutSirenAction
 import pt.isel.iot_data_server.http.hypermedia.createTokenSirenAction
 import pt.isel.iot_data_server.http.hypermedia.createUserSirenAction
 import pt.isel.iot_data_server.http.infra.siren
+import pt.isel.iot_data_server.http.model.Problem
 import pt.isel.iot_data_server.http.model.map
 import pt.isel.iot_data_server.http.model.user.*
 import pt.isel.iot_data_server.service.Either
@@ -30,8 +33,12 @@ class UserController(
 ) {
 
     @Operation(summary = "Create user", description = "Create a new user")
-    @ApiResponse(responseCode = "201", description = "Successfully created")
-    @ApiResponse(responseCode = "400", description = "Bad request - The request was not valid")
+    @ApiResponse(responseCode = "201", description = "Successfully created", content = [Content(
+        mediaType = "application/vnd.siren+json",
+        schema = Schema(implementation = UserCreateOutputModel::class))])
+    @ApiResponse(responseCode = "400", description = "Bad request - The request was not valid", content = [Content(
+        mediaType = "application/problem+json",
+        schema = Schema(implementation = Problem::class))])
     @PostMapping(Uris.Users.ALL)
     fun create(
         @RequestBody input: UserCreateInputModel
@@ -53,7 +60,7 @@ class UserController(
      * If the user is not authenticated, the interceptor will throw an exception and the method will not be called.
      * Because of this, the method will only be called if the user is authenticated, and thus, the user is logically logged.
      */
-
+    @Operation(summary = "Authentication status", description = "Get the user authentication status")
     @GetMapping(Uris.NonSemantic.loggedIn)
     fun isLogged(
         request: HttpServletRequest
@@ -65,6 +72,18 @@ class UserController(
                 clazz("user-logged")
             })
     }
+
+        /**
+     * Get method, because it doesn't change anything in the server.
+     */
+
+        /**
+     * Get method, because it doesn't change anything in the server.
+     */
+
+        /**
+     * Get method, because it doesn't change anything in the server.
+     */
 
     /**
      * Get method, because it doesn't change anything in the server.
