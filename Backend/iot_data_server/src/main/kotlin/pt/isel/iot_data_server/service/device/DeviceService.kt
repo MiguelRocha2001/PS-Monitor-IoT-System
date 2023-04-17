@@ -80,7 +80,7 @@ class DeviceService (
         }
     }
 
-    fun getDevicesByOwnerEmail(ownerEmail: String): List<Device> {
+    fun getDevicesByOwnerEmail(ownerEmail: String): List<Device> { //FIXME: WHAT IF THE EMAIL DOES NOT EXIST
         return transactionManager.run {
             return@run it.repository.getDevicesByOwnerEmail(ownerEmail)
         }

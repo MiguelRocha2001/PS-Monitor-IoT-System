@@ -1,5 +1,6 @@
 package pt.isel.iot_data_server.service.user
 
+
 import org.springframework.stereotype.Service
 import pt.isel.iot_data_server.crypto.AESCipher
 import pt.isel.iot_data_server.domain.User

@@ -1,9 +1,8 @@
 package pt.isel.iot_data_server.http.controllers
 
-import io.swagger.annotations.ApiOperation
-import io.swagger.annotations.ApiParam
-import io.swagger.annotations.ApiResponse
-import io.swagger.annotations.ApiResponses
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pt.isel.iot_data_server.domain.DeviceId
@@ -15,24 +14,23 @@ import pt.isel.iot_data_server.http.model.sensor_data.TemperatureRecordsOutputMo
 import pt.isel.iot_data_server.service.sensor_data.SensorDataService
 import java.util.*
 
+@Tag(name = "Sensor data", description = "Sensor data API")
 @RestController
 class SensorDataController(
     val service: SensorDataService
 ) {
 
-    @ApiOperation(value = "All ph records", notes = "Get all ph records associated with our system associated with a device", response = PhRecordsOutputModel::class)
-    @ApiResponses(value = [
-        ApiResponse(code = 200, message = "Successfully retrieved"),
-        ApiResponse(code = 400, message = "Bad request - The request was not understood by the server"),
-        ApiResponse(code = 404, message = "Not found - The ph records were not found")
-    ])
+    @Operation(summary = "Get Ph records", description = "Get all ph records associated with a device")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved")
+    @ApiResponse(responseCode = "400", description = "Bad request - The request was not valid")
+    @ApiResponse(responseCode = "404", description = "Not found - The ph records were not found")
     @GetMapping(Uris.Devices.PH.ALL_1)
     fun getPhRecords(
-        @PathVariable @ApiParam(name ="ID", value = "Device ID", required = true) device_id: String
+        @PathVariable device_id: String
     ): ResponseEntity<*> {
         val result = service.getPhRecords(DeviceId(device_id))
         return result.map {
-            ResponseEntity.status(201)
+            ResponseEntity.status(200)
                 .contentType(SirenMediaType)
                 .header(
                     "Location",
@@ -47,19 +45,17 @@ class SensorDataController(
     }
 
 
-    @ApiOperation(value = "All temperature records", notes = "Get all temperature records associated with our system associated with a device", response = TemperatureRecordsOutputModel::class)
-    @ApiResponses(value = [
-        ApiResponse(code = 200, message = "Successfully retrieved"),
-        ApiResponse(code = 400, message = "Bad request - The request was not understood by the server"),
-        ApiResponse(code = 404, message = "Not found - The temperature records were not found")
-    ])
+
+    @Operation(summary = "Get temperature records", description = "Get all temperature records associated with a device")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved")
+    @ApiResponse(responseCode = "400", description = "Bad request - The request was not valid")
     @GetMapping(Uris.Devices.Temperature.ALL_1)
     fun getTemperatureRecords(
-        @PathVariable @ApiParam(name ="ID", value = "Device ID", required = true) device_id: String
+        @PathVariable device_id: String
     ): ResponseEntity<*> {
         val result = service.getTemperatureRecords(DeviceId(device_id))
         return result.map {
-            ResponseEntity.status(201)
+            ResponseEntity.status(200)
                 .contentType(SirenMediaType)
                 .header(
                     "Location",
