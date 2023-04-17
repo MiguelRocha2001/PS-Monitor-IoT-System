@@ -72,52 +72,10 @@ data class Problem(
            "Invalid name or password"
         )
 
-        val userAlreadyInQueue = Problem(
-            URI("https://github.com/isel-leic-daw/2022-daw-leic52d-2-22-daw-leic52d-g11/docs/problem/user-already-in-queue"),
-                "User already in a queue",
-                "User is already in queue, unable to perform operation"
-        )
-
-        val userAlreadyInGame = Problem(
-            URI("https://github.com/isel-leic-daw/2022-daw-leic52d-2-22-daw-leic52d-g11/docs/problem/user-already-in-game"),
-             "User already in game",
-             "User is already in a game, unable to perform operation"
-        )
-
-        val userInGameQueue = Problem(
-            URI("https://github.com/isel-leic-daw/2022-daw-leic52d-2-22-daw-leic52d-g11/docs/problem/user-in-game-queue"),
-            "User in game queue",
-            "User is still in game queue"
-        )
-
-        val gameNotFound = Problem(
-            URI("https://github.com/isel-leic-daw/2022-daw-leic52d-2-22-daw-leic52d-g11/docs/problem/game-not-found"),
-            "Game not found",
-            "Unable to find such game"
-        )
-
         val actionNotPermitted = Problem(
             URI("https://github.com/isel-leic-daw/2022-daw-leic52d-2-22-daw-leic52d-g11/docs/problem/action-not-permitted"),
             "Action not permitted",
             "Cannot perform such action"
-        )
-
-        val invalidMove = Problem(
-            URI("https://github.com/isel-leic-daw/2022-daw-leic52d-2-22-daw-leic52d-g11/docs/problem/action-not-permitted"),
-            "Invalid move",
-            "Invalid move"
-        )
-
-        val invalidShot = Problem(
-                URI("https://github.com/isel-leic-daw/2022-daw-leic52d-2-22-daw-leic52d-g11/docs/problem/action-not-permitted"),
-                "Invalid Shot",
-                "Invalid Shot"
-        )
-
-        val noShotWasSelected = Problem(
-                URI("https://github.com/isel-leic-daw/2022-daw-leic52d-2-22-daw-leic52d-g11/docs/problem/action-not-permitted"),
-                "Empty shot",
-                "No shot was selected"
         )
 
         val userNotFound = Problem(
@@ -132,21 +90,6 @@ data class Problem(
             "Body is not of the expected format"
         )
 
-        val notAllShipsPlaced = Problem(
-            URI("https://github.com/isel-leic-daw/2022-daw-leic52d-2-22-daw-leic52d-g11/docs/problem/user-not-found"),
-            "Not all ships placed",
-            "Cannot proceed with the confirmation while all of the ships are not placed"
-        )
-        val boardIsConfirmed = Problem(
-                URI("https://github.com/isel-leic-daw/2022-daw-leic52d-2-22-daw-leic52d-g11/docs/problem/confirmed-board"),
-                "Board is already confirmed",
-                "Unable to perform operation, board is already confirmed"
-        )
-        val notInGameQueue = Problem(
-            URI("https://github.com/isel-leic-daw/2022-daw-leic52d-2-22-daw-leic52d-g11/docs/problem/not-in-game-queue"),
-            "User not in game queue",
-            "User is not in game queue"
-        )
         val deviceAlreadyExists = Problem(
             URI("https://github.com/isel-leic-daw/2022-daw-leic52d-2-22-daw-leic52d-g11/docs/problem/device-already-exists"),
             "Device already exists",
@@ -159,17 +102,21 @@ data class Problem(
         )
 
         val invalidOwnerEmail = Problem(
-            URI("https://github.com/isel-leic-daw/2022-daw-leic52d-2-22-daw-leic52d-g11/docs/problem/device-not-found"),
+            URI("https://github.com/isel-leic-daw/2022-daw-leic52d-2-22-daw-leic52d-g11/docs/problem/invalid-owner-email"),
             "Invalid owner email",
             "Invalid owner email",
+        )
+
+        val emailAlreadyExists = Problem(
+            URI("https://github.com/isel-leic-daw/2022-daw-leic52d-2-22-daw-leic52d-g11/docs/problem/email-already-exists"),
+            "Email already exists",
+            "Email already exists",
         )
     }
 }
 
 val problems = mapOf(
-    "UserAlreadyExists" to Problem.response(400, Problem.userAlreadyExists),
-
-    "BoardIsConfirmed" to Problem.response(405, Problem.boardIsConfirmed),
+    "UserAlreadyExists" to Problem.response(409, Problem.userAlreadyExists),
 
     "InsecurePassword" to Problem.response(400, Problem.insecurePassword),
 
@@ -177,34 +124,17 @@ val problems = mapOf(
 
     "UserOrPasswordAreInvalid" to Problem.response(403, Problem.userOrPasswordAreInvalid),
 
-    "UserAlreadyInQueue" to Problem.response(405, Problem.userAlreadyInQueue),
-
-    "UserAlreadyInGame" to Problem.response(405, Problem.userAlreadyInGame),
-
-    "UserInGameQueue" to Problem.response(404, Problem.userInGameQueue),
-
-    "GameNotFound" to Problem.response(404, Problem.gameNotFound),
-
-    "ActionNotPermitted" to Problem.response(405, Problem.actionNotPermitted),
-
-    "EmptyShotsList" to Problem.response(400, Problem.noShotWasSelected),
-
-    "InvalidMove" to Problem.response(405, Problem.invalidMove),
-
-    "InvalidShot" to Problem.response(405, Problem.invalidShot),
-
     "UserNotFound" to Problem.response(404, Problem.userNotFound),
-
-    "InvalidInputBody" to Problem.response(405, Problem.invalidInputBody),
-
-    "NotAllShipsPlaced" to Problem.response(405, Problem.notAllShipsPlaced),
-
-    "NotInGameQueue" to Problem.response(404, Problem.notInGameQueue),
 
     "DeviceAlreadyExists" to Problem.response(400, Problem.deviceAlreadyExists),
 
-    "DeviceNotFound" to Problem.response(400, Problem.deviceNotFound),
+    "DeviceNotFound" to Problem.response(404, Problem.deviceNotFound),
 
-    "InvalidOwnerEmail" to Problem.response(400, Problem.invalidOwnerEmail),
+    "InvalidOwnerEmail" to Problem.response(409, Problem.invalidOwnerEmail),
+
+    "EmailAlreadyExists" to Problem.response(409, Problem.emailAlreadyExists),
+
+    "UserOrPasswordAreInvalid" to Problem.response(403, Problem.userOrPasswordAreInvalid),
+
 
 )

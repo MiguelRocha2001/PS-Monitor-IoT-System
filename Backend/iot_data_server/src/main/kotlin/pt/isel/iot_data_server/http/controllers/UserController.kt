@@ -1,6 +1,7 @@
 package pt.isel.iot_data_server.http.controllers
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.links.Link
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -39,6 +40,9 @@ class UserController(
     @ApiResponse(responseCode = "400", description = "Bad request - The request was not valid", content = [Content(
         mediaType = "application/problem+json",
         schema = Schema(implementation = Problem::class))])
+    @ApiResponse(responseCode = "409", description = "Conflict - The user already exists", content = [Content(
+        mediaType = "application/problem+json",
+        schema = Schema(implementation = Problem::class))])
     @PostMapping(Uris.Users.ALL)
     fun create(
         @RequestBody input: UserCreateInputModel
@@ -61,6 +65,11 @@ class UserController(
      * Because of this, the method will only be called if the user is authenticated, and thus, the user is logically logged.
      */
     @Operation(summary = "Authentication status", description = "Get the user authentication status")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved",
+       // links = [Link(name = "logout", operationId = "logout", description = "Logout the user")],
+        content = [Content(
+        mediaType = "application/vnd.siren+json",
+        schema = Schema(implementation = IsLoggedInOutputModel::class))])
     @GetMapping(Uris.NonSemantic.loggedIn)
     fun isLogged(
         request: HttpServletRequest
@@ -76,19 +85,8 @@ class UserController(
         /**
      * Get method, because it doesn't change anything in the server.
      */
-
-        /**
-     * Get method, because it doesn't change anything in the server.
-     */
-
-        /**
-     * Get method, because it doesn't change anything in the server.
-     */
-
-    /**
-     * Get method, because it doesn't change anything in the server.
-     */
-
+    @Operation(summary = "Logout", description = "Logout the user")
+    @ApiResponse(responseCode = "204", description = "Successfully logged out")
     @GetMapping(Uris.NonSemantic.logout)
     fun logout(
         user: User,
@@ -100,7 +98,11 @@ class UserController(
         return ResponseEntity.status(204).build()
     }
 
-
+    @Operation(summary = "Get user", description = "Get the user information")
+    @ApiResponse(responseCode = "204", description = "Successfully logged")
+    @ApiResponse(responseCode = "403", description = "User Or Password Are Invalid", content = [Content(
+        mediaType = "application/problem+json",
+        schema = Schema(implementation = Problem::class))])
     @PostMapping(Uris.Users.MY_TOKEN)
     fun login(
         response: HttpServletResponse,
@@ -123,6 +125,15 @@ class UserController(
         }
     }
 
+    @Operation(summary = "Login with Google", description = "Login with Google")
+    @ApiResponse(responseCode = "204", description = "Successfully logged")
+    @ApiResponse(responseCode = "403", description = "User Or Password Are Invalid", content = [Content(
+        mediaType = "application/problem+json",
+        schema = Schema(implementation = Problem::class))])
+    @ApiResponse(responseCode = "409", description = "User or email already exist",
+        content = [Content(
+        mediaType = "application/problem+json",
+        schema = Schema(implementation = Problem::class))])
     @GetMapping(Uris.GoogleAuth.GOOGLE_AUTH)
     fun loginWithGoogleAuth(
         @AuthenticationPrincipal oidcUser: OidcUser?,
@@ -182,7 +193,11 @@ class UserController(
                 )
     }
 
-    //TODO:  NAO ENTENDO MUITO BEM COMO ESTE FUNCIONA E POR ISSO NAO VOU COMENTAR AGORA
+    @Operation(summary = "Get user", description = "Get the current user information")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved", content = [Content(
+        mediaType = "application/vnd.siren+json",
+        schema = Schema(implementation = UserOutputModel::class))])
+    @ApiResponse(responseCode = "401", description = "Not authorized", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
     @GetMapping(Uris.Users.ME)
     fun getMe(
         user: User
