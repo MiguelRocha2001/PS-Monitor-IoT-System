@@ -48,14 +48,14 @@ object Uris {
 
         object PH {
             const val ALL_1 = "${BY_ID1}/ph-data"
-            private const val ALL_2 = "${BY_ID2}/ph"
+            private const val ALL_2 = "${BY_ID2}/ph-data"
 
             fun all(): URI = URI(ALL_2)
         }
 
         object Temperature {
             const val ALL_1 = "${BY_ID1}/temperature-data"
-            private const val ALL_2 = "${BY_ID2}/temperature"
+            private const val ALL_2 = "${BY_ID2}/temperature-data"
 
             fun all(): URI = URI(ALL_2)
         }

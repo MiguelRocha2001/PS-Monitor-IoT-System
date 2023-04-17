@@ -15,9 +15,6 @@ import org.springframework.web.bind.annotation.*
 import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.domain.UserInfo
 import pt.isel.iot_data_server.http.SirenMediaType
-import pt.isel.iot_data_server.http.hypermedia.createLogoutSirenAction
-import pt.isel.iot_data_server.http.hypermedia.createTokenSirenAction
-import pt.isel.iot_data_server.http.hypermedia.createUserSirenAction
 import pt.isel.iot_data_server.http.infra.siren
 import pt.isel.iot_data_server.http.model.Problem
 import pt.isel.iot_data_server.http.model.map
@@ -62,7 +59,7 @@ class UserController(
      */
     @Operation(summary = "Authentication status", description = "Get the user authentication status")
     @GetMapping(Uris.NonSemantic.loggedIn)
-    fun isLogged(
+    fun isLoggedIn(
         request: HttpServletRequest
     ): ResponseEntity<*> {
         val isLogged = request.cookies?.find { it.name == "token" } != null
