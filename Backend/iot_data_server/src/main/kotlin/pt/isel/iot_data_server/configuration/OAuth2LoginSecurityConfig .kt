@@ -44,9 +44,9 @@ class OAuth2LoginSecurityConfig {
                 oauthLogin.userInfoEndpoint()
                     .oidcUserService(googleUserService)
             }
-        .logout { logout ->
-            logout.logoutSuccessHandler(oidcLogoutSuccessHandler())
-        }
+            .logout { logout ->
+                logout.logoutSuccessHandler(oidcLogoutSuccessHandler())
+            }
         return http.build()
     }
 

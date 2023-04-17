@@ -1,18 +1,17 @@
-import {Period} from "./MyChart";
 import {PhRecord} from "../../services/domain";
+import {Day, Hour, Month, Period, Year} from "./MyChart";
 
 export function toLabels(period: Period) {
-    switch (period) {
-        case Period.HOUR:
-            return hourLabels()
-        case Period.DAY:
-            return dayLabels()
-        case Period.MONTH:
-            return monthLabels()
-        case Period.YEAR:
-            return yearLabels()
-        default:
-            throw new Error(`Invalid period: ${period}`)
+    if (period instanceof Hour) {
+        return hourLabels()
+    } else if (period instanceof Day) {
+        return dayLabels()
+    } else if (period instanceof Month) {
+        return monthLabels()
+    } else if (period instanceof Year) {
+        return yearLabels()
+    } else {
+        throw new Error(`Invalid period: ${period}`)
     }
 }
 
@@ -76,16 +75,15 @@ function mapRecordToHourLabel(period: Period, records: PhRecord[]): any[] {
 }
 
 export function mapToLabel(period: Period, record: PhRecord[]): any[] {
-    switch (period) {
-        case Period.HOUR:
-            return mapRecordToHourLabel(period, record)
-        case Period.DAY:
-            return mapRecordToDayOfMonthLabel(period, record)
-        case Period.MONTH:
-            return mapRecordToMonthLabel(period, record)
-        case Period.YEAR:
-            return mapRecordToYearLabel(period, record)
-        default:
-            throw new Error(`Invalid period: ${period}`)
+    if (period instanceof Hour) {
+        return mapRecordToHourLabel(period, record)
+    } else if (period instanceof Day) {
+        return mapRecordToDayOfMonthLabel(period, record)
+    } else if (period instanceof Month) {
+        return mapRecordToMonthLabel(period, record)
+    } else if (period instanceof Year) {
+        return mapRecordToYearLabel(period, record)
+    } else {
+        throw new Error(`Invalid period: ${period}`)
     }
 }
