@@ -56,7 +56,9 @@ class UserController(
     }
 
     @GetMapping(Uris.Users.ALL)
-    fun getAllUsers(): ResponseEntity<*> {
+    fun getAllUsers(
+        user: User
+    ): ResponseEntity<*> {
         val users = service.getAllUsers()
         return if (users.isEmpty())
             ResponseEntity.status(204).build<Unit>()
@@ -133,11 +135,11 @@ class UserController(
         }
 
         return res.map {
-            ResponseEntity.status(204) // no content
+            ResponseEntity.status(201) // Creates a new token
                 .contentType(SirenMediaType)
                 // location is not needed, since the token it is not allowed to fetch the token
                 // instead, the user should create a new one, which will be put in the cookie
-                .build<Unit>()
+                .body(siren(TokenOutputModel(it)) { clazz("user-token") })
         }
     }
 
@@ -207,5 +209,13 @@ class UserController(
         cookieWithToken.maxAge = maxAge
 
         return cookieWithToken
+    }
+
+    /**
+     * Used only for integration tests
+     */
+    @DeleteMapping(Uris.Users.ALL)
+    fun deleteAllUsers() {
+        service.deleteAllUsers()
     }
 }

@@ -168,5 +168,10 @@ class JdbiServerRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN
             .map { it.toDevice() }
     }
 
-
+    /**
+     * Used only for integration tests
+     */
+    override fun deleteAllUsers() {
+        handle.createUpdate("delete from _USER").execute()
+    }
 }

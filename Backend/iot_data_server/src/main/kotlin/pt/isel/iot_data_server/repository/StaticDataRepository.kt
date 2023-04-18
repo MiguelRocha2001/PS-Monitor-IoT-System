@@ -22,4 +22,5 @@ interface StaticDataRepository {//todo all the sensor data needs to go away
     fun getUserByEmailAddressOrNull(email: String): User?
 
     fun getDevicesByOwnerEmail(email: String): List<Device>
+    fun deleteAllUsers()
 }

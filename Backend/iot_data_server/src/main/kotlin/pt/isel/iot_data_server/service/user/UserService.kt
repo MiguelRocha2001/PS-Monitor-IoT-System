@@ -82,6 +82,15 @@ class UserService(
     fun decryptToken(aesCipher: AESCipher, encryptedToken: String): String {
         return aesCipher.decrypt(encryptedToken)
     }
+
+    /**
+     * Used only for integration tests
+     */
+    fun deleteAllUsers() {
+        transactionManager.run {
+            it.repository.deleteAllUsers()
+        }
+    }
 }
 
 
