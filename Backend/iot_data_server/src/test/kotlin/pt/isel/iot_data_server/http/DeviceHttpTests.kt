@@ -70,9 +70,7 @@ class DeviceHttpTests {
             .responseBody
     }
 
-    fun create_device(email:String, client: WebTestClient): DeviceId {
-        createUserAndLogin(email, client)
-
+    fun create_device(email: String, client: WebTestClient): DeviceId {
         val result = client.post().uri(Uris.Devices.ALL)
             .bodyValue(mapOf("email" to email))
             .exchange()
@@ -100,15 +98,22 @@ class DeviceHttpTests {
     @Test
     fun `Can get all Devices`() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+
+        val email = generateRandomEmail()
+        // creates random user, and logs in (results in a valid token inside a cookie)
+        createUserAndLogin(email, client)
+
         create_device(generateRandomEmail(), client)
         create_device(generateRandomEmail(), client)
         create_device(generateRandomEmail(), client)
+
         val result = client.get().uri(Uris.Devices.ALL)
             .exchange()
             .expectStatus().isOk
             .expectBody(SirenModel::class.java)
             .returnResult()
             .responseBody!!
+
         val properties = result.properties as LinkedHashMap<*, *>
         val devices = properties["devices"] as ArrayList<*>
         assertEquals(3,devices.size)
@@ -152,10 +157,15 @@ class DeviceHttpTests {
     @Test
     fun `get all devices`(){
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+
         val email = generateRandomEmail()
+        // creates random user, and logs in (results in a valid token inside a cookie)
+        createUserAndLogin(email, client)
+
         create_device(email, client)
         create_device(email, client)
         create_device(email, client)
+
         val result = client.get().uri(Uris.Devices.ALL)
             .exchange()
             .expectStatus().isOk
@@ -171,11 +181,16 @@ class DeviceHttpTests {
     @Test
     fun `get all devices by email`(){
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+
         val email = generateRandomEmail()
+        // creates random user, and logs in (results in a valid token inside a cookie)
+        createUserAndLogin(email, client)
+
         create_device(email, client)
         create_device(email, client)
         create_device(email, client)
-        val result = client.get().uri(Uris.Devices.BY_EMAIL,email)
+
+        val result = client.get().uri(Uris.Devices.BY_EMAIL, email)
             .exchange()
             .expectStatus().isOk
             .expectBody(SirenModel::class.java)

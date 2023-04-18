@@ -32,7 +32,8 @@ class DeviceController(
     @ApiResponse(responseCode = "400", description = "Bad request - Invalid email", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
     @PostMapping(Uris.Devices.ALL)
     fun addDevice(
-        @RequestBody deviceModel: DeviceInputModel
+        @RequestBody deviceModel: DeviceInputModel,
+        user: User
     ): ResponseEntity<*> {
         val result = service.addDevice(deviceModel.email)
         return result.map { deviceId ->

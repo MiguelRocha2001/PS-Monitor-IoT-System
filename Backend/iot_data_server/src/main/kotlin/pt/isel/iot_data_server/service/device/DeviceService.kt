@@ -20,14 +20,14 @@ class DeviceService (
 
     fun addDevice(ownerEmail: String): CreateDeviceResult {
         if (!emailVerifier(ownerEmail) ) {
-            logger.info("Invalid owner email")
+            logger.debug("Invalid owner email")
             return Either.Left(CreateDeviceError.InvalidOwnerEmail)
         }
         return transactionManager.run {
             return@run generateDeviceId().let { deviceId ->
                 val device = Device(deviceId, ownerEmail)
                 it.repository.addDevice(device)
-                logger.info("Device with id ${device.deviceId} added")
+                logger.debug("Device with id ${device.deviceId} added")
                 Either.Right(deviceId.id)
             }
         }
@@ -35,7 +35,9 @@ class DeviceService (
 
     fun getAllDevices(): List<Device> {
         return transactionManager.run {
-            return@run it.repository.getAllDevices()
+            return@run it.repository.getAllDevices().also {
+                logger.debug("All devices returned")
+            }
         }
     }
 

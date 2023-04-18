@@ -1,4 +1,4 @@
-package security
+package pt.isel.iot_data_server.security
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
