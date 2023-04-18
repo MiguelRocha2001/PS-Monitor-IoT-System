@@ -13,10 +13,7 @@ import pt.isel.iot_data_server.http.infra.siren
 
 @Tag(name = "Siren Info", description = "The Siren Info API")
 @RestController
-class SirenInfoController(
-
-) {
-
+class SirenInfoController {
     @Operation(summary = "Siren Info", description = "Get the siren info")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved")
     @GetMapping(Uris.SirenInfo.SIREN_INFO)

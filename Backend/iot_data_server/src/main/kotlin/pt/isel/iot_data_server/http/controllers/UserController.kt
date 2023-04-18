@@ -45,7 +45,6 @@ class UserController(
         @RequestBody input: UserCreateInputModel
     ): ResponseEntity<*> {
         val res = service.createUser(input.toUserInfo())
-
         return res.map {
             val userId = it.first
             val token = it.second
@@ -54,6 +53,42 @@ class UserController(
                 .header("Location", Uris.Users.byId(userId).toASCIIString())
                 .body(siren(UserCreateOutputModel(userId, token)) { clazz("users") })
         }
+    }
+
+    @GetMapping(Uris.Users.ALL)
+    fun getAllUsers(): ResponseEntity<*> {
+        val users = service.getAllUsers()
+        return if (users.isEmpty())
+            ResponseEntity.status(204).build<Unit>()
+        else
+            ResponseEntity.status(200)
+                .contentType(SirenMediaType)
+                .body(
+                    siren(UsersOutputModel.fromUsers(users)) {
+                        clazz("users")
+                    }
+                )
+    }
+
+    @Operation(summary = "Get user", description = "Get the current user information")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved", content = [Content(
+        mediaType = "application/vnd.siren+json",
+        schema = Schema(implementation = UserOutputModel::class))])
+    @ApiResponse(responseCode = "401", description = "Not authorized", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
+    @GetMapping(Uris.Users.ME)
+    fun getMe(
+        user: User
+    ): ResponseEntity<*> {
+        val userOutputModel = UserOutputModel(
+            user.id,
+            user.userInfo.username,
+            user.userInfo.email,
+        )
+        return ResponseEntity.status(200)
+            .contentType(SirenMediaType)
+            .body(siren(userOutputModel) {
+                clazz("user-me")
+            })
     }
 
     /**
@@ -77,22 +112,6 @@ class UserController(
             .body(siren(IsLoggedInOutputModel(isLogged)) {
                 clazz("user-logged")
             })
-    }
-
-        /**
-     * Get method, because it doesn't change anything in the server.
-     */
-    @Operation(summary = "Logout", description = "Logout the user")
-    @ApiResponse(responseCode = "204", description = "Successfully logged out")
-    @GetMapping(Uris.NonSemantic.logout)
-    fun logout(
-        user: User,
-        response: HttpServletResponse
-    ): ResponseEntity<Unit> {
-        val cookie = buildCookie(0, null)
-        response.addCookie(cookie)
-
-        return ResponseEntity.status(204).build()
     }
 
     @Operation(summary = "Get user", description = "Get the user information")
@@ -129,8 +148,8 @@ class UserController(
         schema = Schema(implementation = Problem::class))])
     @ApiResponse(responseCode = "409", description = "User or email already exist",
         content = [Content(
-        mediaType = "application/problem+json",
-        schema = Schema(implementation = Problem::class))])
+            mediaType = "application/problem+json",
+            schema = Schema(implementation = Problem::class))])
     @GetMapping(Uris.GoogleAuth.GOOGLE_AUTH)
     fun loginWithGoogleAuth(
         @AuthenticationPrincipal oidcUser: OidcUser?,
@@ -164,6 +183,22 @@ class UserController(
         response.sendRedirect("http://localhost:8080/auth/login")
     }
 
+        /**
+     * Get method, because it doesn't change anything in the server.
+     */
+    @Operation(summary = "Logout", description = "Logout the user")
+    @ApiResponse(responseCode = "204", description = "Successfully logged out")
+    @GetMapping(Uris.NonSemantic.logout)
+    fun logout(
+        user: User,
+        response: HttpServletResponse
+    ): ResponseEntity<Unit> {
+        val cookie = buildCookie(0, null)
+        response.addCookie(cookie)
+
+        return ResponseEntity.status(204).build()
+    }
+
     private fun buildCookie(maxAge: Int, value: String?): Cookie {
         val cookieWithToken = Cookie("token", value ?: "null")
         cookieWithToken.path = "/"
@@ -172,42 +207,5 @@ class UserController(
         cookieWithToken.maxAge = maxAge
 
         return cookieWithToken
-    }
-
-
-    @GetMapping(Uris.Users.ALL)
-    fun getAllUsers(): ResponseEntity<*> {
-        val users = service.getAllUsers()
-        return if (users.isEmpty())
-            ResponseEntity.status(204).build<Unit>()
-        else
-            ResponseEntity.status(200)
-                .contentType(SirenMediaType)
-                .body(
-                    siren(UsersOutputModel.fromUsers(users)) {
-                        clazz("users")
-                    }
-                )
-    }
-
-    @Operation(summary = "Get user", description = "Get the current user information")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved", content = [Content(
-        mediaType = "application/vnd.siren+json",
-        schema = Schema(implementation = UserOutputModel::class))])
-    @ApiResponse(responseCode = "401", description = "Not authorized", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
-    @GetMapping(Uris.Users.ME)
-    fun getMe(
-        user: User
-    ): ResponseEntity<*> {
-        val userOutputModel = UserOutputModel(
-            user.id,
-            user.userInfo.username,
-            user.userInfo.email,
-        )
-        return ResponseEntity.status(200)
-            .contentType(SirenMediaType)
-            .body(siren(userOutputModel) {
-                clazz("user-me")
-            })
     }
 }

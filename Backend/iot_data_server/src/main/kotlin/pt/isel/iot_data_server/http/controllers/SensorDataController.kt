@@ -23,7 +23,6 @@ import java.util.*
 class SensorDataController(
     val service: SensorDataService
 ) {
-
     @Operation(summary = "Get Ph records", description = "Get all ph records associated with a device")
     @ApiResponse(responseCode = "200", description = "Ph successfully retrieved", content = [Content(
         mediaType = "application/vnd.siren+json",
@@ -53,8 +52,6 @@ class SensorDataController(
         }
     }
 
-
-
     @Operation(summary = "Get temperature records", description = "Get all temperature records associated with a device")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved", content = [Content(
         mediaType = "application/vnd.siren+json",
@@ -83,8 +80,4 @@ class SensorDataController(
                 )
         }
     }
-
-
-
-
 }

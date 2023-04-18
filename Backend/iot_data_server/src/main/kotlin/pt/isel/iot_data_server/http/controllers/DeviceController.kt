@@ -27,6 +27,25 @@ import java.util.*
 class DeviceController(
     val service: DeviceService
 ) {
+    @Operation(summary = "Add device", description = "Add a device associated with  email")
+    @ApiResponse(responseCode = "201", description = "Device created", content = [Content(mediaType = "application/vnd.siren+json", schema = Schema(implementation = CreateDeviceOutputModel::class))])
+    @ApiResponse(responseCode = "400", description = "Bad request - Invalid email", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
+    @PostMapping(Uris.Devices.ALL)
+    fun addDevice(
+        @RequestBody deviceModel: DeviceInputModel
+    ): ResponseEntity<*> {
+        val result = service.addDevice(deviceModel.email)
+        return result.map { deviceId ->
+            ResponseEntity.status(201)
+                .contentType(SirenMediaType)
+                .header("Location", Uris.Devices.byId(deviceId).toASCIIString())
+                .body(siren(
+                    CreateDeviceOutputModel(deviceId)
+                ) {
+                    clazz("device-id")
+                })
+        }
+    }
 
     @Operation(summary = "All devices", description = "Get all devices associated with our system")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved", content = [Content(mediaType = "application/vnd.siren+json", schema = Schema(implementation = DevicesOutputModel::class))])
@@ -36,6 +55,23 @@ class DeviceController(
         user: User
     ): ResponseEntity<*> {
         val devices = service.getAllDevices()
+        return ResponseEntity.status(200)
+            .contentType(SirenMediaType)
+            .body(siren(
+                DevicesOutputModel.from(devices)
+            ) {
+                clazz("devices")
+            })
+    }
+
+    @Operation(summary = "Device by email", description = "Get a device associated with  email")
+    @ApiResponse(responseCode = "200", description = "Device found", content = [Content(mediaType = "application/vnd.siren+json", schema = Schema(implementation = DeviceOutputModel::class))])
+    @ApiResponse(responseCode = "400", description = "Bad request - The request was not valid, check the given email", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
+    @GetMapping(Uris.Devices.BY_EMAIL)
+    fun getDevicesByEmail(
+        @PathVariable email: String
+    ): ResponseEntity<*> {
+        val devices = service.getDevicesByOwnerEmail(email)
         return ResponseEntity.status(200)
             .contentType(SirenMediaType)
             .body(siren(
@@ -60,43 +96,5 @@ class DeviceController(
                     clazz("device")
                 })
         }
-    }
-
-    @Operation(summary = "Add device", description = "Add a device associated with  email")
-    @ApiResponse(responseCode = "201", description = "Device created", content = [Content(mediaType = "application/vnd.siren+json", schema = Schema(implementation = CreateDeviceOutputModel::class))])
-    @ApiResponse(responseCode = "400", description = "Bad request - Invalid email", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
-    @PostMapping(Uris.Devices.ALL)
-    fun addDevice(
-        @RequestBody deviceModel: DeviceInputModel
-    ): ResponseEntity<*> {
-        val result = service.addDevice(deviceModel.email)
-        return result.map { deviceId ->
-            ResponseEntity.status(201)
-                .contentType(SirenMediaType)
-                .header("Location", Uris.Devices.byId(deviceId).toASCIIString())
-                .body(siren(
-                    CreateDeviceOutputModel(deviceId)
-                ) {
-                    clazz("device-id")
-                })
-        }
-    }
-
-
-    @Operation(summary = "Device by email", description = "Get a device associated with  email")
-    @ApiResponse(responseCode = "200", description = "Device found", content = [Content(mediaType = "application/vnd.siren+json", schema = Schema(implementation = DeviceOutputModel::class))])
-    @ApiResponse(responseCode = "400", description = "Bad request - The request was not valid, check the given email", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
-    @GetMapping(Uris.Devices.BY_EMAIL)
-    fun getDevicesByEmail(
-        @PathVariable email: String
-    ): ResponseEntity<*> {
-        val devices = service.getDevicesByOwnerEmail(email)
-        return ResponseEntity.status(200)
-            .contentType(SirenMediaType)
-            .body(siren(
-                DevicesOutputModel.from(devices)
-            ) {
-                clazz("devices")
-            })
     }
 }
