@@ -45,20 +45,20 @@ class TSDBRepository(tsdbConfig: TSDBConfigProperties) : CollectedDataRepository
 
     override fun getPhRecords(deviceId: DeviceId): List<PhRecord> = runBlocking {
         mutex.withLock { // Use Mutex for synchronization
-        val query =
-            """from(bucket: "$bucket")
-        |> range(start: -7d)
-        |> filter(fn: (r) => r.device == "${deviceId.id}")
-        |> filter(fn: (r) => r._measurement == "ph")
-        """
-        // Result is returned as a stream
-        val results = getClient().getQueryKotlinApi().query(query)
+            val query =
+                """from(bucket: "$bucket")
+                |> range(start: -7d)
+                |> filter(fn: (r) => r.device == "${deviceId.id}")
+                |> filter(fn: (r) => r._measurement == "ph")
+                 """
+            // Result is returned as a stream
+            val results = getClient().getQueryKotlinApi().query(query)
 
-        results.consumeAsFlow().map { result ->
-            val value = result.value as Double
-            val timestamp = result.time ?: Instant.MIN
-            PhRecord(value, timestamp)
-        }.toList()
+            results.consumeAsFlow().map { result ->
+                val value = result.value as Double
+                val timestamp = result.time ?: Instant.MIN
+                PhRecord(value, timestamp)
+            }.toList()
         }
     }
 

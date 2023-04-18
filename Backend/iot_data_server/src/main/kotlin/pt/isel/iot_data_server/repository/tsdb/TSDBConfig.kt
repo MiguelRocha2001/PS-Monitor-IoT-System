@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 
+// TODO -> maybe move to Spring Configuration
 @Configuration
 @EnableConfigurationProperties(TSDB1Config::class, TSDB2Config::class)
 class TSDBConfig {
