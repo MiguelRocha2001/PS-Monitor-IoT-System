@@ -36,35 +36,24 @@ class SensorDataService(
             tsdbRepository.savePhRecord(deviceId, phRecord)
     }
 
-    fun getPhRecords(deviceId: DeviceId): PhDataResult {
-        return if (deviceService.getDeviceById(deviceId) is Either.Left)
+    fun getPhRecords(userId: String, deviceId: DeviceId): PhDataResult {
+        return if (!deviceService.existsDevice(userId, deviceId))
             Either.Left(PhDataError.DeviceNotFound)
         else
             Either.Right(tsdbRepository.getPhRecords(deviceId))
-        /*
-        return transactionManager.run {
-            return@run it.repository.getPhRecords(deviceId)
-        }*/
     }
 
     fun saveTemperatureRecord(
         deviceId: DeviceId,
         temperatureRecord: TemperatureRecord,
     ) {
-        /*
-        transactionManager.run {
-            it.repository.saveTemperatureRecord(deviceId, temperatureRecord)
-        }*/
         if(temperatureRecord.value < -273.15 || temperatureRecord.value > 1000)
             throw Exception("Invalid temperature value")
         tsdbRepository.saveTemperatureRecord(deviceId, temperatureRecord)
     }
 
-    fun getTemperatureRecords(deviceId: DeviceId): TemperatureDataResult {
-       /* return transactionManager.run {
-            return@run it.repository.getTemperatureRecords(deviceId)
-        }*/
-        return if (deviceService.getDeviceById(deviceId) is Either.Left)
+    fun getTemperatureRecords(userId: String, deviceId: DeviceId): TemperatureDataResult {
+        return if (!deviceService.existsDevice(userId, deviceId))
             Either.Left(TemperatureDataError.DeviceNotFound)
         else
             Either.Right(tsdbRepository.getTemperatureRecords(deviceId))
@@ -83,8 +72,8 @@ class SensorDataService(
                 val phRecord = fromJsonStringToPhRecord(string)
                 val deviceId = fromJsonStringToDeviceId(string)
 
-                val deviceResult = deviceService.getDeviceById(deviceId)
-                if (deviceResult is Either.Right) {
+                val deviceResult = deviceService.getDeviceByIdOrNull(deviceId.id)
+                if (deviceResult != null) {
                     // sendEmailIfPhExceedsLimit(deviceId, phRecord, deviceResult.value) TODO: uncomment this later
                     savePhRecord(deviceId, phRecord)
                     logger.info("Saved ph record: $phRecord, from device: $deviceId")

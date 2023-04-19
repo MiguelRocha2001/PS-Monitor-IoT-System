@@ -59,19 +59,32 @@ class JdbiServerRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN
             .execute()
     }
 
-    override fun addDevice(device: Device) {
+    override fun addDevice(userId: String, device: Device) {
         handle.createUpdate(
             """
-            insert into device (id, email) values (:id, :email)
+            insert into device (id, user_id, email) values (:id, :user_id, :email)
             """
         )
             .bind("id", device.deviceId.id)
+            .bind("user_id", userId)
             .bind("email", device.ownerEmail)
             .execute()
     }
 
     override fun getAllDevices(): List<Device> {
         return handle.createQuery("select id, email from device")
+            .mapTo<DeviceMapper>()
+            .list()
+            .map { it.toDevice() }
+    }
+
+    override fun getAllDevices(userId: String): List<Device> {
+        return handle.createQuery("""
+            select id, user_id, email 
+            from device 
+            where user_id = :user_id
+        """)
+            .bind("user_id", userId)
             .mapTo<DeviceMapper>()
             .list()
             .map { it.toDevice() }
@@ -173,5 +186,19 @@ class JdbiServerRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN
      */
     override fun deleteAllUsers() {
         handle.createUpdate("delete from _USER").execute()
+    }
+
+    override fun getDeviceById(deviceId: String): Device? {
+        return handle.createQuery(
+            """
+            select id, user_id, email 
+            from device 
+            where id = :id
+            """
+        )
+            .bind("id", deviceId)
+            .mapTo<DeviceMapper>()
+            .singleOrNull()
+            ?.toDevice()
     }
 }

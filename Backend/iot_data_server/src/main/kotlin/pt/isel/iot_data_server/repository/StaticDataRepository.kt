@@ -10,8 +10,9 @@ interface StaticDataRepository {//todo all the sensor data needs to go away
     fun getAllUsers(): List<User>
     fun getUserByToken(token: String): User?
     fun addToken(userId: String, token: String)
-    fun addDevice(device: Device)
+    fun addDevice(userId: String, device: Device)
     fun getAllDevices(): List<Device>
+    fun getAllDevices(userId: String): List<Device>
     fun deleteDevice(deviceId: DeviceId)
     fun removeAllDevices()
     fun existsUsername(username: String): Boolean
@@ -23,4 +24,5 @@ interface StaticDataRepository {//todo all the sensor data needs to go away
 
     fun getDevicesByOwnerEmail(email: String): List<Device>
     fun deleteAllUsers()
+    fun getDeviceById(deviceId: String): Device?
 }

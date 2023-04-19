@@ -19,7 +19,7 @@ fun createUserSirenAction(sirenBuilderScope: SirenBuilderScope<*>) =
 
 fun createTokenSirenAction(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.action(
-        name = "create-token",
+        name = "login",
         href = URI(Uris.Users.MY_TOKEN),
         method = HttpMethod.POST,
         type = MediaType.APPLICATION_JSON

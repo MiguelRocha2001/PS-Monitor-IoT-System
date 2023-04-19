@@ -1,6 +1,5 @@
 package pt.isel.iot_data_server.http.controllers
 
-
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -35,7 +34,7 @@ class DeviceController(
         @RequestBody deviceModel: DeviceInputModel,
         user: User
     ): ResponseEntity<*> {
-        val result = service.addDevice(deviceModel.email)
+        val result = service.addDevice(user.id, deviceModel.email)
         return result.map { deviceId ->
             ResponseEntity.status(201)
                 .contentType(SirenMediaType)
@@ -55,7 +54,7 @@ class DeviceController(
     fun getDevices(
         user: User
     ): ResponseEntity<*> {
-        val devices = service.getAllDevices()
+        val devices = service.getAllDevices(user.id)
         return ResponseEntity.status(200)
             .contentType(SirenMediaType)
             .body(siren(
@@ -70,6 +69,7 @@ class DeviceController(
     @ApiResponse(responseCode = "400", description = "Bad request - The request was not valid, check the given email", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
     @GetMapping(Uris.Devices.BY_EMAIL)
     fun getDevicesByEmail(
+        user: User,
         @PathVariable email: String
     ): ResponseEntity<*> {
         val devices = service.getDevicesByOwnerEmail(email)
@@ -87,9 +87,10 @@ class DeviceController(
     @ApiResponse(responseCode = "400", description = "Device not found", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
     @GetMapping(Uris.Devices.BY_ID1)
     fun getDeviceById(
+        user: User,
         @PathVariable device_id: String
     ): ResponseEntity<*> {
-        val device = service.getDeviceById(DeviceId(device_id))
+        val device = service.getUserDeviceById(user.id, DeviceId(device_id))
         return device.map {
             ResponseEntity.status(200)
                 .contentType(SirenMediaType)

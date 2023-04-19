@@ -135,7 +135,7 @@ function extractCreateUserAction(actions: any[]) {
 }
 
 function extractCreateTokenAction(actions: any[]) {
-    CREATE_TOKEN_ACTION = extractAction(actions, "create-token")
+    CREATE_TOKEN_ACTION = extractAction(actions, "login")
 }
 
 function extractLogoutAction(actions: any[]) {

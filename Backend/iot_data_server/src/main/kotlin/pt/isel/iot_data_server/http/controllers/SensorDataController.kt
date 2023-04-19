@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pt.isel.iot_data_server.domain.DeviceId
+import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.http.SirenMediaType
 import pt.isel.iot_data_server.http.infra.siren
 import pt.isel.iot_data_server.http.model.Problem
@@ -34,9 +35,10 @@ class SensorDataController(
     )])
     @GetMapping(Uris.Devices.PH.ALL_1)
     fun getPhRecords(
-        @PathVariable device_id: String
+        user: User,
+        @PathVariable device_id: String,
     ): ResponseEntity<*> {
-        val result = service.getPhRecords(DeviceId(device_id))
+        val result = service.getPhRecords(user.id, DeviceId(device_id))
         return result.map {
             ResponseEntity.status(200)
                 .contentType(SirenMediaType)
@@ -63,9 +65,10 @@ class SensorDataController(
     )])
     @GetMapping(Uris.Devices.Temperature.ALL_1)
     fun getTemperatureRecords(
+        user: User,
         @PathVariable device_id: String
     ): ResponseEntity<*> {
-        val result = service.getTemperatureRecords(DeviceId(device_id))
+        val result = service.getTemperatureRecords(user.id, DeviceId(device_id))
         return result.map {
             ResponseEntity.status(200)
                 .contentType(SirenMediaType)

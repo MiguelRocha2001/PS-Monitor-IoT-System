@@ -18,32 +18,36 @@ class DeviceService (
 ) {
     private val logger = LoggerFactory.getLogger(DeviceService::class.java)
 
-    fun addDevice(ownerEmail: String): CreateDeviceResult {
-        if (!emailVerifier(ownerEmail) ) {
+    fun addDevice(userId: String, alertEmail: String): CreateDeviceResult {
+        if (!emailVerifier(alertEmail) ) {
             logger.debug("Invalid owner email")
             return Either.Left(CreateDeviceError.InvalidOwnerEmail)
         }
         return transactionManager.run {
             return@run generateDeviceId().let { deviceId ->
-                val device = Device(deviceId, ownerEmail)
-                it.repository.addDevice(device)
+                val device = Device(deviceId, alertEmail)
+                it.repository.addDevice(userId, device)
                 logger.debug("Device with id ${device.deviceId} added")
                 Either.Right(deviceId.id)
             }
         }
     }
 
-    fun getAllDevices(): List<Device> {
+    fun existsDevice(userId: String, deviceId: DeviceId): Boolean {
+        return getUserDeviceById(userId, deviceId.id) != null
+    }
+
+    fun getAllDevices(userId: String): List<Device> {
         return transactionManager.run {
-            return@run it.repository.getAllDevices().also {
+            return@run it.repository.getAllDevices(userId).also {
                 logger.debug("All devices returned")
             }
         }
     }
 
-    fun getDeviceById(deviceId: DeviceId): GetDeviceResult {
+    fun getUserDeviceById(userId: String, deviceId: DeviceId): GetDeviceResult {
         return transactionManager.run {
-            val device = getDeviceById(deviceId.id)
+            val device = getUserDeviceById(userId, deviceId.id)
             if (device == null) {
                 logger.debug("Device with id $deviceId not found")
                 return@run Either.Left(GetDeviceError.DeviceNotFound)
@@ -53,9 +57,16 @@ class DeviceService (
         }
     }
 
-    private fun getDeviceById(deviceId: String): Device? {
+    private fun getUserDeviceById(userId: String, deviceId: String): Device? {
         return transactionManager.run {
-            return@run it.repository.getAllDevices().find<Device> { it.deviceId.id == deviceId }
+            return@run it.repository.getAllDevices(userId)
+                .find<Device> { device: Device -> device.deviceId.id == deviceId }
+        }
+    }
+
+    fun getDeviceByIdOrNull(deviceId: String): Device? {
+        return transactionManager.run {
+            return@run it.repository.getDeviceById(deviceId)
         }
     }
 
@@ -65,12 +76,13 @@ class DeviceService (
      *  (exists to facilitate testing)
      */
     fun generateDeviceId(): DeviceId {
+
         // loops until a unique ID is generated
         while (true) { // TODO: change to a for loop with a max number of iterations
             val deviceId = generateRandomDeviceId(seed)
 
             // Check if the generated ID already exists
-            val exists = getDeviceById(deviceId.id) != null
+            val exists = getDeviceByIdOrNull(deviceId.id) != null
 
             if (!exists) return deviceId
         }
@@ -88,9 +100,10 @@ class DeviceService (
         }
     }
 
+    /*
     fun deleteDevice(deviceId: DeviceId): DeleteDeviceResult {
         return transactionManager.run {
-            val device = getDeviceById(deviceId.id)
+            val device = getUserDeviceById(deviceId.id)
             if (device == null) {
                 logger.info("Device with id $deviceId not found")
                 return@run Either.Left(DeleteDeviceError.DeviceNotFound)
@@ -100,5 +113,5 @@ class DeviceService (
             return@run Either.Right(Unit)
         }
     }
-
+     */
 }

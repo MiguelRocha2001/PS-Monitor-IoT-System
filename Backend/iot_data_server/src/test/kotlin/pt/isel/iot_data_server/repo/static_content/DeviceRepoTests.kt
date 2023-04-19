@@ -16,7 +16,7 @@ class DeviceRepoTests {
             transactionManager.run {transaction ->
                 val devicesRepo = transaction.repository
                 val device = Device(DeviceId(Random.nextInt().toString()), "exampleEmail@pront.com")
-                devicesRepo.addDevice(device)
+                devicesRepo.addDevice(userId, device)
                 val foundDevice = devicesRepo.getAllDevices().any { it.deviceId.id == device.deviceId.id }
                 assertTrue("Device found", foundDevice)
             }
@@ -34,9 +34,9 @@ class DeviceRepoTests {
                 val device1 = Device(DeviceId(Random.nextInt().toString()), generateRandomEmail())
                 val device2 = Device(DeviceId(Random.nextInt().toString()), generateRandomEmail())
                 val device3 = Device(DeviceId(Random.nextInt().toString()), generateRandomEmail())
-                devicesRepo.addDevice(device1)
-                devicesRepo.addDevice(device2)
-                devicesRepo.addDevice(device3)
+                devicesRepo.addDevice(userId, device1)
+                devicesRepo.addDevice(userId, device2)
+                devicesRepo.addDevice(userId, device3)
                 devices = devicesRepo.getAllDevices()
                 assertTrue("Device found", devices.size == 3)
             }

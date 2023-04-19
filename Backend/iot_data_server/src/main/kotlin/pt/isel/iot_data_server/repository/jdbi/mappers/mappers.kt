@@ -23,6 +23,7 @@ internal fun UserMapper.toUser() = User(
 
 data class DeviceMapper(
     val id: String,
+    val user_id: String,
     val email: String,
 )
 

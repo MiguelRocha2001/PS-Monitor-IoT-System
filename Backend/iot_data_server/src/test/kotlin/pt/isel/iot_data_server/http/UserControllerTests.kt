@@ -52,44 +52,6 @@ class UserControllerTests{
             .responseBody
     }
 
-    /**
-     * Creates a user and returns the token
-     */
-    fun createUserAndLogin(email: String, client: WebTestClient): String {
-        val username = email.split("@")[0]
-        val password = "Static=password1"
-
-        client.post().uri(Uris.Users.ALL)
-            .bodyValue(
-                mapOf(
-                    "username" to username,
-                    "password" to password,
-                    "email" to email
-                )
-            )
-            .exchange()
-            .expectStatus().isCreated
-            .expectBody(SirenModel::class.java)
-            .returnResult()
-            .responseBody
-
-        val result = client.post().uri(Uris.Users.MY_TOKEN)
-            .bodyValue(
-                mapOf(
-                    "username" to username,
-                    "password" to password,
-                )
-            )
-            .exchange()
-            .expectStatus().isCreated // creates a new token, in server
-            .expectBody(SirenModel::class.java)
-            .returnResult()
-            .responseBody
-
-        // extracts the token from response
-        return (result?.properties as java.util.LinkedHashMap<String, String>)["token"] ?: Assertions.fail("No token")
-    }
-
     @Test
     fun `Can get all Users`() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()

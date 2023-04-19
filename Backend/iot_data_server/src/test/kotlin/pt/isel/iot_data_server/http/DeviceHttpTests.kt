@@ -44,71 +44,6 @@ class DeviceHttpTests {
         deleteAllDeviceRecords()
     }
 
-
-    /**
-     * Creates a user and returns the token
-     */
-    fun createUserAndLogin(email: String, client: WebTestClient): String {
-        val username = email.split("@")[0]
-        val password = "Static=password1"
-
-        client.post().uri(Uris.Users.ALL)
-            .bodyValue(
-                mapOf(
-                    "username" to username,
-                    "password" to password,
-                    "email" to email
-                )
-            )
-            .exchange()
-            .expectStatus().isCreated
-            .expectBody(SirenModel::class.java)
-            .returnResult()
-            .responseBody
-
-        val result = client.post().uri(Uris.Users.MY_TOKEN)
-            .bodyValue(
-                mapOf(
-                    "username" to username,
-                    "password" to password,
-                )
-            )
-            .exchange()
-            .expectStatus().isCreated // creates a new token, in server
-            .expectBody(SirenModel::class.java)
-            .returnResult()
-            .responseBody
-
-        // extracts the token from response
-        return (result?.properties as java.util.LinkedHashMap<String, String>)["token"] ?: Assertions.fail("No token")
-    }
-
-    fun create_device(email: String, client: WebTestClient, userToken: String): DeviceId {
-        val result = client.post().uri(Uris.Devices.ALL)
-            .header(HttpHeaders.COOKIE, "token=$userToken")
-            .bodyValue(mapOf("email" to email))
-            .exchange()
-            .expectStatus().isCreated
-            .expectBody(SirenModel::class.java)
-            .returnResult()
-            .responseBody!!
-
-        val properties = result.properties as LinkedHashMap<*, *>
-        assertEquals(1, properties.size)
-        assertEquals(8, (properties["deviceId"] as? String)?.length)
-
-        // asserting links
-        val links = result.links
-        assertEquals(0, links.size)
-
-        // asserting actions
-        val actions = result.actions
-        assertEquals(0, actions.size)
-
-        return DeviceId(properties["deviceId"] as String)
-    }
-
-
     @Test
     fun `Can get all Devices`() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
@@ -164,16 +99,18 @@ class DeviceHttpTests {
     }
 
     @Test
-    fun `get invalid device by id`(){ //TODO: change to 404
+    fun `get invalid device by id`() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         val email = generateRandomEmail()
         val userToken = createUserAndLogin(email, client)
 
         create_device(email, client, userToken)
-        client.get().uri(Uris.Devices.BY_ID1,"INVALID_ID")
+
+        client.get().uri(Uris.Devices.BY_ID1,"invalid_id")
+            .header(HttpHeaders.COOKIE, "token=$userToken")
             .exchange()
-            .expectStatus().isBadRequest
+            .expectStatus().isNotFound
     }
 
     @Test

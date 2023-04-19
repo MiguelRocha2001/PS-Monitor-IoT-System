@@ -13,7 +13,9 @@ create table token(
 
 create table device(
     id varchar primary key,
-    email varchar
+    user_id varchar,
+    email varchar,
+    foreign key (user_id) references _user(_id)
 );
 
 create table salt(
