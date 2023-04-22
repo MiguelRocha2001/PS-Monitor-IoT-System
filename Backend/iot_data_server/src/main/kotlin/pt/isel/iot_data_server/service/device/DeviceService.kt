@@ -3,7 +3,6 @@ package pt.isel.iot_data_server.service.device
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import pt.isel.iot_data_server.domain.Device
-import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.SEED
 import pt.isel.iot_data_server.domain.generateRandomDeviceId
 import pt.isel.iot_data_server.repository.TransactionManager
@@ -28,15 +27,15 @@ class DeviceService (
         return transactionManager.run {
             return@run generateDeviceId().let { deviceId ->
                 val device = Device(deviceId, alertEmail)
-                it.repository.addDevice(userId, device)
+                it.repository.createDevice(userId, device)
                 logger.debug("Device with id ${device.deviceId} added")
-                Either.Right(deviceId.id)
+                Either.Right(deviceId)
             }
         }
     }
 
-    fun existsDevice(userId: String, deviceId: DeviceId): Boolean {
-        return getUserDeviceById(userId, deviceId.id) != null
+    fun existsDevice(userId: String, deviceId: String): Boolean {
+        return getUserDeviceByIdOrNull(userId, deviceId) != null
     }
 
     fun getAllDevices(userId: String): GetAllDevicesResult {
@@ -49,9 +48,9 @@ class DeviceService (
         }
     }
 
-    fun getUserDeviceById(userId: String, deviceId: DeviceId): GetDeviceResult {
+    fun getUserDeviceById(userId: String, deviceId: String): GetDeviceResult {
         return transactionManager.run {
-            val device = getUserDeviceById(userId, deviceId.id)
+            val device = getUserDeviceByIdOrNull(userId, deviceId)
             if (device == null) {
                 logger.debug("Device with id $deviceId not found")
                 return@run Either.Left(GetDeviceError.DeviceNotFound)
@@ -61,11 +60,11 @@ class DeviceService (
         }
     }
 
-    private fun getUserDeviceById(userId: String, deviceId: String): Device? {
+    private fun getUserDeviceByIdOrNull(userId: String, deviceId: String): Device? {
         userService.getUserByIdOrNull(userId) ?: return null
         return transactionManager.run {
             return@run it.repository.getAllDevices(userId)
-                .find<Device> { device: Device -> device.deviceId.id == deviceId }
+                .find<Device> { device: Device -> device.deviceId == deviceId }
         }
     }
 
@@ -80,14 +79,14 @@ class DeviceService (
      * @param seed the seed to be used in the random number generator
      *  (exists to facilitate testing)
      */
-    fun generateDeviceId(): DeviceId {
+    fun generateDeviceId(): String {
 
         // loops until a unique ID is generated
         while (true) { // TODO: change to a for loop with a max number of iterations
             val deviceId = generateRandomDeviceId(seed)
 
             // Check if the generated ID already exists
-            val exists = getDeviceByIdOrNull(deviceId.id) != null
+            val exists = getDeviceByIdOrNull(deviceId) != null
 
             if (!exists) return deviceId
         }

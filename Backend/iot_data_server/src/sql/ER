@@ -5,6 +5,6 @@ All relations are normalized to the third normal form!
 USER({id}, username, hashed_pass, pass_salt, token)
     PK: {id}
 
-DEVICE({id, user_id}, email)
-    PK: {id, user_id}
+DEVICE({id}, user_id, email)
+    PK: {id}
     FK: {user_id} -> {USER.id}

@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 import kotlin.random.Random
 
 
-data class DeviceId(val id: String)
+data class Device(val deviceId: String, val ownerEmail: String)
 
 enum class SEED { HOUR, MINUTE, SECOND, MILLISECOND, NANOSECOND }
 
@@ -16,7 +16,7 @@ enum class SEED { HOUR, MINUTE, SECOND, MILLISECOND, NANOSECOND }
  * This means that we need 8 characters to represent all possible 2^32 combinations.
  * 23^7 < 4,294,967,296 < 23^8
  */
-fun generateRandomDeviceId(seedType: SEED): DeviceId {
+fun generateRandomDeviceId(seedType: SEED): String {
     // Use the current hour as the seed for your random number generator
     val seed = when (seedType) {
         SEED.HOUR -> LocalDateTime.now().hour
@@ -36,13 +36,13 @@ fun generateRandomDeviceId(seedType: SEED): DeviceId {
         sb.append(characters[rand.nextInt(characters.length)])
     }
 
-    return DeviceId(sb.toString())
+    return sb.toString()
 }
 
-fun fromJsonStringToDeviceId(str: String): DeviceId {
+fun fromJsonStringToDeviceId(str: String): String {
     val split = str.trimJsonString().split(",")
 
-    val id = split
+    val deviceId = split
         .find { it.contains("deviceId") }
         ?.split(":")
         ?.get(1)
@@ -50,7 +50,5 @@ fun fromJsonStringToDeviceId(str: String): DeviceId {
         ?.replace("\"", "")
         ?: throw IllegalArgumentException("Invalid json string")
 
-    return DeviceId(id)
+    return deviceId
 }
-
-data class Device(val deviceId: DeviceId, val ownerEmail: String)

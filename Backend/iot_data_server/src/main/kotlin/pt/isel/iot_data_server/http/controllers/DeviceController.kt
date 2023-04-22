@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.http.DeviceInputModel
 import pt.isel.iot_data_server.http.SirenMediaType
@@ -92,7 +91,7 @@ class DeviceController(
         user: User,
         @PathVariable device_id: String
     ): ResponseEntity<*> {
-        val device = service.getUserDeviceById(user.id, DeviceId(device_id))
+        val device = service.getUserDeviceById(user.id, device_id)
         return device.map {
             ResponseEntity.status(200)
                 .contentType(SirenMediaType)

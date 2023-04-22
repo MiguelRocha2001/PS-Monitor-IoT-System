@@ -62,7 +62,7 @@ class JdbiServerRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN
             ?.toUser()
     }
 
-    override fun addToken(userId: String, token: String) {
+    override fun createToken(userId: String, token: String) {
         handle.createUpdate("delete from TOKEN where user_id = :user_id")
             .bind("user_id", userId)
             .execute()
@@ -73,13 +73,13 @@ class JdbiServerRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN
             .execute()
     }
 
-    override fun addDevice(userId: String, device: Device) {
+    override fun createDevice(userId: String, device: Device) {
         handle.createUpdate(
             """
             insert into device (id, user_id, email) values (:id, :user_id, :email)
             """
         )
-            .bind("id", device.deviceId.id)
+            .bind("id", device.deviceId)
             .bind("user_id", userId)
             .bind("email", device.ownerEmail)
             .execute()
@@ -104,9 +104,9 @@ class JdbiServerRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN
             .map { it.toDevice() }
     }
 
-    override fun deleteDevice(deviceId: DeviceId) {
+    override fun deleteDevice(deviceId: String) {
         handle.createUpdate("delete from device where id = :id")
-            .bind("id", deviceId.id)
+            .bind("id", deviceId)
             .execute()
     }
 

@@ -26,7 +26,7 @@ class SensorDataService(
     }
 
     fun savePhRecord(
-        deviceId: DeviceId,
+        deviceId: String,
         phRecord: PhRecord,
     ) {
        // transactionManager.run {
@@ -36,7 +36,7 @@ class SensorDataService(
             tsdbRepository.savePhRecord(deviceId, phRecord)
     }
 
-    fun getPhRecords(userId: String, deviceId: DeviceId): PhDataResult {
+    fun getPhRecords(userId: String, deviceId: String): PhDataResult {
         return if (!deviceService.existsDevice(userId, deviceId))
             Either.Left(PhDataError.DeviceNotFound)
         else
@@ -44,7 +44,7 @@ class SensorDataService(
     }
 
     fun saveTemperatureRecord(
-        deviceId: DeviceId,
+        deviceId: String,
         temperatureRecord: TemperatureRecord,
     ) {
         if(temperatureRecord.value < -273.15 || temperatureRecord.value > 1000)
@@ -52,7 +52,7 @@ class SensorDataService(
         tsdbRepository.saveTemperatureRecord(deviceId, temperatureRecord)
     }
 
-    fun getTemperatureRecords(userId: String, deviceId: DeviceId): TemperatureDataResult {
+    fun getTemperatureRecords(userId: String, deviceId: String): TemperatureDataResult {
         return if (!deviceService.existsDevice(userId, deviceId))
             Either.Left(TemperatureDataError.DeviceNotFound)
         else
@@ -72,7 +72,7 @@ class SensorDataService(
                 val phRecord = fromJsonStringToPhRecord(string)
                 val deviceId = fromJsonStringToDeviceId(string)
 
-                val deviceResult = deviceService.getDeviceByIdOrNull(deviceId.id)
+                val deviceResult = deviceService.getDeviceByIdOrNull(deviceId)
                 if (deviceResult != null) {
                     // sendEmailIfPhExceedsLimit(deviceId, phRecord, deviceResult.value) TODO: uncomment this later
                     savePhRecord(deviceId, phRecord)
@@ -94,10 +94,10 @@ class SensorDataService(
         return tsdbRepository.getAllTemperatureRecords()
     }
 
-    private fun sendEmailIfPhExceedsLimit(deviceId: DeviceId, phRecord: PhRecord,device: Device) {
+    private fun sendEmailIfPhExceedsLimit(deviceId: String, phRecord: PhRecord,device: Device) {
         if (phRecord.value < MIN_PH) {
             val bodyMessage = mapOf(
-                "device_id" to deviceId.id,
+                "device_id" to deviceId,
                 "ph_level" to phRecord.value.toString(),
                 "ph_limit" to MIN_PH.toString()
             )

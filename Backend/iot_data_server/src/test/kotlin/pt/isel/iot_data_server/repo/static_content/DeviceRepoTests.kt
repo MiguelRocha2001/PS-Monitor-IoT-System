@@ -22,7 +22,7 @@ class DeviceRepoTests {
                 val device = Device(DeviceId(Random.nextInt().toString()), "exampleEmail@pront.com")
 
                 repo.createUser(user)
-                repo.addDevice(userId, device)
+                repo.createDevice(userId, device)
 
                 val foundDevice = repo.getAllDevices().any { it.deviceId.id == device.deviceId.id }
                 assertTrue("Device found", foundDevice)
@@ -45,9 +45,9 @@ class DeviceRepoTests {
                 val device2 = Device(DeviceId(Random.nextInt().toString()), generateRandomEmail())
                 val device3 = Device(DeviceId(Random.nextInt().toString()), generateRandomEmail())
 
-                devicesRepo.addDevice(userId, device1)
-                devicesRepo.addDevice(userId, device2)
-                devicesRepo.addDevice(userId, device3)
+                devicesRepo.createDevice(userId, device1)
+                devicesRepo.createDevice(userId, device2)
+                devicesRepo.createDevice(userId, device3)
 
                 devices = devicesRepo.getAllDevices()
                 assertTrue("Device found", devices.size == 3)

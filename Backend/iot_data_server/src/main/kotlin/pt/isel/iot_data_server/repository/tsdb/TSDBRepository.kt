@@ -11,7 +11,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.springframework.stereotype.Repository
-import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.PhRecord
 import pt.isel.iot_data_server.domain.TemperatureRecord
 import pt.isel.iot_data_server.repository.CollectedDataRepository
@@ -43,12 +42,12 @@ class TSDBRepository(tsdbConfig: TSDBConfigProperties) : CollectedDataRepository
         return client
     }
 
-    override fun getPhRecords(deviceId: DeviceId): List<PhRecord> = runBlocking {
+    override fun getPhRecords(deviceId: String): List<PhRecord> = runBlocking {
         mutex.withLock { // Use Mutex for synchronization
             val query =
                 """from(bucket: "$bucket")
                 |> range(start: -7d)
-                |> filter(fn: (r) => r.device == "${deviceId.id}")
+                |> filter(fn: (r) => r.device == "$deviceId")
                 |> filter(fn: (r) => r._measurement == "ph")
                  """
             // Result is returned as a stream
@@ -63,11 +62,11 @@ class TSDBRepository(tsdbConfig: TSDBConfigProperties) : CollectedDataRepository
     }
 
 
-    override fun getTemperatureRecords(deviceId: DeviceId): List<TemperatureRecord> = runBlocking {
+    override fun getTemperatureRecords(deviceId: String): List<TemperatureRecord> = runBlocking {
         val query =
             """from(bucket: "$bucket")
         |> range(start: -7d)
-        |> filter(fn: (r) => r.device == "${deviceId.id}")
+        |> filter(fn: (r) => r.device == "${deviceId}")
         |> filter(fn: (r) => r._measurement == "temperature")
         """
         // Result is returned as a stream
@@ -119,23 +118,23 @@ class TSDBRepository(tsdbConfig: TSDBConfigProperties) : CollectedDataRepository
             }
             .toList()
     }
-    override fun savePhRecord(deviceId: DeviceId, phRecord: PhRecord) =
+    override fun savePhRecord(deviceId: String, phRecord: PhRecord) =
             runBlocking {
                 mutex.withLock {
                     val point = Point
                         .measurement("ph")
-                        .addTag("device", deviceId.id)
+                        .addTag("device", deviceId)
                         .addField("ph_value", phRecord.value)
                         .time(phRecord.instant, WritePrecision.NS)
                     getClient().getWriteKotlinApi().writePoint(point)
                 }
         }
 
-    override fun saveTemperatureRecord(deviceId: DeviceId, temperatureRecord: TemperatureRecord) = runBlocking {
+    override fun saveTemperatureRecord(deviceId: String, temperatureRecord: TemperatureRecord) = runBlocking {
         mutex.withLock {
             val point = Point
                 .measurement("temperature")
-                .addTag("device", deviceId.id)
+                .addTag("device", deviceId)
                 .addField("temperature_value", temperatureRecord.value)
                 .time(temperatureRecord.instant, WritePrecision.NS)
             getClient().getWriteKotlinApi().writePoint(point)

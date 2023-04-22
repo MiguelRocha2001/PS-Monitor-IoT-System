@@ -74,7 +74,7 @@ class UserService(
             val token = UUID.randomUUID().toString()
            // val aesCipher = AESCipher("AES/CBC/PKCS5Padding", AES.generateIv())// todo store the iv in the db
           //  saveEncryptedToken(aesCipher,token,user.id)
-            it.repository.addToken(user.id, token)
+            it.repository.createToken(user.id, token)
 
             return@run Either.Right(token)
         }
@@ -82,7 +82,7 @@ class UserService(
 
     fun saveEncryptedToken(aesCipher: AESCipher, plainToken: String, userId: String) = transactionManager.run {
         val encryptedToken = aesCipher.encrypt(plainToken)
-        return@run it.repository.addToken(userId, encryptedToken)
+        return@run it.repository.createToken(userId, encryptedToken)
     }
 
     fun decryptToken(aesCipher: AESCipher, encryptedToken: String): String {

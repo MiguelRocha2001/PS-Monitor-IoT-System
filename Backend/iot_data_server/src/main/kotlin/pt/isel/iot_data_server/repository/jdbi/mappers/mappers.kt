@@ -1,7 +1,6 @@
 package pt.isel.iot_data_server.repository.jdbi.mappers
 
 import pt.isel.iot_data_server.domain.Device
-import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.domain.UserInfo
 
@@ -28,4 +27,4 @@ data class DeviceMapper(
 )
 
 fun DeviceMapper.toDevice() =
-    Device(DeviceId(id), email)
+    Device(id, email)

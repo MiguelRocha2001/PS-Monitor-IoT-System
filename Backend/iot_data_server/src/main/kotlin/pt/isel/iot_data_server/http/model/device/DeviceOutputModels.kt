@@ -10,7 +10,7 @@ data class DevicesOutputModel(val devices: List<DeviceOutputModel>) {
         fun from(devices: List<Device>) = DevicesOutputModel(devices.map { it.toDeviceOutputModel() })
     }
 }
-fun Device.toDeviceOutputModel() = DeviceOutputModel(id = this.deviceId.id, email = this.ownerEmail)
+fun Device.toDeviceOutputModel() = DeviceOutputModel(id = this.deviceId, email = this.ownerEmail)
 
 data class DeviceOutputModel(val id: String, val email: String)
 
