@@ -7,8 +7,6 @@ import kotlin.random.Random
 
 data class Device(val deviceId: String, val ownerEmail: String)
 
-enum class SEED { HOUR, MINUTE, SECOND, MILLISECOND, NANOSECOND }
-
 /**
  * Generates a random device ID
  * The size of the ID is 8 characters.
@@ -16,16 +14,10 @@ enum class SEED { HOUR, MINUTE, SECOND, MILLISECOND, NANOSECOND }
  * This means that we need 8 characters to represent all possible 2^32 combinations.
  * 23^7 < 4,294,967,296 < 23^8
  */
-fun generateRandomDeviceId(seedType: SEED): String {
+fun generateRandomDeviceId(): String {
     // Use the current hour as the seed for your random number generator
-    val seed = when (seedType) {
-        SEED.HOUR -> LocalDateTime.now().hour
-        SEED.MINUTE -> LocalDateTime.now().minute
-        SEED.SECOND -> LocalDateTime.now().second
-        SEED.MILLISECOND -> LocalDateTime.now().second * 1000
-        SEED.NANOSECOND -> LocalDateTime.now().nano
-    }
-    val rand = Random(seed)
+    val timestamp = System.currentTimeMillis()
+    val rand = Random(timestamp)
 
     // Generate a random string of characters for the device ID
     val sb = StringBuilder()

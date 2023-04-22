@@ -3,7 +3,6 @@ package pt.isel.iot_data_server.service.device
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import pt.isel.iot_data_server.domain.Device
-import pt.isel.iot_data_server.domain.SEED
 import pt.isel.iot_data_server.domain.generateRandomDeviceId
 import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.service.Either
@@ -15,7 +14,6 @@ import pt.isel.iot_data_server.utils.emailVerifier
 class DeviceService (
     private val transactionManager: TransactionManager,
     private val userService: UserService,
-    private val seed: SEED
 ) {
     private val logger = LoggerFactory.getLogger(DeviceService::class.java)
 
@@ -83,7 +81,7 @@ class DeviceService (
 
         // loops until a unique ID is generated
         while (true) { // TODO: change to a for loop with a max number of iterations
-            val deviceId = generateRandomDeviceId(seed)
+            val deviceId = generateRandomDeviceId()
 
             // Check if the generated ID already exists
             val exists = getDeviceByIdOrNull(deviceId) != null
