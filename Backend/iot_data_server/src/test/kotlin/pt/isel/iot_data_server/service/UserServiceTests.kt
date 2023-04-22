@@ -15,7 +15,7 @@ class UserServiceTests {
 	fun `create user`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
 			val saltPasswordOperations = SaltPasswordOperations(transactionManager)
-			val service = UserService(transactionManager,saltPasswordOperations)
+			val service = UserService(transactionManager, saltPasswordOperations)
 			val username = "userGood"
 			val password = "LKMSDOVCJ09Jouin09JN@"
 			val email = "testSubject@email.com"

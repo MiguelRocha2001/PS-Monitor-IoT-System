@@ -45,6 +45,12 @@ class UserService(
         }
     }
 
+    fun getUserByIdOrNull(userId: String): User? {
+        return transactionManager.run {
+            return@run it.repository.getUserByIdOrNull(userId)
+        }
+    }
+
     fun getUserByToken(token: String): User? {
         return transactionManager.run {
             return@run it.repository.getUserByToken(token)

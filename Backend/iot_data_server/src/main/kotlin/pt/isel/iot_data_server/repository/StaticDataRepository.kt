@@ -9,6 +9,7 @@ interface StaticDataRepository {//todo all the sensor data needs to go away
     fun createUser(user: User)
     fun getAllUsers(): List<User>
     fun getUserByToken(token: String): User?
+    fun getUserByIdOrNull(userId: String): User?
     fun addToken(userId: String, token: String)
     fun addDevice(userId: String, device: Device)
     fun getAllDevices(): List<Device>

@@ -4,20 +4,27 @@ import org.junit.jupiter.api.Test
 import org.springframework.test.util.AssertionErrors.assertTrue
 import pt.isel.iot_data_server.domain.Device
 import pt.isel.iot_data_server.domain.DeviceId
+import pt.isel.iot_data_server.domain.User
+import pt.isel.iot_data_server.domain.UserInfo
 import pt.isel.iot_data_server.utils.generateRandomEmail
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 import kotlin.random.Random
 
 class DeviceRepoTests {
-
     @Test
     fun `add device`() {
         testWithTransactionManagerAndRollback { transactionManager ->
-            transactionManager.run {transaction ->
-                val devicesRepo = transaction.repository
+            transactionManager.run { transaction ->
+                val repo = transaction.repository
+
+                val userId = "some_id"
+                val user = User(userId, UserInfo("some_username", "some_password", "some_email"))
                 val device = Device(DeviceId(Random.nextInt().toString()), "exampleEmail@pront.com")
-                devicesRepo.addDevice(userId, device)
-                val foundDevice = devicesRepo.getAllDevices().any { it.deviceId.id == device.deviceId.id }
+
+                repo.createUser(user)
+                repo.addDevice(userId, device)
+
+                val foundDevice = repo.getAllDevices().any { it.deviceId.id == device.deviceId.id }
                 assertTrue("Device found", foundDevice)
             }
         }
@@ -31,12 +38,17 @@ class DeviceRepoTests {
                 var devices = devicesRepo.getAllDevices()
                 assertTrue("Device found", devices.isEmpty())
 
+                val userId = "some_id"
+                val user = User(userId, UserInfo("some_username", "some_password", "some_email"))
+
                 val device1 = Device(DeviceId(Random.nextInt().toString()), generateRandomEmail())
                 val device2 = Device(DeviceId(Random.nextInt().toString()), generateRandomEmail())
                 val device3 = Device(DeviceId(Random.nextInt().toString()), generateRandomEmail())
+
                 devicesRepo.addDevice(userId, device1)
                 devicesRepo.addDevice(userId, device2)
                 devicesRepo.addDevice(userId, device3)
+
                 devices = devicesRepo.getAllDevices()
                 assertTrue("Device found", devices.size == 3)
             }
@@ -48,7 +60,9 @@ class DeviceRepoTests {
         testWithTransactionManagerAndRollback { transactionManager ->
             transactionManager.run {transaction ->
                 val devicesRepo = transaction.repository
+
                 val devices = devicesRepo.getAllDevices()
+
                 assertTrue("Device found", devices.isEmpty())
             }
         }

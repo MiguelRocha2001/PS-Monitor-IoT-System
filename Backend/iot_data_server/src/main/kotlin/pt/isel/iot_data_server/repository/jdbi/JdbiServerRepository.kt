@@ -48,6 +48,20 @@ class JdbiServerRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN
             ?.toUser()
     }
 
+    override fun getUserByIdOrNull(userId: String): User? {
+        return handle.createQuery(
+            """
+            select _id, username, password, email 
+            from _USER as users 
+            where _id = :user_id
+            """
+        )
+            .bind("user_id", userId)
+            .mapTo<UserMapper>()
+            .singleOrNull()
+            ?.toUser()
+    }
+
     override fun addToken(userId: String, token: String) {
         handle.createUpdate("delete from TOKEN where user_id = :user_id")
             .bind("user_id", userId)
@@ -96,24 +110,18 @@ class JdbiServerRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN
             .execute()
     }
 
-    //  TODO - Optimize using the power of relational database queries
     override fun existsUsername(username: String): Boolean {
-        getAllUsers().forEach {
-            if (it.userInfo.username == username) {
-                return true
-            }
-        }
-        return false
+        return handle.createQuery("select username from _USER")
+            .mapTo<String>()
+            .list().size > 0
     }
 
-    //  TODO - Optimize using the power of relational database queries
     override fun getUserByUsernameOrNull(username: String): User? {
-        getAllUsers().forEach {
-            if (it.userInfo.username == username) {
-                return it
-            }
-        }
-        return null
+        return handle.createQuery("select _id, username, password, email from _USER")
+            .mapTo<UserMapper>()
+            .list()
+            .map { it.toUser() }
+            .firstOrNull { it.userInfo.username == username }
     }
 
     override fun existsEmail(email: String): Boolean {

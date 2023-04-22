@@ -5,6 +5,8 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import pt.isel.iot_data_server.domain.SEED
 import pt.isel.iot_data_server.repository.tsdb.TSDBConfigProperties
 import pt.isel.iot_data_server.service.device.DeviceService
+import pt.isel.iot_data_server.service.user.SaltPasswordOperations
+import pt.isel.iot_data_server.service.user.UserService
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndDontRollback
 
 fun deleteAllPhMeasurements(config: TSDBConfigProperties) {
@@ -78,7 +80,8 @@ fun deleteAllTemperatureMeasurements(config: TSDBConfigProperties) {
 
 fun deleteAllDeviceRecords(){
     testWithTransactionManagerAndDontRollback {
-        val service = DeviceService(it, SEED.NANOSECOND)
+        val userService = UserService(it, SaltPasswordOperations(it))
+        val service = DeviceService(it, userService, SEED.NANOSECOND)
         service.removeAllDevices()
     }
 }

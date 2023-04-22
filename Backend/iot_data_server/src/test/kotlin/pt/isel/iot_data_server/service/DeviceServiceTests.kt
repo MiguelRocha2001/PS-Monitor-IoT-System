@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
-import pt.isel.iot_data_server.domain.SEED
-import pt.isel.iot_data_server.service.device.DeviceService
 import pt.isel.iot_data_server.utils.generateRandomEmail
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 
@@ -20,38 +18,42 @@ class DeviceServiceTests {
 	@Test
 	fun `generate device ids`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
-			val service = DeviceService(transactionManager, SEED.NANOSECOND)
-			repeat(1000) { service.generateDeviceId() }
+			val (deviceService, _) = getNewDeviceAndUserService(transactionManager)
+			repeat(1000) { deviceService.generateDeviceId() }
 		}
 	}
 
 	@Test
 	fun `create a device correctly`() {
 		testWithTransactionManagerAndRollback {
-
-			val service = DeviceService(it, SEED.NANOSECOND)
-
+			val (deviceService, userService) = getNewDeviceAndUserService(it)
 			//service.removeAllDevices()// just in case there are any devices in the database
 
-			var devices = service.getAllDevices(user.id)
-			assertTrue(devices.isEmpty())
+			val userID = createRandomUser(userService)
+			var devicesResult = deviceService.getAllDevices(userID)
+			assertTrue(devicesResult is Either.Right && devicesResult.value.isEmpty())
 
 			val ownerEmail = generateRandomEmail()
-			val result = service.addDevice(ownerEmail)
+			val result = deviceService.addDevice(userID, ownerEmail)
 			assertTrue(result is Either.Right)
 
-			devices = service.getAllDevices(user.id)
-			assertTrue(devices.size == 1)
-			assertTrue(devices[0].ownerEmail == ownerEmail)
+			devicesResult = deviceService.getAllDevices(userID)
+			assertTrue(devicesResult is Either.Right && devicesResult.value.size == 1)
+			devicesResult as Either.Right
+			assertTrue(devicesResult.value[0].ownerEmail == ownerEmail)
 		}
 	}
 
 	@Test
 	fun `create invalid device`(){
 		testWithTransactionManagerAndRollback {
-			val service = DeviceService(it, SEED.NANOSECOND)
-		//	service.removeAllDevices()// just in case there are any devices in the database
-			val result = service.addDevice("")
+			val (deviceService, userService) = getNewDeviceAndUserService(it)
+
+			//	service.removeAllDevices()// just in case there are any devices in the database
+
+			val userId = createRandomUser(userService)
+
+			val result = deviceService.addDevice(userId, "")
 			assertTrue(result is Either.Left)
 		}
 	}
@@ -59,15 +61,20 @@ class DeviceServiceTests {
 	@Test
 	fun `get valid device by email`(){
 		testWithTransactionManagerAndRollback {
-			val service = DeviceService(it, SEED.NANOSECOND)
-		//	service.removeAllDevices()// just in case there are any devices in the database
-			val ownerEmail = generateRandomEmail()
-			service.addDevice(ownerEmail)
-			service.addDevice(ownerEmail)
-			service.addDevice(ownerEmail)
-			service.addDevice(ownerEmail)
-			service.addDevice(ownerEmail)
-			val deviceFound = service.getDevicesByOwnerEmail(ownerEmail)
+			val (deviceService, userService) = getNewDeviceAndUserService(it)
+
+			//	service.removeAllDevices()// just in case there are any devices in the database
+
+			val userId = createRandomUser(userService)
+
+			val deviceOwnerEmail = generateRandomEmail()
+			deviceService.addDevice(userId, deviceOwnerEmail)
+			deviceService.addDevice(userId, deviceOwnerEmail)
+			deviceService.addDevice(userId, deviceOwnerEmail)
+			deviceService.addDevice(userId, deviceOwnerEmail)
+			deviceService.addDevice(userId, deviceOwnerEmail)
+
+			val deviceFound = deviceService.getDevicesByOwnerEmail(deviceOwnerEmail)
 			assertTrue(deviceFound.size == 5)
 		}
 	}
@@ -75,10 +82,19 @@ class DeviceServiceTests {
 	@Test
 	fun `get device by invalid email`(){
 		testWithTransactionManagerAndRollback {
-			val service = DeviceService(it, SEED.NANOSECOND)
-		//	service.removeAllDevices()// just in case there are any devices in the database
+			val (deviceService, userService) = getNewDeviceAndUserService(it)
+
+			//	service.removeAllDevices()// just in case there are any devices in the database
+
+			val userId = createRandomUser(userService)
+
+			val deviceOwnerEmail = generateRandomEmail()
+			deviceService.addDevice(userId, deviceOwnerEmail)
+
+			//	service.removeAllDevices()// just in case there are any devices in the database
+
 			val ownerEmail = generateRandomEmail()+"incorrect"
-			val deviceFound = service.getDevicesByOwnerEmail(ownerEmail)
+			val deviceFound = deviceService.getDevicesByOwnerEmail(ownerEmail)
 			assertTrue(deviceFound.isEmpty())
 		}
 	}
@@ -87,18 +103,23 @@ class DeviceServiceTests {
 	@Test
 	fun `Create devices, and then assert if generated ids dont collide with already existent device ids`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
+			val (deviceService, userService) = getNewDeviceAndUserService(transactionManager)
+			val userId = createRandomUser(userService)
 			// will use a different seed, each nanosecond
-			val service = DeviceService(transactionManager, SEED.NANOSECOND)
 			repeat(30) {
 				// creates a device
 				val ownerEmail = generateRandomEmail()
-				val result = service.addDevice(ownerEmail)
+				val result = deviceService.addDevice(userId, ownerEmail)
 				assertTrue(result is Either.Right)
 
 				// tries to generate a new device id, and asserts that it is unique
-				val devices = service.getAllDevices(user.id)
+				val devicesResult = deviceService.getAllDevices(userId)
+				assertTrue(devicesResult is Either.Right)
+				devicesResult as Either.Right
+				val devices = devicesResult.value
+
 				repeat(30) {
-					val newDeviceId = service.generateDeviceId()
+					val newDeviceId = deviceService.generateDeviceId()
 					assertTrue(devices.none { it.deviceId == newDeviceId })
 					Thread.sleep(1) // sleep for 1 millisecond, so that the seed changes
 				}

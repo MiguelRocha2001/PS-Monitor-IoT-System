@@ -8,12 +8,14 @@ import pt.isel.iot_data_server.domain.SEED
 import pt.isel.iot_data_server.domain.generateRandomDeviceId
 import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.service.Either
+import pt.isel.iot_data_server.service.user.UserService
 import pt.isel.iot_data_server.utils.emailVerifier
 
 
 @Service
 class DeviceService (
     private val transactionManager: TransactionManager,
+    private val userService: UserService,
     private val seed: SEED
 ) {
     private val logger = LoggerFactory.getLogger(DeviceService::class.java)
@@ -37,11 +39,13 @@ class DeviceService (
         return getUserDeviceById(userId, deviceId.id) != null
     }
 
-    fun getAllDevices(userId: String): List<Device> {
+    fun getAllDevices(userId: String): GetAllDevicesResult {
+        userService.getUserByIdOrNull(userId) ?: return Either.Left(GetAllDevicesError.UserNotFound)
         return transactionManager.run {
-            return@run it.repository.getAllDevices(userId).also {
+            val devices = it.repository.getAllDevices(userId).also {
                 logger.debug("All devices returned")
             }
+            return@run Either.Right(devices)
         }
     }
 
@@ -58,6 +62,7 @@ class DeviceService (
     }
 
     private fun getUserDeviceById(userId: String, deviceId: String): Device? {
+        userService.getUserByIdOrNull(userId) ?: return null
         return transactionManager.run {
             return@run it.repository.getAllDevices(userId)
                 .find<Device> { device: Device -> device.deviceId.id == deviceId }

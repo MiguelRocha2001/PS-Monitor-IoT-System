@@ -54,14 +54,16 @@ class DeviceController(
     fun getDevices(
         user: User
     ): ResponseEntity<*> {
-        val devices = service.getAllDevices(user.id)
-        return ResponseEntity.status(200)
-            .contentType(SirenMediaType)
-            .body(siren(
-                DevicesOutputModel.from(devices)
-            ) {
-                clazz("devices")
-            })
+        val result = service.getAllDevices(user.id)
+        return result.map {
+            ResponseEntity.status(200)
+                .contentType(SirenMediaType)
+                .body(siren(
+                    DevicesOutputModel.from(it)
+                ) {
+                    clazz("devices")
+                })
+        }
     }
 
     @Operation(summary = "Device by email", description = "Get a device associated with  email")
