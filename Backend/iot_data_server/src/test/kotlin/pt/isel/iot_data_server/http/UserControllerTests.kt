@@ -1,6 +1,7 @@
 package pt.isel.iot_data_server.http
 
 import org.jdbi.v3.core.Jdbi
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -36,8 +37,8 @@ class UserControllerTests{
         ).configure()
     }
 
-    @BeforeEach
-    fun setup() {
+    @AfterEach
+    fun cleanup() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
         client.delete().uri(Uris.Data.ALL)
             .exchange()

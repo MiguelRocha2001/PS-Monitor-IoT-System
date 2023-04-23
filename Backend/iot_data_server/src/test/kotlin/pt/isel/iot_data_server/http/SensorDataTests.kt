@@ -9,6 +9,7 @@ import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders
 import org.springframework.test.web.reactive.server.WebTestClient
 import pt.isel.iot_data_server.http.controllers.Uris
+import pt.isel.iot_data_server.http.infra.SirenModel
 import pt.isel.iot_data_server.repository.tsdb.TSDBConfig
 import pt.isel.iot_data_server.utils.generateRandomEmail
 
@@ -25,6 +26,14 @@ class SensorDataTests {
         val testDBConfig = TSDBConfig().tsdb2Properties()
         deleteAllPhMeasurements(testDBConfig)
         deleteAllTemperatureMeasurements(testDBConfig)
+
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+        client.delete().uri(Uris.Data.ALL)
+            .exchange()
+            .expectStatus().isOk
+            .expectBody(SirenModel::class.java)
+            .returnResult()
+            .responseBody
     }
 
     @Test

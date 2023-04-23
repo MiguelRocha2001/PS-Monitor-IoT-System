@@ -94,9 +94,7 @@ class UserController(
     }
 
     /**
-     * Since the User parameter is requested, the interceptor will try to authenticate the user.
-     * If the user is not authenticated, the interceptor will throw an exception and the method will not be called.
-     * Because of this, the method will only be called if the user is authenticated, and thus, the user is logically logged.
+     * FIXME - The token could exist, but could be expired.
      */
     @Operation(summary = "Authentication status", description = "Get the user authentication status")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved",
