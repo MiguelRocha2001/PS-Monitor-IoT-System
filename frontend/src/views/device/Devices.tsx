@@ -6,25 +6,24 @@ import Card from "react-bootstrap/Card";
 import {Stack} from "react-bootstrap";
 import {MyLink} from "../Commons";
 import {SomethingWentWrong} from "../SomethingWentWrong";
+import {useSetError} from "../error/ErrorContainer";
+import {ErrorController} from "../error/ErrorController";
 
 export function Devices() {
+    const setError = useSetError()
     const [devices, setDevices] = useState<Device[]>([])
-    const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
 
     useEffect(() => {
         async function fetchDevices() {
-            const devices = await services.getDevices()
-            setDevices(devices)
+            services.getDevices()
+                .then(devices => setDevices(devices))
+                .catch(error => setError(error))
         }
-        try {
-            fetchDevices()
-        } catch (e: any) {
-            setErrorMessage(e.message)
-        }
+        fetchDevices()
     }, [])
 
-    if (errorMessage == undefined) {
-        return (
+    return (
+        <ErrorController>
             <Card>
                 <Card.Body>
                     <Stack gap={2}>
@@ -54,7 +53,6 @@ export function Devices() {
                     </Stack>
                 </Card.Body>
             </Card>
-        )
-    } else
-        return (<SomethingWentWrong details={errorMessage} />);
+        </ErrorController>
+    )
 }

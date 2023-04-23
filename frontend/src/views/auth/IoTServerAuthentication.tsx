@@ -1,7 +1,7 @@
 import * as React from "react"
 import {useState} from "react"
 import {Navigate, useLocation, useNavigate} from "react-router-dom"
-import {useIsLoggedIn, useSetUser} from "./Authn"
+import {useIsLoggedIn, useSetIsLoggedIn} from "./Authn"
 import {Logger} from "tslog";
 import {services} from "../../services/services";
 import {User} from "../../services/domain";
@@ -43,7 +43,7 @@ export function IoTServerAuthentication({title, action}: { title: string, action
     const [checkUsername, setCheckUsername] = useState("")
     const [successSignUp, setSuccessSignUp] = useState("")
     const [redirect, setRedirect] = useState<string | undefined>(undefined)
-    const setUser = useSetUser()
+    const setIsLoggedIn = useSetIsLoggedIn()
     const user = useIsLoggedIn()
     const navigate = useNavigate()
     const location = useLocation()
@@ -78,7 +78,7 @@ export function IoTServerAuthentication({title, action}: { title: string, action
                     if (result instanceof Error) {
                         setError(result.message)
                     } else {
-                        setUser(true)
+                        setIsLoggedIn(true)
                         setRedirect("/")
                     }
                 })
@@ -95,7 +95,7 @@ export function IoTServerAuthentication({title, action}: { title: string, action
                         setError(result.message)
                     } else {
                         setSuccessSignUp("User created successfully!")
-                        setUser(false)
+                        setIsLoggedIn(false)
                         setError("")
                     }
                     // setRedirect(location.state?.source?.pathname || "/sign-in") // fixme - results in endless loop

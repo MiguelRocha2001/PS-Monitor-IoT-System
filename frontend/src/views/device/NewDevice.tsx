@@ -5,26 +5,27 @@ import {Navigate, useNavigate} from "react-router-dom"
 import React from "react";
 import {services} from "../../services/services";
 import {SomethingWentWrong} from "../SomethingWentWrong";
+import {useError, useSetError} from "../error/ErrorContainer";
+import {ErrorController} from "../error/ErrorController";
 
 function NewDevice() {
-    const [error, setError] = React.useState<string | undefined>(undefined)
-
-    if (error) return (<SomethingWentWrong details={error} />)
-    else return (
-        <Card>
-            <Card.Body>
-                <Card.Title>Add a new IoT Device</Card.Title>
-                <Card.Subtitle className="mb-2 text-muted">Fill in the form</Card.Subtitle>
-                <NewIoTDeviceForm onError={(msg) => setError(msg)}/>
-            </Card.Body>
-        </Card>
+    return (
+        <ErrorController>
+            <Card>
+                <Card.Body>
+                    <Card.Title>Add a new IoT Device</Card.Title>
+                    <Card.Subtitle className="mb-2 text-muted">Fill in the form</Card.Subtitle>
+                    <NewIoTDeviceForm />
+                </Card.Body>
+            </Card>
+        </ErrorController>
     );
 }
 
 export default NewDevice;
 
-function NewIoTDeviceForm({onError}: { onError: (error: string) => void }) {
-    const navigate = useNavigate()
+function NewIoTDeviceForm() {
+    const setError = useSetError()
 
     const [deviceId, setDeviceId] = React.useState<string | undefined>(undefined);
     const [email, setEmail] = React.useState<string>("");
@@ -33,12 +34,9 @@ function NewIoTDeviceForm({onError}: { onError: (error: string) => void }) {
         return <Navigate to={`/device-created/${deviceId}`} replace={true}/>
 
     async function submitForm() {
-        try {
-            const deviceId = await services.createDevice(email)
-            setDeviceId(deviceId)
-        } catch (e: any) {
-            onError(e.message)
-        }
+        services.createDevice(email)
+            .then(deviceId => setDeviceId(deviceId))
+            .catch(error => setError(error))
     }
 
     return(

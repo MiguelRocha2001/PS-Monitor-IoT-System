@@ -27,36 +27,50 @@ export async function fetchRequest(
     const headers: any = {
         'Content-Type': CONTENT_TYPE_JSON
     }
-    return await fetch(toFullUrl(request), {
-        method: request.method,
-        headers,
-        credentials: 'include',
-        body: request.body ? buildBody(request.body) : undefined
-    })
+    try {
+        return await fetch(toFullUrl(request), {
+            method: request.method,
+            headers,
+            credentials: 'include',
+            body: request.body ? buildBody(request.body) : undefined
+        })
+    } catch (error: any) {
+        logger.error("Network Error: ", error)
+        return Promise.reject(new NetworkError(error.message))
+    }
 }
+
+export enum ResponseType {Siren, Any, ProblemJson}
 
 /**
  * Makes an API call.
  * @param request Request object containing url, method and body.
  * The url is relative to the API host (host should not be included).
+ * @param responseType Expected response format. Default is Siren.
  */
-export async function doFetch(request: Request): Promise<Siren | BackendError> {
+export async function doFetch(
+    request: Request,
+    responseType: ResponseType
+): Promise<Siren | any> {
     if (request && validateRequestMethod(request)) {
         logger.info("sending request to: ", toFullUrl(request))
         // console.log("body: ", request.body ? buildBody(request.body) : undefined)
-        try {
-            const resp = await fetchRequest(request)
-            const data = await getSirenOrProblemOrUndefined(resp)
+        const resp = await fetchRequest(request)
+        const data = await getSirenOrProblemOrAny(resp)
 
-            if (data instanceof ProblemJson) {
-                logger.error("Response Error: ", data.title)
-                return new BackendError(data.title, resp.status)
-            }
-            return data
-        } catch (error: any) {
-            logger.error("Network Error: ", error)
-            return Promise.reject(new NetworkError(error.message))
+        if (data instanceof ProblemJson) {
+            logger.error("Response Error: ", data.title)
+            return new BackendError(data.title, resp.status)
         }
+
+        // if expected format is not verified
+        if (responseType === ResponseType.Siren && !(data instanceof Siren)) {
+            throw new Error(`Expected Siren response, got ${typeof data}`)
+        } else if (responseType === ResponseType.Any && data instanceof Siren) {
+            throw new Error(`Expected any response, got Siren`)
+        }
+
+        return data
     }
     return Promise.reject(new Error('Invalid request'))
 }
@@ -85,14 +99,14 @@ export function toBody(obj: any): Body {
     return body
 }
 
-export async function getSirenOrProblemOrUndefined(response: Response): Promise<Siren | ProblemJson> {
+export async function getSirenOrProblemOrAny(response: Response): Promise<Siren | any | ProblemJson> {
     if (response.ok) {
         const isSiren = response.headers.get('content-type')?.includes('application/vnd.siren+json');
         if (isSiren) {
             const sirenJson = await response.json()
             return fromJson(sirenJson)
         }
-        return isSiren ? await response.json() : null;
+        return await response.json(); // any
     } else {
         const problemJson = await response.json()
         return new ProblemJson(problemJson.title, response.status, problemJson.detail)

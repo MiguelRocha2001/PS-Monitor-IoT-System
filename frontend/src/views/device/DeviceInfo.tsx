@@ -5,16 +5,20 @@ import {Loading} from "../Loading";
 import {MyCard, MyLink} from "../Commons";
 import {Device} from "../../services/domain";
 import {Col} from "react-bootstrap";
+import {useSetError} from "../error/ErrorContainer";
+import {ErrorController} from "../error/ErrorController";
 
 export function DeviceInfo() {
+    const setError = useSetError()
     const { deviceId } = useParams<string>()
     const [device, setDevice] = React.useState<Device | null>(null);
 
     useEffect(() => {
         async function fetchDevice() {
             if (deviceId) { // TODO: SHOULDN'T BE NEEDED !!!
-                const device = await services.getDevice(deviceId)
-                setDevice(device)
+                services.getDevice(deviceId)
+                    .then(device => setDevice(device))
+                    .catch(error => setError(error))
             }
         }
 
@@ -25,12 +29,14 @@ export function DeviceInfo() {
         return <></>
     else
         return (
-            <MyCard title={'Device Info'} boldTitle={true} children={
-                <div>
-                    <DeviceInfoAux device={device}/>
-                    <MyLink to={`/device-data/${device.id}`} center={false} text={'Sensors'}/>
-                </div>
-            }/>
+            <ErrorController>
+                <MyCard title={'Device Info'} boldTitle={true} children={
+                    <div>
+                        <DeviceInfoAux device={device}/>
+                        <MyLink to={`/device-data/${device.id}`} center={false} text={'Sensors'}/>
+                    </div>
+                }/>
+            </ErrorController>
         );
 }
 

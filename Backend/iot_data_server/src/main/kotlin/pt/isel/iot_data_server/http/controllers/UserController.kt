@@ -93,9 +93,6 @@ class UserController(
             })
     }
 
-    /**
-     * FIXME - The token could exist, but could be expired.
-     */
     @Operation(summary = "Authentication status", description = "Get the user authentication status")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved",
        // links = [Link(name = "logout", operationId = "logout", description = "Logout the user")],
@@ -106,7 +103,7 @@ class UserController(
     fun isLoggedIn(
         request: HttpServletRequest
     ): ResponseEntity<*> {
-        val isLogged = request.cookies?.find { it.name == "token" } != null
+        val isLogged = request.cookies?.any { it.name == "token" } ?: false
         return ResponseEntity.status(200)
             .contentType(SirenMediaType)
             .body(siren(IsLoggedInOutputModel(isLogged)) {
@@ -128,7 +125,8 @@ class UserController(
 
         // adds cookie to response
         if (res is Either.Right) {
-            val cookie = buildCookie(60 * 60 * 24 * 7, res.value)
+            val age = 60 * 60 // 1 hour
+            val cookie = buildCookie(age, res.value)
             response.addCookie(cookie)
         }
 
@@ -188,7 +186,7 @@ class UserController(
      */
     @Operation(summary = "Logout", description = "Logout the user")
     @ApiResponse(responseCode = "204", description = "Successfully logged out")
-    @GetMapping(Uris.NonSemantic.logout)
+    @DeleteMapping(Uris.NonSemantic.logout)
     fun logout(
         user: User,
         response: HttpServletResponse

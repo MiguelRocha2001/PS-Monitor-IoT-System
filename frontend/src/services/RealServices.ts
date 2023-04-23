@@ -1,4 +1,4 @@
-import {doFetch, fetchRequest, toBody} from "./fetch";
+import {doFetch, fetchRequest, ResponseType, toBody} from "./fetch";
 import {Device, PhData, TemperatureData, toDevice, toDevices, toPhData, toTemperatureData, User} from "./domain";
 import {Services} from "./services";
 import {Siren, SirenModule} from "./sirenModule";
@@ -28,12 +28,8 @@ export class RealServices implements Services {
             url: `siren-info`,
             method: 'GET',
         }
-        const response = await doFetch(request)
-        if (response instanceof Siren) {
-            extractSirenInfo(response)
-            return
-        } else
-            throw new Error(`Failed to get backend siren info: ${response.status} ${response.message}`)
+        const response = await doFetch(request, ResponseType.Siren)
+        extractSirenInfo(response)
     }
 
     async googleLogin(): Promise<void> {
@@ -74,15 +70,8 @@ export class RealServices implements Services {
             method: createUserAction.method,
             body: toBody({username, password, email, mobile})
         }
-        try {
-            const response = await doFetch(request)
-            if (response instanceof Siren) {
-                logger.info(`User ${username} created`)
-                return
-            }
-        } catch (e) {
-            logger.error(`Failed to create user: ${e}`)
-        }
+        await doFetch(request, ResponseType.Siren)
+        logger.info(`User ${username} created`)
     }
 
     // TODO: fix this
@@ -94,11 +83,7 @@ export class RealServices implements Services {
             method: action.method,
             body: toBody({username, password})
         }
-        const response = await doFetch(request)
-        if (response instanceof Siren)
-            return
-        else
-            throw new Error(`Failed to authenticate user: ${response.status} ${response.message}`)
+        await doFetch(request, ResponseType.Siren)
     }
 
     async isLoggedIn(): Promise<boolean> {
@@ -108,13 +93,8 @@ export class RealServices implements Services {
             url: isLoggedInLink.href,
             method: 'GET'
         }
-        const response = await doFetch(request)
-        if (response instanceof Siren) {
-            return response.properties.isLoggedIn
-        }
-        else {
-            throw new Error(`Failed to check if user is logged in: ${response.status} ${response.message}`)
-        }
+        const response = await doFetch(request, ResponseType.Siren)
+        return response.properties.isLoggedIn
     }
 
     async getMe(): Promise<User> {
@@ -124,14 +104,9 @@ export class RealServices implements Services {
             url: getMeLink.href,
             method: 'GET'
         }
-        const response = await doFetch(request)
-        if (response instanceof Siren) {
-            const userFromResponse = response.properties
-            return new User(userFromResponse.username, userFromResponse.password)
-        }
-        else {
-            throw new Error(`Failed to get me: ${response.status} ${response.message}`)
-        }
+        const response = await doFetch(request, ResponseType.Siren)
+        const userFromResponse = response.properties
+        return new User(userFromResponse.username, userFromResponse.password)
     }
 
     async createDevice(ownerEmail: string): Promise<string> {
@@ -142,14 +117,12 @@ export class RealServices implements Services {
             method: addDeviceAction.method,
             body: toBody({email: ownerEmail})
         }
-        const response = await doFetch(request)
-        if (response instanceof Siren) {
-            const deviceId = response.properties.deviceId
-            console.log(`Device added with id ${deviceId}`)
-            if (deviceId) return deviceId
-            else throw new Error(`Device added, but no device id found`)
-        } else
-            throw new Error(`Failed to add device: ${response.status} ${response.message}`)
+        const response = await doFetch(request, ResponseType.Siren)
+        const deviceId = response.properties.deviceId
+
+        console.log(`Device added with id ${deviceId}`)
+        if (deviceId) return deviceId
+        else throw new Error(`Device added, but no device id found`)
     }
 
     async getDevices(): Promise<Device[]> {
@@ -159,11 +132,8 @@ export class RealServices implements Services {
             url: getDevicesLink.href,
             method: 'GET'
         }
-        const response = await doFetch(request)
-        if (response instanceof Siren) {
-            return toDevices(response.properties)
-        } else
-            throw new Error(`Failed to get devices: ${response.status} ${response.message}`)
+        const response = await doFetch(request, ResponseType.Siren)
+        return toDevices(response.properties)
     }
 
     async getDevice(deviceId: string): Promise<Device> {
@@ -175,11 +145,8 @@ export class RealServices implements Services {
             url: urlWithId,
             method: 'GET'
         }
-        const response = await doFetch(request)
-        if (response instanceof Siren) {
-            return toDevice(response.properties)
-        } else
-            throw new Error(`Failed to get devices: ${response.status} ${response.message}`)
+        const response = await doFetch(request, ResponseType.Siren)
+        return toDevice(response.properties)
     }
 
     async getPhData(deviceId: string): Promise<PhData> {
@@ -191,11 +158,8 @@ export class RealServices implements Services {
             url: urlWithId,
             method: 'GET'
         }
-        const response = await doFetch(request)
-        if (response instanceof Siren)
-            return toPhData(response.properties)
-        else
-            throw new Error(`Failed to get ph data: ${response.status} ${response.message}`)
+        const response = await doFetch(request, ResponseType.Siren)
+        return toPhData(response.properties)
     }
 
     async getTemperatureData(deviceId: string): Promise<TemperatureData> {
@@ -207,14 +171,17 @@ export class RealServices implements Services {
             url: urlWithId,
             method: 'GET'
         }
-        const response = await doFetch(request)
-        if (response instanceof Siren)
-            return toTemperatureData(response.properties)
-        else
-            throw new Error(`Failed to get temperature data: ${response.status} ${response.message}`)
+        const response = await doFetch(request, ResponseType.Siren)
+        return toTemperatureData(response.properties)
     }
 
-    logout(): Promise<void> {
-        return Promise.resolve(undefined);
+    async logout(): Promise<void> {
+        const logoutAction = SirenModule.getLogoutAction()
+        if (!logoutAction) throw new Error('Logout action not found')
+        const request = {
+            url: logoutAction.href,
+            method: 'POST'
+        }
+        await doFetch(request, ResponseType.Any)
     }
 }

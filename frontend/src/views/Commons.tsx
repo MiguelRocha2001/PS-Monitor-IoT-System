@@ -70,8 +70,12 @@ export function ChooseDevice({onDeviceSelected}: { onDeviceSelected: (deviceId: 
 
     useEffect(() => {
         async function fetchDevices() {
-            const devices = await services.getDevices();
-            setDevices(devices);
+            try {
+                const devices = await services.getDevices();
+                setDevices(devices);
+            } catch (e) {
+
+            }
         }
         fetchDevices();
     }, []);

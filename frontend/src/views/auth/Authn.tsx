@@ -40,6 +40,6 @@ export function useIsLoggedIn() {
     return useContext(LoggedInContext).logged
 }
 
-export function useSetUser() {
+export function useSetIsLoggedIn() {
     return useContext(LoggedInContext).setLogged
 }
