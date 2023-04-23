@@ -28,7 +28,7 @@ export async function fetchRequest(
         'Content-Type': CONTENT_TYPE_JSON
     }
     try {
-        return await fetch(toFullUrl(request), {
+        return  await fetch(toFullUrl(request), {
             method: request.method,
             headers,
             credentials: 'include',
@@ -40,22 +40,29 @@ export async function fetchRequest(
     }
 }
 
-export enum ResponseType {Siren, Any, ProblemJson}
+export enum ResponseType {Siren, Any}
 
 /**
  * Makes an API call.
  * @param request Request object containing url, method and body.
  * The url is relative to the API host (host should not be included).
  * @param responseType Expected response format. Default is Siren.
+ * @returns Promise of the response. This could be a Siren object or any other object.
+ * If the status is 204 (No Content) then the response is null.
  */
 export async function doFetch(
     request: Request,
     responseType: ResponseType
-): Promise<Siren | any> {
+): Promise<Siren | any | null> {
     if (request && validateRequestMethod(request)) {
         logger.info("sending request to: ", toFullUrl(request))
         // console.log("body: ", request.body ? buildBody(request.body) : undefined)
         const resp = await fetchRequest(request)
+
+        if (resp.status === 204 && responseType === ResponseType.Any) {
+            return null
+        }
+
         const data = await getSirenOrProblemOrAny(resp)
 
         if (data instanceof ProblemJson) {

@@ -180,7 +180,7 @@ export class RealServices implements Services {
         if (!logoutAction) throw new Error('Logout action not found')
         const request = {
             url: logoutAction.href,
-            method: 'POST'
+            method: logoutAction.method
         }
         await doFetch(request, ResponseType.Any)
     }

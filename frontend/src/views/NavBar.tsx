@@ -6,17 +6,19 @@ import {MyLink} from "./Commons";
 import {useIsLoggedIn, useSetIsLoggedIn} from "./auth/Authn";
 import {services} from "../services/services";
 import Button from "react-bootstrap/Button";
+import {useSetError} from "./error/ErrorContainer";
 
 function NavBar() {
-    const isLoggedIn = useIsLoggedIn()
+    const setError = useSetError()
     const setIsLoggedIn = useSetIsLoggedIn()
+    const isLoggedIn = useIsLoggedIn()
 
     const logout =
         isLoggedIn ?
             (<Button variant="outline-primary" onClick={async () => {
-                services.logout()
-                    .catch(error => console.log(error))
-                setIsLoggedIn(false)
+                await services.logout()
+                    .then(() => setIsLoggedIn(false))
+                    .catch(error => setError(error))
             }}>LOGOUT</Button> ) : <></>
 
     const devicesLink = isLoggedIn ? <MyLink text={'Devices'} to="/devices" center={true} margin={'1em'}/> : <></>
