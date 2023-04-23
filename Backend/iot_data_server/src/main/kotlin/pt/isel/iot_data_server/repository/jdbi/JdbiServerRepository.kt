@@ -2,7 +2,8 @@ package pt.isel.iot_data_server.repository.jdbi
 
 import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.kotlin.mapTo
-import pt.isel.iot_data_server.domain.*
+import pt.isel.iot_data_server.domain.Device
+import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.repository.StaticDataRepository
 import pt.isel.iot_data_server.repository.jdbi.mappers.DeviceMapper
 import pt.isel.iot_data_server.repository.jdbi.mappers.UserMapper
@@ -86,7 +87,7 @@ class JdbiServerRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN
     }
 
     override fun getAllDevices(): List<Device> {
-        return handle.createQuery("select id, email from device")
+        return handle.createQuery("select id, user_id, email from device")
             .mapTo<DeviceMapper>()
             .list()
             .map { it.toDevice() }
@@ -111,9 +112,15 @@ class JdbiServerRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN
     }
 
     override fun existsUsername(username: String): Boolean {
-        return handle.createQuery("select username from _USER")
+        return handle.createQuery("""
+            select username 
+            from _USER 
+            where username = :username
+        """)
+            .bind("username", username)
             .mapTo<String>()
-            .list().size > 0
+            .list()
+            .isNotEmpty()
     }
 
     override fun getUserByUsernameOrNull(username: String): User? {
@@ -178,7 +185,7 @@ class JdbiServerRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN
     override fun getDevicesByOwnerEmail(email: String): List<Device> {
         return handle.createQuery(
             """
-            select id, email 
+            select id, user_id, email
             from device 
             where email = :email
             """
@@ -208,5 +215,13 @@ class JdbiServerRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN
             .mapTo<DeviceMapper>()
             .singleOrNull()
             ?.toDevice()
+    }
+
+    override fun deleteAllTokens() {
+        handle.createUpdate("delete from TOKEN").execute()
+    }
+
+    override fun deleteAllDevices() {
+        handle.createUpdate("delete from device").execute()
     }
 }

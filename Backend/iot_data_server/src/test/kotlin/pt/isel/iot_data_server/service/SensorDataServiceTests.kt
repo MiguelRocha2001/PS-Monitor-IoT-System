@@ -1,20 +1,17 @@
 package pt.isel.iot_data_server.service
 
-import deleteAllPhMeasurements
-import deleteAllTemperatureMeasurements
+import pt.isel.iot_data_server.utils.deleteAllPhMeasurements
+import pt.isel.iot_data_server.utils.deleteAllTemperatureMeasurements
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
-import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.PhRecord
-import pt.isel.iot_data_server.domain.SEED
 import pt.isel.iot_data_server.domain.TemperatureRecord
 import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.repository.tsdb.TSDBConfig
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
-import pt.isel.iot_data_server.service.device.DeviceService
 import pt.isel.iot_data_server.service.email.EmailManager
 import pt.isel.iot_data_server.service.sensor_data.SensorDataService
 import pt.isel.iot_data_server.utils.generateRandomEmail
@@ -121,7 +118,7 @@ class SensorDataServiceTest {
             // Invoke savePhRecord with invalid pH value
             val email = generateRandomEmail()
             deviceService.addDevice(userId, email)
-            val deviceId = DeviceId("invalid")
+            val deviceId = "invalid"
             val phRecord = PhRecord(generateRandomPh(), getRandomInstantWithinLastWeek())
 
             try {
@@ -154,7 +151,7 @@ class SensorDataServiceTest {
             // Invoke savePhRecord with invalid pH value
             val email = generateRandomEmail()
             deviceService.addDevice(userId, email)
-            val deviceId = DeviceId("invalid")
+            val deviceId = "invalid"
 
             try {
                 // Code that may throw an exception

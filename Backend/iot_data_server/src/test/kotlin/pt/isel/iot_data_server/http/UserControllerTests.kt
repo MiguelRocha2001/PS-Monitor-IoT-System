@@ -14,13 +14,8 @@ import org.springframework.http.HttpHeaders
 import org.springframework.test.web.reactive.server.WebTestClient
 import pt.isel.iot_data_server.http.controllers.Uris
 import pt.isel.iot_data_server.http.infra.SirenModel
-import pt.isel.iot_data_server.repository.TransactionManager
-import pt.isel.iot_data_server.repository.jdbi.JdbiTransaction
 import pt.isel.iot_data_server.repository.jdbi.configure
 import pt.isel.iot_data_server.utils.generateRandomEmail
-import pt.isel.iot_data_server.utils.generateRandomName
-import pt.isel.iot_data_server.utils.generateRandomPassword
-import javax.sql.DataSource
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -44,7 +39,7 @@ class UserControllerTests{
     @BeforeEach
     fun setup() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
-        client.delete().uri(Uris.Users.ALL)
+        client.delete().uri(Uris.Data.ALL)
             .exchange()
             .expectStatus().isOk
             .expectBody(SirenModel::class.java)

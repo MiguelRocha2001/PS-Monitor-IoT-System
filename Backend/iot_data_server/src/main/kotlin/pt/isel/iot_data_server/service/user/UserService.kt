@@ -90,10 +90,12 @@ class UserService(
     }
 
     /**
-     * Used only for integration tests
+     * Used only for integration tests.
+     * Deletes all users and tokens.
      */
     fun deleteAllUsers() {
         transactionManager.run {
+            it.repository.deleteAllTokens()
             it.repository.deleteAllUsers()
         }
     }

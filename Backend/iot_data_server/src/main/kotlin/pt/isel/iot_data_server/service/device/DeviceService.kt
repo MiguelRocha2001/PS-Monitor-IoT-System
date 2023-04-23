@@ -102,6 +102,12 @@ class DeviceService (
         }
     }
 
+    fun deleteAllDevices() {
+        return transactionManager.run {
+            return@run it.repository.deleteAllDevices()
+        }
+    }
+
     /*
     fun deleteDevice(deviceId: DeviceId): DeleteDeviceResult {
         return transactionManager.run {

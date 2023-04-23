@@ -9,7 +9,6 @@ import pt.isel.iot_data_server.utils.generateRandomName
 import pt.isel.iot_data_server.utils.generateRandomPassword
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 import java.util.*
-import kotlin.random.Random
 
 
 class UserRepoTests {

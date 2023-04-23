@@ -1,6 +1,6 @@
 package pt.isel.iot_data_server.service
 
-import deleteAllDeviceRecords
+import pt.isel.iot_data_server.utils.deleteAllDeviceRecords
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

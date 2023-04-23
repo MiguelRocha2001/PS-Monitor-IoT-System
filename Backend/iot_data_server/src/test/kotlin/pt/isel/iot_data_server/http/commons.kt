@@ -3,7 +3,6 @@ package pt.isel.iot_data_server.http
 import org.junit.jupiter.api.Assertions
 import org.springframework.http.HttpHeaders
 import org.springframework.test.web.reactive.server.WebTestClient
-import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.http.controllers.Uris
 import pt.isel.iot_data_server.http.infra.SirenModel
 
@@ -45,7 +44,7 @@ fun createUserAndLogin(email: String, client: WebTestClient): String {
     return (result?.properties as java.util.LinkedHashMap<String, String>)["token"] ?: Assertions.fail("No token")
 }
 
-fun create_device(email: String, client: WebTestClient, userToken: String): DeviceId {
+fun create_device(email: String, client: WebTestClient, userToken: String): String {
     val result = client.post().uri(Uris.Devices.ALL)
         .header(HttpHeaders.COOKIE, "token=$userToken")
         .bodyValue(mapOf("email" to email))
@@ -67,5 +66,5 @@ fun create_device(email: String, client: WebTestClient, userToken: String): Devi
     val actions = result.actions
     Assertions.assertEquals(0, actions.size)
 
-    return DeviceId(properties["deviceId"] as String)
+    return properties["deviceId"] as String
 }

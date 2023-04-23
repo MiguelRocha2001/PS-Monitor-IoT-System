@@ -26,6 +26,10 @@ object Uris {
         const val SIREN_INFO = "/siren-info"
     }
 
+    object Data {
+        const val ALL = "/all"
+    }
+
     object Users {
         const val ALL = "/users"
         private const val BY_ID1 = "$ALL/{id}"

@@ -1,5 +1,6 @@
 package pt.isel.iot_data_server.service
 
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.util.AssertionErrors.assertTrue
@@ -10,7 +11,6 @@ import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 
 @SpringBootTest
 class UserServiceTests {
-
 	@Test
 	fun `create user`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
@@ -75,7 +75,6 @@ class UserServiceTests {
 			val email1 = "testSubject1@email.com"
 			val newUser1 = UserInfo(username1, password1,email1)
 
-
 			val username2 = "userGood2"
 			val password2 = "LKMSDOVCJ09Jouin09JN@"
 			val email2 = "testSubject2@email.com"
@@ -86,9 +85,12 @@ class UserServiceTests {
 			val email3 = "testSubject3@email.com"
 			val newUser3 = UserInfo(username3, password3,email3)
 
-			service.createUser(newUser1)
-			service.createUser(newUser2)
-			service.createUser(newUser3)
+			val res1 = service.createUser(newUser1)
+			val res2 = service.createUser(newUser2)
+			val res3 = service.createUser(newUser3)
+			assertTrue("User 1 was not created", res1 is Either.Right)
+			assertTrue("User 2 was not created", res2 is Either.Right)
+			assertTrue("User 3 was not created", res3 is Either.Right)
 
 			val users = service.getAllUsers()
 

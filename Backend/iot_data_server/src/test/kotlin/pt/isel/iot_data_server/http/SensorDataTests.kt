@@ -1,7 +1,7 @@
 package pt.isel.iot_data_server.http
 
-import deleteAllPhMeasurements
-import deleteAllTemperatureMeasurements
+import pt.isel.iot_data_server.utils.deleteAllPhMeasurements
+import pt.isel.iot_data_server.utils.deleteAllTemperatureMeasurements
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -33,7 +33,7 @@ class SensorDataTests {
 
         val email = generateRandomEmail()
         val userToken = createUserAndLogin(email, client)
-        val deviceId = create_device(email, client, userToken).id
+        val deviceId = create_device(email, client, userToken)
 
         val result = client.get().uri(Uris.Devices.PH.ALL_1, deviceId)
             .header(HttpHeaders.COOKIE, "token=$userToken")
@@ -49,7 +49,7 @@ class SensorDataTests {
 
         val email = generateRandomEmail()
         val userToken = createUserAndLogin(email, client)
-        val deviceId = create_device(email, client, userToken).id
+        val deviceId = create_device(email, client, userToken)
 
         val result = client.get().uri(Uris.Devices.Temperature.ALL_1, deviceId)
             .header(HttpHeaders.COOKIE, "token=$userToken")

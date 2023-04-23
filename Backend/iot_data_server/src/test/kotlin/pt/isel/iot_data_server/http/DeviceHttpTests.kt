@@ -1,8 +1,7 @@
 package pt.isel.iot_data_server.http
 
-import deleteAllDeviceRecords
+import pt.isel.iot_data_server.utils.deleteAllDeviceRecords
 import org.jdbi.v3.core.Jdbi
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -14,7 +13,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
 import org.springframework.http.HttpHeaders
 import org.springframework.test.web.reactive.server.WebTestClient
-import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.http.controllers.Uris
 import pt.isel.iot_data_server.http.infra.SirenModel
 import pt.isel.iot_data_server.repository.jdbi.configure
@@ -41,7 +39,13 @@ class DeviceHttpTests {
 
     @BeforeEach
     fun setup() {
-        deleteAllDeviceRecords()
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+        client.delete().uri(Uris.Data.ALL)
+            .exchange()
+            .expectStatus().isOk
+            .expectBody(SirenModel::class.java)
+            .returnResult()
+            .responseBody
     }
 
     @Test
@@ -84,7 +88,7 @@ class DeviceHttpTests {
         val userToken = createUserAndLogin(email, client)
 
         val deviceId = create_device(email, client, userToken)
-        val result = client.get().uri(Uris.Devices.BY_ID1,deviceId.id)
+        val result = client.get().uri(Uris.Devices.BY_ID1, deviceId)
             .header(HttpHeaders.COOKIE, "token=$userToken")
             .exchange()
             .expectStatus().isOk
@@ -94,8 +98,8 @@ class DeviceHttpTests {
 
         val properties = result.properties as LinkedHashMap<*, *>
 
-        assertEquals(deviceId.id,properties["id"])
-        assertEquals(email,properties["email"])
+        assertEquals(deviceId, properties["id"])
+        assertEquals(email, properties["email"])
     }
 
     @Test

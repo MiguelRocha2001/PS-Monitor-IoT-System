@@ -3,10 +3,11 @@ package pt.isel.iot_data_server.repo.static_content
 import org.junit.jupiter.api.Test
 import org.springframework.test.util.AssertionErrors.assertTrue
 import pt.isel.iot_data_server.domain.Device
-import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.domain.UserInfo
 import pt.isel.iot_data_server.utils.generateRandomEmail
+import pt.isel.iot_data_server.utils.generateRandomName
+import pt.isel.iot_data_server.utils.generateRandomPassword
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 import kotlin.random.Random
 
@@ -18,13 +19,20 @@ class DeviceRepoTests {
                 val repo = transaction.repository
 
                 val userId = "some_id"
-                val user = User(userId, UserInfo("some_username", "some_password", "some_email"))
-                val device = Device(DeviceId(Random.nextInt().toString()), "exampleEmail@pront.com")
+                val user = User(
+                    userId,
+                    UserInfo(
+                        generateRandomName(),
+                        generateRandomPassword(),
+                        generateRandomEmail()
+                    )
+                )
+                val device = Device(Random.nextInt().toString(), "exampleEmail@pront.com")
 
                 repo.createUser(user)
                 repo.createDevice(userId, device)
 
-                val foundDevice = repo.getAllDevices().any { it.deviceId.id == device.deviceId.id }
+                val foundDevice = repo.getAllDevices().any { it.deviceId == device.deviceId }
                 assertTrue("Device found", foundDevice)
             }
         }
@@ -39,11 +47,19 @@ class DeviceRepoTests {
                 assertTrue("Device found", devices.isEmpty())
 
                 val userId = "some_id"
-                val user = User(userId, UserInfo("some_username", "some_password", "some_email"))
+                val user = User(
+                    userId,
+                    UserInfo(
+                        generateRandomName(),
+                        generateRandomPassword(),
+                        generateRandomEmail()
+                    )
+                )
+                devicesRepo.createUser(user)
 
-                val device1 = Device(DeviceId(Random.nextInt().toString()), generateRandomEmail())
-                val device2 = Device(DeviceId(Random.nextInt().toString()), generateRandomEmail())
-                val device3 = Device(DeviceId(Random.nextInt().toString()), generateRandomEmail())
+                val device1 = Device(Random.nextInt().toString(), generateRandomEmail())
+                val device2 = Device(Random.nextInt().toString(), generateRandomEmail())
+                val device3 = Device(Random.nextInt().toString(), generateRandomEmail())
 
                 devicesRepo.createDevice(userId, device1)
                 devicesRepo.createDevice(userId, device2)
@@ -67,5 +83,4 @@ class DeviceRepoTests {
             }
         }
     }
-
 }

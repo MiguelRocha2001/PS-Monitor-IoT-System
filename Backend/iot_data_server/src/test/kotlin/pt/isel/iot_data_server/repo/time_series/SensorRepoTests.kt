@@ -1,12 +1,11 @@
 package pt.isel.iot_data_server.repo.time_series
 
-import deleteAllPhMeasurements
-import deleteAllTemperatureMeasurements
+import pt.isel.iot_data_server.utils.deleteAllPhMeasurements
+import pt.isel.iot_data_server.utils.deleteAllTemperatureMeasurements
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.test.util.AssertionErrors.assertTrue
-import pt.isel.iot_data_server.domain.DeviceId
 import pt.isel.iot_data_server.domain.PhRecord
 import pt.isel.iot_data_server.domain.TemperatureRecord
 import pt.isel.iot_data_server.repository.tsdb.TSDBConfig
@@ -30,7 +29,7 @@ class TsdbRepoTests {
     fun `add ph record and get it`() {
         val testDBConfig = TSDBConfig().tsdb2Properties()
         val repo = TSDBRepository(testDBConfig)
-        val deviceId = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120002")
+        val deviceId = "80acf16c-d3bb-11ed-afa1-0242ac120002"
         val phsBefore = repo.getPhRecords(deviceId)
         assertTrue("Ph found", phsBefore.isEmpty())
         repo.savePhRecord(deviceId, PhRecord(generateRandomPh(), Instant.now()))
@@ -43,7 +42,7 @@ class TsdbRepoTests {
     fun `add 3 ph records and get the list`() {
         val testDBConfig = TSDBConfig().tsdb2Properties()
         val repo = TSDBRepository(testDBConfig)
-        val deviceId = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120002")
+        val deviceId = "80acf16c-d3bb-11ed-afa1-0242ac120002"
         val phsBefore = repo.getPhRecords(deviceId)
         assertTrue("Ph found", phsBefore.isEmpty())
         repo.savePhRecord(deviceId, PhRecord(generateRandomPh(), Instant.now()))
@@ -57,8 +56,8 @@ class TsdbRepoTests {
     fun `add 2 ph records to a device and 1 to another`() {
         val testDBConfig = TSDBConfig().tsdb2Properties()
         val repo = TSDBRepository(testDBConfig)
-        val deviceId = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120002")
-        val deviceId2 = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120003")
+        val deviceId = "80acf16c-d3bb-11ed-afa1-0242ac120002"
+        val deviceId2 = "80acf16c-d3bb-11ed-afa1-0242ac120003"
         repo.savePhRecord(deviceId, PhRecord(generateRandomPh(), Instant.now()))
         repo.savePhRecord(deviceId, PhRecord(generateRandomPh(), Instant.now()))
         repo.savePhRecord(deviceId2, PhRecord(generateRandomPh(), Instant.now()))
@@ -75,7 +74,7 @@ class TsdbRepoTests {
     fun `add temperature record and get it`() {
         val testDBConfig = TSDBConfig().tsdb2Properties()
         val repo = TSDBRepository(testDBConfig)
-        val deviceId = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120002")
+        val deviceId = "80acf16c-d3bb-11ed-afa1-0242ac120002"
         val recordedTemperature = repo.getTemperatureRecords(deviceId)
         assertTrue("Temperature found", recordedTemperature.isEmpty())
         repo.saveTemperatureRecord(deviceId, TemperatureRecord(generateRandomPh(), Instant.now()))
@@ -87,7 +86,7 @@ class TsdbRepoTests {
     fun `add 3 temperature records and get the list`() {
         val testDBConfig = TSDBConfig().tsdb2Properties()
         val repo = TSDBRepository(testDBConfig)
-        val deviceId = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120002")
+        val deviceId = "80acf16c-d3bb-11ed-afa1-0242ac120002"
         val recordedTemperature = repo.getTemperatureRecords(deviceId)
         assertTrue("Temperature found", recordedTemperature.isEmpty())
         repo.saveTemperatureRecord(deviceId, TemperatureRecord(generateRandomPh(), Instant.now()))
@@ -101,8 +100,8 @@ class TsdbRepoTests {
     fun `add 2 temperature records to a device and 1 to another`() {
         val testDBConfig = TSDBConfig().tsdb2Properties()
         val repo = TSDBRepository(testDBConfig)
-        val deviceId = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120002")
-        val deviceId2 = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120003")
+        val deviceId = "80acf16c-d3bb-11ed-afa1-0242ac120002"
+        val deviceId2 = "80acf16c-d3bb-11ed-afa1-0242ac120003"
         repo.saveTemperatureRecord(deviceId, TemperatureRecord(generateRandomPh(), Instant.now()))
         repo.saveTemperatureRecord(deviceId, TemperatureRecord(generateRandomPh(), Instant.now()))
         repo.saveTemperatureRecord(deviceId2, TemperatureRecord(generateRandomPh(), Instant.now()))
@@ -118,7 +117,7 @@ class TsdbRepoTests {
     fun `add 2 temperature records to a device and 1 ph record`() {
         val testDBConfig = TSDBConfig().tsdb2Properties()
         val repo = TSDBRepository(testDBConfig)
-        val deviceId = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120002")
+        val deviceId = "80acf16c-d3bb-11ed-afa1-0242ac120002"
         repo.savePhRecord(deviceId, PhRecord(generateRandomPh(), Instant.now()))
         repo.savePhRecord(deviceId, PhRecord(generateRandomPh(), Instant.now()))
         repo.saveTemperatureRecord(deviceId, TemperatureRecord(generateRandomPh(), Instant.now()))
@@ -132,8 +131,8 @@ class TsdbRepoTests {
     fun `add 1 temperature record and 1 ph record to two devices`() {
         val testDBConfig = TSDBConfig().tsdb2Properties()
         val repo = TSDBRepository(testDBConfig)
-        val deviceId = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120002")
-        val deviceId2 = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120003")
+        val deviceId = "80acf16c-d3bb-11ed-afa1-0242ac120002"
+        val deviceId2 = "80acf16c-d3bb-11ed-afa1-0242ac120003"
         repo.savePhRecord(deviceId, PhRecord(generateRandomPh(), Instant.now()))
         repo.saveTemperatureRecord(deviceId, TemperatureRecord(generateRandomPh(), Instant.now()))
         repo.savePhRecord(deviceId2, PhRecord(generateRandomPh(), Instant.now()))
@@ -143,7 +142,7 @@ class TsdbRepoTests {
         val phs2 = repo.getPhRecords(deviceId2)
         val temperatures2 = repo.getTemperatureRecords(deviceId2)
         assertTrue("Ph found", phs1.size == 1)
-        assertTrue("Temperature found", temperatures1.size == 1)
+        assertTrue( "Temperature found", temperatures1.size == 1)
         assertTrue("Ph found", phs2.size == 1)
         assertTrue("Temperature found", temperatures2.size == 1)
     }
@@ -153,7 +152,7 @@ class TsdbRepoTests {
     fun `add ph record and get it concurrently`(){ //THIS TEST CAN FAIL IF TWO INSTANTS ARE GENERATED ARE EQUAL (HIGHLY UNLIKELY)
         val testDBConfig = TSDBConfig().tsdb2Properties()
         val repo = TSDBRepository(testDBConfig)
-        val deviceId = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120002")
+        val deviceId = "80acf16c-d3bb-11ed-afa1-0242ac120002"
 
         // Number of threads for concurrent execution
         val numThreads = 10
@@ -186,7 +185,7 @@ class TsdbRepoTests {
     fun `add temperature record and get it concurrently`(){ //THIS TEST CAN FAIL IF TWO INSTANTS ARE GENERATED ARE EQUAL (HIGHLY UNLIKELY)
         val testDBConfig = TSDBConfig().tsdb2Properties()
         val repo = TSDBRepository(testDBConfig)
-        val deviceId = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120002")
+        val deviceId = "80acf16c-d3bb-11ed-afa1-0242ac120002"
 
         // Number of threads for concurrent execution
         val numThreads = 10
@@ -230,7 +229,7 @@ class TsdbRepoTests {
             thread(start = true) {
                 repeat(repetitions){
                     // generate random instant
-                    val deviceId = DeviceId("80acf16c-d3bb-11ed-afa1-0242ac120002")
+                    val deviceId = "80acf16c-d3bb-11ed-afa1-0242ac120002"
                     val ph = generateRandomPh()
                     val temperature = generateRandomPh()
                     val randomInstant = getRandomInstantWithinLastWeek()
@@ -252,6 +251,4 @@ class TsdbRepoTests {
         assertEquals(phs.size, numThreads * repetitions)
         assertEquals(temperatures.size, numThreads * repetitions)
     }
-
-
 }
