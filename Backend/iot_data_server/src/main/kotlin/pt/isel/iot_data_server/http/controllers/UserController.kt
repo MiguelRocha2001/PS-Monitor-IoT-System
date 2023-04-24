@@ -181,14 +181,13 @@ class UserController(
         response.sendRedirect("http://localhost:8080/auth/login")
     }
 
-        /**
+    /**
      * Get method, because it doesn't change anything in the server.
      */
     @Operation(summary = "Logout", description = "Logout the user")
     @ApiResponse(responseCode = "204", description = "Successfully logged out")
     @DeleteMapping(Uris.NonSemantic.logout)
     fun logout(
-        user: User,
         response: HttpServletResponse
     ): ResponseEntity<Unit> {
         val cookie = buildCookie(0, null)

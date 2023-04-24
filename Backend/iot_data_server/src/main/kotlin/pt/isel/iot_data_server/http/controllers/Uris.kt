@@ -9,7 +9,9 @@ object Uris {
      * but rather the semantic of the application (verbs that represent actions).
      */
     object NonSemantic {
-        const val logout = "logout"
+        // logout is a reserved word when using HttpSecurity
+        // @see https://docs.spring.io/spring-security/reference/servlet/authentication/logout.html
+        const val logout = "log-out"
         const val loggedIn = "logged-in"
 
         fun logout(): URI = URI(logout)

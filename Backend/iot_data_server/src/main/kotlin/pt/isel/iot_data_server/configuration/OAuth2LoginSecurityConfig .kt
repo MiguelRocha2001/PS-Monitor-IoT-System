@@ -44,6 +44,7 @@ class OAuth2LoginSecurityConfig {
                 oauthLogin.userInfoEndpoint()
                     .oidcUserService(googleUserService)
             }
+            // TODO: review this later
             .logout { logout ->
                 logout.logoutSuccessHandler(oidcLogoutSuccessHandler())
             }
@@ -56,7 +57,7 @@ class OAuth2LoginSecurityConfig {
         val oidcLogoutSuccessHandler = OidcClientInitiatedLogoutSuccessHandler(
             clientRegistrationRepository
         )
-        oidcLogoutSuccessHandler.setPostLogoutRedirectUri("http://localhost:8081/home")
+        oidcLogoutSuccessHandler.setPostLogoutRedirectUri("http://localhost:8080/")
         return oidcLogoutSuccessHandler
     }
 

@@ -16,6 +16,7 @@ import {DeviceCreated} from "./views/device/DeviceCreated";
 import {AuthnContainer} from "./views/auth/Authn";
 import {RequireAuthn} from "./views/auth/RequireAuthn";
 import {ErrorContainer} from "./views/error/ErrorContainer";
+import {UserCreated} from "./views/auth/UserCreated";
 
 const logger = new Logger({ name: "App" });
 
@@ -82,6 +83,7 @@ function Router() {
                         <Routes>
                             <Route path='/' element={<Home />} />
                             <Route path='/auth/:action' element={<Authentication />} />
+                            <Route path='/auth/user-created' element={<UserCreated />} />
                             <Route path='/devices' element={<RequireAuthn children={<Devices />} />} />
                             <Route path='/devices/:deviceId' element={<RequireAuthn children={<DeviceInfo />} />} />
                             <Route path='/add-new-device' element={<RequireAuthn children={<NewDevice />} />} />

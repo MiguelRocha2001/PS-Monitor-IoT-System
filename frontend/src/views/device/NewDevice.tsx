@@ -43,7 +43,7 @@ function NewIoTDeviceForm() {
         <Form>
             <fieldset disabled={false}>
                 <Form.Group className="mb-3">
-                    <Form.Label>Email</Form.Label>
+                    <Form.Label>Email (sensor alerts)</Form.Label>
                     <Form.Control placeholder="Email" onChange={(ev) => {
                         setEmail(ev.target.value)
                     }} />
