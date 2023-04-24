@@ -6,9 +6,9 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.test.util.AssertionErrors.assertTrue
+import pt.isel.iot_data_server.configuration.TSDBConfig
 import pt.isel.iot_data_server.domain.PhRecord
 import pt.isel.iot_data_server.domain.TemperatureRecord
-import pt.isel.iot_data_server.repository.tsdb.TSDBConfig
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
 import pt.isel.iot_data_server.utils.generateRandomPh
 import pt.isel.iot_data_server.utils.getRandomInstantWithinLastWeek

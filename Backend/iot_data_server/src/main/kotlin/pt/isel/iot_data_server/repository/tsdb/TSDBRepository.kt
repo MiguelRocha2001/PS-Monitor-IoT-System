@@ -16,9 +16,18 @@ import pt.isel.iot_data_server.domain.TemperatureRecord
 import pt.isel.iot_data_server.repository.CollectedDataRepository
 import java.time.Instant
 
+interface TSDBConfigProperties {
+    val token: String
+    val org: String
+    val bucket: String
+    val path: String
+}
+
 //TODO isto retorna os dados referentes a um nos ultimos 7 dias,se calhar devia ser possivel escolher o intervalo de tempo
 @Repository
-class TSDBRepository(tsdbConfig: TSDBConfigProperties) : CollectedDataRepository {
+class TSDBRepository(
+    tsdbConfig: TSDBConfigProperties
+) : CollectedDataRepository {
     private val token = tsdbConfig.token
     private val org = tsdbConfig.org
     private val bucket = tsdbConfig.bucket
@@ -140,7 +149,6 @@ class TSDBRepository(tsdbConfig: TSDBConfigProperties) : CollectedDataRepository
             getClient().getWriteKotlinApi().writePoint(point)
         }
     }
-
 }
 
 

@@ -29,11 +29,7 @@ class InfoHttpTests {
     class GameTestConfiguration {
         @Bean
         @Primary
-        fun jdbiTest() = Jdbi.create(
-            PGSimpleDataSource().apply {
-                setURL(System.getenv("DB_POSTGRES_IOT_SYSTEM_TEST"))
-            }
-        ).configure()
+        fun jdbiTest() = buildJdbiTest()
     }
 
     @Test

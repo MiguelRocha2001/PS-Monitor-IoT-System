@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
+import pt.isel.iot_data_server.configuration.TSDBConfig
 import pt.isel.iot_data_server.domain.PhRecord
 import pt.isel.iot_data_server.domain.TemperatureRecord
 import pt.isel.iot_data_server.repository.TransactionManager
-import pt.isel.iot_data_server.repository.tsdb.TSDBConfig
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
 import pt.isel.iot_data_server.service.email.EmailManager
 import pt.isel.iot_data_server.service.sensor_data.SensorDataService

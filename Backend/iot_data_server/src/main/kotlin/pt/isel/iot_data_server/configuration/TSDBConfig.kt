@@ -1,16 +1,15 @@
-package pt.isel.iot_data_server.repository.tsdb
+package pt.isel.iot_data_server.configuration
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
+import pt.isel.iot_data_server.repository.tsdb.TSDBConfigProperties
 
-// TODO -> maybe move to Spring Configuration
 @Configuration
 @EnableConfigurationProperties(TSDB1Config::class, TSDB2Config::class)
 class TSDBConfig {
-
     @Bean
     fun tsdb1Properties(): TSDBConfigProperties {
         return TSDB1Config()
@@ -20,7 +19,6 @@ class TSDBConfig {
     fun tsdb2Properties(): TSDBConfigProperties {
         return TSDB2Config()
     }
-
 }
 
 @Primary // This is the default configuration
@@ -33,6 +31,7 @@ class TSDB1Config : TSDBConfigProperties {
     override val path: String = "http://localhost:8086"
 }
 
+// TODO: move this to test configuration
 @Configuration
 @ConfigurationProperties(prefix = "tsdb2")
 class TSDB2Config : TSDBConfigProperties {

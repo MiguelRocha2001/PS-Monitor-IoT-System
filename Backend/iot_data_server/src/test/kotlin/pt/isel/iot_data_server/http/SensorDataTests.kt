@@ -6,11 +6,13 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Primary
 import org.springframework.http.HttpHeaders
 import org.springframework.test.web.reactive.server.WebTestClient
+import pt.isel.iot_data_server.configuration.TSDBConfig
 import pt.isel.iot_data_server.http.controllers.Uris
 import pt.isel.iot_data_server.http.infra.SirenModel
-import pt.isel.iot_data_server.repository.tsdb.TSDBConfig
 import pt.isel.iot_data_server.utils.generateRandomEmail
 
 
@@ -20,6 +22,9 @@ import pt.isel.iot_data_server.utils.generateRandomEmail
 class SensorDataTests {
     @LocalServerPort
     var port: Int = 0
+    @Bean
+    @Primary
+    fun jdbiTest() = buildJdbiTest()
 
     @AfterEach
     fun delete_data(){
