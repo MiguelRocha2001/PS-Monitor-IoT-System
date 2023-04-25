@@ -3,12 +3,9 @@ package pt.isel.iot_data_server.repository.jdbi
 import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.iot_data_server.domain.Device
-import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.repository.DeviceDataRepository
 import pt.isel.iot_data_server.repository.jdbi.mappers.DeviceMapper
-import pt.isel.iot_data_server.repository.jdbi.mappers.UserMapper
 import pt.isel.iot_data_server.repository.jdbi.mappers.toDevice
-import pt.isel.iot_data_server.repository.jdbi.mappers.toUser
 
 class JdbiDeviceDataRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN,DEVICE...)
     private val handle: Handle

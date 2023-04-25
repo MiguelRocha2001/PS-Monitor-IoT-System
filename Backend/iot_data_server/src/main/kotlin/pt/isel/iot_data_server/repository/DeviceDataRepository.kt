@@ -1,7 +1,6 @@
 package pt.isel.iot_data_server.repository
 
 import pt.isel.iot_data_server.domain.Device
-import pt.isel.iot_data_server.domain.User
 
 interface DeviceDataRepository {
     fun createDevice(userId: String, device: Device)

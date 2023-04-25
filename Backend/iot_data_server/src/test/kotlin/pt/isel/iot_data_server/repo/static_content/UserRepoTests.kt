@@ -1,8 +1,8 @@
 package pt.isel.iot_data_server.repo.static_content
 
 
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.domain.UserInfo
 import pt.isel.iot_data_server.utils.generateRandomEmail

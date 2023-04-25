@@ -1,7 +1,5 @@
 package pt.isel.iot_data_server.service
 
-import pt.isel.iot_data_server.utils.deleteAllPhMeasurements
-import pt.isel.iot_data_server.utils.deleteAllTemperatureMeasurements
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -14,10 +12,7 @@ import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
 import pt.isel.iot_data_server.service.email.EmailManager
 import pt.isel.iot_data_server.service.sensor_data.SensorDataService
-import pt.isel.iot_data_server.utils.generateRandomEmail
-import pt.isel.iot_data_server.utils.generateRandomPh
-import pt.isel.iot_data_server.utils.getRandomInstantWithinLastWeek
-import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
+import pt.isel.iot_data_server.utils.*
 
 
 class SensorDataServiceTest {

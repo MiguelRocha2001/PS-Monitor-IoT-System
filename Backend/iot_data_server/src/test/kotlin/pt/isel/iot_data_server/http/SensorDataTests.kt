@@ -1,7 +1,5 @@
 package pt.isel.iot_data_server.http
 
-import pt.isel.iot_data_server.utils.deleteAllPhMeasurements
-import pt.isel.iot_data_server.utils.deleteAllTemperatureMeasurements
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -13,6 +11,8 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import pt.isel.iot_data_server.configuration.TSDBConfig
 import pt.isel.iot_data_server.http.controllers.Uris
 import pt.isel.iot_data_server.http.infra.SirenModel
+import pt.isel.iot_data_server.utils.deleteAllPhMeasurements
+import pt.isel.iot_data_server.utils.deleteAllTemperatureMeasurements
 import pt.isel.iot_data_server.utils.generateRandomEmail
 
 

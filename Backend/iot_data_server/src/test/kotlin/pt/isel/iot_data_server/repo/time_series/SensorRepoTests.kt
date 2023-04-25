@@ -1,7 +1,5 @@
 package pt.isel.iot_data_server.repo.time_series
 
-import pt.isel.iot_data_server.utils.deleteAllPhMeasurements
-import pt.isel.iot_data_server.utils.deleteAllTemperatureMeasurements
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -10,6 +8,8 @@ import pt.isel.iot_data_server.configuration.TSDBConfig
 import pt.isel.iot_data_server.domain.PhRecord
 import pt.isel.iot_data_server.domain.TemperatureRecord
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
+import pt.isel.iot_data_server.utils.deleteAllPhMeasurements
+import pt.isel.iot_data_server.utils.deleteAllTemperatureMeasurements
 import pt.isel.iot_data_server.utils.generateRandomPh
 import pt.isel.iot_data_server.utils.getRandomInstantWithinLastWeek
 import java.time.Instant

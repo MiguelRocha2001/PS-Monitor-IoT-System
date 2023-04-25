@@ -1,42 +1,31 @@
 package pt.isel.iot_data_server.configuration
 
-import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.EnableConfigurationProperties
+import com.influxdb.client.domain.Bucket
+import com.influxdb.client.kotlin.InfluxDBClientKotlin
+import com.influxdb.client.kotlin.InfluxDBClientKotlinFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Primary
-import pt.isel.iot_data_server.repository.tsdb.TSDBConfigProperties
 
 @Configuration
-@EnableConfigurationProperties(TSDB1Config::class, TSDB2Config::class)
 class TSDBConfig {
-    @Bean
-    fun tsdb1Properties(): TSDBConfigProperties {
-        return TSDB1Config()
-    }
+    val token: String = System.getenv()["INFLUX_TOKEN"]?:"" // same organization, same token
+    val org: String = "isel"
+    val bucket: String = "my_bucket"
+    val path: String = "http://localhost:8086"
+
+    private val clientThreadLocal = ThreadLocal<InfluxDBClientKotlin>()
 
     @Bean
-    fun tsdb2Properties(): TSDBConfigProperties {
-        return TSDB2Config()
+    fun getClient(): InfluxDBClientKotlin {
+        var client = clientThreadLocal.get()
+        if (client == null) {
+            client = InfluxDBClientKotlinFactory.create(path, token.toCharArray(), org, bucket)
+            clientThreadLocal.set(client)
+        }
+        return client
     }
-}
 
-@Primary // This is the default configuration
-@Configuration
-@ConfigurationProperties(prefix = "tsdb1")
-class TSDB1Config : TSDBConfigProperties {
-    override val token: String = System.getenv()["INFLUX_TOKEN"]?:"" //same organization,same token
-    override val org: String = "isel"
-    override val bucket: String = "my_bucket"
-    override val path: String = "http://localhost:8086"
-}
 
-// TODO: move this to test configuration
-@Configuration
-@ConfigurationProperties(prefix = "tsdb2")
-class TSDB2Config : TSDBConfigProperties {
-    override val token: String = System.getenv()["INFLUX_TOKEN"]?:""
-    override val org: String = "isel"
-    override val bucket: String = "test_bucket"
-    override val path: String = "http://localhost:8086"
+    @Bean
+    fun getBucketName(): Bucket = Bucket().name(bucket)
 }

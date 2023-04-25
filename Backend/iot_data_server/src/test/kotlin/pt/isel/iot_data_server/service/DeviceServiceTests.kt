@@ -1,10 +1,10 @@
 package pt.isel.iot_data_server.service
 
-import pt.isel.iot_data_server.utils.deleteAllDeviceRecords
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
+import pt.isel.iot_data_server.utils.deleteAllDeviceRecords
 import pt.isel.iot_data_server.utils.generateRandomEmail
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 
