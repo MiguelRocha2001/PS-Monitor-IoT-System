@@ -237,4 +237,17 @@ class JdbiServerRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN
     override fun deleteAllDevices() {
         handle.createUpdate("delete from device").execute()
     }
+
+    override fun deviceCount(userId: String): Int {
+        return handle.createQuery(
+            """
+            select count(*) 
+            from device 
+            where user_id = :user_id
+            """
+        )
+            .bind("user_id", userId)
+            .mapTo<Int>()
+            .single()
+    }
 }

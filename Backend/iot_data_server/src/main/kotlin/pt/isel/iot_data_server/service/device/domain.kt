@@ -10,6 +10,11 @@ sealed class CreateDeviceError: Error() {
 }
 typealias CreateDeviceResult = Either<CreateDeviceError, String>
 
+sealed class DeviceCountError: Error() {
+    object UserNotFound: DeviceCountError()
+}
+typealias DeviceCountResult = Either<DeviceCountError, Int>
+
 sealed class GetAllDevicesError: Error() {
     object UserNotFound: GetAllDevicesError()
 }

@@ -12,10 +12,7 @@ import pt.isel.iot_data_server.http.DeviceInputModel
 import pt.isel.iot_data_server.http.SirenMediaType
 import pt.isel.iot_data_server.http.infra.siren
 import pt.isel.iot_data_server.http.model.Problem
-import pt.isel.iot_data_server.http.model.device.CreateDeviceOutputModel
-import pt.isel.iot_data_server.http.model.device.DeviceOutputModel
-import pt.isel.iot_data_server.http.model.device.DevicesOutputModel
-import pt.isel.iot_data_server.http.model.device.toDeviceOutputModel
+import pt.isel.iot_data_server.http.model.device.*
 import pt.isel.iot_data_server.http.model.map
 import pt.isel.iot_data_server.service.device.DeviceService
 import java.util.*
@@ -63,6 +60,22 @@ class DeviceController(
                     DevicesOutputModel.from(it)
                 ) {
                     clazz("devices")
+                })
+        }
+    }
+
+    @GetMapping(Uris.Devices.COUNT)
+    fun getDeviceCount(
+        user: User
+    ): ResponseEntity<*> {
+        val result = service.getDeviceCount(user.id)
+        return result.map { deviceCount ->
+            ResponseEntity.status(200)
+                .contentType(SirenMediaType)
+                .body(siren(
+                    DeviceCountOutputModel(deviceCount)
+                ) {
+                    clazz("device-count")
                 })
         }
     }

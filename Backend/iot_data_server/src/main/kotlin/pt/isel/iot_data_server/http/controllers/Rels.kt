@@ -15,6 +15,7 @@ object Rels {
 
     // ------------------- Devices -------------------
     val DEVICES = LinkRelation("devices")
+    val DEVICE_COUNT = LinkRelation("device-count")
     val DEVICE_BY_ID = LinkRelation("device-by-id")
 
     // ------------------- PH -------------------

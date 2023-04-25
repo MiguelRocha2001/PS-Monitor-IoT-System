@@ -11,6 +11,7 @@ export interface Services {
     getMe(): Promise<User>
     createDevice(ownerEmail: string): Promise<string>
     getDevices(page: number, limit: number): Promise<Device[]>
+    getDeviceCount(): Promise<number>
     getDevice(deviceId: string): Promise<Device>
     getPhData(deviceId: string): Promise<PhData>
     getTemperatureData(deviceId: string): Promise<TemperatureData>

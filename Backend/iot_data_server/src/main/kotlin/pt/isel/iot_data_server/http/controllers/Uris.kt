@@ -45,6 +45,8 @@ object Uris {
 
     object Devices {
         const val ALL = "/devices"
+        const val COUNT = "$ALL/count"
+
         const val BY_ID1 = ALL + "/{device_id}"
         private const val BY_ID2 = ALL + "/:device_id"
         const val BY_EMAIL = ALL + "/email/{email}"

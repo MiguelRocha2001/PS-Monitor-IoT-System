@@ -19,6 +19,7 @@ export class RealServices implements Services {
             SirenModule.extractGetMeLink(response.links)
             SirenModule.extractAddDeviceAction(response.actions)
             SirenModule.extractGetDevicesLink(response.links)
+            SirenModule.extractGetDeviceCountLink(response.links)
             SirenModule.extractGetDeviceLink(response.links)
             SirenModule.extractGetPhDataLink(response.links)
             SirenModule.extractGetTemperatureDataLink(response.links)
@@ -135,6 +136,17 @@ export class RealServices implements Services {
         }
         const response = await doFetch(request, ResponseType.Siren)
         return toDevices(response.properties)
+    }
+
+    async getDeviceCount(): Promise<number> {
+        const getDeviceCountLink = SirenModule.getGetDeviceCountLink()
+        if (!getDeviceCountLink) throw new Error('Get devices link not found')
+        const request = {
+            url: getDeviceCountLink.href,
+            method: 'GET'
+        }
+        const response = await doFetch(request, ResponseType.Siren)
+        return response.properties.deviceCount
     }
 
     async getDevice(deviceId: string): Promise<Device> {

@@ -4,6 +4,8 @@ import pt.isel.iot_data_server.domain.Device
 
 data class DeviceIdOutputModel(val id: String)
 
+data class DeviceCountOutputModel(val deviceCount: Int)
+
 data class DevicesOutputModel(val devices: List<DeviceOutputModel>) {
 
     companion object {

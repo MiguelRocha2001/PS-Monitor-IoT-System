@@ -10,8 +10,8 @@ interface StaticDataRepository {//todo all the sensor data needs to go away
     fun getUserByIdOrNull(userId: String): User?
     fun createToken(userId: String, token: String)
     fun createDevice(userId: String, device: Device)
-    fun getAllDevices(page: Int? = null, limit: Int? = null): List<Device>
-    fun getAllDevices(userId: String, page: Int? = null, limit: Int? = null): List<Device>
+    fun getAllDevices(page: Int? = null, limit: Int? = null): List<Device> // TODO: test with params
+    fun getAllDevices(userId: String, page: Int? = null, limit: Int? = null): List<Device> // TODO: test with params
     fun deleteDevice(deviceId: String)
     fun removeAllDevices()
     fun existsUsername(username: String): Boolean
@@ -20,10 +20,11 @@ interface StaticDataRepository {//todo all the sensor data needs to go away
     fun saveSalt(userId: String, salt: String)
     fun getSalt(userId: String): String
     fun getUserByEmailAddressOrNull(email: String): User?
-
     fun getDevicesByOwnerEmail(email: String): List<Device>
     fun deleteAllUsers()
     fun getDeviceById(deviceId: String): Device?
     fun deleteAllTokens()
     fun deleteAllDevices()
+
+    fun deviceCount(userId: String): Int // TODO: test this
 }

@@ -76,6 +76,7 @@ let IS_LOGGED_IN_LINK: Link
 let GET_ME_LINK: Link
 let ADD_DEVICE_ACTION: Action
 let GET_DEVICES_LINK: Link
+let GET_DEVICE_COUNT_LINK: Link
 let GET_DEVICE_LINK: Link
 let GET_PH_DATA_LINK: Link
 let GET_TEMPERATURE_DATA_LINK: Link
@@ -111,6 +112,10 @@ function getAddDeviceAction(): Action {
 
 function getGetDevicesLink(): Link {
     return GET_DEVICES_LINK
+}
+
+function getGetDeviceCountLink(): Link {
+    return GET_DEVICE_COUNT_LINK
 }
 
 function getGetDeviceLink(): Link {
@@ -156,6 +161,10 @@ function extractAddDeviceAction(actions: any[]) {
 
 function extractGetDevicesLink(links: Link[]) {
     GET_DEVICES_LINK = extractLink(links, "devices")
+}
+
+function extractGetDeviceCountLink(links: Link[]) {
+    GET_DEVICE_COUNT_LINK = extractLink(links, "device-count")
 }
 
 function extractGetDeviceLink(links: Link[]) {
@@ -223,6 +232,8 @@ export const SirenModule = {
     getGetMeLink,
     getAddDeviceAction,
     getGetDevicesLink,
+    getGetDeviceCountLink,
+    extractGetDeviceCountLink,
     extractGetDevicesLink,
     getGetPhDataLink,
     extractGetPhDataLink,

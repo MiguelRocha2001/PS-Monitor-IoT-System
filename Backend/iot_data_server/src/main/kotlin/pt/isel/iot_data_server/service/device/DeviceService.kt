@@ -36,6 +36,15 @@ class DeviceService (
         return getUserDeviceByIdOrNull(userId, deviceId) != null
     }
 
+    fun getDeviceCount(userId: String): DeviceCountResult {
+        userService.getUserByIdOrNull(userId) ?: return Either.Left(DeviceCountError.UserNotFound)
+        return transactionManager.run {
+            val count = it.repository.deviceCount(userId)
+            logger.debug("Device count returned")
+            return@run Either.Right(count)
+        }
+    }
+
     fun getAllDevices(userId: String, page: Int?, limit: Int?): GetAllDevicesResult {
         userService.getUserByIdOrNull(userId) ?: return Either.Left(GetAllDevicesError.UserNotFound)
         return transactionManager.run {
