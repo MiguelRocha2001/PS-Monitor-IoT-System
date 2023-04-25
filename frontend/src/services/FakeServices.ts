@@ -90,8 +90,10 @@ export class FakeServices implements Services {
         return deviceId
     }
 
-    async getDevices(): Promise<Device[]> {
-        return this.devices
+    async getDevices(page: number, limit: number): Promise<Device[]> {
+        const start = (page - 1) * limit
+        const end = start + limit
+        return this.devices.slice(start, end)
     }
 
     async getDevice(deviceId: string): Promise<Device> {

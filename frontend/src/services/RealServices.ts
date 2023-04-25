@@ -125,11 +125,12 @@ export class RealServices implements Services {
         else throw new Error(`Device added, but no device id found`)
     }
 
-    async getDevices(): Promise<Device[]> {
-        const getDevicesLink = SirenModule.getGetDevicesLink()
+    async getDevices(page: number, limit: number): Promise<Device[]> {
+        const getDevicesLink = SirenModule.getGetDevicesLink().href
+        const getDeviceLinkAfterParams = getDevicesLink + '?page=' + page + '&limit=' + limit
         if (!getDevicesLink) throw new Error('Get devices link not found')
         const request = {
-            url: getDevicesLink.href,
+            url: getDeviceLinkAfterParams,
             method: 'GET'
         }
         const response = await doFetch(request, ResponseType.Siren)

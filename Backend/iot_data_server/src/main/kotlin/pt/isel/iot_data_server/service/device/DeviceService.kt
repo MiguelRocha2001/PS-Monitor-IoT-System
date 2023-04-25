@@ -36,10 +36,10 @@ class DeviceService (
         return getUserDeviceByIdOrNull(userId, deviceId) != null
     }
 
-    fun getAllDevices(userId: String): GetAllDevicesResult {
+    fun getAllDevices(userId: String, page: Int?, limit: Int?): GetAllDevicesResult {
         userService.getUserByIdOrNull(userId) ?: return Either.Left(GetAllDevicesError.UserNotFound)
         return transactionManager.run {
-            val devices = it.repository.getAllDevices(userId).also {
+            val devices = it.repository.getAllDevices(userId, page, limit).also {
                 logger.debug("All devices returned")
             }
             return@run Either.Right(devices)

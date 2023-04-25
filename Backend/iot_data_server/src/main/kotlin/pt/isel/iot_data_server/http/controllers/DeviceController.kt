@@ -51,9 +51,11 @@ class DeviceController(
     @ApiResponse(responseCode = "401", description = "Not authorized", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
     @GetMapping(Uris.Devices.ALL)
     fun getDevices(
-        user: User
+        user: User,
+        @RequestParam(required = false) page: Int?,
+        @RequestParam(required = false) limit: Int?
     ): ResponseEntity<*> {
-        val result = service.getAllDevices(user.id)
+        val result = service.getAllDevices(user.id, page, limit)
         return result.map {
             ResponseEntity.status(200)
                 .contentType(SirenMediaType)

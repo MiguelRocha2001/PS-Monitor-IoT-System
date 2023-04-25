@@ -10,11 +10,11 @@ export interface Services {
     isLoggedIn(): Promise<boolean>
     getMe(): Promise<User>
     createDevice(ownerEmail: string): Promise<string>
-    getDevices(): Promise<Device[]>
+    getDevices(page: number, limit: number): Promise<Device[]>
     getDevice(deviceId: string): Promise<Device>
     getPhData(deviceId: string): Promise<PhData>
     getTemperatureData(deviceId: string): Promise<TemperatureData>
     logout(): Promise<void>
 }
 
-export const services: Services = new RealServices()
+export const services: Services = new FakeServices()

@@ -86,20 +86,33 @@ class JdbiServerRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN
             .execute()
     }
 
-    override fun getAllDevices(): List<Device> {
-        return handle.createQuery("select id, user_id, email from device")
+    override fun getAllDevices(page: Int?, limit: Int?): List<Device> {
+        val offset = (page ?: 0) * (limit ?: 10)
+        return handle.createQuery("""
+            select id, user_id, email 
+            from device 
+            limit :limit 
+            offset :offset
+        """)
+            .bind("limit", limit ?: 10)
+            .bind("offset", offset)
             .mapTo<DeviceMapper>()
             .list()
             .map { it.toDevice() }
     }
 
-    override fun getAllDevices(userId: String): List<Device> {
+    override fun getAllDevices(userId: String, page: Int?, limit: Int?): List<Device> {
+        val offset = ((page ?: 1) - 1) * (limit ?: 10)
         return handle.createQuery("""
             select id, user_id, email 
             from device 
             where user_id = :user_id
+            limit :limit 
+            offset :offset
         """)
             .bind("user_id", userId)
+            .bind("limit", limit ?: 10)
+            .bind("offset", offset)
             .mapTo<DeviceMapper>()
             .list()
             .map { it.toDevice() }
