@@ -107,15 +107,15 @@ class TSDBRepository(
             .toList()
     }
     override fun savePhRecord(deviceId: String, phRecord: PhRecord) =
-            runBlocking {
-                mutex.withLock {
-                    val point = Point
-                        .measurement("ph")
-                        .addTag("device", deviceId)
-                        .addField("ph_value", phRecord.value)
-                        .time(phRecord.instant, WritePrecision.NS)
-                    client.getWriteKotlinApi().writePoint(point)
-                }
+        runBlocking {
+            mutex.withLock {
+                val point = Point
+                    .measurement("ph")
+                    .addTag("device", deviceId)
+                    .addField("ph_value", phRecord.value)
+                    .time(phRecord.instant, WritePrecision.NS)
+                client.getWriteKotlinApi().writePoint(point)
+            }
         }
 
     override fun saveTemperatureRecord(deviceId: String, temperatureRecord: TemperatureRecord) = runBlocking {
