@@ -32,22 +32,20 @@ class TSDBRepository(
     //  val lock = ReentrantLock()
 
     override fun getPhRecords(deviceId: String): List<PhRecord> = runBlocking {
-        mutex.withLock {
-            val query =
-                """from(bucket: "$bucketName")
+        val query =
+            """from(bucket: "$bucketName")
                 |> range(start: -7d)
                 |> filter(fn: (r) => r.device == "$deviceId")
                 |> filter(fn: (r) => r._measurement == "ph")
                  """
-            // Result is returned as a stream
-            val results = client.getQueryKotlinApi().query(query)
+        // Result is returned as a stream
+        val results = client.getQueryKotlinApi().query(query)
 
-            results.consumeAsFlow().map { result ->
-                val value = result.value as Double
-                val timestamp = result.time ?: Instant.MIN
-                PhRecord(value, timestamp)
-            }.toList()
-        }
+        results.consumeAsFlow().map { result ->
+            val value = result.value as Double
+            val timestamp = result.time ?: Instant.MIN
+            PhRecord(value, timestamp)
+        }.toList()
     }
 
     override fun getTemperatureRecords(deviceId: String): List<TemperatureRecord> = runBlocking {
@@ -106,27 +104,22 @@ class TSDBRepository(
             }
             .toList()
     }
-    override fun savePhRecord(deviceId: String, phRecord: PhRecord) =
-        runBlocking {
-            mutex.withLock {
-                val point = Point
-                    .measurement("ph")
-                    .addTag("device", deviceId)
-                    .addField("ph_value", phRecord.value)
-                    .time(phRecord.instant, WritePrecision.NS)
-                client.getWriteKotlinApi().writePoint(point)
-            }
-        }
+    override fun savePhRecord(deviceId: String, phRecord: PhRecord) = runBlocking {
+        val point = Point
+            .measurement("ph")
+            .addTag("device", deviceId)
+            .addField("ph_value", phRecord.value)
+            .time(phRecord.instant, WritePrecision.NS)
+        client.getWriteKotlinApi().writePoint(point)
+    }
 
     override fun saveTemperatureRecord(deviceId: String, temperatureRecord: TemperatureRecord) = runBlocking {
-        mutex.withLock {
-            val point = Point
-                .measurement("temperature")
-                .addTag("device", deviceId)
-                .addField("temperature_value", temperatureRecord.value)
-                .time(temperatureRecord.instant, WritePrecision.NS)
-            client.getWriteKotlinApi().writePoint(point)
-        }
+        val point = Point
+            .measurement("temperature")
+            .addTag("device", deviceId)
+            .addField("temperature_value", temperatureRecord.value)
+            .time(temperatureRecord.instant, WritePrecision.NS)
+        client.getWriteKotlinApi().writePoint(point)
     }
 }
 
