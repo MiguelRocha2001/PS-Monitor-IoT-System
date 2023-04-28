@@ -7,25 +7,37 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class TSDBConfig {
+class TSDBProductionConfig {
+    private val tsdbConfig = TSDBBuilder("my_bucket")
+    @Bean
+    fun getInfluxDBClientKotlin(): InfluxDBClientKotlin {
+        return tsdbConfig.getClient()
+    }
+    @Bean fun getBucket(): Bucket {
+        return tsdbConfig.getBucket()
+    }
+}
+
+class TSDBBuilder(
+    val bucketName: String
+) {
     val token: String = System.getenv()["INFLUX_TOKEN"]?:"" // same organization, same token
     val org: String = "isel"
-    val bucket: String = "my_bucket"
     val path: String = "http://localhost:8086"
 
     private val clientThreadLocal = ThreadLocal<InfluxDBClientKotlin>()
 
-    @Bean
     fun getClient(): InfluxDBClientKotlin {
         var client = clientThreadLocal.get()
         if (client == null) {
-            client = InfluxDBClientKotlinFactory.create(path, token.toCharArray(), org, bucket)
+            client = InfluxDBClientKotlinFactory.create(path, token.toCharArray(), org, bucketName)
             clientThreadLocal.set(client)
         }
         return client
     }
 
-
-    @Bean
-    fun getBucketName(): Bucket = Bucket().name(bucket)
+    fun getBucket(): Bucket {
+        return Bucket().name(bucketName)
+    }
 }
+
