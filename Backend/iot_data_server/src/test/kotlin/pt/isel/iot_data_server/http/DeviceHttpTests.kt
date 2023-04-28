@@ -23,7 +23,7 @@ class DeviceHttpTests {
     var port: Int = 0
 
     @TestConfiguration
-    class GameTestConfiguration {
+    class DeviceTestConfiguration {
         @Bean
         @Primary
         fun jdbiTest() = buildJdbiTest()

@@ -16,19 +16,23 @@ import pt.isel.iot_data_server.domain.TemperatureRecord
 import pt.isel.iot_data_server.repository.CollectedDataRepository
 import java.time.Instant
 
+/*
+TODO: check server status
+    @see: https://github.com/influxdata/influxdb-client-java/tree/master/client-kotlin#advanced-usage
+ */
 
 //TODO isto retorna os dados referentes a um nos ultimos 7 dias,se calhar devia ser possivel escolher o intervalo de tempo
 @Repository
 class TSDBRepository(
     private val client: InfluxDBClientKotlin,
-    private val bucket : Bucket
+    bucket : Bucket
 ) : CollectedDataRepository {
     private val bucketName = bucket.name
-    val mutex = Mutex()
+    val mutex = Mutex() // Use Mutex for synchronization
     //  val lock = ReentrantLock()
 
     override fun getPhRecords(deviceId: String): List<PhRecord> = runBlocking {
-        mutex.withLock { // Use Mutex for synchronization
+        mutex.withLock {
             val query =
                 """from(bucket: "$bucketName")
                 |> range(start: -7d)

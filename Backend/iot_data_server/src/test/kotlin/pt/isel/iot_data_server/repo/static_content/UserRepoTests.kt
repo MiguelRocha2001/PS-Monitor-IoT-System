@@ -18,7 +18,7 @@ class UserRepoTests {
     fun `add user and get`() {
         testWithTransactionManagerAndRollback { transactionManager ->
             transactionManager.run { transaction ->
-                val usersRepo = transaction.repository
+                val usersRepo = transaction.userRepo
 
                 val userId = UUID.randomUUID().toString()
                 val userInfo = UserInfo(generateRandomName(), generateRandomPassword(), generateRandomEmail())
