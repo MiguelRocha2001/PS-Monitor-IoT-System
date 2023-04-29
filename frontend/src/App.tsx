@@ -17,6 +17,7 @@ import {AuthnContainer} from "./views/auth/Authn";
 import {RequireAuthn} from "./views/auth/RequireAuthn";
 import {ErrorContainer} from "./views/error/ErrorContainer";
 import {UserCreated} from "./views/auth/UserCreated";
+//import './App.css';
 
 const logger = new Logger({ name: "App" });
 

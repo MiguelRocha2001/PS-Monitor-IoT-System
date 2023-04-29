@@ -7,11 +7,14 @@ import {useIsLoggedIn, useSetIsLoggedIn} from "./auth/Authn";
 import {services} from "../services/services";
 import Button from "react-bootstrap/Button";
 import {useSetError} from "./error/ErrorContainer";
+import '../style/NavBarStyle.css'
+
 
 function NavBar() {
     const setError = useSetError()
     const setIsLoggedIn = useSetIsLoggedIn()
     const isLoggedIn = useIsLoggedIn()
+
 
     const logout =
         isLoggedIn ?
@@ -24,20 +27,33 @@ function NavBar() {
     const devicesLink = isLoggedIn ? <MyLink text={'Devices'} to="/devices" center={true} margin={'1em'}/> : <></>
 
     const authenticationLink = isLoggedIn ? <></>
-        : <MyLink text={'Authentication'} to="/auth/login" center={true} margin={'1em'}/>
+        : <MyLink text={'Login/SignUp'} to="/auth/login" center={true} margin={'1em'}/>
+
+    const navbarContent = isLoggedIn ? (
+        <>
+            <Navbar id="basic-navbar-nav">
+                <Nav
+                    className="me-auto my-2 my-lg-0"
+                    style={{ maxHeight: '100px' }}
+                    navbarScroll
+                >
+                    <Nav.Link>{devicesLink}</Nav.Link>
+                    <Nav.Link>{authenticationLink}</Nav.Link>
+                    <Nav.Link>{logout}</Nav.Link>
+                </Nav>
+            </Navbar>
+        </>
+    ) : (
+        <MyLink text={'Login/SignUp'} to="/auth/login" center={true} margin={'1em'}/>
+    );
 
     return (
-        <Navbar bg="light" expand="lg" style={{marginTop: '1em', marginBottom: '2em'}}>
+        <Navbar expand="light" className={"primaryNavbar"}>
             <Container>
-                <Navbar.Brand href="/">Industrial IoT Solutions</Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="me-auto">
-                        {devicesLink}
-                        {authenticationLink}
-                        {logout}
-                    </Nav>
-                </Navbar.Collapse>
+                <Navbar.Brand href="/">
+                    <img src= {"./favicon.ico"} alt="logo"/>
+                </Navbar.Brand>
+                {navbarContent}
             </Container>
         </Navbar>
     );

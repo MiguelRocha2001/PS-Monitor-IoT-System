@@ -7,6 +7,10 @@ import {BrowserRouter} from "react-router-dom";
 import {StillInProgressAlert} from "./views/StillInProgressAlert";
 import {Col} from "react-bootstrap";
 import {App} from "./App";
+import Home from "./views/Home";
+import FrontPage from "./views/testLayout/FrontPage";
+import SignInForm from "./views/testLayout/SignInForm";
+import SignUpForm from "./views/testLayout/SignUpForm";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -15,14 +19,12 @@ const root = ReactDOM.createRoot(
 root.render(
     <React.StrictMode>
         <BrowserRouter >
-            <Col style={{width: '90%', margin: 'auto', marginTop: '30px'}}>
-                <StillInProgressAlert />
-                <App />
-            </Col>
+            <SignInForm/>
         </BrowserRouter>
     </React.StrictMode>
 );
-
+//<StillInProgressAlert /> yes, it is still in progress
+// <Col style={{width: '90%', margin: 'auto', marginTop: '30px'}}><App /></Col>
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
