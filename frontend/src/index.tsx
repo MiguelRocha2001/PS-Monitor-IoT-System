@@ -4,13 +4,9 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter} from "react-router-dom";
-import {StillInProgressAlert} from "./views/StillInProgressAlert";
-import {Col} from "react-bootstrap";
-import {App} from "./App";
-import Home from "./views/Home";
-import FrontPage from "./views/testLayout/FrontPage";
-import SignInForm from "./views/testLayout/SignInForm";
-import SignUpForm from "./views/testLayout/SignUpForm";
+import CodeInput from "./views/testLayout/CodeEmailVerification";
+import CodeVerification from "./views/testLayout/CodeEmailVerification";
+import InputCode from "./views/testLayout/CodeInput";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -19,7 +15,7 @@ const root = ReactDOM.createRoot(
 root.render(
     <React.StrictMode>
         <BrowserRouter >
-            <SignInForm/>
+            <CodeInput/>
         </BrowserRouter>
     </React.StrictMode>
 );

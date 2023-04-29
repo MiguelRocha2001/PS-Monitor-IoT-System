@@ -1,0 +1,45 @@
+.code-input {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-gap: 10px;
+    margin: 20px auto;
+    width: 300px;
+    height: 50px;
+    justify-items: center;
+    align-items: center;
+}
+
+.code-input-square {
+    border: 2px solid #b7b7b7;
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    text-align: center;
+    line-height: 30px;
+}
+
+.code-input-square.active {
+    border-color: #3e8e41;
+    color: #3e8e41;
+}
+
+.code-input input[type='text'] {
+    opacity: 0;
+    position: absolute;
+    width: 0;
+    height: 0;
+    z-index: -1;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(0); }
+    75% { transform: translateX(5px); }
+    100% { transform: translateX(0); }
+}
+
+.shake {
+    animation: shake 0.4s;
+}
+
