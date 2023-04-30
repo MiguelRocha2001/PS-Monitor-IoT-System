@@ -38,6 +38,7 @@
     font-size: 16px;
 }
 
+
 .signin-form button[type="submit"] {
     padding: 10px;
     margin-top: 15px;
@@ -99,3 +100,13 @@
 .google-icon {
     margin-right: 0.5rem;
 }
+
+#error-message{
+    margin-top: 0px;
+    color: red;
+    font-size: 12px;
+    font-weight: 400;
+    margin-bottom: 3px;
+}
+
+

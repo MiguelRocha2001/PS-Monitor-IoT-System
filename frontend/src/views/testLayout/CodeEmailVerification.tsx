@@ -3,18 +3,31 @@ import axios from 'axios';
 import './CodeEmailVerification.css';
 import CodeInput from "./CodeInput";
 
-function CodeVerification() {
+type OwnerDetails = {
+    email: string;
+};
+
+function CodeVerification({ email }: OwnerDetails) {
     const [isCodeIncorrect, setIsCodeIncorrect] = useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = useState<string>('');
+    const [isCodeSent, setIsCodeSent] = useState<string>('');
 
+    function handleResendCodeClick() {
+        // TODO: implement the logic for resending the code,the resent code needs to be different from the previous one
+        setIsCodeSent("Code resent to email"+ email)
+        console.log('Resending code...');
+    }
 
-    const shakeInput = isCodeIncorrect ? 'shake' : '';
     function onCodeSubmit(code: string) {
-        if(code === '12345') { // number of allowed tries 5, max duration token time is 30 minutes
+        if(code === '12345') { //TODO number of allowed tries 5, max duration token time is 30 minutes, if this happens change the error message to "Your code has expired, please request a new one"
             setIsCodeIncorrect(false);
             return true;
         }
         setIsCodeIncorrect(true);
+        setErrorMessage('Incorrect code, please try again');
+        setIsCodeSent('')
         return false;
+
       //  window.alert(code);
         /*
         axios.post('http://localhost:8080/api/v1/verify', {//api path to verify //todo
@@ -36,7 +49,10 @@ function CodeVerification() {
         <div className="code-verification">
             <h2>A code was sent to your email</h2>
             <p>Please enter the 5-digit code to verify your account:</p>
+            <p id="errorMessage" >{errorMessage}</p>
             <CodeInput onCodeSubmit={onCodeSubmit}/>
+            <button className="resend-code-button" onClick={handleResendCodeClick}>Resend Code</button>
+            <p id={"isCodeSent"}>{isCodeSent}</p>
         </div>
     );
 }

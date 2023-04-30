@@ -17,6 +17,9 @@ import {AuthnContainer} from "./views/auth/Authn";
 import {RequireAuthn} from "./views/auth/RequireAuthn";
 import {ErrorContainer} from "./views/error/ErrorContainer";
 import {UserCreated} from "./views/auth/UserCreated";
+import FrontPage from "./views/testLayout/FrontPage";
+import SignUpForm from "./views/testLayout/SignUpForm";
+import SignInForm from "./views/testLayout/SignInForm";
 //import './App.css';
 
 const logger = new Logger({ name: "App" });
@@ -79,11 +82,11 @@ function Router() {
         <div>
             <ErrorContainer>
                 <AuthnContainer>
-                    <NavBar/>
-                    <Container style={{width: '90%', margin: 'auto', marginTop: '30px'}}>
+                    <Container style={{width: '90%', margin: 'auto'}}>
                         <Routes>
-                            <Route path='/' element={<Home />} />
-                            <Route path='/auth/:action' element={<Authentication />} />
+                            <Route path='/' element={<FrontPage />} />
+                            <Route path='/auth/register' element={<SignUpForm />} />
+                            <Route path='/auth/login' element={<SignInForm />} />
                             <Route path='/auth/user-created' element={<UserCreated />} />
                             <Route path='/devices' element={<RequireAuthn children={<Devices />} />} />
                             <Route path='/devices/:deviceId' element={<RequireAuthn children={<DeviceInfo />} />} />
@@ -98,3 +101,28 @@ function Router() {
         </div>
     );
 }
+
+/*before
+    return (
+        <div>
+            <ErrorContainer>
+                <AuthnContainer>
+                    <NavBar/>
+                    <Container style={{width: '90%', margin: 'auto', marginTop: '30px'}}>
+                        <Routes>
+                            <Route path='/' element={<FrontPage />} />
+                            <Route path='/auth/:action' element={<Authentication />} />
+                            <Route path='/auth/user-created' element={<UserCreated />} />
+                            <Route path='/devices' element={<RequireAuthn children={<Devices />} />} />
+                            <Route path='/devices/:deviceId' element={<RequireAuthn children={<DeviceInfo />} />} />
+                            <Route path='/add-new-device' element={<RequireAuthn children={<NewDevice />} />} />
+                            <Route path='/device-data/:deviceId' element={<RequireAuthn children={<DeviceSensorialData />} />} />
+                            <Route path='/device-created/:deviceId' element={<RequireAuthn children={<DeviceCreated />} />} />
+                            <Route path='*' element={<p>404</p>} />
+                        </Routes>
+                    </Container>
+                </AuthnContainer>
+            </ErrorContainer>
+        </div>
+    );
+ */

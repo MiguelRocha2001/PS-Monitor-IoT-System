@@ -57,3 +57,16 @@ button:hover {
         padding: 0.5rem 1rem;
     }
 }
+
+.github-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    color: #333;
+    font-size: 40px;
+    cursor: pointer;
+}
+
+.github-icon:hover {
+    color: #4078c0;
+}

@@ -1,6 +1,8 @@
 import React from "react";
 import "./HomePageStyle.css";
 import { useNavigate } from "react-router-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faGithub} from "@fortawesome/free-brands-svg-icons";
 
 function FrontPage() {
 
@@ -22,6 +24,9 @@ function FrontPage() {
                 <button onClick={handleLoginClick} className="login-button">Log in</button>
                 <button onClick={handleSignUpClick} className="signup-button">Sign up</button>
             </div>
+            <a href="https://github.com/MiguelRocha2001/PS-Monitor-IoT-System" target="_blank" rel="noopener noreferrer">
+                <FontAwesomeIcon icon={faGithub} className="github-icon" />
+            </a>
         </div>
     );
 }

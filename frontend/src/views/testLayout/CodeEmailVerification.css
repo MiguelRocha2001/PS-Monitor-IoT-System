@@ -1,6 +1,10 @@
-.shake {
-    animation: shake 0.5s;
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
+
 
 .code-verification {
     background-color: #f2f2f2;
@@ -82,4 +86,30 @@
         padding: 5px;
         width: 30px;
     }
+}
+
+#errorMessage{
+    color: red;
+    font-size: 12px;
+    font-weight: 400;
+    margin-bottom: 20px;
+}
+
+.resend-code-button {
+    background-color: #3e8e41;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.resend-code-button:hover {
+    background-color: lightgreen;
+}
+
+#isCodeSent{
+    margin-top: 1rem;
 }
