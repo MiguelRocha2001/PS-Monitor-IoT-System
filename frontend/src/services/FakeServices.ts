@@ -12,6 +12,21 @@ export class FakeServices implements Services {
         this.devices.push(new Device(this.getNewDeviceId(), this.email))
         this.devices.push(new Device(this.getNewDeviceId(), this.email))
         this.devices.push(new Device(this.getNewDeviceId(), this.email))
+        this.devices.push(new Device(this.getNewDeviceId(), this.email))
+        this.devices.push(new Device(this.getNewDeviceId(), this.email))
+        this.devices.push(new Device(this.getNewDeviceId(), this.email))
+        this.devices.push(new Device(this.getNewDeviceId(), this.email))
+        this.devices.push(new Device(this.getNewDeviceId(), this.email))
+        this.devices.push(new Device(this.getNewDeviceId(), this.email))
+        this.devices.push(new Device(this.getNewDeviceId(), this.email))
+        this.devices.push(new Device(this.getNewDeviceId(), this.email))
+        this.devices.push(new Device(this.getNewDeviceId(), this.email))
+        this.devices.push(new Device(this.getNewDeviceId(), this.email))
+        this.devices.push(new Device(this.getNewDeviceId(), this.email))
+        this.devices.push(new Device(this.getNewDeviceId(), this.email))
+        this.devices.push(new Device(this.getNewDeviceId(), this.email))
+        this.devices.push(new Device(this.getNewDeviceId(), this.email))
+        this.devices.push(new Device(this.getNewDeviceId(), this.email))
     }
 
     async getBackendSirenInfo() {
@@ -94,6 +109,10 @@ export class FakeServices implements Services {
         const start = (page - 1) * limit
         const end = start + limit
         return this.devices.slice(start, end)
+    }
+
+    async getDeviceCount(): Promise<number> {
+        return this.devices.length
     }
 
     async getDevice(deviceId: string): Promise<Device> {

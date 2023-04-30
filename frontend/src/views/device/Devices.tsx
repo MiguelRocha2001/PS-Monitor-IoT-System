@@ -70,8 +70,18 @@ function DeviceList({devices}: { devices: Device[] }) {
 
 function PageDisplay({onPageChange}: { onPageChange: (page: number) => void }) {
     const [active, setActive] = useState(1)
+    const [numbOfPages, setNumbOfPages] = useState(1)
+
+    useEffect(() => {
+        async function fetchDeviceCount() {
+            const deviceCount = await services.getDeviceCount()
+            setNumbOfPages(Math.ceil(deviceCount / 5))
+        }
+        fetchDeviceCount()
+    }, [])
+
     let items = [];
-    for (let number = 1; number <= 5; number++) {
+    for (let number = 1; number <= numbOfPages; number++) {
         items.push(
             <Pagination.Item key={number} active={number === active} onClick={() => {
                 onPageChange(number)

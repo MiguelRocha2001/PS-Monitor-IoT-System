@@ -1,44 +1,42 @@
 package pt.isel.iot_data_server.service
 
-import pt.isel.iot_data_server.utils.deleteAllPhMeasurements
-import pt.isel.iot_data_server.utils.deleteAllTemperatureMeasurements
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
-import pt.isel.iot_data_server.configuration.TSDBConfig
+import pt.isel.iot_data_server.configuration.TSDBBuilder
+import pt.isel.iot_data_server.configuration.TSDBProductionConfig
 import pt.isel.iot_data_server.domain.PhRecord
 import pt.isel.iot_data_server.domain.TemperatureRecord
+import pt.isel.iot_data_server.repo.time_series.deleteAllPhMeasurements
+import pt.isel.iot_data_server.repo.time_series.deleteAllTemperatureMeasurements
 import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
 import pt.isel.iot_data_server.service.email.EmailManager
 import pt.isel.iot_data_server.service.sensor_data.SensorDataService
-import pt.isel.iot_data_server.utils.generateRandomEmail
-import pt.isel.iot_data_server.utils.generateRandomPh
-import pt.isel.iot_data_server.utils.getRandomInstantWithinLastWeek
-import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
+import pt.isel.iot_data_server.utils.*
 
 
 class SensorDataServiceTest {
-
     private lateinit var mqttClient: MqttClient
+    private val tsdbBuilder: TSDBBuilder = TSDBBuilder("test_bucket")
+    private val tsdbRepository: TSDBRepository = TSDBRepository(
+        tsdbBuilder.getClient(),
+        tsdbBuilder.getBucket()
+    )
 
     @BeforeEach
     fun setup() {
         // Mock Mqtt3Client instance
         mqttClient = Mockito.mock(MqttClient::class.java)
-        val testDBConfig = TSDBConfig().tsdb2Properties()
-        deleteAllPhMeasurements(testDBConfig)
-        deleteAllTemperatureMeasurements(testDBConfig)
+        deleteAllPhMeasurements(tsdbBuilder)
+        deleteAllTemperatureMeasurements(tsdbBuilder)
     }
 
     @Test
     fun testSavePhRecordWithValidPhValue() {
         testWithTransactionManagerAndRollback { tra: TransactionManager ->
-
-            val testDBConfig = TSDBConfig().tsdb2Properties()
-            val tsdbRepository = TSDBRepository(testDBConfig)
             val emailSenderService = EmailManager()
 
             val (deviceService, userService) = getNewDeviceAndUserService(tra)
@@ -71,9 +69,6 @@ class SensorDataServiceTest {
     @Test
     fun testSavePhRecordWithInvalidPhValue() {
         testWithTransactionManagerAndRollback { tra: TransactionManager ->
-
-            val testDBConfig = TSDBConfig().tsdb2Properties()
-            val tsdbRepository = TSDBRepository(testDBConfig)
             val emailSenderService = EmailManager()
 
             val (deviceService, userService) = getNewDeviceAndUserService(tra)
@@ -104,9 +99,6 @@ class SensorDataServiceTest {
     @Test
     fun testSavePhRecordWithInvalidDeviceId() {
         testWithTransactionManagerAndRollback { tra: TransactionManager ->
-
-            val testDBConfig = TSDBConfig().tsdb2Properties()
-            val tsdbRepository = TSDBRepository(testDBConfig)
             val emailSenderService = EmailManager()
 
             val (deviceService, userService) = getNewDeviceAndUserService(tra)
@@ -135,11 +127,8 @@ class SensorDataServiceTest {
     }
 
     @Test
-    fun testGetTemperatureRecordWithInvalidDeviceId(){
+    fun testGetTemperatureRecordWithInvalidDeviceId() {
         testWithTransactionManagerAndRollback { tra: TransactionManager ->
-
-            val testDBConfig = TSDBConfig().tsdb2Properties()
-            val tsdbRepository = TSDBRepository(testDBConfig)
             val emailSenderService = EmailManager()
 
             val (deviceService, userService) = getNewDeviceAndUserService(tra)
@@ -167,10 +156,8 @@ class SensorDataServiceTest {
     }
 
     @Test
-    fun testSaveValidTemperatureRecord(){
+    fun testSaveValidTemperatureRecord() {
         testWithTransactionManagerAndRollback { tra: TransactionManager ->
-            val testDBConfig = TSDBConfig().tsdb2Properties()
-            val tsdbRepository = TSDBRepository(testDBConfig)
             val emailSenderService = EmailManager()
 
             val (deviceService, userService) = getNewDeviceAndUserService(tra)
@@ -201,10 +188,8 @@ class SensorDataServiceTest {
 
 
     @Test
-    fun testSaveInvalidTemperatureRecord(){
+    fun testSaveInvalidTemperatureRecord() {
         testWithTransactionManagerAndRollback { tra: TransactionManager ->
-            val testDBConfig = TSDBConfig().tsdb2Properties()
-            val tsdbRepository = TSDBRepository(testDBConfig)
             val emailSenderService = EmailManager()
 
             val (deviceService, userService) = getNewDeviceAndUserService(tra)

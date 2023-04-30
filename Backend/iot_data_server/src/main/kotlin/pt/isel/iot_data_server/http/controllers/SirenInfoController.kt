@@ -29,6 +29,7 @@ class SirenInfoController {
                 isLoggedInLink(this)
                 getMeLink(this)
                 getDevicesLink(this)
+                getDeviceCountLink(this)
                 getDeviceLink(this)
                 createDeviceAction(this)
                 getPhLink(this)

@@ -16,7 +16,8 @@ class DeviceRepoTests {
     fun `add device`() {
         testWithTransactionManagerAndRollback { transactionManager ->
             transactionManager.run { transaction ->
-                val repo = transaction.repository
+                val deviceDataRepository = transaction.deviceRepo
+                val userRepo = transaction.userRepo
 
                 val userId = "some_id"
                 val user = User(
@@ -29,10 +30,10 @@ class DeviceRepoTests {
                 )
                 val device = Device(Random.nextInt().toString(), "exampleEmail@pront.com")
 
-                repo.createUser(user)
-                repo.createDevice(userId, device)
+                userRepo.createUser(user)
+                deviceDataRepository.createDevice(userId, device)
 
-                val foundDevice = repo.getAllDevices().any { it.deviceId == device.deviceId }
+                val foundDevice = deviceDataRepository.getAllDevices().any { it.deviceId == device.deviceId }
                 assertTrue("Device found", foundDevice)
             }
         }
@@ -41,8 +42,10 @@ class DeviceRepoTests {
     @Test
     fun `add 3 devices and get the list`() {
         testWithTransactionManagerAndRollback { transactionManager ->
-            transactionManager.run {transaction ->
-                val devicesRepo = transaction.repository
+            transactionManager.run { transaction ->
+                val devicesRepo = transaction.deviceRepo
+                val userRepo = transaction.userRepo
+
                 var devices = devicesRepo.getAllDevices()
                 assertTrue("Device found", devices.isEmpty())
 
@@ -55,7 +58,7 @@ class DeviceRepoTests {
                         generateRandomEmail()
                     )
                 )
-                devicesRepo.createUser(user)
+                userRepo.createUser(user)
 
                 val device1 = Device(Random.nextInt().toString(), generateRandomEmail())
                 val device2 = Device(Random.nextInt().toString(), generateRandomEmail())
@@ -74,8 +77,8 @@ class DeviceRepoTests {
     @Test
     fun `get empty list of devices`() {
         testWithTransactionManagerAndRollback { transactionManager ->
-            transactionManager.run {transaction ->
-                val devicesRepo = transaction.repository
+            transactionManager.run { transaction ->
+                val devicesRepo = transaction.deviceRepo
 
                 val devices = devicesRepo.getAllDevices()
 

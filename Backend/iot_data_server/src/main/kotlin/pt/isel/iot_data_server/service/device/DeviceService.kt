@@ -25,7 +25,7 @@ class DeviceService (
         return transactionManager.run {
             return@run generateDeviceId().let { deviceId ->
                 val device = Device(deviceId, alertEmail)
-                it.repository.createDevice(userId, device)
+                it.deviceRepo.createDevice(userId, device)
                 logger.debug("Device with id ${device.deviceId} added")
                 Either.Right(deviceId)
             }
@@ -36,10 +36,19 @@ class DeviceService (
         return getUserDeviceByIdOrNull(userId, deviceId) != null
     }
 
-    fun getAllDevices(userId: String, page: Int?, limit: Int?): GetAllDevicesResult {
+    fun getDeviceCount(userId: String): DeviceCountResult {
+        userService.getUserByIdOrNull(userId) ?: return Either.Left(DeviceCountError.UserNotFound)
+        return transactionManager.run {
+            val count = it.deviceRepo.deviceCount(userId)
+            logger.debug("Device count returned")
+            return@run Either.Right(count)
+        }
+    }
+
+    fun getAllDevices(userId: String, page: Int? = null, limit: Int? = null): GetAllDevicesResult {
         userService.getUserByIdOrNull(userId) ?: return Either.Left(GetAllDevicesError.UserNotFound)
         return transactionManager.run {
-            val devices = it.repository.getAllDevices(userId, page, limit).also {
+            val devices = it.deviceRepo.getAllDevices(userId, page, limit).also {
                 logger.debug("All devices returned")
             }
             return@run Either.Right(devices)
@@ -61,14 +70,14 @@ class DeviceService (
     private fun getUserDeviceByIdOrNull(userId: String, deviceId: String): Device? {
         userService.getUserByIdOrNull(userId) ?: return null
         return transactionManager.run {
-            return@run it.repository.getAllDevices(userId)
+            return@run it.deviceRepo.getAllDevices(userId)
                 .find<Device> { device: Device -> device.deviceId == deviceId }
         }
     }
 
     fun getDeviceByIdOrNull(deviceId: String): Device? {
         return transactionManager.run {
-            return@run it.repository.getDeviceById(deviceId)
+            return@run it.deviceRepo.getDeviceById(deviceId)
         }
     }
 
@@ -92,19 +101,19 @@ class DeviceService (
 
     fun removeAllDevices() {
         return transactionManager.run {
-            return@run it.repository.removeAllDevices()
+            return@run it.deviceRepo.removeAllDevices()
         }
     }
 
     fun getDevicesByOwnerEmail(ownerEmail: String): List<Device> { //FIXME: WHAT IF THE EMAIL DOES NOT EXIST
         return transactionManager.run {
-            return@run it.repository.getDevicesByOwnerEmail(ownerEmail)
+            return@run it.deviceRepo.getDevicesByOwnerEmail(ownerEmail)
         }
     }
 
     fun deleteAllDevices() {
         return transactionManager.run {
-            return@run it.repository.deleteAllDevices()
+            return@run it.deviceRepo.deleteAllDevices()
         }
     }
 

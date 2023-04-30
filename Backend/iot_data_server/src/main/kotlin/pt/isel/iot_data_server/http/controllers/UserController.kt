@@ -1,7 +1,6 @@
 package pt.isel.iot_data_server.http.controllers
 
 import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.links.Link
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse

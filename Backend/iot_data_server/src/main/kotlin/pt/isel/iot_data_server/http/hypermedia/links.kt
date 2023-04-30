@@ -29,6 +29,12 @@ fun getDevicesLink(sirenBuilderScope: SirenBuilderScope<*>) =
         rel = Rels.DEVICES
     )
 
+fun getDeviceCountLink(sirenBuilderScope: SirenBuilderScope<*>) =
+    sirenBuilderScope.link(
+        href = URI(Uris.Devices.COUNT),
+        rel = Rels.DEVICE_COUNT
+    )
+
 fun getDeviceLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
         href = Uris.Devices.byId(),

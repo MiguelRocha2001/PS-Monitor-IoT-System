@@ -19,16 +19,16 @@ class UserService(
             // generate random int
             val userId = UUID.randomUUID().toString()
 
-            if (it.repository.existsUsername(userInfo.username))
+            if (it.userRepo.existsUsername(userInfo.username))
                 return@run Either.Left(CreateUserError.UserAlreadyExists)
 
-            if (it.repository.existsEmail(userInfo.email))
+            if (it.userRepo.existsEmail(userInfo.email))
                 return@run Either.Left(CreateUserError.EmailAlreadyExists)
 
             val passwordHash = saltPasswordOperations.saltAndHashPass(userInfo.password, userId)
             val newUserInfo = UserInfo(userInfo.username, passwordHash.hashedPassword, userInfo.email)
             val newUser = User(userId, newUserInfo)
-            it.repository.createUser(newUser)
+            it.userRepo.createUser(newUser)
 
             val tokenCreationResult = createAndGetToken(userInfo.username)
             if (tokenCreationResult is Either.Left)
@@ -41,25 +41,25 @@ class UserService(
 
     fun getAllUsers(): List<User> {
         return transactionManager.run {
-            return@run it.repository.getAllUsers()
+            return@run it.userRepo.getAllUsers()
         }
     }
 
     fun getUserByIdOrNull(userId: String): User? {
         return transactionManager.run {
-            return@run it.repository.getUserByIdOrNull(userId)
+            return@run it.userRepo.getUserByIdOrNull(userId)
         }
     }
 
     fun getUserByToken(token: String): User? {
         return transactionManager.run {
-            return@run it.repository.getUserByToken(token)
+            return@run it.userRepo.getUserByToken(token)
         }
     }
 
     fun getUserByEmailAddress(email: String): User? {
         return transactionManager.run {
-            return@run it.repository.getUserByEmailAddressOrNull(email)
+            return@run it.userRepo.getUserByEmailAddressOrNull(email)
         }
     }
 
@@ -69,12 +69,12 @@ class UserService(
      */
     fun createAndGetToken(username: String): TokenCreationResult {
         return transactionManager.run {
-            val user = it.repository.getUserByUsernameOrNull(username)
+            val user = it.userRepo.getUserByUsernameOrNull(username)
                 ?: return@run Either.Left(TokenCreationError.UserOrPasswordAreInvalid)
             val token = UUID.randomUUID().toString()
            // val aesCipher = AESCipher("AES/CBC/PKCS5Padding", AES.generateIv())// todo store the iv in the db
           //  saveEncryptedToken(aesCipher,token,user.id)
-            it.repository.createToken(user.id, token)
+            it.userRepo.createToken(user.id, token)
 
             return@run Either.Right(token)
         }
@@ -82,7 +82,7 @@ class UserService(
 
     fun saveEncryptedToken(aesCipher: AESCipher, plainToken: String, userId: String) = transactionManager.run {
         val encryptedToken = aesCipher.encrypt(plainToken)
-        return@run it.repository.createToken(userId, encryptedToken)
+        return@run it.userRepo.createToken(userId, encryptedToken)
     }
 
     fun decryptToken(aesCipher: AESCipher, encryptedToken: String): String {
@@ -95,8 +95,8 @@ class UserService(
      */
     fun deleteAllUsers() {
         transactionManager.run {
-            it.repository.deleteAllTokens()
-            it.repository.deleteAllUsers()
+            it.userRepo.deleteAllTokens()
+            it.userRepo.deleteAllUsers()
         }
     }
 }

@@ -29,7 +29,7 @@ class SaltPasswordOperations(
 
       fun saveSalt(userId: String, salt: String) {
         return transactionManager.run {
-            return@run it.repository.saveSalt(userId, salt)
+            return@run it.userRepo.saveSalt(userId, salt)
         }
     }
 
@@ -44,7 +44,7 @@ class SaltPasswordOperations(
     //username is used to get the stored pass from the database
     //password is the password received from the user (CLEAR TEXT)
     fun verifyPassword(username: String, password: String): Boolean = transactionManager.run {
-        val user = it.repository.getUserByUsernameOrNull(username) ?: return@run false
+        val user = it.userRepo.getUserByUsernameOrNull(username) ?: return@run false
         val storedSalt = getSalt(user.id)
         val receivedHashPassword = hashPassword(password,storedSalt).hashedPassword
         val storedHashedPassword = user.userInfo.password
@@ -52,7 +52,7 @@ class SaltPasswordOperations(
     }
 
     fun getSalt(userId: String): ByteArray = transactionManager.run {
-        return@run Base64.getDecoder().decode(it.repository.getSalt(userId))
+        return@run Base64.getDecoder().decode(it.userRepo.getSalt(userId))
     }
 
 }
