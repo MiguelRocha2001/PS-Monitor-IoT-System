@@ -47,7 +47,7 @@ type Action =
     }
 
 function reducer(state:State, action:Action): State {
-    switch(action.type){
+    switch(action.type) {
         case "setSirenInfoFetched" : return {type: "sirenInfoFetched"}
         case "setSirenInfoFetchFailed" : return {type: "sirenInfoFetchFailed"}
     }

@@ -34,7 +34,7 @@ fun fromJsonStringToDeviceId(str: String): String {
     val split = str.trimJsonString().split(",")
 
     val deviceId = split
-        .find { it.contains("deviceId") }
+        .find { it.contains("device_id") }
         ?.split(":")
         ?.get(1)
         ?.trim()

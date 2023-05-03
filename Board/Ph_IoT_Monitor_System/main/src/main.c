@@ -97,7 +97,7 @@ void sendWaterAlert(esp_mqtt_client_handle_t client, int timestamp, char* device
 }
 
 /**
- * The program starts here.
+ * Program entry point.
  * It will read the pH value every 0.3 seconds and store it in RTC memory.
  * After 5 readings, it will send the values to the MQTT broker and go to deep sleep for 3 seconds.
  * For some unknown reason, the MQTT broker does not receive all messages, the first reading round.

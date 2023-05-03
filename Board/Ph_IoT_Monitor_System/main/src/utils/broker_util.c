@@ -148,7 +148,7 @@ void mqtt_send_ph(esp_mqtt_client_handle_t client, struct ph_record *ph_record, 
     char buf[100];
     sprintf(buf, "{deviceId: %s, value: %f, timestamp: %d}", deviceID, ph_record -> value, ph_record -> timestamp);
 
-    mqtt_send_encrypted_data(client, buf, "/ph");
+    mqtt_send_encrypted_data(client, buf, "ph");
     
     ESP_LOGI(TAG, "Message: %s published on topic /ph", buf);
 }
@@ -159,7 +159,7 @@ void mqtt_send_water_alert(esp_mqtt_client_handle_t client, int timestamp, char*
     char buf[100];
     sprintf(buf, "{deviceId: %s, timestamp: %d}", deviceID, timestamp);
 
-    mqtt_send_encrypted_data(client, buf, "/water_alert");
+    mqtt_send_encrypted_data(client, buf, "water_alert");
     
     ESP_LOGI(TAG, "Message: %s published on topic /water_alert", buf);
 }

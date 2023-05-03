@@ -14,13 +14,15 @@ import pt.isel.iot_data_server.http.model.Problem
 import pt.isel.iot_data_server.http.model.map
 import pt.isel.iot_data_server.http.model.sensor_data.PhRecordsOutputModel
 import pt.isel.iot_data_server.http.model.sensor_data.TemperatureRecordsOutputModel
-import pt.isel.iot_data_server.service.sensor_data.SensorDataService
+import pt.isel.iot_data_server.service.sensor_data.PhDataService
+import pt.isel.iot_data_server.service.sensor_data.TemperatureDataService
 import java.util.*
 
 @Tag(name = "Sensor data", description = "Sensor data API")
 @RestController
 class SensorDataController(
-    val service: SensorDataService
+    val phDataService: PhDataService,
+    val temperatureDataService: TemperatureDataService
 ) {
     @Operation(summary = "Get Ph records", description = "Get all ph records associated with a device")
     @ApiResponse(responseCode = "200", description = "Ph successfully retrieved", content = [Content(
@@ -36,7 +38,7 @@ class SensorDataController(
         user: User,
         @PathVariable device_id: String,
     ): ResponseEntity<*> {
-        val result = service.getPhRecords(user.id, device_id)
+        val result = phDataService.getPhRecords(user.id, device_id)
         return result.map {
             ResponseEntity.status(200)
                 .contentType(SirenMediaType)
@@ -66,7 +68,7 @@ class SensorDataController(
         user: User,
         @PathVariable device_id: String
     ): ResponseEntity<*> {
-        val result = service.getTemperatureRecords(user.id, device_id)
+        val result = temperatureDataService.getTemperatureRecords(user.id, device_id)
         return result.map {
             ResponseEntity.status(200)
                 .contentType(SirenMediaType)

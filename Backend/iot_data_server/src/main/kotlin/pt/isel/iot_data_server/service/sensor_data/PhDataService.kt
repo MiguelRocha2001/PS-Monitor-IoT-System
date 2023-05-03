@@ -3,6 +3,7 @@ package pt.isel.iot_data_server.service.sensor_data
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import pt.isel.iot_data_server.crypto.AES
 import pt.isel.iot_data_server.domain.*
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
 import pt.isel.iot_data_server.service.Either
@@ -11,14 +12,14 @@ import pt.isel.iot_data_server.service.email.EmailManager
 
 
 @Service
-class SensorDataService(
+class PhDataService(
   //  private val transactionManager: TransactionManager,
     private val emailSenderService: EmailManager,
     private val tsdbRepository: TSDBRepository,
     private val deviceService: DeviceService,
     client: MqttClient
 ) {
-    private val logger = LoggerFactory.getLogger(SensorDataService::class.java)
+    private val logger = LoggerFactory.getLogger(PhDataService::class.java)
 
     val MIN_PH = 6.0 // TODO: change this to other place and make it configurable
     init {
@@ -43,24 +44,12 @@ class SensorDataService(
             Either.Right(tsdbRepository.getPhRecords(deviceId))
     }
 
-    fun saveTemperatureRecord(
-        deviceId: String,
-        temperatureRecord: TemperatureRecord,
-    ) {
-        if(temperatureRecord.value < -273.15 || temperatureRecord.value > 1000)
-            throw Exception("Invalid temperature value")
-        tsdbRepository.saveTemperatureRecord(deviceId, temperatureRecord)
-    }
-
-    fun getTemperatureRecords(userId: String, deviceId: String): TemperatureDataResult {
-        return if (!deviceService.existsDevice(userId, deviceId))
-            Either.Left(TemperatureDataError.DeviceNotFound)
-        else
-            Either.Right(tsdbRepository.getTemperatureRecords(deviceId))
+    fun getAllPhRecords(): List<PhRecord> {
+        return tsdbRepository.getAllPhRecords()
     }
 
     private fun subscribePhTopic(client: MqttClient) {
-        client.subscribe("/ph") { topic, message ->
+        client.subscribe("ph") { topic, message ->
             try {
                 logger.info("Received message from topic: $topic")
 
@@ -84,14 +73,6 @@ class SensorDataService(
                 logger.error("Error while processing ph record: ${e.message}")
             }
         }
-    }
-
-    fun getAllPhRecords(): List<PhRecord> {
-        return tsdbRepository.getAllPhRecords()
-    }
-
-    fun getAllTemperatureRecords(): List<TemperatureRecord> {
-        return tsdbRepository.getAllTemperatureRecords()
     }
 
     private fun sendEmailIfPhExceedsLimit(deviceId: String, phRecord: PhRecord,device: Device) {

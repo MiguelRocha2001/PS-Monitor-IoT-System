@@ -87,7 +87,6 @@ class DeviceService (
      *  (exists to facilitate testing)
      */
     fun generateDeviceId(): String {
-
         // loops until a unique ID is generated
         while (true) { // TODO: change to a for loop with a max number of iterations
             val deviceId = generateRandomDeviceId()
