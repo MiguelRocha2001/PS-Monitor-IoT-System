@@ -105,7 +105,6 @@ body{
 
 .pagination > li > a,
 .pagination > li > a:hover,
-.pagination > li > a:focus,
 .pagination > li > span {
     color: #3e8e41;
     font-size: 1.2rem;
@@ -113,14 +112,18 @@ body{
     padding: 0.5rem 1rem;
 }
 
-#pagination-elem,
-#pagination-elem :hover,
-#pagination-elem :focus
+
+
+.pagination-elem,
+.pagination-elem :hover
 {
-    background-color: #3e8e41;
     border-color: #fff;
     color: #fff;
 
+}
+
+#active{
+    background-color : #3e8e41;
 }
 
 
@@ -143,4 +146,49 @@ body{
     .list-item-info a {
         margin-top: 0.5rem;
     }
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+}
+
+.input-group input {
+    border-color: #3e8e41;
+    margin-top: 1rem;
+    margin-right: 0.5rem;
+}
+
+.input-group input::placeholder {
+    color: grey;
+}
+
+.input-group button {
+    margin-top: 1rem;
+    background-color: #3e8e41;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+}
+
+.pagination-btn {
+    background-color: #3e8e41;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    margin: 0 0.5rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+}
+
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+.pagination-btn:hover {
+    background-color: #2c6e36;
 }
