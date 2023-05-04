@@ -12,6 +12,7 @@ import FrontPage from "./views/testLayout/FrontPage";
 import {Col} from "react-bootstrap";
 import {App} from "./App";
 import SignUpForm from "./views/testLayout/SignUpForm";
+import {Devices} from "./views/device/Devices";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -20,10 +21,11 @@ const root = ReactDOM.createRoot(
 root.render(
     <React.StrictMode>
         <BrowserRouter >
-           <Col style={{width: '90%', margin: 'auto'}}><App /></Col>
+            <Col style={{width: '90%', margin: 'auto'}}><App /></Col>
         </BrowserRouter>
     </React.StrictMode>
 );
+//<Col style={{width: '90%', margin: 'auto'}}><App /></Col>
 //<Col style={{width: '90%', margin: 'auto'}}><App /></Col>>
 //<StillInProgressAlert /> yes, it is still in progress
 // <Col style={{width: '90%', margin: 'auto', marginTop: '30px'}}><App /></Col>

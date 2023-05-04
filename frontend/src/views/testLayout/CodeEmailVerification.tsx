@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import './CodeEmailVerification.css';
 import CodeInput from "./CodeInput";
@@ -11,8 +11,17 @@ function CodeVerification({ email }: OwnerDetails) {
     const [isCodeIncorrect, setIsCodeIncorrect] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [isCodeSent, setIsCodeSent] = useState<string>('');
+    const [coolDownCode, setCoolDownCode] = useState<boolean>(false);
 
     function handleResendCodeClick() {
+        // Disable the resend code button
+        setCoolDownCode(true);
+
+        // Set a timer to re-enable the resend code button after 5 seconds
+        setTimeout(() => {
+            setCoolDownCode(false);
+        }, 5000);
+
         // TODO: implement the logic for resending the code,the resent code needs to be different from the previous one
         setIsCodeSent("Code resent to email"+ email)
         console.log('Resending code...');
@@ -50,11 +59,15 @@ function CodeVerification({ email }: OwnerDetails) {
             <h2>A code was sent to your email</h2>
             <p>Please enter the 5-digit code to verify your account:</p>
             <p id="errorMessage" >{errorMessage}</p>
-            <CodeInput onCodeSubmit={onCodeSubmit}/>
-            <button className="resend-code-button" onClick={handleResendCodeClick}>Resend Code</button>
-            <p id={"isCodeSent"}>{isCodeSent}</p>
+            <CodeInput/>
+            {(!coolDownCode) && (<button className="resend-code-button" onClick={handleResendCodeClick}>Resend Code</button>)}
+            {(coolDownCode) && (<p id={"isCodeSent"}>{isCodeSent}</p>)}
         </div>
     );
+
+
 }
+
+
 
 export default CodeVerification;

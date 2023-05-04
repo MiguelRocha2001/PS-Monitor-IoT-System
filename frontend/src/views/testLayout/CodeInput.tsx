@@ -6,7 +6,11 @@ type CodeInputProps = {
     onCodeSubmit: (code: string) => boolean;
 };
 
-const InputCode = ({ onCodeSubmit }: CodeInputProps) => {
+const onCodeSubmit = (password: string) => {
+    return password == "ABCDE";
+}
+
+const InputCode = () => {
     const [code, setCode] = useState<string>('');
     const[isCodeIncorrect, setIsCodeIncorrect] = useState<boolean>(false);
 
@@ -21,7 +25,10 @@ const InputCode = ({ onCodeSubmit }: CodeInputProps) => {
                 if(!onCodeSubmit(input.toUpperCase())) {
                     setCode('')
                     setIsCodeIncorrect(true)
+                    console.log("Incorrect code")
                 }
+                else
+                    console.log("Correct code")
             }
         }
     };

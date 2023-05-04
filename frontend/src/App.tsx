@@ -20,6 +20,7 @@ import {UserCreated} from "./views/auth/UserCreated";
 import FrontPage from "./views/testLayout/FrontPage";
 import SignUpForm from "./views/testLayout/SignUpForm";
 import SignInForm from "./views/testLayout/SignInForm";
+import NotFound from "./views/testLayout/404";
 //import './App.css';
 
 const logger = new Logger({ name: "App" });
@@ -93,7 +94,7 @@ function Router() {
                             <Route path='/add-new-device' element={<RequireAuthn children={<NewDevice />} />} />
                             <Route path='/device-data/:deviceId' element={<RequireAuthn children={<DeviceSensorialData />} />} />
                             <Route path='/device-created/:deviceId' element={<RequireAuthn children={<DeviceCreated />} />} />
-                            <Route path='*' element={<p>404</p>} />
+                            <Route path='*' element={<NotFound/>}/>
                         </Routes>
                     </Container>
                 </AuthnContainer>
