@@ -1,0 +1,146 @@
+/****DevicesPage****/
+body{
+    background-color: #ECECEC;
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    margin: 1rem auto;
+    max-width: 600px;
+}
+
+.card-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 4rem;
+    background-color: #3e8e41;
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: bold;
+    border-radius: 10px 10px 0 0;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.list-group {
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+}
+
+.list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f2f2f2;
+    border: none;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 10px;
+}
+
+.list-item-info {
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.list-item-info a {
+    display: block;
+    text-decoration: none;
+    color: #3e8e41;
+    font-weight: bold;
+    transition: all 0.2s ease-in-out;
+
+}
+
+.list-item-info a:hover {
+    color: #fff;
+    background-color: #3e8e41;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.add-device {
+    margin-top: 1rem;
+    background-color: #3e8e41;
+    border-radius: 10px;
+    padding: 1rem;
+}
+
+.add-device a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.device-id{
+    color: #3e8e41;
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+/****Pagination****/
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pagination > li > a,
+.pagination > li > a:hover,
+.pagination > li > a:focus,
+.pagination > li > span {
+    color: #3e8e41;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+}
+
+#pagination-elem,
+#pagination-elem :hover,
+#pagination-elem :focus
+{
+    background-color: #3e8e41;
+    border-color: #fff;
+    color: #fff;
+
+}
+
+
+@media only screen and (max-width: 600px) {
+    .card {
+        max-width: 90%;
+    }
+}
+
+@media only screen and (max-width: 450px) {
+    .card-header {
+        font-size: 1.2rem;
+    }
+
+    .list-item-info {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .list-item-info a {
+        margin-top: 0.5rem;
+    }
+}
