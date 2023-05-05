@@ -14,13 +14,15 @@ export function Devices() {
     const setError = useSetError()
     const [devices, setDevices] = useState<Device[]>([])
     const [searchQuery, setSearchQuery] = useState("");
-    const [filteredDevices, setFilteredDevices] = useState<Device[]>([]);
+
 
     const [page, setPage] = useState(1)
     const [pageSize, setPageSize] = useState(5)
     const [totalDevices, setTotalDevices] = useState(0)
 
-    useEffect(() => {
+
+
+    useEffect(() => { //TODO IF I FETCH DEVICE I STORE THEME SO WHEN I CLICK IN THE PREVIOUS BUTTON A NEW REQUEST IS NOT MADE
         async function fetchNumberOfDevices() {
             services.getDeviceCount()
                 .then((number)=>
@@ -28,8 +30,9 @@ export function Devices() {
                 )
                 .catch(error => setError(error))
         }
-        fetchNumberOfDevices()
-    }, [totalDevices])
+        if(searchQuery === "") fetchNumberOfDevices()
+
+    }, [searchQuery])
 
     useEffect(() => {
         async function fetchDevices() {
@@ -43,25 +46,27 @@ export function Devices() {
     }, [page, pageSize,searchQuery])
 
     const handleButtonPress = () => {
-         services.getDevicesByName(page, pageSize, searchQuery.toUpperCase()).then
-            (devices => {
-                setDevices(devices);
-            })
+         services.getDevicesByName(page, pageSize, searchQuery.toUpperCase()).then(
+             devices => {setDevices(devices);})
+             .then(()=> services.getDeviceCountByName(searchQuery.toUpperCase()))
+             .then((devicesSize)=>setTotalDevices(devicesSize))
+             .catch(error => setError(error)
+         )
     }
 
     return (
         <ErrorController>
-            <DeviceList devices={devices} searchQuery={searchQuery} setSearchQuery={setSearchQuery} handleButtonPress={handleButtonPress} />
-            <Pagination currentPage={page} totalPages={totalDevices/pageSize} onPageChange={(selectedPage: number) => setPage(selectedPage)} />
+            <DeviceList devices={devices} searchQuery={searchQuery} setSearchQuery={setSearchQuery} handleButtonPress={handleButtonPress} totalDevices={totalDevices}/>
+            <Pagination currentPage={page} totalPages={Math.ceil(totalDevices/pageSize)} onPageChange={(selectedPage: number) => setPage(selectedPage)} />
         </ErrorController>
     )
 }
 
-function DeviceList({ devices, searchQuery, setSearchQuery, handleButtonPress }: { devices: Device[], searchQuery: string, setSearchQuery: (searchQuery: string) => void, handleButtonPress: () => void }) {
+function DeviceList({ devices, searchQuery, setSearchQuery, handleButtonPress,totalDevices }: { devices: Device[], searchQuery: string, setSearchQuery: (searchQuery: string) => void, handleButtonPress: () => void, totalDevices: number }) {
     return (
         <div className="card">
             <div className="card-header">
-                <h3>Devices Currently Active</h3>
+                <h3>{totalDevices} Devices Currently Active</h3>
             </div>
             <div className="card-body">
                 {devices.length > 0 ? (
@@ -128,7 +133,7 @@ function InputTextBox({ searchQuery, setSearchQuery, onSearch }: { searchQuery: 
                 placeholder="Search for device"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyPress={handleKeyPress}
+                onKeyPress={handleKeyPress} //TODO: FIX THIS
             />
             <button type="button" onClick={onSearch}>Search</button>
         </div>

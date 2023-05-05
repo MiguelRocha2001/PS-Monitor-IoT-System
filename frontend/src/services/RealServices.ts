@@ -142,6 +142,10 @@ export class RealServices implements Services {
         throw new Error("Method not implemented.");//todo
     }
 
+    getDeviceCountByName(s: string): Promise<number> {
+        throw new Error("Method not implemented.");//todo
+    }
+
     async getDeviceCount(): Promise<number> {
         const getDeviceCountLink = SirenModule.getGetDeviceCountLink()
         if (!getDeviceCountLink) throw new Error('Get devices link not found')

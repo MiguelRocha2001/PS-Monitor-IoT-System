@@ -117,6 +117,10 @@ export class FakeServices implements Services {
         return this.devices.filter(d => d.id.includes(name)).slice(start, end)
     }
 
+    getDeviceCountByName(s: string): Promise<number> {
+        return this.getDevicesByName(1, 1000, s).then(devices => devices.length)
+    }
+
     async getDeviceCount(): Promise<number> {
         return this.devices.length
     }

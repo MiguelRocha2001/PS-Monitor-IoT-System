@@ -17,6 +17,7 @@ export interface Services {
     getTemperatureData(deviceId: string): Promise<TemperatureData>
     logout(): Promise<void>
     getDevicesByName(page: number, limit: number, name: string): Promise<Device[]>
+    getDeviceCountByName(s: string): Promise<number>;
 }
 
 export const services: Services = new FakeServices()

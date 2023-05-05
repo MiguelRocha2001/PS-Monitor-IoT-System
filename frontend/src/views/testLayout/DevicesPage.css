@@ -10,6 +10,7 @@ body{
     padding: 1rem;
     margin: 1rem auto;
     max-width: 600px;
+
 }
 
 .card-header {
@@ -92,10 +93,16 @@ body{
 /****Pagination****/
 
 .pagination-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
+
 
 .pagination {
     display: flex;
