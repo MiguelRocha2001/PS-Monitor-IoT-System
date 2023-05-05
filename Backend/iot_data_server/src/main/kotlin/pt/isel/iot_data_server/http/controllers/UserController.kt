@@ -20,6 +20,7 @@ import pt.isel.iot_data_server.http.model.Problem
 import pt.isel.iot_data_server.http.model.map
 import pt.isel.iot_data_server.http.model.user.*
 import pt.isel.iot_data_server.service.Either
+import pt.isel.iot_data_server.service.user.Role
 import pt.isel.iot_data_server.service.user.UserService
 import java.util.*
 
@@ -55,6 +56,7 @@ class UserController(
     }
 
     @GetMapping(Uris.Users.ALL)
+    @Authorization(Role.ADMIN)
     fun getAllUsers(
         user: User
     ): ResponseEntity<*> {
@@ -125,8 +127,8 @@ class UserController(
         // adds cookie to response
         if (res is Either.Right) {
             val age = 60 * 60 // 1 hour
-            val cookie = buildCookie(age, res.value)
-            response.addCookie(cookie)
+            val cookieWithToken = buildCookie(age, res.value)
+            response.addCookie(cookieWithToken)
         }
 
         return res.map {
@@ -163,7 +165,7 @@ class UserController(
 
         val user = service.getUserByEmailAddress(email)
         if (user == null) {
-            val userCreationResult = service.createUser(UserInfo(username, password, email))
+            val userCreationResult = service.createUser(UserInfo(username, password, email, Role.USER))
             if (userCreationResult is Either.Left) {
                 throw RuntimeException("Error creating user")
             }

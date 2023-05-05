@@ -30,14 +30,14 @@ class DeviceServiceTests {
 			//service.removeAllDevices()// just in case there are any devices in the database
 
 			val userID = createRandomUser(userService)
-			var devicesResult = deviceService.getAllDevices(userID)
+			var devicesResult = deviceService.getUserDevices(userID)
 			assertTrue(devicesResult is Either.Right && devicesResult.value.isEmpty())
 
 			val ownerEmail = generateRandomEmail()
 			val result = deviceService.addDevice(userID, ownerEmail)
 			assertTrue(result is Either.Right)
 
-			devicesResult = deviceService.getAllDevices(userID)
+			devicesResult = deviceService.getUserDevices(userID)
 			assertTrue(devicesResult is Either.Right && devicesResult.value.size == 1)
 			devicesResult as Either.Right
 			assertTrue(devicesResult.value[0].ownerEmail == ownerEmail)
@@ -113,7 +113,7 @@ class DeviceServiceTests {
 				assertTrue(result is Either.Right)
 
 				// tries to generate a new device id, and asserts that it is unique
-				val devicesResult = deviceService.getAllDevices(userId)
+				val devicesResult = deviceService.getUserDevices(userId)
 				assertTrue(devicesResult is Either.Right)
 				devicesResult as Either.Right
 				val devices = devicesResult.value

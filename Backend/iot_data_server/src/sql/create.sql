@@ -1,8 +1,11 @@
+-- TODO: define constraints in here
+
 create table _user(
     _id varchar primary key,
     username varchar unique,
     password varchar,
-    email varchar unique
+    email varchar unique,
+    role varchar
 );
 
 create table token(

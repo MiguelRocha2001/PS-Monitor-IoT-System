@@ -52,7 +52,7 @@ class DeviceController(
         @RequestParam(required = false) page: Int?,
         @RequestParam(required = false) limit: Int?
     ): ResponseEntity<*> {
-        val result = service.getAllDevices(user.id, page, limit)
+        val result = service.getUserDevices(user.id, page, limit)
         return result.map {
             ResponseEntity.status(200)
                 .contentType(SirenMediaType)
@@ -61,6 +61,26 @@ class DeviceController(
                 ) {
                     clazz("devices")
                 })
+        }
+    }
+
+    @GetMapping(Uris.Devices.ALL)
+    fun getAllDevices(
+        user: User,
+        @RequestParam(required = false) page: Int?,
+        @RequestParam(required = false) limit: Int?
+    ): ResponseEntity<*> {
+        return checkRole(user, "admin") {
+            val result = service.getAllDevices(page, limit)
+            result.map {
+                ResponseEntity.status(200)
+                    .contentType(SirenMediaType)
+                    .body(siren(
+                        DevicesOutputModel.from(it)
+                    ) {
+                        clazz("devices")
+                    })
+            }
         }
     }
 

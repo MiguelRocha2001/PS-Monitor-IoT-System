@@ -13,13 +13,14 @@ class JdbiUserDataRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOK
     override fun createUser(user: User) {
         handle.createUpdate(
             """
-            insert into _USER (_id, username, password, email) values (:_id, :username, :password, :email)
+            insert into _USER (_id, username, password, email, role) values (:_id, :username, :password, :email, :role)
             """
         )
             .bind("_id", user.id)
             .bind("username", user.userInfo.username)
             .bind("password", user.userInfo.password)
             .bind("email", user.userInfo.email)
+            .bind("role", user.userInfo.role)
             .execute()
     }
 
