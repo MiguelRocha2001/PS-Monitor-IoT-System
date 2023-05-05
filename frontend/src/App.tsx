@@ -3,13 +3,13 @@ import {Route, Routes} from 'react-router-dom'
 import Home from "./views/Home";
 import NewDevice from "./views/device/NewDevice";
 import {Container} from "react-bootstrap";
-import {Devices} from "./views/device/Devices";
+//import {Devices} from "./views/device/Devices";
 import NavBar from "./views/NavBar";
 import {services} from "./services/services";
 import {SomethingWentWrong} from "./views/SomethingWentWrong";
 import {Logger} from "tslog";
 import {Loading} from "./views/Loading";
-import {DeviceInfo} from "./views/device/DeviceInfo";
+//import {DeviceInfo} from "./views/device/DeviceInfo";
 import {Authentication} from "./views/auth/Authentication";
 import {DeviceSensorialData} from "./views/device/DeviceData";
 import {DeviceCreated} from "./views/device/DeviceCreated";
@@ -21,6 +21,9 @@ import FrontPage from "./views/testLayout/FrontPage";
 import SignUpForm from "./views/testLayout/SignUpForm";
 import SignInForm from "./views/testLayout/SignInForm";
 import NotFound from "./views/testLayout/404";
+import {Devices} from "./views/testLayout/DevicesPage";
+import {DeviceInfo} from "./views/testLayout/DeviceInformation";
+
 //import './App.css';
 
 const logger = new Logger({ name: "App" });
@@ -83,14 +86,14 @@ function Router() {
         <div>
             <ErrorContainer>
                 <AuthnContainer>
-                    <Container style={{width: '90%', margin: 'auto'}}>
+                    <Container>
                         <Routes>
                             <Route path='/' element={<FrontPage />} />
                             <Route path='/auth/register' element={<SignUpForm />} />
                             <Route path='/auth/login' element={<SignInForm />} />
                             <Route path='/auth/user-created' element={<UserCreated />} />
-                            <Route path='/devices' element={<RequireAuthn children={<Devices />} />} />
-                            <Route path='/devices/:deviceId' element={<RequireAuthn children={<DeviceInfo />} />} />
+                            <Route path='/devices' element={<Devices/>} />
+                            <Route path='/devices/:deviceId' element={<DeviceInfo />} />
                             <Route path='/add-new-device' element={<RequireAuthn children={<NewDevice />} />} />
                             <Route path='/device-data/:deviceId' element={<RequireAuthn children={<DeviceSensorialData />} />} />
                             <Route path='/device-created/:deviceId' element={<RequireAuthn children={<DeviceCreated />} />} />

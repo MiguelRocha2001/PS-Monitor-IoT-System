@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 import './DevicesPage.css'
+import Button from "react-bootstrap/Button";
 
 export function Devices() {
     const setError = useSetError()
@@ -45,6 +46,11 @@ export function Devices() {
         fetchDevices()
     }, [page, pageSize,searchQuery])
 
+    const handleLogout = async () => {
+        await services.logout()
+            .catch(error => setError(error))
+    }
+
     const handleButtonPress = () => {
          services.getDevicesByName(page, pageSize, searchQuery.toUpperCase()).then(
              devices => {setDevices(devices);})
@@ -56,6 +62,7 @@ export function Devices() {
 
     return (
         <ErrorController>
+            <LogoutButton handleLogout={handleLogout}/>
             <DeviceList devices={devices} searchQuery={searchQuery} setSearchQuery={setSearchQuery} handleButtonPress={handleButtonPress} totalDevices={totalDevices}/>
             <Pagination currentPage={page} totalPages={Math.ceil(totalDevices/pageSize)} onPageChange={(selectedPage: number) => setPage(selectedPage)} />
         </ErrorController>
@@ -66,7 +73,7 @@ function DeviceList({ devices, searchQuery, setSearchQuery, handleButtonPress,to
     return (
         <div className="card">
             <div className="card-header">
-                <h3>{totalDevices} Devices Currently Active</h3>
+                <h3>{totalDevices} devices currently selected</h3>
             </div>
             <div className="card-body">
                 {devices.length > 0 ? (
@@ -136,6 +143,20 @@ function InputTextBox({ searchQuery, setSearchQuery, onSearch }: { searchQuery: 
                 onKeyPress={handleKeyPress} //TODO: FIX THIS
             />
             <button type="button" onClick={onSearch}>Search</button>
+        </div>
+    );
+}
+
+interface LogoutButtonProps {
+    handleLogout: () => Promise<void>;
+}
+
+function LogoutButton(props: LogoutButtonProps) {
+    return (
+        <div className="button-container">
+            <Button variant="outline-primary logout-btn" onClick={props.handleLogout}>
+                LOGOUT
+            </Button>
         </div>
     );
 }

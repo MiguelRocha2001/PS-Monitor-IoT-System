@@ -199,3 +199,18 @@ body{
 .pagination-btn:hover {
     background-color: #2c6e36;
 }
+
+
+/*logount button*/
+
+.logout-btn,
+.logout-btn:hover
+{
+    background-color: #3e8e41;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    margin: 10px 0.5rem 0;
+}

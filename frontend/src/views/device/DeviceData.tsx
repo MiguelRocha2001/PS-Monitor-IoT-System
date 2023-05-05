@@ -219,7 +219,7 @@ function Graph({deviceId}: { deviceId: string | undefined}) {
                     <br/>
                     <Stack gap={5}>
                         {chart}
-                        <Col style={{width: '100%', alignContent: 'center'}}>
+                        <Col>
                             <Stack gap={3} style={{width: '70%'}}>
                                 <PeriodSelector handler={(periodType) => periodHandler(periodType)}/>
                                 {displayYearSelector && <YearSelector setYear={(year: number) => onYearChangeHandler(year)}/>}
