@@ -34,9 +34,18 @@ class TemperatureDataService(
         tsdbRepository.saveTemperatureRecord(deviceId, temperatureRecord)
     }
 
-    fun getTemperatureRecords(userId: String, deviceId: String): TemperatureDataResult {
-        return if (!deviceService.existsDevice(userId, deviceId))
+    fun getTemperatureRecords(deviceId: String): TemperatureDataResult {
+        return if (!deviceService.existsDevice(deviceId))
             Either.Left(TemperatureDataError.DeviceNotFound)
+        else
+            Either.Right(tsdbRepository.getTemperatureRecords(deviceId))
+    }
+
+    fun getTemperatureRecordsIfIsOwner(deviceId: String, userId: String): TemperatureDataResult {
+        return if (!deviceService.existsDevice(deviceId))
+            Either.Left(TemperatureDataError.DeviceNotFound)
+        else if (!deviceService.belongsToUser(deviceId, userId))
+            Either.Left(TemperatureDataError.DeviceNotBelongsToUser(userId))
         else
             Either.Right(tsdbRepository.getTemperatureRecords(deviceId))
     }

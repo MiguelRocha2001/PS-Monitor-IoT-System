@@ -32,8 +32,10 @@ class DeviceService (
         }
     }
 
-    fun existsDevice(userId: String, deviceId: String): Boolean {
-        return getUserDeviceByIdOrNull(userId, deviceId) != null
+    fun existsDevice(deviceId: String): Boolean {
+        return transactionManager.run {
+            it.deviceRepo.getDeviceById(deviceId) != null
+        }
     }
 
     fun getDeviceCount(userId: String): DeviceCountResult {
@@ -74,6 +76,10 @@ class DeviceService (
             logger.debug("Device with id $deviceId found")
             return@run Either.Right(device)
         }
+    }
+
+    fun belongsToUser(deviceId: String, userId: String): Boolean {
+        return getUserDeviceById(userId, deviceId) is Either.Right
     }
 
     private fun getUserDeviceByIdOrNull(userId: String, deviceId: String): Device? {

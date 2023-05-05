@@ -3,7 +3,6 @@ package pt.isel.iot_data_server.service.sensor_data
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import pt.isel.iot_data_server.crypto.AES
 import pt.isel.iot_data_server.domain.*
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
 import pt.isel.iot_data_server.service.Either
@@ -37,9 +36,18 @@ class PhDataService(
             tsdbRepository.savePhRecord(deviceId, phRecord)
     }
 
-    fun getPhRecords(userId: String, deviceId: String): PhDataResult {
-        return if (!deviceService.existsDevice(userId, deviceId))
+    fun getPhRecords(deviceId: String): PhDataResult {
+        return if (!deviceService.existsDevice(deviceId))
             Either.Left(PhDataError.DeviceNotFound)
+        else
+            Either.Right(tsdbRepository.getPhRecords(deviceId))
+    }
+
+    fun getPhRecordsIfIsOwner(deviceId: String, userId: String): PhDataResult {
+        return if (!deviceService.existsDevice(deviceId))
+            Either.Left(PhDataError.DeviceNotFound)
+        else if (!deviceService.belongsToUser(deviceId, userId))
+            Either.Left(PhDataError.DeviceNotBelongsToUser(userId))
         else
             Either.Right(tsdbRepository.getPhRecords(deviceId))
     }

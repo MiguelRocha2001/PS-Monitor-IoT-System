@@ -3,6 +3,7 @@ package pt.isel.iot_data_server.repository.jdbi.mappers
 import pt.isel.iot_data_server.domain.Device
 import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.domain.UserInfo
+import pt.isel.iot_data_server.http.model.user.toRole
 
 data class UserMapper(
     val _id: String,
@@ -14,7 +15,7 @@ data class UserMapper(
 
 internal fun UserMapper.toUser() = User(
     id = _id,
-    userInfo = UserInfo(username, password, email, role)
+    userInfo = UserInfo(username, password, email, role.toRole())
 )
 
 data class DeviceMapper(

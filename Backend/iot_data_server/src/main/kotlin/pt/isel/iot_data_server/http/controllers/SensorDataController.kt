@@ -14,13 +14,16 @@ import pt.isel.iot_data_server.http.model.Problem
 import pt.isel.iot_data_server.http.model.map
 import pt.isel.iot_data_server.http.model.sensor_data.PhRecordsOutputModel
 import pt.isel.iot_data_server.http.model.sensor_data.TemperatureRecordsOutputModel
+import pt.isel.iot_data_server.service.device.DeviceService
 import pt.isel.iot_data_server.service.sensor_data.PhDataService
 import pt.isel.iot_data_server.service.sensor_data.TemperatureDataService
+import pt.isel.iot_data_server.service.user.Role
 import java.util.*
 
 @Tag(name = "Sensor data", description = "Sensor data API")
 @RestController
 class SensorDataController(
+    val deviceService: DeviceService,
     val phDataService: PhDataService,
     val temperatureDataService: TemperatureDataService
 ) {
@@ -38,7 +41,10 @@ class SensorDataController(
         user: User,
         @PathVariable device_id: String,
     ): ResponseEntity<*> {
-        val result = phDataService.getPhRecords(user.id, device_id)
+        val result = if (user.userInfo.role === Role.ADMIN)
+            phDataService.getPhRecords(device_id)
+        else
+            phDataService.getPhRecordsIfIsOwner(device_id, user.id)
         return result.map {
             ResponseEntity.status(200)
                 .contentType(SirenMediaType)
@@ -68,7 +74,12 @@ class SensorDataController(
         user: User,
         @PathVariable device_id: String
     ): ResponseEntity<*> {
-        val result = temperatureDataService.getTemperatureRecords(user.id, device_id)
+        val result = if (user.userInfo.role === Role.ADMIN)
+            temperatureDataService.getTemperatureRecords(device_id)
+        else {
+            temperatureDataService.getTemperatureRecordsIfIsOwner(device_id, user.id)
+        }
+
         return result.map {
             ResponseEntity.status(200)
                 .contentType(SirenMediaType)
