@@ -1,7 +1,7 @@
 import React, {useEffect, useReducer} from "react";
 import {Route, Routes} from 'react-router-dom'
 import Home from "./views/Home";
-import NewDevice from "./views/device/NewDevice";
+//import NewDevice from "./views/device/NewDevice";
 import {Container} from "react-bootstrap";
 //import {Devices} from "./views/device/Devices";
 import NavBar from "./views/NavBar";
@@ -23,6 +23,7 @@ import SignInForm from "./views/testLayout/SignInForm";
 import NotFound from "./views/testLayout/404";
 import {Devices} from "./views/testLayout/DevicesPage";
 import {DeviceInfo} from "./views/testLayout/DeviceInformation";
+import NewDevice from "./views/testLayout/AddNewDevice";
 
 //import './App.css';
 
@@ -94,9 +95,9 @@ function Router() {
                             <Route path='/auth/user-created' element={<UserCreated />} />
                             <Route path='/devices' element={<Devices/>} />
                             <Route path='/devices/:deviceId' element={<DeviceInfo />} />
-                            <Route path='/add-new-device' element={<RequireAuthn children={<NewDevice />} />} />
-                            <Route path='/device-data/:deviceId' element={<RequireAuthn children={<DeviceSensorialData />} />} />
-                            <Route path='/device-created/:deviceId' element={<RequireAuthn children={<DeviceCreated />} />} />
+                            <Route path='/add-new-device' element={<NewDevice />} />
+                            <Route path='/device-data/:deviceId' element = {<DeviceSensorialData />} />
+                            <Route path='/device-created/:deviceId' element={<DeviceCreated />} />
                             <Route path='*' element={<NotFound/>}/>
                         </Routes>
                     </Container>

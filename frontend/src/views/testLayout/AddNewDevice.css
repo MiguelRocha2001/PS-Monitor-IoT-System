@@ -1,0 +1,47 @@
+.form-group label {
+    color: #3e8e41;
+    font-weight: bold;
+}
+
+.form-control {
+    border-color: #3e8e41;
+    border-radius: 0;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: #3e8e41;
+}
+
+.btn {
+    background-color: #3e8e41;
+    border-color: #3e8e41;
+}
+
+.btn:hover {
+    background-color: #2e6532;
+    border-color: #2e6532;
+}
+
+.btn:focus {
+    box-shadow: none;
+    background-color: #2e6532;
+    border-color: #2e6532;
+}
+
+.card {
+    background-color: #f1f1f1;
+    text-align: center;
+}
+
+.card-title {
+    color: #3e8e41;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.card-subtitle {
+    color: #3e8e41;
+    font-size: 1.2rem;
+    font-weight: bold;
+}

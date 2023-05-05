@@ -5,10 +5,9 @@
     justify-content: center;
     align-items: center;
     height: 50vh;
-    width: 50rem;
+    width: 50vh;
     background-color: #3e8e41;
     color: white;
-    translate: -10%;
     border-radius: 10px;
 }
 
