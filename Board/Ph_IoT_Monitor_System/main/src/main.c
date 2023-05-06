@@ -13,7 +13,7 @@
 #include "wifi_connect_util.h"
 #include "nvs_util.h"
 #include "esp_touch_util.h"
-#include "sensor/sensor_records.h"
+#include "sensor/sensor_reader.h"
 #include "time_util.h"
 
 const static char* TAG = "MAIN";
@@ -83,6 +83,63 @@ void compute_sensors(char* deviceID) {
     }
 }
 
+int check_sensors() {
+    ESP_LOGE(TAG, "Checking sensors...");
+    int res = read_sensor_records(&sensor_records);
+    switch (res)
+    {
+    case PH_SENSOR_ERROR:
+        ESP_LOGE(TAG, "PH sensor error");
+        break;
+    case TEMP_SENSOR_ERROR:
+        ESP_LOGE(TAG, "Temperature sensor error");
+        break;
+    case WATER_LEVEL_SENSOR_ERROR:
+        ESP_LOGE(TAG, "Water level sensor error");
+        break;
+    case WATER_FLOW_SENSOR_ERROR:
+        ESP_LOGE(TAG, "Water flow sensor error");
+        break;
+    case HUMIDITY_SENSOR_ERROR:
+        ESP_LOGE(TAG, "Humidity sensor error");
+        break;
+    default:
+        ESP_LOGE(TAG, "All sensors are working");
+        break;
+    }
+    return res;
+}
+
+/**
+ * 
+*/
+void send_sensor_not_working_alert(esp_mqtt_client_handle_t client, char* deviceID, int sensor_error) {
+    ESP_LOGE(TAG, "Sending sensor not working alert...");
+    char sensorName[20];
+    switch (sensor_error)
+    {
+    case PH_SENSOR_ERROR:
+        sensorName = "PH";
+        break;
+    case TEMP_SENSOR_ERROR:
+        sensorName = "Temperature";
+        break;
+    case WATER_LEVEL_SENSOR_ERROR:
+        sensorName = "Water level";
+        break;
+    case WATER_FLOW_SENSOR_ERROR:
+        sensorName = "Water flow";
+        break;
+    case HUMIDITY_SENSOR_ERROR:
+        sensorName = "Humidity";
+        break;
+    default:
+        // TODO: should not happen
+    }
+    int timestamp = getNowTimestamp();
+    mqtt_send_sensor_not_working_alert(client, deviceID, timestamp, sensorName);
+}
+
 /**
  * Program entry point.
  * It will read the pH value every 0.3 seconds and store it in RTC memory.
@@ -92,6 +149,10 @@ void compute_sensors(char* deviceID) {
 void app_main(void) {
     ESP_LOGE(TAG, "Starting app_main...");
     ESP_ERROR_CHECK(nvs_flash_init());
+
+    if (int error = check_sensors() == -1) {
+        send_sensor_not_working_alert(error);
+    }
 
     char* deviceID;
     get_device_id(&deviceID);

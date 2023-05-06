@@ -16,7 +16,7 @@ idf_component_register(
             "src/utils/sha256_util.c"
             "src/utils/utils.c"
             "src/utils/entropy_poll.c"
-            "src/utils/sensor/sensor_records.c"
+            "src/utils/sensor/sensor_readings.c"
             "src/utils/ph/ph_reader_fake.c"
             "src/utils/ph/ph_reader_real.c"
             "src/utils/temp/temperature_reader_fake.c"

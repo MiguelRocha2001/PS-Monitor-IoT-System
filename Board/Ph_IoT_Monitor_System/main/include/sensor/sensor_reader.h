@@ -3,6 +3,12 @@
 
 #include "sensor_record.h"
 
+#define PH_SENSOR_ERROR -1
+#define TEMP_SENSOR_ERROR -1
+#define WATER_LEVEL_SENSOR_ERROR -1
+#define WATER_FLOW_SENSOR_ERROR -1
+#define HUMIDITY_SENSOR_ERROR -1
+
 #define MAX_SENSOR_RECORDS 3
 
 typedef struct sensor_records_struct {

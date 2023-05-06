@@ -2,7 +2,7 @@
     "cmake.configureOnOpen": true,
     "idf.adapterTargetName": "esp32s2",
     "idf.openOcdConfigs": [
-        "board/esp32s2-kaluga-1.cfg"
+        "board/esp32s2-bridge.cfg"
     ],
     "idf.portWin": "COM5",
     "idf.flashType": "UART",
@@ -49,6 +49,9 @@
         "ph_record.h": "c",
         "sensor_records.h": "c",
         "sensor_record.h": "c",
-        "temp_record.h": "c"
+        "temp_record.h": "c",
+        "temp_reader.h": "c",
+        "ph_reader.h": "c",
+        "sensor_reader.h": "c"
     }
 }

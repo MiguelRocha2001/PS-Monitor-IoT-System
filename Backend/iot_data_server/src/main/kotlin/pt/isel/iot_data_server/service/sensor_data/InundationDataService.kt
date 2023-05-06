@@ -10,7 +10,7 @@ import pt.isel.iot_data_server.service.email.EmailManager
 
 
 @Service
-class FloodDataService(
+class WaterLeakDataService(
   //  private val transactionManager: TransactionManager,
     private val emailSenderService: EmailManager,
     private val tsdbRepository: TSDBRepository,
@@ -21,11 +21,11 @@ class FloodDataService(
 
     val MIN_PH = 6.0 // TODO: change this to other place and make it configurable
     init {
-        subscribeFloodTopic(client)
+        subscribeWaterLeakTopic(client)
     }
 
-    private fun subscribeFloodTopic(client: MqttClient) {
-        client.subscribe("flood") { topic, message ->
+    private fun subscribeWaterLeakTopic(client: MqttClient) {
+        client.subscribe("water_leak") { topic, message ->
             try {
                 logger.info("Received message from topic: $topic")
 
@@ -37,21 +37,11 @@ class FloodDataService(
                 val floodRecord = fromJsonStringToFloodRecord(string)
                 val deviceId = fromJsonStringToDeviceId(string)
 
+                // TODO -> alert user
+
             } catch (e: Exception) {
                 logger.error("Error while processing ph record: ${e.message}")
             }
-        }
-    }
-
-    private fun sendEmailIfPhExceedsLimit(deviceId: String, phRecord: PhRecord,device: Device) {
-        if (phRecord.value < MIN_PH) {
-            val bodyMessage = mapOf(
-                "device_id" to deviceId,
-                "ph_level" to phRecord.value.toString(),
-                "ph_limit" to MIN_PH.toString()
-            )
-            val subject = emptyMap<String, String>()
-            emailSenderService.sendEmail(device.ownerEmail, subject, bodyMessage,"phProblem")
         }
     }
 

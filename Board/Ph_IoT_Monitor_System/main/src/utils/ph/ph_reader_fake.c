@@ -15,7 +15,7 @@ float generate_random_float()
     return ((float)rand()/(float)(RAND_MAX)) * a;
 }
 
-void read_ph_record(struct sensor_record1 *sensor_record)
+int read_ph_record(struct sensor_record1 *sensor_record)
 {
     ESP_LOGE(TAG, "Reading pH...");
     float ph_value = generate_random_float();
