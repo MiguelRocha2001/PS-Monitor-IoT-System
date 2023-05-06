@@ -5,12 +5,14 @@ import org.junit.jupiter.api.Test
 import org.springframework.test.util.AssertionErrors.assertFalse
 import org.springframework.test.util.AssertionErrors.assertTrue
 import pt.isel.iot_data_server.domain.UserInfo
+import pt.isel.iot_data_server.service.user.Role
 import pt.isel.iot_data_server.service.user.SaltPasswordOperations
 import pt.isel.iot_data_server.service.user.UserService
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 import java.util.*
 
-class SaltTests{
+class SaltTests {
+    private val role = Role.USER
 
     @Test
     fun `verify if two equal passwords are stored the same`(){
@@ -20,10 +22,10 @@ class SaltTests{
 
             //create user
             val pass = "LKMSDOVCJ09Jouin09JN@"
-            val newUser = UserInfo("userGood", pass,"testSubject@email.com")
+            val newUser = UserInfo("userGood", pass,"testSubject@email.com", role)
             service.createUser(newUser)
 
-            val newUser2 = UserInfo("userGood2", pass,"testSubject2@email.com")
+            val newUser2 = UserInfo("userGood2", pass,"testSubject2@email.com", role)
             service.createUser(newUser2)
 
 
@@ -45,7 +47,7 @@ class SaltTests{
 
             //create user
             val pass = "LKMSDOVCJ09Jouin09JN@"
-            val newUser = UserInfo("userGood", pass,"testSubject@email.com")
+            val newUser = UserInfo("userGood", pass,"testSubject@email.com", role)
             service.createUser(newUser)
 
             //stored user password
@@ -66,7 +68,7 @@ class SaltTests{
 
             //create user
             val pass = "LKMSDOVCJ09Jouin09JN@"
-            val newUser = UserInfo("userGood", pass,"testSubject@email.com")
+            val newUser = UserInfo("userGood", pass,"testSubject@email.com", role)
             service.createUser(newUser)
 
             //stored user password

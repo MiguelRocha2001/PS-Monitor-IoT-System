@@ -44,6 +44,11 @@
         "utils.h": "c",
         "rsa.h": "c",
         "stdint.h": "c",
-        "pk.h": "c"
+        "pk.h": "c",
+        "time_util.h": "c",
+        "ph_record.h": "c",
+        "sensor_records.h": "c",
+        "sensor_record.h": "c",
+        "temp_record.h": "c"
     }
 }

@@ -2,9 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <esp_log.h>
-
-#include "ph_reader_fake.h"
 #include "time_util.h"
+#include "sensor_record.h"
 
 const static char* TAG = "PH_READER_FAKE";
 
@@ -23,7 +22,7 @@ int generate_random_int()
     return rand();
 }
 
-void read_ph(struct ph_record *ph_record)
+void read_ph_record(struct sensor_record1 *sensor_record)
 {
     ESP_LOGE(TAG, "Reading pH...");
     float ph_value = generate_random_float();

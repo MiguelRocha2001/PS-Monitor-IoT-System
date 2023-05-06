@@ -16,7 +16,7 @@ import java.time.Instant
  * @see: https://docs.influxdata.com/influxdb/cloud/write-data/best-practices/duplicate-points/
  */
 class TsdbRepoDuplicateTests {
-    private val tsdbBuilder: TSDBBuilder = TSDBBuilder("test_bucket")
+    private val tsdbBuilder: TSDBBuilder = TSDBBuilder("test")
     private val repo: TSDBRepository = TSDBRepository(
         tsdbBuilder.getClient(),
         tsdbBuilder.getBucket()

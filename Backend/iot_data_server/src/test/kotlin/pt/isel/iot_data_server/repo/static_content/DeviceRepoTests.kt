@@ -5,6 +5,7 @@ import org.springframework.test.util.AssertionErrors.assertTrue
 import pt.isel.iot_data_server.domain.Device
 import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.domain.UserInfo
+import pt.isel.iot_data_server.service.user.Role
 import pt.isel.iot_data_server.utils.generateRandomEmail
 import pt.isel.iot_data_server.utils.generateRandomName
 import pt.isel.iot_data_server.utils.generateRandomPassword
@@ -12,6 +13,7 @@ import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 import kotlin.random.Random
 
 class DeviceRepoTests {
+    private val role = Role.USER
     @Test
     fun `add device`() {
         testWithTransactionManagerAndRollback { transactionManager ->
@@ -25,7 +27,8 @@ class DeviceRepoTests {
                     UserInfo(
                         generateRandomName(),
                         generateRandomPassword(),
-                        generateRandomEmail()
+                        generateRandomEmail(),
+                        role
                     )
                 )
                 val device = Device(Random.nextInt().toString(), "exampleEmail@pront.com")
@@ -55,7 +58,8 @@ class DeviceRepoTests {
                     UserInfo(
                         generateRandomName(),
                         generateRandomPassword(),
-                        generateRandomEmail()
+                        generateRandomEmail(),
+                        role
                     )
                 )
                 userRepo.createUser(user)

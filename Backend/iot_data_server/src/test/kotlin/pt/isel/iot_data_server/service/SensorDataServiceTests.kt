@@ -20,7 +20,7 @@ import pt.isel.iot_data_server.utils.*
 
 class SensorDataServiceTest {
     private lateinit var mqttClient: MqttClient
-    private val tsdbBuilder: TSDBBuilder = TSDBBuilder("test_bucket")
+    private val tsdbBuilder: TSDBBuilder = TSDBBuilder("test")
     private val tsdbRepository: TSDBRepository = TSDBRepository(
         tsdbBuilder.getClient(),
         tsdbBuilder.getBucket()
@@ -56,7 +56,7 @@ class SensorDataServiceTest {
             sensorDataService.savePhRecord(deviceId, phRecord2)
             sensorDataService.savePhRecord(deviceId, phRecord3)
 
-            val result = sensorDataService.getPhRecords(userId, deviceId)
+            val result = sensorDataService.getPhRecords(deviceId)
             assert(result is Either.Right)
             val phRecords = (result as Either.Right).value
             assert(phRecords.size == 3)
@@ -144,7 +144,7 @@ class SensorDataServiceTest {
 
             try {
                 // Code that may throw an exception
-                sensorDataService.getTemperatureRecords(userId, deviceId)
+                sensorDataService.getTemperatureRecords(deviceId)
             } catch (e: IllegalArgumentException) {
                 // Access the exception message
                 val errorMessage = e.message
@@ -175,7 +175,7 @@ class SensorDataServiceTest {
             sensorDataService.saveTemperatureRecord(deviceId, temperatureRecord2)
             sensorDataService.saveTemperatureRecord(deviceId, temperatureRecord3)
 
-            val result = sensorDataService.getTemperatureRecords(userId, deviceId)
+            val result = sensorDataService.getTemperatureRecords(deviceId)
             assert(result is Either.Right)
             val temperatureRecords = (result as Either.Right).value
             assert(temperatureRecords.size == 3)

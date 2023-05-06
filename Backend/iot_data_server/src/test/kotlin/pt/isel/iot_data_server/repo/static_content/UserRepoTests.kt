@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.domain.UserInfo
+import pt.isel.iot_data_server.service.user.Role
 import pt.isel.iot_data_server.utils.generateRandomEmail
 import pt.isel.iot_data_server.utils.generateRandomName
 import pt.isel.iot_data_server.utils.generateRandomPassword
@@ -13,6 +14,7 @@ import java.util.*
 
 
 class UserRepoTests {
+    private val role = Role.USER
 
     @Test
     fun `add user and get`() {
@@ -21,7 +23,7 @@ class UserRepoTests {
                 val usersRepo = transaction.userRepo
 
                 val userId = UUID.randomUUID().toString()
-                val userInfo = UserInfo(generateRandomName(), generateRandomPassword(), generateRandomEmail())
+                val userInfo = UserInfo(generateRandomName(), generateRandomPassword(), generateRandomEmail(), role)
 
                 val user = User(userId, userInfo)
                 usersRepo.createUser(user)

@@ -23,19 +23,18 @@ import pt.isel.iot_data_server.utils.generateRandomEmail
 //Nao estou a conseguir fazer o setup do test porque tenho de usar o bucket 2 e nao sei como fazer isso por equanto
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class SensorDataTests {
-    private val tsdbBuilder: TSDBBuilder = TSDBBuilder("test_bucket")
-
+    private val tsdbBuilder: TSDBBuilder = TSDBBuilder("test")
     @LocalServerPort
     var port: Int = 0
     @TestConfiguration
     class SensorDataTestConfiguration {
-        private val tsdbConfig = TSDBBuilder("my_bucket")
+        private val tsdbBuilder: TSDBBuilder = TSDBBuilder("test")
         @Bean
         fun getInfluxDBClientKotlin(): InfluxDBClientKotlin {
-            return tsdbConfig.getClient()
+            return tsdbBuilder.getClient()
         }
         @Bean fun getBucket(): Bucket {
-            return tsdbConfig.getBucket()
+            return tsdbBuilder.getBucket()
         }
 
         @Bean
