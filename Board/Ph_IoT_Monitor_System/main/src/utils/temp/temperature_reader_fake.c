@@ -3,7 +3,7 @@
 #include <time.h>
 #include <esp_log.h>
 #include "time_util.h"
-#include "sensor_record.h"
+#include "sensor/sensor_record.h"
 
 const static char* TAG = "TEMP_READER_FAKE";
 

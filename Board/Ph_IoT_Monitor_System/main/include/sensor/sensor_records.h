@@ -1,7 +1,7 @@
-#include "sensor_record.h"
-
 #ifndef SENSOR_RECORDS_H
 #define SENSOR_RECORDS_H
+
+#include "sensor_record.h"
 
 #define MAX_SENSOR_RECORDS 3
 

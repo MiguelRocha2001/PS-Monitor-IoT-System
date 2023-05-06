@@ -13,7 +13,8 @@
 #include "wifi_connect_util.h"
 #include "nvs_util.h"
 #include "esp_touch_util.h"
-#include "sensor_records.h"
+#include "sensor/sensor_records.h"
+#include "time_util.h"
 
 const static char* TAG = "MAIN";
 
@@ -33,8 +34,8 @@ void printDeepSleepWokeCause(esp_sleep_wakeup_cause_t cause) {
 void send_sensor_records(esp_mqtt_client_handle_t client, char* deviceID) {
     ESP_LOGE(TAG, "Sending sensor records...");
     for (int i = 0; i < MAX_SENSOR_RECORDS; i++) {
-        mqtt_send_sensor_record(client, &sensor_records.ph_records[i], deviceID, "ph");
-        mqtt_send_sensor_record(client, &sensor_records.temperature_records[i], deviceID, "temperature");
+        mqtt_send_sensor_record1(client, &sensor_records.ph_records[i], deviceID, "ph");
+        mqtt_send_sensor_record2(client, &sensor_records.temperature_records[i], deviceID, "temperature");
         // TODO: send water level, water flow and humidity
     }
     
@@ -66,20 +67,20 @@ void sendWaterAlert(esp_mqtt_client_handle_t client, int timestamp, char* device
     mqtt_send_water_alert(client, timestamp, deviceID);
 }
 
-void compute_sensors() {
-    if (sensors_reading_is_complete()) {
-            setup_wifi();
-            esp_mqtt_client_handle_t client = setup_mqtt();
+void compute_sensors(char* deviceID) {
+    if (sensors_reading_is_complete(&sensor_records)) {
+        setup_wifi();
+        esp_mqtt_client_handle_t client = setup_mqtt();
 
-            send_sensor_records(client, deviceID);
-            erase_sensor_records();
+        send_sensor_records(client, deviceID);
+        erase_sensor_records();
 
-            start_deep_sleep(LONG_SLEEP_TIME);
-        } else {
-            setup_wifi();
-            read_sensors();
-            start_deep_sleep(READ_PH_INTERVAL);
-        }
+        start_deep_sleep(LONG_SLEEP_TIME);
+    } else {
+        setup_wifi();
+        read_sensor_records(&sensor_records);
+        start_deep_sleep(READ_PH_INTERVAL);
+    }
 }
 
 /**
@@ -107,29 +108,7 @@ void app_main(void) {
 
         int current_timestamp = getNowTimestamp(); // get current time
         sendWaterAlert(client, current_timestamp, deviceID);
-    } 
-    // Normal woke up
-    else {
-        // print_ph_values();
-        compute_sensors():
-
-        if (is_ph_reading_complete()) {
-            setup_wifi();
-            esp_mqtt_client_handle_t client = setup_mqtt();
-
-            send_ph_values(client, deviceID);
-            erase_ph_values();
-
-            start_deep_sleep(LONG_SLEEP_TIME);
-        } else {
-            setup_wifi(); // to get the current time
-
-            struct ph_record ph_record;
-            read_ph(&ph_record);
-
-            store_ph_in_RTC_memory(&ph_record);
-
-            start_deep_sleep(READ_PH_INTERVAL);
-        }
+    } else { // Normal woke up
+        compute_sensors(deviceID);
     }
 }

@@ -20,7 +20,7 @@
 #include "esp_log.h"
 #include "mqtt_client.h"
 
-#include "sensor_record.h"
+#include "sensor/sensor_records.h"
 
 // see: https://docs.espressif.com/projects/esp-idf/en/v5.0.1/esp32s2/api-reference/protocols/mqtt.html
 
@@ -147,7 +147,7 @@ void mqtt_send_encrypted_data(esp_mqtt_client_handle_t client, char* buf, char* 
 void mqtt_send_sensor_record1(esp_mqtt_client_handle_t client, struct sensor_record1 *sensor_record, char* deviceID, char* topic)
 {
     char buf[100];
-    sprintf(buf, "{deviceId: %s, value: %f, timestamp: %d}", deviceID, ph_record -> value, ph_record -> timestamp);
+    sprintf(buf, "{deviceId: %s, value: %f, timestamp: %d}", deviceID, sensor_record -> value, sensor_record -> timestamp);
 
     // mqtt_send_encrypted_data(client, buf, "ph");
     esp_mqtt_client_publish(client, topic, buf, 0, 1, 0);
@@ -158,7 +158,7 @@ void mqtt_send_sensor_record1(esp_mqtt_client_handle_t client, struct sensor_rec
 void mqtt_send_sensor_record2(esp_mqtt_client_handle_t client, struct sensor_record2 *sensor_record, char* deviceID, char* topic)
 {
     char buf[100];
-    sprintf(buf, "{deviceId: %s, value: %f, timestamp: %d}", deviceID, ph_record -> value, ph_record -> timestamp);
+    sprintf(buf, "{deviceId: %s, value: %d, timestamp: %d}", deviceID, sensor_record -> value, sensor_record -> timestamp);
 
     // mqtt_send_encrypted_data(client, buf, "ph");
     esp_mqtt_client_publish(client, topic, buf, 0, 1, 0);
