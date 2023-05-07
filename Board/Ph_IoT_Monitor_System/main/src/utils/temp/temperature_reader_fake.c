@@ -1,18 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <esp_log.h>
 #include "time_util.h"
 #include "sensor/sensor_record.h"
+#include "utils.h"
 
 const static char* TAG = "TEMP_READER_FAKE";
-
-int generate_random_int()
-{
-    srand((unsigned int)time(NULL));
-
-    return rand();
-}
 
 int read_temperature_record(struct sensor_record2 *temp_record)
 {

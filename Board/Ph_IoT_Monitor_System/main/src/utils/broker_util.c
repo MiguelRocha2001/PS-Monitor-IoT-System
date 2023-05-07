@@ -20,7 +20,7 @@
 #include "esp_log.h"
 #include "mqtt_client.h"
 
-#include "sensor/sensor_records.h"
+#include "sensor/sensor_reader.h"
 
 // see: https://docs.espressif.com/projects/esp-idf/en/v5.0.1/esp32s2/api-reference/protocols/mqtt.html
 
@@ -178,14 +178,20 @@ void mqtt_send_water_alert(esp_mqtt_client_handle_t client, int timestamp, char*
     ESP_LOGI(TAG, "Message: %s published on topic /flood", buf);
 }
 
-void mqtt_send_sensor_not_working_alert(esp_mqtt_client_handle_t client, int timestamp, char* deviceID, char* sensor)
+void mqtt_send_sensor_not_working_alert(esp_mqtt_client_handle_t client, int timestamp, char* deviceID, char** sensors)
 {
     // convert ph_record -> value to string
     char buf[100];
-    sprintf(buf, "{deviceId: %s, timestamp: %d, sensor: %s}", deviceID, timestamp, sensor);
 
-    // mqtt_send_encrypted_data(client, buf, "sensor_not_working_alert");
-    esp_mqtt_client_publish(client, "sensor_not_working_alert", buf, 0, 1, 0);
-    
-    ESP_LOGI(TAG, "Message: %s published on topic /sensor_not_working_alert", buf);
+    char sensors_list_buff[100] = "";
+
+    for (int i = 0; i < 3; i++)
+    {
+        if (sensors[i] != NULL)
+        {
+            strcat(sensors_list_buff, sensors[i]);
+            strcat(sensors_list_buff, ", ");
+        }
+    }
+    sprintf(buf, "{deviceId: %s, timestamp: %d, sensors: %s}", deviceID, timestamp, sensors_list_buff);
 }

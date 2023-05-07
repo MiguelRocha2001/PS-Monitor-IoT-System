@@ -10,6 +10,7 @@
 #include "base64_util.h"
 #include "time_util.h"
 #include <esp_random.h>
+#include <time.h>
 
 static const char *TAG = "Utils";
 
@@ -36,4 +37,19 @@ uint8_t* get_random_array(int len) {
     esp_fill_random(buf, size);
 
     return buf;
+}
+
+float generate_random_float()
+{
+    srand((unsigned int)time(NULL));
+
+    float a = 5.0;
+    return ((float)rand()/(float)(RAND_MAX)) * a;
+}
+
+int generate_random_int()
+{
+    srand((unsigned int)time(NULL));
+
+    return rand();
 }

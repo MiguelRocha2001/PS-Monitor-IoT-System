@@ -4,7 +4,7 @@
     "idf.openOcdConfigs": [
         "board/esp32s2-bridge.cfg"
     ],
-    "idf.portWin": "COM5",
+    "idf.portWin": "COM6",
     "idf.flashType": "UART",
     "files.associations": {
         "adc.h": "c",
@@ -52,6 +52,16 @@
         "temp_record.h": "c",
         "temp_reader.h": "c",
         "ph_reader.h": "c",
-        "sensor_reader.h": "c"
+        "sensor_reader.h": "c",
+        "water_level_reader.h": "c",
+        "humidity_reader.h": "c",
+        "water_flow_reader.h": "c",
+        "*.tcc": "c",
+        "limits": "c",
+        "numeric": "c",
+        "streambuf": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "utility": "c"
     }
 }

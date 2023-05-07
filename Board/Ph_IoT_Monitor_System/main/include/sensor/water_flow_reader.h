@@ -1,3 +1,3 @@
 #include "sensor_record.h"
 
-int read_water_flow(sensor_record1 *sensor_record);
+int read_water_flow_record(sensor_record2 *sensor_record);
