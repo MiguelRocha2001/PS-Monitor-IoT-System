@@ -7,6 +7,8 @@ import {Device} from "../../services/domain";
 import {Col} from "react-bootstrap";
 import {useSetError} from "../error/ErrorContainer";
 import {ErrorController} from "../error/ErrorController";
+import {DeviceSensorialData} from "./deviceSensorialData";
+import {ChartWithPeriodSelection} from "./text";
 import "./DeviceInformation.css";
 
 export function DeviceInfo() {
@@ -16,7 +18,7 @@ export function DeviceInfo() {
 
     useEffect(() => {
         async function fetchDevice() {
-            if (deviceId) { // TODO: SHOULDN'T BE NEEDED !!!
+            if (deviceId) { // TODO: SHOULDN'T BE NEEDED !!! passar email e id como props
                 services.getDevice(deviceId)
                     .then(device => setDevice(device))
                     .catch(error => setError(error))
@@ -31,11 +33,8 @@ export function DeviceInfo() {
     else
         return (
             <ErrorController>
-                <div className="card">
-                    <DeviceInfoAux device={device} />
-                    <button className="link-button">
-                        <MyLink to={`/device-data/${device.id}`} center={false} text="Sensors" />
-                    </button>
+                <div className={"device-sensor-data"}>
+                    <ChartWithPeriodSelection deviceId={device.id}/>
                 </div>
             </ErrorController>
         );
@@ -43,9 +42,9 @@ export function DeviceInfo() {
 
 function DeviceInfoAux({device}: { device: Device }) {
     return (
-        <Col className = {"information-about-device"}>
-            <p><b>Id:</b> {device.id}</p>
-            <p><b>Email:</b> {device.email}</p>
-        </Col>
+        <div className = {"information-about-device"}>
+            <p><b>Identifier:</b> {device.id}</p>
+            <p><b>Associated email:</b> {device.email}</p>
+        </div>
     );
 }

@@ -29,11 +29,27 @@ function NewIoTDeviceForm() {
 
     const [deviceId, setDeviceId] = React.useState<string | undefined>(undefined);
     const [email, setEmail] = React.useState<string>("");
+    const [isEmailWrong, setIsEmailWrong] = React.useState<boolean>(false);
 
     if (deviceId)
         return <Navigate to={`/device-created/${deviceId}`} replace={true}/>
 
     async function submitForm() {
+
+        if (!email) {
+            setIsEmailWrong(true)
+            console.log("email is empty")
+            return;
+        }
+
+        // Check if email is in a valid format
+        const emailRegex = /^\S+@\S+\.\S+$/;
+        if (!emailRegex.test(email)) {
+            console.log("email is not valid")
+            setIsEmailWrong(true)
+            return;
+        }
+        setIsEmailWrong(false)
         services.createDevice(email)
             .then(deviceId => setDeviceId(deviceId))
             .catch(error => setError(error))
@@ -42,9 +58,9 @@ function NewIoTDeviceForm() {
     return(
         <Form>
             <fieldset disabled={false}>
-                <Form.Group className="mb-3">
+                <Form.Group className="mb-3 ">
                     <Form.Label>This email will be used to send alerts about the device status </Form.Label>
-                    <Form.Control placeholder="Email" onChange={(ev) => {
+                    <Form.Control id={isEmailWrong ? "wrong-email" : ""} placeholder="Email" onChange={(ev) => {
                         setEmail(ev.target.value)
                     }} />
                 </Form.Group>

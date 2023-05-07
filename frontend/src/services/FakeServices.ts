@@ -133,38 +133,77 @@ export class FakeServices implements Services {
             throw new Error(`Device ${deviceId} not found`)
         }
     }
+/* one record per day every day for 5 years
+    async getTemperatureData(deviceId: string): Promise<TemperatureData> {
+        const records: TemperatureRecord[] = [];
+        const startDate = new Date('2018-01-01T00:00:00.000Z');
+        const endDate = new Date('2023-01-01T00:00:00.000Z');
+        const numDays = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+        const recordsPerDay = 1;
+        const temperatureIncreasePerDay = 0.02; // Increase in temperature per day
+        let temperature = 20;
 
+        for (let i = 0; i < numDays; i++) {
+            const currentDate = new Date(startDate.getTime() + i * (1000 * 60 * 60 * 24));
+            for (let j = 0; j < recordsPerDay; j++) {
+                records.push(new TemperatureRecord(temperature, currentDate));
+            }
+            temperature += temperatureIncreasePerDay;
+        }
+
+        return new TemperatureData(records);
+    }
+
+    async  getPhData(deviceId: string): Promise<PhData> {
+        const records: PhRecord[] = [];
+        const startDate = new Date('2018-01-01T00:00:00.000Z');
+        const endDate = new Date('2023-01-01T00:00:00.000Z');
+        const numDays = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+        const recordsPerDay = 1;
+        const phIncreasePerDay = 0.002; // Increase in pH per day
+        let pH = 7;
+
+        for (let i = 0; i < numDays; i++) {
+            const currentDate = new Date(startDate.getTime() + i * (1000 * 60 * 60 * 24));
+            for (let j = 0; j < recordsPerDay; j++) {
+                records.push(new PhRecord(pH, currentDate));
+            }
+            if (i < numDays / 2) {
+                pH += phIncreasePerDay;
+            } else {
+                pH -= phIncreasePerDay;
+            }
+        }
+
+        return new PhData(records);
+    }
+
+*/
+//2023 occurences
     async getPhData(deviceId: string): Promise<PhData> {
-        return new PhData([
-            new PhRecord(7.0, new Date('2019-02-01T00:00:00.000Z')),
-            new PhRecord(7.1, new Date('2019-01-01T01:00:01.000Z')),
-            new PhRecord(7.2, new Date('2019-01-01T02:00:02.000Z')),
-            new PhRecord(7.3, new Date('2019-01-01T03:00:03.000Z')),
-            new PhRecord(7.4, new Date('2019-01-01T04:00:04.000Z')),
-            new PhRecord(7.5, new Date('2019-01-01T05:00:05.000Z')),
-            new PhRecord(7.6, new Date('2019-01-07T06:00:06.000Z')),
-            new PhRecord(7.7, new Date('2019-01-08T07:00:00.000Z')),
-            new PhRecord(7.8, new Date('2019-01-09T08:00:00.000Z')),
-            new PhRecord(7.9, new Date('2019-01-10T09:00:00.000Z')),
-            new PhRecord(8.0, new Date('2019-01-11T10:00:00.000Z')),
-            new PhRecord(8.1, new Date('2019-01-12T11:00:00.000Z'))
-        ])
+        const startDate = new Date('2023-01-01T00:00:00.000Z');
+        const endDate = new Date('2023-12-31T23:59:59.999Z');
+        const numDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24));
+        const data: PhRecord[] = [];
+        for (let i = 0; i < numDays; i++) {
+            const date = new Date(startDate.getTime() + i * (1000 * 3600 * 24));
+            const phValue = i / numDays * 2 + 7; // linear growth from 7 to 9
+            data.push(new PhRecord(phValue, date));
+        }
+        return new PhData(data);
     }
 
     async getTemperatureData(deviceId: string): Promise<TemperatureData> {
-        return new TemperatureData( [
-            new TemperatureRecord(21, new Date('2019-01-01T00:00:00.000Z')),
-            new TemperatureRecord(24, new Date('2019-01-02T01:00:00.000Z')),
-            new TemperatureRecord(20, new Date('2019-01-03T02:00:00.000Z')),
-            new TemperatureRecord(22, new Date('2019-01-04T03:00:00.000Z')),
-            new TemperatureRecord(20, new Date('2019-01-05T04:00:00.000Z')),
-            new TemperatureRecord(45, new Date('2019-01-06T05:00:00.000Z')),
-            new TemperatureRecord(23, new Date('2019-01-07T06:00:00.000Z')),
-            new TemperatureRecord(21, new Date('2019-01-08T07:00:00.000Z')),
-            new TemperatureRecord(20, new Date('2019-01-09T08:00:00.000Z')),
-            new TemperatureRecord(20, new Date('2019-01-10T09:00:00.000Z')),
-            new TemperatureRecord(26, new Date('2019-01-11T10:00:00.000Z')),
-            new TemperatureRecord(29, new Date('2019-01-27T11:00:00.000Z'))
-        ])
+        const startDate = new Date('2023-01-01T00:00:00.000Z');
+        const endDate = new Date('2023-12-31T23:59:59.999Z');
+        const numDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24));
+        const data: TemperatureRecord[] = [];
+        for (let i = 0; i < numDays; i++) {
+            const date = new Date(startDate.getTime() + i * (1000 * 3600 * 24));
+            const temperatureValue = i / numDays * 5 + 20; // linear growth from 20 to 25
+            data.push(new TemperatureRecord(temperatureValue, date));
+        }
+        return new TemperatureData(data);
     }
+
 }

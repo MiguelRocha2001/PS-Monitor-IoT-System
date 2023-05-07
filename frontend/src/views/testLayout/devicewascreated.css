@@ -1,0 +1,69 @@
+.card {
+    border: none;
+    background-color: #fff;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    max-width: 600px;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #3e8e41;
+    margin-bottom: 0.5rem;
+}
+
+.card-subtitle {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+.card-text {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.device-created {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.copy-to-clipboard {
+    margin-top: 16px;
+    padding: 8px 16px;
+    border: none;
+    background-color: #3e8e41;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.copy-to-clipboard:hover {
+    background-color: #2d6d32;
+}
+
+.copy-to-clipboard:active {
+    background-color: #255e2d;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.copy-button {
+    color: white;
+    background-color: #3e8e41;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+

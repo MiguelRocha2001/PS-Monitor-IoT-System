@@ -42,6 +42,7 @@
   "devDependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@types/react-router-bootstrap": "^0.26.0",
+    "react-datepicker": "^4.11.0",
     "style-loader": "^3.3.1",
     "ts-loader": "^9.4.1",
     "webpack": "^5.78.0",
