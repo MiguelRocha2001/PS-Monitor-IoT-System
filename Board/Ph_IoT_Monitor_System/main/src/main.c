@@ -19,7 +19,7 @@
 const static char* TAG = "MAIN";
 
 const static long SENSOR_MULTIPLE_READING_INTERVAL = 1000000 * 3; // 3 seconds
-const static long LONG_SLEEP_TIME = 1000000 * 30; // 10 seconds
+const static long LONG_SLEEP_TIME = 1000000 * 3; // 3 seconds
 
 RTC_DATA_ATTR struct sensor_records_struct sensor_records;
 
@@ -103,6 +103,8 @@ int check_sensors_status(char* deviceID) {
     return res;
 }
 
+// IMPORTANT -> run with $idf.py monitor
+
 /**
  * Program entry point.
  * It will read the pH value every 0.3 seconds and store it in RTC memory.
@@ -116,11 +118,12 @@ void app_main(void) {
     char* deviceID;
     get_device_id(&deviceID);
 
+    // needs wifi to ajust time, because the fake readings will get the real time
     int sensor_status_result = check_sensors_status(deviceID);
     if (sensor_status_result == -1) {
         start_deep_sleep(LONG_SLEEP_TIME);
     }
-
+    
     esp_sleep_wakeup_cause_t cause = esp_sleep_get_wakeup_cause();
     printDeepSleepWokeCause(cause);
 
