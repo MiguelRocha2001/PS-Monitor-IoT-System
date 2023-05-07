@@ -99,6 +99,12 @@ class UserService(
             it.userRepo.deleteAllUsers()
         }
     }
+
+    fun deleteUser(userId: String) {
+        transactionManager.run {
+            it.userRepo.deleteUser(userId)
+        }
+    }
 }
 
 

@@ -7,7 +7,7 @@ import pt.isel.iot_data_server.repository.UserDataRepository
 import pt.isel.iot_data_server.repository.jdbi.mappers.UserMapper
 import pt.isel.iot_data_server.repository.jdbi.mappers.toUser
 
-class JdbiUserDataRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN,DEVICE...)
+class JdbiUserDataRepository(
     private val handle: Handle
 ) : UserDataRepository {
     override fun createUser(user: User) {
@@ -141,6 +141,12 @@ class JdbiUserDataRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOK
 
     override fun deleteAllTokens() {
         handle.createUpdate("delete from TOKEN").execute()
+    }
+
+    override fun deleteUser(userId: String) {
+        handle.createUpdate("delete from _USER where _id = :user_id")
+            .bind("user_id", userId)
+            .execute()
     }
 
     /**

@@ -20,7 +20,8 @@ class WaterFlowDataService(
 ) {
     private val logger = LoggerFactory.getLogger(WaterFlowDataService::class.java)
 
-    val MIN_PH = 6.0 // TODO: change this to other place and make it configurable
+    val MAXIMUM_WATER_FLOW = 1000.0 // TODO: change this to other place and make it configurable
+
     init {
         subscribeWaterFlowTopic(client)
     }
@@ -29,7 +30,7 @@ class WaterFlowDataService(
         deviceId: String,
         waterFlowRecord: WaterFlowRecord
     ) {
-        if(waterFlowRecord.value < 0)
+        if (waterFlowRecord.value < 0)
             throw Exception("Invalid water flow value")
         tsdbRepository.saveWaterFlowRecord(deviceId, waterFlowRecord)
     }
@@ -55,25 +56,28 @@ class WaterFlowDataService(
     }
 
     private fun subscribeWaterFlowTopic(client: MqttClient) {
-        client.subscribe("waterFlow") { topic, message ->
+        client.subscribe("water_flow") { topic, message ->
             try {
                 logger.info("Received message from topic: $topic")
-                val waterFlowRecord = WaterFlowRecord(message.toString().toDouble())
-                val deviceId = topic.split("/")[1]
-                saveWaterFlowRecord(deviceId, waterFlowRecord)
+
+                val byteArray = message.payload
+                val string = String(byteArray)
+
+                val waterFlowRecord = fromJsonStringToWaterFlowRecord(string)
+                val deviceId = fromJsonStringToDeviceId(string)
+
+                val deviceResult = deviceService.getDeviceByIdOrNull(deviceId)
+                if (deviceResult != null) {
+                    // TODO: alert user if water flow is has passed the maximum value
+                    saveWaterFlowRecord(deviceId, waterFlowRecord)
+                    logger.info("Saved water flow record: $waterFlowRecord, from device: $deviceId")
+                } else {
+                    logger.info("Received water flow record from unknown device: $deviceId")
+                }
             } catch (e: Exception) {
-                logger.error("Error while processing message from topic: $topic", e)
+                logger.error("Error while processing water flow record: ${e.message}")
             }
         }
     }
 
-    fun sendEmailIfWaterFlowIsTooLow(deviceId: String, waterFlowRecord: WaterFlowRecord) {
-        if (waterFlowRecord.value < MIN_PH) {
-            val device = deviceService.getDevice(deviceId)
-            emailSenderService.sendEmail(
-                device.ownerEmail,
-                "Water flow is too low",
-                "The water flow of device ${device.name} is too low. Current value: ${waterFlowRecord.value}"
-            )
-        }
-    }
+}

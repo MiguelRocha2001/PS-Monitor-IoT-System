@@ -1,6 +1,7 @@
 package pt.isel.iot_data_server.repository
 
 import pt.isel.iot_data_server.domain.Device
+import pt.isel.iot_data_server.domain.SensorErrorRecord
 
 interface DeviceDataRepository {
     fun createDevice(userId: String, device: Device)
@@ -12,4 +13,7 @@ interface DeviceDataRepository {
     fun getDeviceById(deviceId: String): Device?
     fun deleteAllDevices()
     fun deviceCount(userId: String): Int // TODO: test this
+    fun saveSensorErrorRecord(deviceId: String, sensorErrorRecord: SensorErrorRecord)
+    fun getSensorErrorRecords(deviceId: String): List<SensorErrorRecord>
+    fun getAllSensorErrorRecords(): List<SensorErrorRecord>
 }

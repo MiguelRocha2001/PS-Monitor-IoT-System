@@ -1,7 +1,6 @@
 package pt.isel.iot_data_server.repository
 
-import pt.isel.iot_data_server.domain.PhRecord
-import pt.isel.iot_data_server.domain.TemperatureRecord
+import pt.isel.iot_data_server.domain.*
 
 interface CollectedDataRepository {
 
@@ -14,5 +13,13 @@ interface CollectedDataRepository {
     fun saveTemperatureRecord(deviceId: String, temperatureRecord: TemperatureRecord)
     fun getAllPhRecords(): List<PhRecord>
     fun getAllTemperatureRecords(): List<TemperatureRecord>
-
+    fun getHumidityRecords(deviceId: String): List<HumidityRecord>
+    fun saveHumidityRecord(deviceId: String, humidityRecord: HumidityRecord)
+    fun getAllHumidityRecords(): List<HumidityRecord>
+    fun getWaterFlowRecords(deviceId: String): List<WaterFlowRecord>
+    fun saveWaterFlowRecord(deviceId: String, waterFlowRecord: WaterFlowRecord)
+    fun getAllWaterFlowRecords(): List<WaterFlowRecord>
+    fun getWaterLevelRecords(deviceId: String): List<WaterLevelRecord>
+    fun saveWaterLevelRecord(deviceId: String, waterLevelRecord: WaterLevelRecord)
+    fun getAllWaterLevelRecords(): List<WaterLevelRecord>
 }

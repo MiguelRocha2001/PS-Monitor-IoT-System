@@ -17,7 +17,7 @@ class WaterLeakDataService(
     private val deviceService: DeviceService,
     client: MqttClient
 ) {
-    private val logger = LoggerFactory.getLogger(FloodDataService::class.java)
+    private val logger = LoggerFactory.getLogger(WaterLeakDataService::class.java)
 
     val MIN_PH = 6.0 // TODO: change this to other place and make it configurable
     init {

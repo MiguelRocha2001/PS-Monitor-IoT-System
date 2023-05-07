@@ -18,8 +18,8 @@
 
 const static char* TAG = "MAIN";
 
-const static long READ_PH_INTERVAL = 1000000 * 0.3; // 3 seconds
-const static long LONG_SLEEP_TIME = 1000000 * 3; // 10 seconds
+const static long SENSOR_MULTIPLE_READING_INTERVAL = 1000000 * 3; // 3 seconds
+const static long LONG_SLEEP_TIME = 1000000 * 30; // 10 seconds
 
 RTC_DATA_ATTR struct sensor_records_struct sensor_records;
 
@@ -79,7 +79,7 @@ void compute_sensors(char* deviceID) {
     } else {
         setup_wifi();
         read_sensor_records(&sensor_records);
-        start_deep_sleep(READ_PH_INTERVAL);
+        start_deep_sleep(SENSOR_MULTIPLE_READING_INTERVAL);
     }
 }
 
@@ -111,7 +111,8 @@ int check_sensors() {
 }
 
 /**
- * 
+ * Publishes a sensor not working alert to the MQTT broker,
+ * with the deviceID and the sensor that is not working.
 */
 void send_sensor_not_working_alert(esp_mqtt_client_handle_t client, char* deviceID, int sensor_error) {
     ESP_LOGE(TAG, "Sending sensor not working alert...");
@@ -152,6 +153,7 @@ void app_main(void) {
 
     if (int error = check_sensors() == -1) {
         send_sensor_not_working_alert(error);
+        start_deep_sleep(LONG_SLEEP_TIME);
     }
 
     char* deviceID;

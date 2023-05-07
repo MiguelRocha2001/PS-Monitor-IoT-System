@@ -58,17 +58,28 @@ class WaterLevelDataService(
     }
 
     private fun subscribeWaterLevelTopic(client: MqttClient) {
-        client.subscribe("waterLevel") { _, message ->
-            val waterLevelRecord = WaterLevelRecord(message.toString().toDouble())
-            val deviceId = "waterLevel"
-            saveWaterLevelRecord(deviceId, waterLevelRecord)
-            logger.info("Water level record saved: $waterLevelRecord")
-            if (waterLevelRecord.value < MIN_WATER_LEVEL) {
-                emailSenderService.sendEmail(
-                    "Water level is low",
-                    "Water level is low, please refill the water tank"
-                )
+        client.subscribe("water_level") { topic, message ->
+            try {
+                logger.info("Received message from topic: $topic")
+
+                val byteArray = message.payload
+                val string = String(byteArray)
+
+                val waterLevelRecord = fromJsonStringToWaterLevelRecord(string)
+                val deviceId = fromJsonStringToDeviceId(string)
+
+                val deviceResult = deviceService.getDeviceByIdOrNull(deviceId)
+                if (deviceResult != null) {
+                    // TODO: alert user if water flow is has passed the maximum value
+                    saveWaterLevelRecord(deviceId, waterLevelRecord)
+                    logger.info("Saved water level record: $waterLevelRecord, from device: $deviceId")
+                } else {
+                    logger.info("Received water level record from unknown device: $deviceId")
+                }
+            } catch (e: Exception) {
+                logger.error("Error while processing water level record: ${e.message}")
             }
         }
     }
+
 }

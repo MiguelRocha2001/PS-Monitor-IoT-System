@@ -21,6 +21,13 @@ create table device(
     foreign key (user_id) references _user(_id)
 );
 
+create table device_error(
+    device_id varchar,
+    sensor varchar,
+    timestamp timestamp,
+    foreign key (device_id) references device(id)
+);
+
 create table salt(
     salt varchar primary key,
     user_id varchar

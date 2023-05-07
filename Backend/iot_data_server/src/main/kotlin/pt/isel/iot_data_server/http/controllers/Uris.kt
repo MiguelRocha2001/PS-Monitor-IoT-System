@@ -34,7 +34,7 @@ object Uris {
 
     object Users {
         const val ALL = "/users"
-        private const val BY_ID1 = "$ALL/{id}"
+        const val BY_ID1 = "$ALL/{id}"
         const val ME = "$ALL/me"
         const val MY_TOKEN = "$ME/token"
 
@@ -76,6 +76,27 @@ object Uris {
         object Temperature {
             const val ALL_1 = "${BY_ID1}/temperature-data"
             private const val ALL_2 = "${BY_ID2}/temperature-data"
+
+            fun all(): URI = URI(ALL_2)
+        }
+
+        object WaterFlow {
+            const val ALL_1 = "${BY_ID1}/water-flow-data"
+            private const val ALL_2 = "${BY_ID2}/water-flow-data"
+
+            fun all(): URI = URI(ALL_2)
+        }
+
+        object WaterLevel {
+            const val ALL_1 = "${BY_ID1}/water-level-data"
+            private const val ALL_2 = "${BY_ID2}/water-level-data"
+
+            fun all(): URI = URI(ALL_2)
+        }
+
+        object Humidity {
+            const val ALL_1 = "${BY_ID1}/humidity-data"
+            private const val ALL_2 = "${BY_ID2}/humidity-data"
 
             fun all(): URI = URI(ALL_2)
         }

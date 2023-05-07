@@ -29,7 +29,6 @@ import java.util.*
 class UserController(
     val service: UserService
 ) {
-
     @Operation(summary = "Create user", description = "Create a new user")
     @ApiResponse(responseCode = "201", description = "Successfully created", content = [Content(
         mediaType = "application/vnd.siren+json",
@@ -182,6 +181,18 @@ class UserController(
         response.sendRedirect("http://localhost:8080/auth/login")
     }
 
+    @Operation(summary = "Delete user", description = "Delete the user")
+    @ApiResponse(responseCode = "204", description = "Successfully deleted")
+    @ApiResponse(responseCode = "401", description = "Not authorized", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
+    @DeleteMapping(Uris.Users.BY_ID1)
+    @Authorization(Role.ADMIN)
+    fun deleteUser(
+        @PathVariable("id") id: String
+    ): ResponseEntity<Unit> {
+        service.deleteUser(id)
+        return ResponseEntity.status(204).build()
+    }
+
     /**
      * Get method, because it doesn't change anything in the server.
      */
@@ -203,7 +214,6 @@ class UserController(
         cookieWithToken.isHttpOnly = true
         cookieWithToken.secure = true
         cookieWithToken.maxAge = maxAge
-
         return cookieWithToken
     }
 

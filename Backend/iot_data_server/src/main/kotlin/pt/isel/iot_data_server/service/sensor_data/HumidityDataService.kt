@@ -59,15 +59,25 @@ class HumidityDataService(
 
     private fun subscribeHumidityTopic(client: MqttClient) {
         client.subscribe("humidity") { topic, message ->
-            val humidityRecord = HumidityRecord(message.toString().toDouble())
-            val deviceId = topic.split("/")[1]
-            saveHumidityRecord(deviceId, humidityRecord)
-            if (humidityRecord.value < MIN_HUMIDITY) {
-                logger.info("Humidity is below the minimum value")
-                emailSenderService.sendEmail(
-                    "Humidity is below the minimum value",
-                    "Humidity is below the minimum value in device $deviceId"
-                )
+            try {
+                logger.info("Received message from topic: $topic")
+
+                val byteArray = message.payload
+                val string = String(byteArray)
+
+                val humidityRecord = fromJsonStringToHumidityRecord(string)
+                val deviceId = fromJsonStringToDeviceId(string)
+
+                val deviceResult = deviceService.getDeviceByIdOrNull(deviceId)
+                if (deviceResult != null) {
+                    // sendEmailIfPhExceedsLimit(deviceId, phRecord, deviceResult.value) TODO: uncomment this later
+                    saveHumidityRecord(deviceId, humidityRecord)
+                    logger.info("Saved humidity record: $humidityRecord, from device: $deviceId")
+                } else {
+                    logger.info("Received humidity record from unknown device: $deviceId")
+                }
+            } catch (e: Exception) {
+                logger.error("Error while processing humidity record: ${e.message}")
             }
         }
     }
