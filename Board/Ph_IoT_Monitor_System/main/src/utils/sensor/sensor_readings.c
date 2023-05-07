@@ -1,6 +1,7 @@
 #include "sensor/sensor_reader.h"
 #include "sensor/ph_reader.h"
 #include "sensor/temp_reader.h"
+#include "sensor/sensor_record.h"
 
 const static char* TAG = "sensor_readings";
 
@@ -10,9 +11,9 @@ const static char* TAG = "sensor_readings";
 */
 int read_sensor_records(sensor_records_struct *sensor_records) {
     int index = sensor_records->index;
-
     if (index < MAX_SENSOR_RECORDS) {
-        if (read_ph_record(&sensor_records->ph_records[index]) == -1) return PH_SENSOR_ERROR;
+        if (read_start_ph_record(&sensor_records->start_ph_records[index]) == -1) return START_PH_SENSOR_ERROR;
+        if (read_end_ph_record(&sensor_records->end_ph_records[index]) == -1) return END_PH_SENSOR_ERROR;
         if (read_temp_record(&sensor_records->temperature_records[index]) == -1) return TEMP_SENSOR_ERROR;
         if (read_water_level_record(&sensor_records->water_level_records[index]) == -1) return WATER_LEVEL_SENSOR_ERROR;
         if (read_water_flow_record(&sensor_records->water_flow_records[index]) == -1) return WATER_FLOW_SENSOR_ERROR;
@@ -22,6 +23,45 @@ int read_sensor_records(sensor_records_struct *sensor_records) {
         return 0;
     }
     return 1;
+}
+
+/**
+ * Check if all the sensors are working.
+ * @param stores the sensors that are not working in the int array.
+ * @returns 0 if all the sensors are working, -1 otherwise.
+*/
+int check_if_sensors_are_working(int *sensors_not_working) {
+    struct sensor_record1 record1;
+    struct sensor_record2 record2;
+    if (read_ph_record(&record1) == -1)
+        sensors_not_working[0] = START_PH_SENSOR_ERROR;
+    if (read_end_ph_record(&record1) == -1)
+        sensors_not_working[1] = END_PH_SENSOR_ERROR;
+    if (read_water_level_record(&record1) == -1)
+        sensors_not_working[2] = WATER_LEVEL_SENSOR_ERROR;
+    if (read_water_flow_record(&record1) == -1)
+        sensors_not_working[3] = WATER_FLOW_SENSOR_ERROR;
+    if (read_humidity_record(&record1) == -1)
+        sensors_not_working[4] = HUMIDITY_SENSOR_ERROR;
+    if (read_temp_record(&record2) == -1)    
+        sensors_not_working[5] = TEMP_SENSOR_ERROR;
+    if (
+        sensors_not_working[0] == -1 || 
+        sensors_not_working[1] == -1 || 
+        sensors_not_working[2] == -1 || 
+        sensors_not_working[3] == -1 || 
+        sensors_not_working[4] == -1 || 
+        sensors_not_working[5] == -1
+    )
+    {
+        return -1;
+    }
+    else
+    {
+        return 0;
+    }
+    
+    return 0;
 }
 
 int sensors_reading_is_complete(sensor_records_struct *sensor_records) {

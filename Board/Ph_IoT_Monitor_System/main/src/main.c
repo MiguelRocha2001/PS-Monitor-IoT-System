@@ -34,11 +34,11 @@ void printDeepSleepWokeCause(esp_sleep_wakeup_cause_t cause) {
 void send_sensor_records(esp_mqtt_client_handle_t client, char* deviceID) {
     ESP_LOGE(TAG, "Sending sensor records...");
     for (int i = 0; i < MAX_SENSOR_RECORDS; i++) {
-        mqtt_send_sensor_record1(client, &sensor_records.ph_records[i], deviceID, "ph");
+        mqtt_send_sensor_record1(client, &sensor_records.start_ph_records[i], deviceID, "ph");
+        mqtt_send_sensor_record1(client, &sensor_records.end_ph_records[i], deviceID, "ph");
         mqtt_send_sensor_record2(client, &sensor_records.temperature_records[i], deviceID, "temperature");
         // TODO: send water level, water flow and humidity
     }
-    
 }
 
 void erase_sensor_records() {
@@ -85,27 +85,28 @@ void compute_sensors(char* deviceID) {
 
 int check_sensors() {
     ESP_LOGE(TAG, "Checking sensors...");
-    int res = read_sensor_records(&sensor_records);
-    switch (res)
+
+    int sensors_not_working[6]; // 6 sensors
+    int res = check_if_sensors_are_working(send_sensor_not_working_alert);
+    if (sensors_not_working[0] == -1)
     {
-    case PH_SENSOR_ERROR:
         ESP_LOGE(TAG, "PH sensor error");
-        break;
-    case TEMP_SENSOR_ERROR:
+    }
+    if (sensors_not_working[1] == -1)
+    {
         ESP_LOGE(TAG, "Temperature sensor error");
-        break;
-    case WATER_LEVEL_SENSOR_ERROR:
+    }
+    if (sensors_not_working[2] == -1)
+    {
         ESP_LOGE(TAG, "Water level sensor error");
-        break;
-    case WATER_FLOW_SENSOR_ERROR:
+    }
+    if (sensors_not_working[3] == -1)
+    {
         ESP_LOGE(TAG, "Water flow sensor error");
-        break;
-    case HUMIDITY_SENSOR_ERROR:
+    }
+    if (sensors_not_working[4] == -1)
+    {
         ESP_LOGE(TAG, "Humidity sensor error");
-        break;
-    default:
-        ESP_LOGE(TAG, "All sensors are working");
-        break;
     }
     return res;
 }
@@ -117,25 +118,24 @@ int check_sensors() {
 void send_sensor_not_working_alert(esp_mqtt_client_handle_t client, char* deviceID, int sensor_error) {
     ESP_LOGE(TAG, "Sending sensor not working alert...");
     char sensorName[20];
-    switch (sensor_error)
-    {
-    case PH_SENSOR_ERROR:
-        sensorName = "PH";
-        break;
-    case TEMP_SENSOR_ERROR:
-        sensorName = "Temperature";
-        break;
-    case WATER_LEVEL_SENSOR_ERROR:
-        sensorName = "Water level";
-        break;
-    case WATER_FLOW_SENSOR_ERROR:
-        sensorName = "Water flow";
-        break;
-    case HUMIDITY_SENSOR_ERROR:
-        sensorName = "Humidity";
-        break;
-    default:
-        // TODO: should not happen
+    switch (sensor_error) {
+        case PH_SENSOR_ERROR:
+            sensorName = "PH";
+            break;
+        case TEMP_SENSOR_ERROR:
+            sensorName = "Temperature";
+            break;
+        case WATER_LEVEL_SENSOR_ERROR:
+            sensorName = "Water level";
+            break;
+        case WATER_FLOW_SENSOR_ERROR:
+            sensorName = "Water flow";
+            break;
+        case HUMIDITY_SENSOR_ERROR:
+            sensorName = "Humidity";
+            break;
+        default:
+            // TODO: should not happen
     }
     int timestamp = getNowTimestamp();
     mqtt_send_sensor_not_working_alert(client, deviceID, timestamp, sensorName);
