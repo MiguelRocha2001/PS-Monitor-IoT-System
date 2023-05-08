@@ -81,3 +81,17 @@ fun WaterLevelRecord.toOutputModel() = WaterLevelRecordOutputModel(
     value = this.value,
     timestamp = this.instant.toString()
 )
+
+data class SensorErrorRecordOutputModel(
+    val sensorName: String,
+    val timestamp: String
+)
+fun SensorErrorRecord.toOutputModel() = SensorErrorRecordOutputModel(
+    sensorName = this.sensorName.toString(),
+    timestamp = this.instant.toString()
+)
+data class SensorErrorsOutputModel(val errors: List<SensorErrorRecordOutputModel>) {
+    companion object {
+        fun from(errors: List<SensorErrorRecord>) = SensorErrorsOutputModel(errors.map { it.toOutputModel() })
+    }
+}

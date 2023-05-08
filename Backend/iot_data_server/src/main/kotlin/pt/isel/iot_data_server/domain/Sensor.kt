@@ -16,61 +16,60 @@ data class WaterLevelRecord(val value: Int, val instant: Instant)
 data class FloodRecord(val instant: Instant)
 data class SensorErrorRecord(val sensorName: SensorName, val instant: Instant)
 
-fun fromJsonStringToPhRecord(str: String): PhRecord {
-    val (time, value) = fromJsonStringToTimestampAndDouble(str)
+fun fromMqttMsgStringToPhRecord(str: String): PhRecord {
+    val (time, value) = fromMqttMsgStringToTimestampAndDouble(str)
     return PhRecord(value, time)
 }
 
-fun fromJsonStringToTemperatureRecord(str: String): TemperatureRecord {
-    val (time, value) = fromJsonStringToTimestampAndInt(str)
+fun fromMqttMessageToTemperatureRecord(str: String): TemperatureRecord {
+    val (time, value) = fromMqttMsgStringToTimestampAndInt(str)
     return TemperatureRecord(value, time)
 }
 
-fun fromJsonStringToHumidityRecord(str: String): HumidityRecord {
-    val (time, value) = fromJsonStringToTimestampAndDouble(str)
+fun fromMqttMsgStringToHumidityRecord(str: String): HumidityRecord {
+    val (time, value) = fromMqttMsgStringToTimestampAndDouble(str)
     return HumidityRecord(value, time)
 }
 
-fun fromJsonStringToWaterFlowRecord(str: String): WaterFlowRecord {
-    val (time, value) = fromJsonStringToTimestampAndInt(str)
+fun fromMqttMsgStringToWaterFlowRecord(str: String): WaterFlowRecord {
+    val (time, value) = fromMqttMsgStringToTimestampAndInt(str)
     return WaterFlowRecord(value, time)
 }
 
-fun fromJsonStringToWaterLevelRecord(str: String): WaterLevelRecord {
-    val (time, value) = fromJsonStringToTimestampAndInt(str)
+fun fromMqttMsgStringToWaterLevelRecord(str: String): WaterLevelRecord {
+    val (time, value) = fromMqttMsgStringToTimestampAndInt(str)
     return WaterLevelRecord(value, time)
 }
 
-fun fromJsonStringToFloodRecord(str: String): FloodRecord {
-    val time = fromJsonStringToTimestamp(str)
+fun fromMqttMsgStringToFloodRecord(str: String): FloodRecord {
+    val time = fromMqttMsgStringToTimestamp(str)
     return FloodRecord(time)
 }
 
-fun fromJsonStringToSensorErrorRecord(str: String): SensorErrorRecord {
-    val time = fromJsonStringToTimestamp(str)
-    val sensorName = fromJsonStringToSensorName(str)
+fun fromMqttMsgStringToSensorErrorRecord(str: String): SensorErrorRecord {
+    val time = fromMqttMsgStringToTimestamp(str)
+    val sensorName = fromMqttMsgStringToSensorName(str)
     return SensorErrorRecord(sensorName, time)
 }
 
-fun fromJsonStringToTimestampAndDouble(str: String): Pair<Instant, Double> {
-    val time = fromJsonStringToTimestamp(str)
-    val value = fromJsonStringToDouble(str)
+fun fromMqttMsgStringToTimestampAndDouble(str: String): Pair<Instant, Double> {
+    val time = fromMqttMsgStringToTimestamp(str)
+    val value = fromMqttMsgStringToDouble(str)
     return Pair(time, value)
 }
 
-fun fromJsonStringToTimestampAndInt(str: String): Pair<Instant, Int> {
-    val time = fromJsonStringToTimestamp(str)
-    val value = fromJsonStringToDouble(str).toInt()
+fun fromMqttMsgStringToTimestampAndInt(str: String): Pair<Instant, Int> {
+    val time = fromMqttMsgStringToTimestamp(str)
+    val value = fromMqttMsgStringToDouble(str).toInt()
     return Pair(time, value)
 }
 
-fun fromJsonStringToTimestamp(str: String): Instant {
-    val split = str.trimJsonString().split(",")
+fun fromMqttMsgStringToTimestamp(str: String): Instant {
+    val split = str.split(",")
 
     val timestampInSeconds: Long = split
         .find { it.contains("timestamp") }
         ?.substringAfter(":")
-        ?.replace("\"", "")
         ?.trim()
         ?.toLong() ?: throw IllegalArgumentException("Invalid json string")
 
@@ -79,7 +78,7 @@ fun fromJsonStringToTimestamp(str: String): Instant {
     return Instant.ofEpochMilli(timestamp)
 }
 
-fun fromJsonStringToValue(str: String): String {
+fun fromMqttMsgStringToValue(str: String): String {
     val split = str.trimJsonString().split(",")
 
     return split
@@ -91,7 +90,7 @@ fun fromJsonStringToValue(str: String): String {
         ?: throw IllegalArgumentException("Invalid json string")
 }
 
-fun fromJsonStringToSensorName(str: String): SensorName {
+fun fromMqttMsgStringToSensorName(str: String): SensorName {
     val split = str.trimJsonString().split(",")
 
     val sensorName = split
@@ -105,12 +104,7 @@ fun fromJsonStringToSensorName(str: String): SensorName {
     return SensorName.valueOf(sensorName)
 }
 
-fun fromJsonStringToDouble(str: String): Double {
-    val value = fromJsonStringToValue(str)
+fun fromMqttMsgStringToDouble(str: String): Double {
+    val value = fromMqttMsgStringToValue(str)
     return value.toDouble()
-}
-
-fun fromJsonStringToInt(str: String): Int {
-    val value = fromJsonStringToValue(str)
-    return value.toInt()
 }

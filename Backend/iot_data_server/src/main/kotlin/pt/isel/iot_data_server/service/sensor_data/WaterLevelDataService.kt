@@ -12,7 +12,6 @@ import pt.isel.iot_data_server.service.email.EmailManager
 
 @Service
 class WaterLevelDataService(
-  //  private val transactionManager: TransactionManager,
     private val emailSenderService: EmailManager,
     private val tsdbRepository: TSDBRepository,
     private val deviceService: DeviceService,
@@ -30,7 +29,6 @@ class WaterLevelDataService(
         deviceId: String,
         waterLevelRecord: WaterLevelRecord,
     ) {
-       // transactionManager.run {
         if(waterLevelRecord.value < 0 || waterLevelRecord.value > 100)
             throw IllegalArgumentException("Invalid water level value")
         else
@@ -65,8 +63,8 @@ class WaterLevelDataService(
                 val byteArray = message.payload
                 val string = String(byteArray)
 
-                val waterLevelRecord = fromJsonStringToWaterLevelRecord(string)
-                val deviceId = fromJsonStringToDeviceId(string)
+                val waterLevelRecord = fromMqttMsgStringToWaterLevelRecord(string)
+                val deviceId = fromMqttMsgStringToDeviceId(string)
 
                 val deviceResult = deviceService.getDeviceByIdOrNull(deviceId)
                 if (deviceResult != null) {

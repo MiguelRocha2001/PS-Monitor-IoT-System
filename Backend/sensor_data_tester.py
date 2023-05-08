@@ -2,19 +2,39 @@ import paho.mqtt.client as mqtt
 import random
 import datetime
 import time
+# import the threading module
+import threading
 
 # see: https://pypi.org/project/paho-mqtt/
 
-def get_message_with_value():
-    device_id = "\"device_manual_tests\""
-    value = "\"" + str(random.uniform(1.0, 12.0)) + "\""
-    timestamp = "\"" + str(round(time.time())) + "\""
-    return "{\"device_id\": " + device_id + ", \"value\": " + value + ", \"timestamp\": " + timestamp + "}"
+def get_message_with_float_value():
+    device_id = "device_manual_tests"
+    value = str(random.uniform(1.0, 12.0))
+    timestamp = str(round(time.time()))
+    return "device_id: " + device_id + ", value: " + value + ", timestamp: " + timestamp + ""
+
+def get_message_with_int_value():
+    device_id = "device_manual_tests"
+    value = str(random.randint(1, 100))
+    timestamp = str(round(time.time()))
+    return "device_id: " + device_id + ", value: " + value + ", timestamp: " + timestamp + ""
 
 def get_message_without_value():
-    device_id = "\"device_manual_tests\""
-    timestamp = "\"" + str(round(time.time())) + "\""
-    return "{\"device_id\": " + device_id + ", \"timestamp\": " + timestamp + "}"
+    device_id = "device_manual_tests"
+    timestamp = str(round(time.time()))
+    return "device_id: " + device_id + ", timestamp: " + timestamp + ""
+
+def get_message_with_sensors_error():
+    device_id = "device_manual_tests"
+    timestamp = str(round(time.time()))
+    sensors = "ph, humidity, temperature, water_flow, water_level, flood"
+    return "device_id: " + device_id + ", timestamp: " + timestamp + ", sensors: " + sensors + ""
+
+def get_message_with_device_error():
+    device_id = "device_manual_tests"
+    timestamp = str(round(time.time()))
+    error = "something went wrong"
+    return "device_id: " + device_id + ", timestamp: " + timestamp + ", error: " + error + ""
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -28,18 +48,53 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     print(msg.topic+" "+str(msg.payload))
 
+ 
+class thread1(threading.Thread):
+    def __init__(self, client):
+        threading.Thread.__init__(self)
+        self.client = client
+        
+    # helper function to execute the threads
+    def run(self):
+        while True:
+            client.publish("ph", get_message_with_float_value())
+            time.sleep(1)
+            client.publish("humidity", get_message_with_float_value())
+            time.sleep(1)
+            client.publish("temperature", get_message_with_int_value())
+            time.sleep(1)
+            client.publish("water_flow", get_message_with_int_value())
+            time.sleep(1)
+            client.publish("water_level", get_message_with_int_value())
+
+
+class thread2(threading.Thread):
+    def __init__(self, client):
+        threading.Thread.__init__(self)
+        self.client = client
+        
+    # helper function to execute the threads
+    def run(self):
+        while True:
+            client.publish("sensor_error", get_message_with_sensors_error())
+            time.sleep(5)
+            client.publish("device_error", get_message_with_device_error())
+            time.sleep(5)
+            client.publish("water_leak", get_message_without_value())
+            time.sleep(5)
+
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
 
 client.connect("localhost", 1883, 60)
 
-while True:
-    client.publish("ph", get_message_with_value())
-    time.sleep(1)
-    client.publish("temperature", get_message_with_value())
-    time.sleep(1)
-    client.publish("flood", get_message_without_value())
+thread1 = thread1(client)
+thread2 = thread2(client)
+ 
+thread1.start()
+thread2.start()
+
 
 # Blocking call that processes network traffic, dispatches callbacks and
 # handles reconnecting.

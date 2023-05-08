@@ -1,4 +1,4 @@
-package pt.isel.iot_data_server.service.sensor_data
+package pt.isel.iot_data_server.service.device
 
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.slf4j.LoggerFactory
@@ -6,74 +6,66 @@ import org.springframework.stereotype.Service
 import pt.isel.iot_data_server.domain.*
 import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.service.Either
-import pt.isel.iot_data_server.service.device.DeviceService
 import pt.isel.iot_data_server.service.email.EmailManager
 
 
 @Service
-class SensorErrorService(
+class DeviceErrorService(
     private val transactionManager: TransactionManager,
     private val emailSenderService: EmailManager,
     private val deviceService: DeviceService,
     client: MqttClient
 ) {
-    private val logger = LoggerFactory.getLogger(SensorErrorService::class.java)
+    private val logger = LoggerFactory.getLogger(DeviceErrorService::class.java)
 
     init {
-        subscribeSensorErrorTopic(client)
+        subscribeDeviceErrorTopic(client)
     }
 
-    fun saveSensorErrorRecord(
+    fun saveDeviceErrorRecord(
         deviceId: String,
-        sensorErrorRecord: SensorErrorRecord,
+        deviceErrorRecord: DeviceErrorRecord,
     ) {
         transactionManager.run {
-            it.deviceRepo.saveSensorErrorRecord(deviceId, sensorErrorRecord)
+            it.deviceRepo.saveDeviceErrorRecord(deviceId, deviceErrorRecord)
         }
     }
 
-    fun getSensorErrorRecords(deviceId: String): SensorErrorDataResult {
+    fun getDeviceErrorRecords(deviceId: String): DeviceErrorRecordsResult {
         return transactionManager.run {
             if (!deviceService.existsDevice(deviceId))
-                Either.Left(SensorErrorDataError.DeviceNotFound)
+                Either.Left(DeviceErrorRecordsError.DeviceNotFound)
             else
-                Either.Right(it.deviceRepo.getSensorErrorRecords(deviceId))
+                Either.Right(it.deviceRepo.getDeviceErrorRecords(deviceId))
         }
     }
 
-    fun getSensorErrorRecordsIfIsOwner(deviceId: String, userId: String): SensorErrorDataResult {
+    fun getDeviceErrorRecordsIfIsOwner(deviceId: String, userId: String): DeviceErrorRecordsResult {
         return transactionManager.run {
             if (!deviceService.existsDevice(deviceId))
-                Either.Left(SensorErrorDataError.DeviceNotFound)
+                Either.Left(DeviceErrorRecordsError.DeviceNotFound)
             else if (!deviceService.belongsToUser(deviceId, userId))
-                Either.Left(SensorErrorDataError.DeviceNotBelongsToUser(userId))
+                Either.Left(DeviceErrorRecordsError.DeviceNotBelongsToUser(userId))
             else
-                Either.Right(it.deviceRepo.getSensorErrorRecords(deviceId))
+                Either.Right(it.deviceRepo.getDeviceErrorRecords(deviceId))
         }
     }
-
-    fun getAllSensorErrorRecords(): List<SensorErrorRecord> {
-        return transactionManager.run {
-            it.deviceRepo.getAllSensorErrorRecords()
-        }
-    }
-
-    private fun subscribeSensorErrorTopic(client: MqttClient) {
-        client.subscribe("sensor_error") { topic, message ->
+    private fun subscribeDeviceErrorTopic(client: MqttClient) {
+        client.subscribe("unknown_woke_up_reason") { topic, message ->
             try {
                 logger.info("Received message from topic: $topic")
 
                 val byteArray = message.payload
                 val string = String(byteArray)
 
-                val sensorErrorRecord = fromMqttMsgStringToSensorErrorRecord(string)
+                val deviceErrorRecord = fromMqttMsgStringToDeviceErrorRecord(string)
                 val deviceId = fromMqttMsgStringToDeviceId(string)
 
                 val deviceResult = deviceService.getDeviceByIdOrNull(deviceId)
                 if (deviceResult != null) {
                     // TODO: alert user immediately
-                    saveSensorErrorRecord(deviceId, sensorErrorRecord)
-                    logger.info("Saved sensor error record: $sensorErrorRecord, from device: $deviceId")
+                    saveDeviceErrorRecord(deviceId, deviceErrorRecord)
+                    logger.info("Saved sensor error record from device: $deviceId")
                 } else {
                     logger.info("Received sensor error record from unknown device: $deviceId")
                 }

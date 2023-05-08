@@ -19,7 +19,6 @@ class WaterLeakDataService(
 ) {
     private val logger = LoggerFactory.getLogger(WaterLeakDataService::class.java)
 
-    val MIN_PH = 6.0 // TODO: change this to other place and make it configurable
     init {
         subscribeWaterLeakTopic(client)
     }
@@ -29,13 +28,11 @@ class WaterLeakDataService(
             try {
                 logger.info("Received message from topic: $topic")
 
-                // TODO -> DECRYPT MESSAGE FIRST
-
                 val byteArray = message.payload
                 val string = String(byteArray)
 
-                val floodRecord = fromJsonStringToFloodRecord(string)
-                val deviceId = fromJsonStringToDeviceId(string)
+                val floodRecord = fromMqttMsgStringToFloodRecord(string)
+                val deviceId = fromMqttMsgStringToDeviceId(string)
 
                 // TODO -> alert user
 

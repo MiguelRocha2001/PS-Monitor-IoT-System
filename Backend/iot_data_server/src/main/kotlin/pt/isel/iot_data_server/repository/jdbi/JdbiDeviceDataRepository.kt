@@ -3,6 +3,7 @@ package pt.isel.iot_data_server.repository.jdbi
 import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.iot_data_server.domain.Device
+import pt.isel.iot_data_server.domain.DeviceErrorRecord
 import pt.isel.iot_data_server.domain.SensorErrorRecord
 import pt.isel.iot_data_server.repository.DeviceDataRepository
 import pt.isel.iot_data_server.repository.jdbi.mappers.DeviceMapper
@@ -110,7 +111,7 @@ class JdbiDeviceDataRepository(
     override fun saveSensorErrorRecord(deviceId: String, sensorErrorRecord: SensorErrorRecord) {
         handle.createUpdate(
             """
-            insert into device_error (device_id, sensor, timestamp)
+            insert into sensor_error (device_id, sensor, timestamp)
             values (:device_id, :sensor, :timestamp)
             """
         )
@@ -124,7 +125,7 @@ class JdbiDeviceDataRepository(
         return handle.createQuery(
             """
             select device_id, sensor, timestamp
-            from device_error
+            from sensor_error
             where device_id = :device_id
             """
         )
@@ -137,10 +138,31 @@ class JdbiDeviceDataRepository(
         return handle.createQuery(
             """
             select device_id, sensor, timestamp
-            from device_error
+            from sensor_error
             """
         )
             .mapTo<SensorErrorRecord>()
             .list()
+    }
+
+    override fun saveDeviceErrorRecord(deviceId: String, deviceErrorRecord: DeviceErrorRecord) {
+        handle.createUpdate(
+            """
+            insert into device_error (device_id, timestamp, error)
+            values (:device_id, :timestamp, :error)
+            """
+        )
+            .bind("device_id", deviceId)
+            .bind("timestamp", deviceErrorRecord.instant)
+            .bind("error", deviceErrorRecord.error)
+            .execute()
+    }
+
+    override fun getDeviceErrorRecords(deviceId: String): List<DeviceErrorRecord> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getAllDeviceErrorRecords(): List<DeviceErrorRecord> {
+        TODO("Not yet implemented")
     }
 }

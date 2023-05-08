@@ -1,10 +1,35 @@
 package pt.isel.iot_data_server.domain
 
 import pt.isel.iot_data_server.utils.trimJsonString
+import java.time.Instant
 import kotlin.random.Random
 
 
 data class Device(val deviceId: String, val ownerEmail: String)
+data class DeviceErrorRecord(val deviceId: String, val instant: Instant, val error: String)
+
+fun fromMqttMsgStringToDeviceErrorRecord(str: String): DeviceErrorRecord {
+    val split = str.split(",")
+
+    val deviceId = split
+        .find { it.contains("device_id") }
+        ?.split(":")
+        ?.get(1)
+        ?.trim()
+        ?: throw IllegalArgumentException("Invalid json string")
+
+    val timestamp = fromMqttMsgStringToTimestamp(str)
+
+    val error = split
+        .find { it.contains("error") }
+        ?.split(":")
+        ?.get(1)
+        ?.trim()
+        ?.replace("\"", "")
+        ?: throw IllegalArgumentException("Invalid json string")
+
+    return DeviceErrorRecord(deviceId, timestamp, error)
+}
 
 /**
  * Generates a random device ID
@@ -30,7 +55,7 @@ fun generateRandomDeviceId(): String {
     return sb.toString()
 }
 
-fun fromJsonStringToDeviceId(str: String): String {
+fun fromMqttMsgStringToDeviceId(str: String): String {
     val split = str.trimJsonString().split(",")
 
     val deviceId = split

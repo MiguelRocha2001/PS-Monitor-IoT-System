@@ -1,6 +1,7 @@
 package pt.isel.iot_data_server.service.device
 
 import pt.isel.iot_data_server.domain.Device
+import pt.isel.iot_data_server.domain.DeviceErrorRecord
 import pt.isel.iot_data_server.service.Either
 
 sealed class CreateDeviceError: Error() {
@@ -23,11 +24,15 @@ typealias GetAllDevicesResult = Either<GetAllDevicesError, List<Device>>
 sealed class GetDeviceError: Error() {
     object DeviceNotFound: GetDeviceError()
 }
-
 typealias GetDeviceResult = Either<GetDeviceError, Device>
 
 sealed class DeleteDeviceError: Error() {
     object DeviceNotFound: DeleteDeviceError()
 }
-
 typealias DeleteDeviceResult = Either<DeleteDeviceError, Unit>
+
+sealed class DeviceErrorRecordsError: Error() {
+    object DeviceNotFound: DeviceErrorRecordsError()
+    data class DeviceNotBelongsToUser(val userId: String): DeviceErrorRecordsError()
+}
+typealias DeviceErrorRecordsResult = Either<DeviceErrorRecordsError, List<DeviceErrorRecord>>

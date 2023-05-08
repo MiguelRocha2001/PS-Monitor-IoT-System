@@ -59,13 +59,11 @@ class TemperatureDataService(
             try {
                 logger.info("Received message from topic: $topic")
 
-                // TODO -> DECRYPT MESSAGE FIRST
-
                 val byteArray = message.payload
                 val string = String(byteArray)
 
-                val temperatureRecord = fromJsonStringToTemperatureRecord(string)
-                val deviceId = fromJsonStringToDeviceId(string)
+                val temperatureRecord = fromMqttMessageToTemperatureRecord(string)
+                val deviceId = fromMqttMsgStringToDeviceId(string)
 
                 val deviceResult = deviceService.getDeviceByIdOrNull(deviceId)
                 if (deviceResult != null) {

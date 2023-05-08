@@ -172,7 +172,6 @@ void mqtt_send_water_alert(esp_mqtt_client_handle_t client, int timestamp, char*
     char buf[100];
     sprintf(buf, "{deviceId: %s, timestamp: %d}", deviceID, timestamp);
 
-    // mqtt_send_encrypted_data(client, buf, "water_alert");
     esp_mqtt_client_publish(client, "flood", buf, 0, 1, 0);
     
     ESP_LOGI(TAG, "Message: %s published on topic /flood", buf);
@@ -193,5 +192,19 @@ void mqtt_send_sensor_not_working_alert(esp_mqtt_client_handle_t client, int tim
             strcat(sensors_list_buff, ", ");
         }
     }
-    sprintf(buf, "{deviceId: %s, timestamp: %d, sensors: %s}", deviceID, timestamp, sensors_list_buff);
+    sprintf(buf, "deviceId: %s, timestamp: %d, sensors: %s", deviceID, timestamp, sensors_list_buff);
+
+    esp_mqtt_client_publish(client, "sensor_error", buf, 0, 1, 0);
+
+    ESP_LOGI(TAG, "Message: %s published on topic /sensor_error", buf);
+}
+
+void mqtt_send_unknown_woke_up_reason_alert(esp_mqtt_client_handle_t client, int timestamp, char* deviceID, char* reason)
+{
+    char buf[100];
+    sprintf(buf, "{deviceId: %s, timestamp: %d, error: %s}", deviceID, timestamp, reason);
+
+    esp_mqtt_client_publish(client, "device_error", buf, 0, 1, 0);
+
+    ESP_LOGI(TAG, "Message: %s published on topic /device_error", buf);
 }
