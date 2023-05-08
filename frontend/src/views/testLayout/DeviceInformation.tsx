@@ -9,6 +9,7 @@ import {useSetError} from "../error/ErrorContainer";
 import {ErrorController} from "../error/ErrorController";
 import {DeviceSensorialData} from "./deviceSensorialData";
 import {ChartWithPeriodSelection} from "./text";
+import {Devices} from "./DevicesPage";
 import "./DeviceInformation.css";
 
 export function DeviceInfo() {
@@ -30,13 +31,16 @@ export function DeviceInfo() {
 
     if (device == null)
         return <></>
-    else
+    else//FIXME: ERROR CONROLLER WHY
         return (
-            <ErrorController>
-                <div className={"device-sensor-data"}>
-                    <ChartWithPeriodSelection deviceId={device.id}/>
+            <div className="app-container">
+                <div className="devices-container">
+                    <Devices />
                 </div>
-            </ErrorController>
+                <div className="chart-container">
+                    <ChartWithPeriodSelection  deviceId={device.id}/>
+                </div>
+            </div>
         );
 }
 

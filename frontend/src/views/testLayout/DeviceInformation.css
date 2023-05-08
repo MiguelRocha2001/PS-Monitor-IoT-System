@@ -8,3 +8,23 @@
     align-items: start;
     padding: 1rem;
 }
+
+.app-container {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    display: flex;
+}
+
+.devices-container {
+    width: 70%;
+    flex: 2;
+}
+
+.chart-container {
+    display: flex;
+    justify-content: center; /* center horizontally */
+    align-items: center; /* center vertically */
+    height: 100vh; /* set height to viewport height */
+    flex: 3;
+}

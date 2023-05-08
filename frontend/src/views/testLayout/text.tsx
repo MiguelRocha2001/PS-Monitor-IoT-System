@@ -97,7 +97,7 @@ export function ChartWithPeriodSelection({deviceId}: { deviceId: string }) {
     };
 
     return (
-        <div>
+        <div className={"graph-view"}>
             <div className={"chart-buttons"}>
                 <select onChange={handlePeriodSelection}>
                     <option value="">Select period</option>

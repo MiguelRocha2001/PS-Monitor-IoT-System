@@ -84,7 +84,7 @@ export function MyChart(
 
     return (
         <div className="App">
-            <canvas ref={canvasRef} width="400" height="200"/>
+            <canvas ref={canvasRef} width="600" height="400"/>
 
             {Object.keys(dataSet).map(key => (
                 <Button
