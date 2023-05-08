@@ -63,8 +63,8 @@ class WaterFlowDataService(
                 val byteArray = message.payload
                 val string = String(byteArray)
 
-                val waterFlowRecord = fromJsonStringToWaterFlowRecord(string)
-                val deviceId = fromJsonStringToDeviceId(string)
+                val waterFlowRecord = fromMqttMsgStringToWaterFlowRecord(string)
+                val deviceId = fromMqttMsgStringToDeviceId(string)
 
                 val deviceResult = deviceService.getDeviceByIdOrNull(deviceId)
                 if (deviceResult != null) {

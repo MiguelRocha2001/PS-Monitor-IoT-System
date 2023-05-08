@@ -65,8 +65,8 @@ class HumidityDataService(
                 val byteArray = message.payload
                 val string = String(byteArray)
 
-                val humidityRecord = fromJsonStringToHumidityRecord(string)
-                val deviceId = fromJsonStringToDeviceId(string)
+                val humidityRecord = fromMqttMsgStringToHumidityRecord(string)
+                val deviceId = fromMqttMsgStringToDeviceId(string)
 
                 val deviceResult = deviceService.getDeviceByIdOrNull(deviceId)
                 if (deviceResult != null) {

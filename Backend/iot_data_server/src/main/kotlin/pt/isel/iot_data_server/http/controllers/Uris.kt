@@ -100,5 +100,19 @@ object Uris {
 
             fun all(): URI = URI(ALL_2)
         }
+
+        object Error {
+            const val ALL_1 = "${BY_ID1}/error-data"
+            private const val ALL_2 = "${BY_ID2}/error-data"
+
+            fun all(): URI = URI(ALL_2)
+        }
+
+        object SensorError {
+            const val ALL_1 = "${BY_ID1}/sensor-error-data"
+            private const val ALL_2 = "${BY_ID2}/sensor-error-data"
+
+            fun all(): URI = URI(ALL_2)
+        }
     }
 }

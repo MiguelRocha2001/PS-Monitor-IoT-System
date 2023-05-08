@@ -64,8 +64,8 @@ class PhDataService(
                 val byteArray = message.payload
                 val string = String(byteArray)
 
-                val phRecord = fromJsonStringToPhRecord(string)
-                val deviceId = fromJsonStringToDeviceId(string)
+                val phRecord = fromMqttMsgStringToPhRecord(string)
+                val deviceId = fromMqttMsgStringToDeviceId(string)
 
                 val deviceResult = deviceService.getDeviceByIdOrNull(deviceId)
                 if (deviceResult != null) {

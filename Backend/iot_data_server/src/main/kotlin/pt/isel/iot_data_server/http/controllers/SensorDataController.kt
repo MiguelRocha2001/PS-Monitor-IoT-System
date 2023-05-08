@@ -11,8 +11,10 @@ import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.http.SirenMediaType
 import pt.isel.iot_data_server.http.infra.siren
 import pt.isel.iot_data_server.http.model.Problem
+import pt.isel.iot_data_server.http.model.device.DeviceErrorsOutputModel
 import pt.isel.iot_data_server.http.model.map
 import pt.isel.iot_data_server.http.model.sensor_data.*
+import pt.isel.iot_data_server.service.device.DeviceErrorService
 import pt.isel.iot_data_server.service.device.DeviceService
 import pt.isel.iot_data_server.service.sensor_data.*
 import pt.isel.iot_data_server.service.user.Role
@@ -26,7 +28,9 @@ class SensorDataController(
     val temperatureDataService: TemperatureDataService,
     val humidityDataService: HumidityDataService,
     val waterFlowDataService: WaterFlowDataService,
-    val waterLevelDataService: WaterLevelDataService
+    val waterLevelDataService: WaterLevelDataService,
+    val deviceErrorService: DeviceErrorService,
+    val sensorErrorService: SensorErrorService
 ) {
     @Operation(summary = "Get Ph records", description = "Get all ph records associated with a device")
     @ApiResponse(responseCode = "200", description = "Ph successfully retrieved", content = [Content(
@@ -169,4 +173,54 @@ class SensorDataController(
                 )
         }
     }
+
+    @GetMapping(Uris.Devices.Error.ALL_1)
+    fun getDeviceErrors(
+        user: User,
+        @PathVariable device_id: String
+    ): ResponseEntity<*> {
+        val result = if (user.userInfo.role === Role.ADMIN)
+            deviceErrorService.getDeviceErrorRecords(device_id)
+        else {
+            deviceErrorService.getDeviceErrorRecordsIfIsOwner(device_id, user.id)
+        }
+        return result.map {
+            ResponseEntity.status(200)
+                .contentType(SirenMediaType)
+                .header(
+                    "Location",
+                    Uris.Devices.Error.all().toASCIIString()
+                )
+                .body(
+                    siren(DeviceErrorsOutputModel.from(it)) {
+                        clazz("device-errors")
+                    }
+                )
+        }
+    }
+
+    @GetMapping(Uris.Devices.SensorError.ALL_1)
+        fun getSensorErrors(
+            user: User,
+            @PathVariable device_id: String
+        ): ResponseEntity<*> {
+            val result = if (user.userInfo.role === Role.ADMIN)
+                sensorErrorService.getSensorErrorRecords(device_id)
+            else {
+                sensorErrorService.getSensorErrorRecordsIfIsOwner(device_id, user.id)
+            }
+            return result.map {
+                ResponseEntity.status(200)
+                    .contentType(SirenMediaType)
+                    .header(
+                        "Location",
+                        Uris.Devices.SensorError.all().toASCIIString()
+                    )
+                    .body(
+                        siren(SensorErrorsOutputModel.from(it)) {
+                            clazz("sensor-errors")
+                        }
+                    )
+            }
+        }
 }
