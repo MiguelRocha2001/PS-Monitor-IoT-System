@@ -7,17 +7,11 @@ import threading
 
 # see: https://pypi.org/project/paho-mqtt/
 
-def get_message_with_float_value():
+def get_sensor_record_mqtt_message(sensor_type):
     device_id = "device_manual_tests"
     value = str(random.uniform(1.0, 12.0))
     timestamp = str(round(time.time()))
-    return "device_id: " + device_id + ", value: " + value + ", timestamp: " + timestamp + ""
-
-def get_message_with_int_value():
-    device_id = "device_manual_tests"
-    value = str(random.randint(1, 100))
-    timestamp = str(round(time.time()))
-    return "device_id: " + device_id + ", value: " + value + ", timestamp: " + timestamp + ""
+    return "device_id: " + device_id + ", value: " + value + ", timestamp: " + timestamp + ", sensor_type: " + sensor_type + ""
 
 def get_message_without_value():
     device_id = "device_manual_tests"
@@ -57,15 +51,15 @@ class thread1(threading.Thread):
     # helper function to execute the threads
     def run(self):
         while True:
-            client.publish("ph", get_message_with_float_value())
+            client.publish("sensor_record", get_sensor_record_mqtt_message("ph"))
             time.sleep(1)
-            client.publish("humidity", get_message_with_float_value())
+            client.publish("sensor_record", get_sensor_record_mqtt_message("humidity"))
             time.sleep(1)
-            client.publish("temperature", get_message_with_int_value())
+            client.publish("sensor_record", get_sensor_record_mqtt_message("temperature"))
             time.sleep(1)
-            client.publish("water_flow", get_message_with_int_value())
+            client.publish("sensor_record", get_sensor_record_mqtt_message("water_flow"))
             time.sleep(1)
-            client.publish("water_level", get_message_with_int_value())
+            client.publish("sensor_record", get_sensor_record_mqtt_message("water_level"))
 
 
 class thread2(threading.Thread):

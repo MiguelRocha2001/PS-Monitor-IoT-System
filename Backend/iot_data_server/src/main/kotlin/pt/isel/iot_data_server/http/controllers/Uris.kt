@@ -66,6 +66,13 @@ object Uris {
         fun byId(): URI = URI(BY_ID2)
         fun byId(id: String): URI = UriTemplate(BY_ID1).expand(id)
 
+        object Sensor {
+            const val ALL_1 = "${BY_ID1}/sensors"
+            private const val ALL_2 = "${BY_ID2}/sensors"
+            const val NAMES = "${ALL_2}/names"
+            fun all(): URI = URI(ALL_2)
+        }
+
         object PH {
             const val ALL_1 = "${BY_ID1}/ph-data"
             private const val ALL_2 = "${BY_ID2}/ph-data"

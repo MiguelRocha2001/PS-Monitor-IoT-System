@@ -11,7 +11,6 @@ import org.springframework.context.annotation.DependsOn
 import pt.isel.iot_data_server.hive.HiveMQManager
 import pt.isel.iot_data_server.hive.MqttClient.Companion.getMqttClient
 import pt.isel.iot_data_server.repository.jdbi.configure
-//import springfox.documentation.swagger2.annotations.EnableSwagger2
 
 
 @SpringBootApplication

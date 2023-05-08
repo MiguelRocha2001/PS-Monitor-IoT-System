@@ -18,14 +18,13 @@ fun fromMqttMsgStringToDeviceErrorRecord(str: String): DeviceErrorRecord {
         ?.trim()
         ?: throw IllegalArgumentException("Invalid json string")
 
-    val timestamp = fromMqttMsgStringToTimestamp(str)
+    val timestamp = getInstant(split)
 
     val error = split
         .find { it.contains("error") }
         ?.split(":")
         ?.get(1)
         ?.trim()
-        ?.replace("\"", "")
         ?: throw IllegalArgumentException("Invalid json string")
 
     return DeviceErrorRecord(deviceId, timestamp, error)
