@@ -31,14 +31,14 @@ export function DeviceInfo() {
 
     if (device == null)
         return <></>
-    else//FIXME: ERROR CONROLLER WHY
+    else
         return (
             <div className="app-container">
                 <div className="devices-container">
                     <Devices />
                 </div>
                 <div className="chart-container">
-                    <ChartWithPeriodSelection  deviceId={device.id}/>
+                    <ChartWithPeriodSelection  deviceId={device.id} deviceEmail={device.email}/>
                 </div>
             </div>
         );

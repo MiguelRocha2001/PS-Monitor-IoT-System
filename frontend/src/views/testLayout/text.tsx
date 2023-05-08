@@ -5,7 +5,7 @@ import {PhRecord, TemperatureRecord} from "../../services/domain";
 import "./text.css";
 
 
-export function ChartWithPeriodSelection({deviceId}: { deviceId: string }) {
+export function ChartWithPeriodSelection({deviceId,deviceEmail}: { deviceId: string, deviceEmail: string }) {
     const [phRecords, setPhRecords] = React.useState<PhRecord[]>([]);
     const [tempRecords, setTempRecords] = React.useState<TemperatureRecord[]>([]);
     const [errorMessage, setErrorMessage] = useState<string>();
@@ -113,9 +113,16 @@ export function ChartWithPeriodSelection({deviceId}: { deviceId: string }) {
                 </select>
             </div>
             {period && <MyChart period={period} phRecords={phRecords} tempRecords={tempRecords}/>}
-            {period && <button id={"export-csv"} onClick={() => exportToCsv(phRecords, tempRecords)}>
-                Export to CSV
-            </button>}
+            <div className={"get-information"}>
+                <div>
+                <p><b>Device identifier: </b>{deviceId}</p>
+                <p><b>Associated email: </b>{deviceEmail}</p>
+                </div>
+                {period && <button id={"export-csv"} onClick={() => exportToCsv(phRecords, tempRecords)}>
+                    Export CSV
+                </button>}
+            </div>
+
         </div>
     );
 }

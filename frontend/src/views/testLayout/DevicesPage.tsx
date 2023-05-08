@@ -140,7 +140,7 @@ function InputTextBox({ searchQuery, setSearchQuery, onSearch }: { searchQuery: 
                 placeholder="Search for device"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyPress={handleKeyPress} //TODO: FIX THIS
+                onKeyDown={handleKeyPress}
             />
             <button id={"searchButton"} type="button" onClick={onSearch}>Search</button>
         </div>
