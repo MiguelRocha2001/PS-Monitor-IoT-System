@@ -16,4 +16,5 @@ interface UserDataRepository {
     fun getUserByEmailAddressOrNull(email: String): User?
     fun deleteAllUsers()
     fun deleteAllTokens()
+    fun deleteUser(userId: String)
 }

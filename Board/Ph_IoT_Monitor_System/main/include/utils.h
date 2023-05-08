@@ -24,4 +24,7 @@ void restart_esp(int delay_seconds);
 
 uint8_t* get_random_array(int len);
 
+float generate_random_float();
+int generate_random_int();
+
 #endif // UTILS_H

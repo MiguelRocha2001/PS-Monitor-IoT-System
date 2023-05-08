@@ -15,6 +15,7 @@ import pt.isel.iot_data_server.http.model.Problem
 import pt.isel.iot_data_server.http.model.device.*
 import pt.isel.iot_data_server.http.model.map
 import pt.isel.iot_data_server.service.device.DeviceService
+import pt.isel.iot_data_server.service.user.Role
 import java.util.*
 
 @Tag(name = "Devices", description = "The Devices API")
@@ -46,13 +47,14 @@ class DeviceController(
     @Operation(summary = "All devices", description = "Get all devices associated with our system")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved", content = [Content(mediaType = "application/vnd.siren+json", schema = Schema(implementation = DevicesOutputModel::class))])
     @ApiResponse(responseCode = "401", description = "Not authorized", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
-    @GetMapping(Uris.Devices.ALL)
-    fun getDevices(
+    @GetMapping(Uris.Devices.My.ALL)
+    @Authorization(Role.ADMIN)
+    fun getMyDevices(
         user: User,
         @RequestParam(required = false) page: Int?,
         @RequestParam(required = false) limit: Int?
     ): ResponseEntity<*> {
-        val result = service.getAllDevices(user.id, page, limit)
+        val result = service.getUserDevices(user.id, page, limit)
         return result.map {
             ResponseEntity.status(200)
                 .contentType(SirenMediaType)
@@ -64,7 +66,25 @@ class DeviceController(
         }
     }
 
-    @GetMapping(Uris.Devices.COUNT)
+    @GetMapping(Uris.Devices.ALL)
+    fun getDevices(
+        user: User,
+        @RequestParam(required = false) page: Int?,
+        @RequestParam(required = false) limit: Int?
+    ): ResponseEntity<*> {
+        val result = service.getAllDevices(page, limit)
+        return result.map {
+            ResponseEntity.status(200)
+                .contentType(SirenMediaType)
+                .body(siren(
+                    DevicesOutputModel.from(it)
+                ) {
+                    clazz("devices")
+                })
+        }
+    }
+
+    @GetMapping(Uris.Devices.My.COUNT)
     fun getDeviceCount(
         user: User
     ): ResponseEntity<*> {

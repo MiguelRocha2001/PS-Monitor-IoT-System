@@ -5,7 +5,6 @@ idf_component_register(
             "src/utils/pushingbox_util.c"
             "src/utils/esp_touch_util.c"
             "src/utils/wifi_connect_util.c"
-            "src/utils/ph_reader_fake.c"
             "src/utils/broker_util.c"
             "src/utils/deep_sleep.c"
             "src/utils/dht11.c"
@@ -17,6 +16,12 @@ idf_component_register(
             "src/utils/sha256_util.c"
             "src/utils/utils.c"
             "src/utils/entropy_poll.c"
+            "src/utils/sensor/sensor_readings.c"
+            "src/utils/ph/ph_reader_fake.c"
+            "src/utils/temp/temperature_reader_fake.c"
+            "src/utils/humidity/humidity_reader_fake.c"
+            "src/utils/water_level/water_level_reader_fake.c"
+            "src/utils/water_flow/water_flow_reader_fake.c"
         INCLUDE_DIRS "include"
 )
 target_compile_options(${COMPONENT_LIB} PRIVATE  -Wno-format)

@@ -20,6 +20,7 @@ import pt.isel.iot_data_server.http.model.Problem
 import pt.isel.iot_data_server.http.model.map
 import pt.isel.iot_data_server.http.model.user.*
 import pt.isel.iot_data_server.service.Either
+import pt.isel.iot_data_server.service.user.Role
 import pt.isel.iot_data_server.service.user.UserService
 import java.util.*
 
@@ -28,7 +29,6 @@ import java.util.*
 class UserController(
     val service: UserService
 ) {
-
     @Operation(summary = "Create user", description = "Create a new user")
     @ApiResponse(responseCode = "201", description = "Successfully created", content = [Content(
         mediaType = "application/vnd.siren+json",
@@ -55,6 +55,7 @@ class UserController(
     }
 
     @GetMapping(Uris.Users.ALL)
+    @Authorization(Role.ADMIN)
     fun getAllUsers(
         user: User
     ): ResponseEntity<*> {
@@ -125,8 +126,8 @@ class UserController(
         // adds cookie to response
         if (res is Either.Right) {
             val age = 60 * 60 // 1 hour
-            val cookie = buildCookie(age, res.value)
-            response.addCookie(cookie)
+            val cookieWithToken = buildCookie(age, res.value)
+            response.addCookie(cookieWithToken)
         }
 
         return res.map {
@@ -163,7 +164,7 @@ class UserController(
 
         val user = service.getUserByEmailAddress(email)
         if (user == null) {
-            val userCreationResult = service.createUser(UserInfo(username, password, email))
+            val userCreationResult = service.createUser(UserInfo(username, password, email, Role.USER))
             if (userCreationResult is Either.Left) {
                 throw RuntimeException("Error creating user")
             }
@@ -178,6 +179,18 @@ class UserController(
         }
 
         response.sendRedirect("http://localhost:8080/auth/login")
+    }
+
+    @Operation(summary = "Delete user", description = "Delete the user")
+    @ApiResponse(responseCode = "204", description = "Successfully deleted")
+    @ApiResponse(responseCode = "401", description = "Not authorized", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
+    @DeleteMapping(Uris.Users.BY_ID1)
+    @Authorization(Role.ADMIN)
+    fun deleteUser(
+        @PathVariable("id") id: String
+    ): ResponseEntity<Unit> {
+        service.deleteUser(id)
+        return ResponseEntity.status(204).build()
     }
 
     /**
@@ -201,7 +214,6 @@ class UserController(
         cookieWithToken.isHttpOnly = true
         cookieWithToken.secure = true
         cookieWithToken.maxAge = maxAge
-
         return cookieWithToken
     }
 

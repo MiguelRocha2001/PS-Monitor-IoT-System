@@ -2,9 +2,9 @@
     "cmake.configureOnOpen": true,
     "idf.adapterTargetName": "esp32s2",
     "idf.openOcdConfigs": [
-        "board/esp32s2-kaluga-1.cfg"
+        "board/esp32s2-bridge.cfg"
     ],
-    "idf.portWin": "COM5",
+    "idf.portWin": "COM6",
     "idf.flashType": "UART",
     "files.associations": {
         "adc.h": "c",
@@ -44,6 +44,24 @@
         "utils.h": "c",
         "rsa.h": "c",
         "stdint.h": "c",
-        "pk.h": "c"
+        "pk.h": "c",
+        "time_util.h": "c",
+        "ph_record.h": "c",
+        "sensor_records.h": "c",
+        "sensor_record.h": "c",
+        "temp_record.h": "c",
+        "temp_reader.h": "c",
+        "ph_reader.h": "c",
+        "sensor_reader.h": "c",
+        "water_level_reader.h": "c",
+        "humidity_reader.h": "c",
+        "water_flow_reader.h": "c",
+        "*.tcc": "c",
+        "limits": "c",
+        "numeric": "c",
+        "streambuf": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "utility": "c"
     }
 }

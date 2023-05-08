@@ -2,6 +2,7 @@ package pt.isel.iot_data_server.service.user
 
 import pt.isel.iot_data_server.service.Either
 
+enum class Role { ADMIN, USER }
 
 sealed class CreateUserError: Error() {
     object UserAlreadyExists: CreateUserError()

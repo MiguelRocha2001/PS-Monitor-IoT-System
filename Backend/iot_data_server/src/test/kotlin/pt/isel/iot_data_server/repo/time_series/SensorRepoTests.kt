@@ -14,7 +14,7 @@ import java.time.Instant
 import kotlin.concurrent.thread
 
 class TsdbRepoTests {
-    private val tsdbBuilder: TSDBBuilder = TSDBBuilder("test_bucket")
+    private val tsdbBuilder: TSDBBuilder = TSDBBuilder("test")
     private val repo: TSDBRepository = TSDBRepository(
         tsdbBuilder.getClient(),
         tsdbBuilder.getBucket()

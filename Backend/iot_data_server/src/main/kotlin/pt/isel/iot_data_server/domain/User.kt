@@ -1,8 +1,9 @@
 package pt.isel.iot_data_server.domain
 
+import pt.isel.iot_data_server.service.user.Role
 import java.util.regex.Pattern
 
-data class UserInfo(val username: String, val password: String, val email: String) {
+data class UserInfo(val username: String, val password: String, val email: String, val role: Role) {
     init {
         val emailRegexPattern = "^(.+)@(\\S+)$"
         require(patternMatches(email, emailRegexPattern)) { "Invalid email address" }

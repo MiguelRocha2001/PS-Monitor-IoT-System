@@ -7,23 +7,21 @@
 #include "wifi_connect_util.h"
 #include <mqtt_client.h>
 
-#include <ph_reader_fake.h>
 #include <deep_sleep.h>
 
-#include "ph_reader_fake.h"
 #include "broker_util.h"
 #include "wifi_connect_util.h"
 #include "nvs_util.h"
 #include "esp_touch_util.h"
-#include "ph_values_struct.h"
+#include "sensor/sensor_reader.h"
 #include "time_util.h"
 
 const static char* TAG = "MAIN";
 
-const static long READ_PH_INTERVAL = 1000000 * 0.3; // 3 seconds
-const static long LONG_SLEEP_TIME = 1000000 * 3; // 10 seconds
+const static long SENSOR_MULTIPLE_READING_INTERVAL = 1000000 * 3; // 3 seconds
+const static long LONG_SLEEP_TIME = 1000000 * 30; // 10 seconds
 
-RTC_DATA_ATTR struct ph_records_struct ph_records;
+RTC_DATA_ATTR struct sensor_records_struct sensor_records;
 
 void printDeepSleepWokeCause(esp_sleep_wakeup_cause_t cause) {
     if (cause == ESP_SLEEP_WAKEUP_TIMER) {
@@ -33,51 +31,26 @@ void printDeepSleepWokeCause(esp_sleep_wakeup_cause_t cause) {
     }
 }
 
-void store_ph_in_RTC_memory(struct ph_record* ph_record) {
-    ESP_LOGE(TAG, "Storing pH...");
-    if (ph_records.index < MAX_PH_VALUES) {
-        ph_records.ph_values[ph_records.index].value = ph_record->value;
-        ph_records.ph_values[ph_records.index].timestamp = ph_record->timestamp;
-
-        ph_records.index++;
-    } else {
-        ESP_LOGE(TAG, "No more space in RTC memory");
+void send_sensor_records(esp_mqtt_client_handle_t client, char* deviceID) {
+    ESP_LOGE(TAG, "Sending sensor records...");
+    for (int i = 0; i < MAX_SENSOR_RECORDS; i++) {
+        mqtt_send_sensor_record1(client, &sensor_records.start_ph_records[i], deviceID, "ph");
+        mqtt_send_sensor_record1(client, &sensor_records.end_ph_records[i], deviceID, "ph");
+        mqtt_send_sensor_record2(client, &sensor_records.temperature_records[i], deviceID, "temperature");
+        // TODO: send water level, water flow and humidity
     }
 }
 
-int is_ph_reading_complete() {
-    ESP_LOGE(TAG, "Checking if pH reading is complete...");
-    return ph_records.index == MAX_PH_VALUES;
-}
-
-void print_ph_values() {
-    ESP_LOGE(TAG, "Printing pH values...");
-    for (int i = 0; i < MAX_PH_VALUES; i++) {
-        if (ph_records.ph_values[i].value != 0) {
-            ESP_LOGE(TAG, "pH value: %f", ph_records.ph_values[i].value);
-            ESP_LOGE(TAG, "Timestamp: %d", ph_records.ph_values[i].timestamp);
-        }
+void erase_sensor_records() {
+    ESP_LOGE(TAG, "Erasing sensor records...");
+    for (int i = 0; i < MAX_SENSOR_RECORDS; i++) {
+        sensor_records.start_ph_records[i].value = 0;
+        sensor_records.start_ph_records[i].timestamp = 0;
+        sensor_records.end_ph_records[i].value = 0;
+        sensor_records.end_ph_records[i].timestamp = 0;
+        sensor_records.temperature_records[i].value = 0;
+        sensor_records.temperature_records[i].timestamp = 0;
     }
-}
-
-void send_ph_values(esp_mqtt_client_handle_t client, char* deviceID) {
-    ESP_LOGE(TAG, "Sending pH values...");
-    for (int i = 0; i < MAX_PH_VALUES; i++) {
-        if (ph_records.ph_values[i].value != 0) {
-            mqtt_send_ph(client, &ph_records.ph_values[i], deviceID);
-            // delay necessary. Without it, the Backend server will not receive all messages. Not sure why...
-            vTaskDelay(300 / portTICK_PERIOD_MS);
-        }
-    }
-}
-
-void erase_ph_values() {
-    ESP_LOGE(TAG, "Erasing pH values...");
-    for (int i = 0; i < MAX_PH_VALUES; i++) {
-        ph_records.ph_values[i].value = 0;
-        ph_records.ph_values[i].timestamp = 0;
-    }
-    ph_records.index = 0;
 }
 
 void setup_wifi(void) {
@@ -96,8 +69,42 @@ void sendWaterAlert(esp_mqtt_client_handle_t client, int timestamp, char* device
     mqtt_send_water_alert(client, timestamp, deviceID);
 }
 
+void compute_sensors(char* deviceID) {
+    if (sensors_reading_is_complete(&sensor_records)) {
+        setup_wifi();
+        esp_mqtt_client_handle_t client = setup_mqtt();
+
+        send_sensor_records(client, deviceID);
+        erase_sensor_records();
+
+        start_deep_sleep(LONG_SLEEP_TIME);
+    } else {
+        setup_wifi();
+        read_sensor_records(&sensor_records);
+        start_deep_sleep(SENSOR_MULTIPLE_READING_INTERVAL);
+    }
+}
+
+int check_sensors_status(char* deviceID) {
+    ESP_LOGE(TAG, "Checking sensors...");
+
+    int sensors_not_working[6]; // 6 sensors
+    int res = check_if_sensors_are_working(sensors_not_working);
+
+    if (res == -1)
+    {
+        esp_mqtt_client_handle_t client = setup_mqtt();
+        ESP_LOGE(TAG, "Sending sensor not working alert...");
+        int timestamp = getNowTimestamp();
+        mqtt_send_sensor_not_working_alert(client, deviceID, timestamp, sensors_not_working);
+    }
+    
+
+    return res;
+}
+
 /**
- * The program starts here.
+ * Program entry point.
  * It will read the pH value every 0.3 seconds and store it in RTC memory.
  * After 5 readings, it will send the values to the MQTT broker and go to deep sleep for 3 seconds.
  * For some unknown reason, the MQTT broker does not receive all messages, the first reading round.
@@ -109,41 +116,24 @@ void app_main(void) {
     char* deviceID;
     get_device_id(&deviceID);
 
+    int sensor_status_result = check_sensors_status(deviceID);
+    if (sensor_status_result == -1) {
+        start_deep_sleep(LONG_SLEEP_TIME);
+    }
+
     esp_sleep_wakeup_cause_t cause = esp_sleep_get_wakeup_cause();
     printDeepSleepWokeCause(cause);
 
-    // Woker duo to water sensor
-    if (cause == ESP_SLEEP_WAKEUP_EXT0)
-    {
-        ESP_LOGE(TAG, "Woke up from water sensor");
+    // Woker duo to water leak sensor
+    if (cause == ESP_SLEEP_WAKEUP_EXT0) {
+        ESP_LOGE(TAG, "Woke up from water leak sensor");
 
         setup_wifi();
         esp_mqtt_client_handle_t client = setup_mqtt();
 
         int current_timestamp = getNowTimestamp(); // get current time
         sendWaterAlert(client, current_timestamp, deviceID);
-    } 
-    // Normal woke up
-    else {
-        print_ph_values();
-
-        if (is_ph_reading_complete()) {
-            setup_wifi();
-            esp_mqtt_client_handle_t client = setup_mqtt();
-
-            send_ph_values(client, deviceID);
-            erase_ph_values();
-
-            start_deep_sleep(LONG_SLEEP_TIME);
-        } else {
-            setup_wifi(); // to get the current time
-
-            struct ph_record ph_record;
-            read_ph(&ph_record);
-
-            store_ph_in_RTC_memory(&ph_record);
-
-            start_deep_sleep(READ_PH_INTERVAL);
-        }
+    } else { // Normal woke up
+        compute_sensors(deviceID);
     }
 }

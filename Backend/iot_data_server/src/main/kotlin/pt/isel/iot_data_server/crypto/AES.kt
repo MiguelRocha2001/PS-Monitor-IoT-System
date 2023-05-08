@@ -18,7 +18,6 @@ class AES(
     private val algorithm: String,
     private val separator: Char
 ) {
-
     companion object {
         @Throws(NoSuchAlgorithmException::class)
         fun generateKey(n: Int): SecretKey {

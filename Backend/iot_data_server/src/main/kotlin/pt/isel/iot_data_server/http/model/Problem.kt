@@ -136,5 +136,5 @@ val problems = mapOf(
 
     "UserOrPasswordAreInvalid" to Problem.response(403, Problem.userOrPasswordAreInvalid),
 
-
+    "DeviceNotBelongsToUser" to Problem.response(403, Problem.actionNotPermitted),
 )

@@ -1,8 +1,11 @@
+-- TODO: define constraints in here
+
 create table _user(
     _id varchar primary key,
     username varchar unique,
     password varchar,
-    email varchar unique
+    email varchar unique,
+    role varchar
 );
 
 create table token(
@@ -16,6 +19,13 @@ create table device(
     user_id varchar,
     email varchar,
     foreign key (user_id) references _user(_id)
+);
+
+create table device_error(
+    device_id varchar,
+    sensor varchar,
+    timestamp timestamp,
+    foreign key (device_id) references device(id)
 );
 
 create table salt(

@@ -19,8 +19,8 @@
 
 #include "esp_log.h"
 #include "mqtt_client.h"
-#include "ph_reader_fake.h"
-#include "aes_util.h"
+
+#include "sensor/sensor_reader.h"
 
 // see: https://docs.espressif.com/projects/esp-idf/en/v5.0.1/esp32s2/api-reference/protocols/mqtt.html
 
@@ -132,6 +132,7 @@ esp_mqtt_client_handle_t setup_mqtt()
     return client;
 }
 
+/*
 void mqtt_send_encrypted_data(esp_mqtt_client_handle_t client, char* buf, char* topic)
 {
     const uint8_t key_256[KEY_SIZE_BYTES] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F};
@@ -141,14 +142,26 @@ void mqtt_send_encrypted_data(esp_mqtt_client_handle_t client, char* buf, char* 
 
     int msg_id = esp_mqtt_client_publish(client, topic, res, 0, 1, 0);
 }
+*/
 
-void mqtt_send_ph(esp_mqtt_client_handle_t client, struct ph_record *ph_record, char* deviceID)
+void mqtt_send_sensor_record1(esp_mqtt_client_handle_t client, struct sensor_record1 *sensor_record, char* deviceID, char* topic)
 {
-    // convert ph_record -> value to string
     char buf[100];
-    sprintf(buf, "{deviceId: %s, value: %f, timestamp: %d}", deviceID, ph_record -> value, ph_record -> timestamp);
+    sprintf(buf, "{deviceId: %s, value: %f, timestamp: %d}", deviceID, sensor_record -> value, sensor_record -> timestamp);
 
-    mqtt_send_encrypted_data(client, buf, "/ph");
+    // mqtt_send_encrypted_data(client, buf, "ph");
+    esp_mqtt_client_publish(client, topic, buf, 0, 1, 0);
+    
+    ESP_LOGI(TAG, "Message: %s published on topic /ph", buf);
+}
+
+void mqtt_send_sensor_record2(esp_mqtt_client_handle_t client, struct sensor_record2 *sensor_record, char* deviceID, char* topic)
+{
+    char buf[100];
+    sprintf(buf, "{deviceId: %s, value: %d, timestamp: %d}", deviceID, sensor_record -> value, sensor_record -> timestamp);
+
+    // mqtt_send_encrypted_data(client, buf, "ph");
+    esp_mqtt_client_publish(client, topic, buf, 0, 1, 0);
     
     ESP_LOGI(TAG, "Message: %s published on topic /ph", buf);
 }
@@ -159,7 +172,26 @@ void mqtt_send_water_alert(esp_mqtt_client_handle_t client, int timestamp, char*
     char buf[100];
     sprintf(buf, "{deviceId: %s, timestamp: %d}", deviceID, timestamp);
 
-    mqtt_send_encrypted_data(client, buf, "/water_alert");
+    // mqtt_send_encrypted_data(client, buf, "water_alert");
+    esp_mqtt_client_publish(client, "flood", buf, 0, 1, 0);
     
-    ESP_LOGI(TAG, "Message: %s published on topic /water_alert", buf);
+    ESP_LOGI(TAG, "Message: %s published on topic /flood", buf);
+}
+
+void mqtt_send_sensor_not_working_alert(esp_mqtt_client_handle_t client, int timestamp, char* deviceID, char** sensors)
+{
+    // convert ph_record -> value to string
+    char buf[100];
+
+    char sensors_list_buff[100] = "";
+
+    for (int i = 0; i < 3; i++)
+    {
+        if (sensors[i] != NULL)
+        {
+            strcat(sensors_list_buff, sensors[i]);
+            strcat(sensors_list_buff, ", ");
+        }
+    }
+    sprintf(buf, "{deviceId: %s, timestamp: %d, sensors: %s}", deviceID, timestamp, sensors_list_buff);
 }

@@ -32,8 +32,10 @@ class DeviceService (
         }
     }
 
-    fun existsDevice(userId: String, deviceId: String): Boolean {
-        return getUserDeviceByIdOrNull(userId, deviceId) != null
+    fun existsDevice(deviceId: String): Boolean {
+        return transactionManager.run {
+            it.deviceRepo.getDeviceById(deviceId) != null
+        }
     }
 
     fun getDeviceCount(userId: String): DeviceCountResult {
@@ -45,7 +47,16 @@ class DeviceService (
         }
     }
 
-    fun getAllDevices(userId: String, page: Int? = null, limit: Int? = null): GetAllDevicesResult {
+    fun getAllDevices(page: Int? = null, limit: Int? = null): GetAllDevicesResult {
+        return transactionManager.run {
+            val devices = it.deviceRepo.getAllDevices(page, limit).also {
+                logger.debug("All devices returned")
+            }
+            return@run Either.Right(devices)
+        }
+    }
+
+    fun getUserDevices(userId: String, page: Int? = null, limit: Int? = null): GetAllDevicesResult {
         userService.getUserByIdOrNull(userId) ?: return Either.Left(GetAllDevicesError.UserNotFound)
         return transactionManager.run {
             val devices = it.deviceRepo.getAllDevices(userId, page, limit).also {
@@ -65,6 +76,10 @@ class DeviceService (
             logger.debug("Device with id $deviceId found")
             return@run Either.Right(device)
         }
+    }
+
+    fun belongsToUser(deviceId: String, userId: String): Boolean {
+        return getUserDeviceById(userId, deviceId) is Either.Right
     }
 
     private fun getUserDeviceByIdOrNull(userId: String, deviceId: String): Device? {
@@ -87,7 +102,6 @@ class DeviceService (
      *  (exists to facilitate testing)
      */
     fun generateDeviceId(): String {
-
         // loops until a unique ID is generated
         while (true) { // TODO: change to a for loop with a max number of iterations
             val deviceId = generateRandomDeviceId()

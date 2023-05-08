@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import pt.isel.iot_data_server.configuration.TSDBBuilder
-import pt.isel.iot_data_server.configuration.TSDBProductionConfig
 import pt.isel.iot_data_server.domain.PhRecord
 import pt.isel.iot_data_server.domain.TemperatureRecord
 import pt.isel.iot_data_server.repo.time_series.deleteAllPhMeasurements
@@ -14,13 +13,14 @@ import pt.isel.iot_data_server.repo.time_series.deleteAllTemperatureMeasurements
 import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
 import pt.isel.iot_data_server.service.email.EmailManager
-import pt.isel.iot_data_server.service.sensor_data.SensorDataService
+import pt.isel.iot_data_server.service.sensor_data.PhDataService
+import pt.isel.iot_data_server.service.sensor_data.TemperatureDataService
 import pt.isel.iot_data_server.utils.*
 
 
 class SensorDataServiceTest {
     private lateinit var mqttClient: MqttClient
-    private val tsdbBuilder: TSDBBuilder = TSDBBuilder("test_bucket")
+    private val tsdbBuilder: TSDBBuilder = TSDBBuilder("test")
     private val tsdbRepository: TSDBRepository = TSDBRepository(
         tsdbBuilder.getClient(),
         tsdbBuilder.getBucket()
@@ -42,8 +42,8 @@ class SensorDataServiceTest {
             val (deviceService, userService) = getNewDeviceAndUserService(tra)
             val userId = createRandomUser(userService)
 
-            // Create SensorDataService instance
-            val sensorDataService = SensorDataService(emailSenderService, tsdbRepository, deviceService, mqttClient)
+            // Create service instance
+            val sensorDataService = PhDataService(emailSenderService, tsdbRepository, deviceService, mqttClient)
 
             // Invoke savePhRecord with valid pH value
             val email = generateRandomEmail()
@@ -56,7 +56,7 @@ class SensorDataServiceTest {
             sensorDataService.savePhRecord(deviceId, phRecord2)
             sensorDataService.savePhRecord(deviceId, phRecord3)
 
-            val result = sensorDataService.getPhRecords(userId, deviceId)
+            val result = sensorDataService.getPhRecords(deviceId)
             assert(result is Either.Right)
             val phRecords = (result as Either.Right).value
             assert(phRecords.size == 3)
@@ -74,8 +74,8 @@ class SensorDataServiceTest {
             val (deviceService, userService) = getNewDeviceAndUserService(tra)
             val userId = createRandomUser(userService)
 
-            // Create SensorDataService instance
-            val sensorDataService = SensorDataService(emailSenderService, tsdbRepository, deviceService, mqttClient)
+            // Create service instance
+            val sensorDataService = PhDataService(emailSenderService, tsdbRepository, deviceService, mqttClient)
 
             // Invoke savePhRecord with invalid pH value
             val email = generateRandomEmail()
@@ -104,8 +104,8 @@ class SensorDataServiceTest {
             val (deviceService, userService) = getNewDeviceAndUserService(tra)
             val userId = createRandomUser(userService)
 
-            // Create SensorDataService instance
-            val sensorDataService = SensorDataService(emailSenderService, tsdbRepository, deviceService, mqttClient)
+            // Create service instance
+            val sensorDataService = PhDataService(emailSenderService, tsdbRepository, deviceService, mqttClient)
 
             // Invoke savePhRecord with invalid pH value
             val email = generateRandomEmail()
@@ -134,8 +134,8 @@ class SensorDataServiceTest {
             val (deviceService, userService) = getNewDeviceAndUserService(tra)
             val userId = createRandomUser(userService)
 
-            // Create SensorDataService instance
-            val sensorDataService = SensorDataService(emailSenderService, tsdbRepository, deviceService, mqttClient)
+            // Create service instance
+            val sensorDataService = TemperatureDataService(emailSenderService, tsdbRepository, deviceService, mqttClient)
 
             // Invoke savePhRecord with invalid pH value
             val email = generateRandomEmail()
@@ -144,7 +144,7 @@ class SensorDataServiceTest {
 
             try {
                 // Code that may throw an exception
-                sensorDataService.getTemperatureRecords(userId, deviceId)
+                sensorDataService.getTemperatureRecords(deviceId)
             } catch (e: IllegalArgumentException) {
                 // Access the exception message
                 val errorMessage = e.message
@@ -163,7 +163,7 @@ class SensorDataServiceTest {
             val (deviceService, userService) = getNewDeviceAndUserService(tra)
             val userId = createRandomUser(userService)
 
-            val sensorDataService = SensorDataService(emailSenderService, tsdbRepository, deviceService, mqttClient)
+            val sensorDataService = TemperatureDataService(emailSenderService, tsdbRepository, deviceService, mqttClient)
 
             val email = generateRandomEmail()
             deviceService.addDevice(userId, email)
@@ -175,7 +175,7 @@ class SensorDataServiceTest {
             sensorDataService.saveTemperatureRecord(deviceId, temperatureRecord2)
             sensorDataService.saveTemperatureRecord(deviceId, temperatureRecord3)
 
-            val result = sensorDataService.getTemperatureRecords(userId, deviceId)
+            val result = sensorDataService.getTemperatureRecords(deviceId)
             assert(result is Either.Right)
             val temperatureRecords = (result as Either.Right).value
             assert(temperatureRecords.size == 3)
@@ -195,7 +195,7 @@ class SensorDataServiceTest {
             val (deviceService, userService) = getNewDeviceAndUserService(tra)
             val userId = createRandomUser(userService)
 
-            val sensorDataService = SensorDataService(emailSenderService, tsdbRepository, deviceService, mqttClient)
+            val sensorDataService = TemperatureDataService(emailSenderService, tsdbRepository, deviceService, mqttClient)
 
             val email = generateRandomEmail()
             deviceService.addDevice(userId, email)

@@ -3,11 +3,12 @@ package pt.isel.iot_data_server.repository.jdbi
 import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.iot_data_server.domain.Device
+import pt.isel.iot_data_server.domain.SensorErrorRecord
 import pt.isel.iot_data_server.repository.DeviceDataRepository
 import pt.isel.iot_data_server.repository.jdbi.mappers.DeviceMapper
 import pt.isel.iot_data_server.repository.jdbi.mappers.toDevice
 
-class JdbiDeviceDataRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,TOKEN,DEVICE...)
+class JdbiDeviceDataRepository(
     private val handle: Handle
 ) : DeviceDataRepository {
     override fun createDevice(userId: String, device: Device) {
@@ -104,5 +105,42 @@ class JdbiDeviceDataRepository( //TODO:ORGANIZAR ISTO EM VARIOS FICHEIROS(USER,T
             .bind("user_id", userId)
             .mapTo<Int>()
             .single()
+    }
+
+    override fun saveSensorErrorRecord(deviceId: String, sensorErrorRecord: SensorErrorRecord) {
+        handle.createUpdate(
+            """
+            insert into device_error (device_id, sensor, timestamp)
+            values (:device_id, :sensor, :timestamp)
+            """
+        )
+            .bind("device_id", deviceId)
+            .bind("sensor", sensorErrorRecord.sensorName)
+            .bind("timestamp", sensorErrorRecord.instant)
+            .execute()
+    }
+
+    override fun getSensorErrorRecords(deviceId: String): List<SensorErrorRecord> {
+        return handle.createQuery(
+            """
+            select device_id, sensor, timestamp
+            from device_error
+            where device_id = :device_id
+            """
+        )
+            .bind("device_id", deviceId)
+            .mapTo<SensorErrorRecord>()
+            .list()
+    }
+
+    override fun getAllSensorErrorRecords(): List<SensorErrorRecord> {
+        return handle.createQuery(
+            """
+            select device_id, sensor, timestamp
+            from device_error
+            """
+        )
+            .mapTo<SensorErrorRecord>()
+            .list()
     }
 }
