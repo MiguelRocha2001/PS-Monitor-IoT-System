@@ -12,7 +12,7 @@ export class Day implements Period {constructor(public day: number, public month
 export class Hour implements Period {constructor(public hour: number, public day: Day) {}}
 
 export function MyChart(
-    {period, phRecords, tempRecords}: { period: Period, phRecords: PhRecord[], tempRecords: PhRecord[] }
+    {period, phRecords, tempRecords}: { period: Period, phRecords: PhRecord[], tempRecords: PhRecord[] } //FIXME os dados nao estão bem representados
 ) {
     const canvasRef = React.useRef(null);
     const [metadata, setMetadata] = React.useState(dataSet);
@@ -55,30 +55,54 @@ export function MyChart(
         [phDataset, tempDataset]
         .filter((d: any) => Object.keys(d).length > 0);
 
+    if(dataset.length === 0) {
+        console.log("No dataset")
+    }
+
+    //check if its temperature or ph dataset
+    if(dataset.filter((d: any) => d.label === "Temperature").length === 1) {
+        console.log("Temperature dataset")
+    }
+    if(dataset.filter((d: any) => d.label === "pH").length === 1) {
+        console.log("PH dataset")
+    }
+
+    const labelY = dataset.filter((d: any) => d.label === "Temperature").length === 1 ? "Temperature" : "pH"
+    const labelX = "Time in " + period.constructor.name //FIXME: miguel da fix disto
+
+
+    //print dataset
+    console.log(dataset)
+
+    const options = {
+        scales: {
+            xAxes: [{
+                scaleLabel: {
+                    display: true,
+                    labelString: labelX
+                }
+            }],
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: labelY
+                }
+            }]
+        }
+    };
+
     const config = {
         type: "line",
         data: {
             labels: labels,
             datasets: dataset
         },
-        options: {
-            legend: {
-                display: true,
-                labels: {
-                    fontColor: "#ff0000"
-                }
-            },
-            scales: {
-                yAxes: [
-                    {
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }
-                ]
-            }
-        }
-    };
+        options: options
+    }
+
 
     useChart(canvasRef, config);
 

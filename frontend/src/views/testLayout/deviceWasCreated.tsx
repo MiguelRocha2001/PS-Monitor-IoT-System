@@ -31,7 +31,7 @@ export function DeviceCreated() {
             />
             <div className="d-flex justify-content-center align-items-center mt-3">
                 <Button onClick={copyToClipboard}>
-                    {copied ? "Copied!" : "Copy to Clipboard"}
+                    {copied ? "Copied!" : "Copy Id to Clipboard"}
                 </Button>
                 <Link to="/devices" className="ml-3">
                     <Button variant="secondary">Go to Devices</Button>

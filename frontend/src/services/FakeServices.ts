@@ -37,18 +37,23 @@ export class FakeServices implements Services {
         throw new Error('Dont call this method in fake mode')
     }
 
-    async createUser(username: string, password: string, email: string, mobile: string): Promise<void> {
-        const existingUser = this.users.find(u => u.username === username)
+    checkIfUserExists(email: string): Promise<boolean> {
+        if(!email) return Promise.resolve(false)
+        return Promise.resolve(this.users.find(u => u.email === email) !== undefined)
+    }
+
+    async createUser(password: string, email: string): Promise<void> {
+        const existingUser = this.users.find(u => u.email === email)
         if (existingUser) {
             throw new Error('Username already exists')
         }
-        const newUser = new User(username, password)
+        const newUser = new User(email, password)
         this.users.push(newUser)
         this.user = newUser
     }
 
-    async authenticateUser(username: string, password: string): Promise<void> {
-        const user = this.users.find(u => u.username === username && u.password === password)
+    async authenticateUser(email: string, password: string): Promise<void> {
+        const user = this.users.find(u => u.email === email && u.password === password)
         if (user) {
             this.user = user
         } else {

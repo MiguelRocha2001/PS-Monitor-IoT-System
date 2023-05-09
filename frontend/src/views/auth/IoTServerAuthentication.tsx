@@ -13,17 +13,17 @@ import {Stack} from "react-bootstrap";
 
 const logger = new Logger({ name: "Authentication" });
 
-export async function authenticate(username: string, password: string): Promise<void | Error> {
+export async function authenticate(email: string, password: string): Promise<void | Error> {
     try {
-        return services.authenticateUser(username, password);
+        return services.authenticateUser(email, password);
     } catch (e) {
         return new Error("Something went wrong");
     }
 }
 
-export async function createUser(username: string, password: string, email: string, mobile: string): Promise<void | Error> {
+export async function createUser(password: string, email: string): Promise<void | Error> {
     try {
-        return await services.createUser(username, password, email, mobile);
+        return await services.createUser(password, email);
     } catch (e) {
         return new Error("Something went wrong");
     }
@@ -88,7 +88,7 @@ export function IoTServerAuthentication({title, action}: { title: string, action
                     setError("Invalid username or password")
                 })
         } else {
-            createUser(username, password, email, mobile)
+            createUser(password, email)
                 .then((result) => {
                     setIsSubmitting(false)
                     if(result instanceof Error) {

@@ -109,4 +109,7 @@
     margin-bottom: 3px;
 }
 
+.bad-input{
+    border-color: red !important;
+}
 

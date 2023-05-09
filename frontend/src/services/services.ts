@@ -5,7 +5,7 @@ import {FakeServices} from "./FakeServices";
 export interface Services {
     googleLogin(): Promise<void>
     getBackendSirenInfo(): Promise<void>
-    createUser(username: string, password: string, email: string, mobile: string): Promise<void>
+    createUser(password: string, email: string): Promise<void>
     authenticateUser(username: string, password: string): Promise<void>
     isLoggedIn(): Promise<boolean>
     getMe(): Promise<User>
@@ -18,6 +18,7 @@ export interface Services {
     logout(): Promise<void>
     getDevicesByName(page: number, limit: number, name: string): Promise<Device[]>
     getDeviceCountByName(s: string): Promise<number>;
+    checkIfUserExists(email: string): Promise<boolean>;
 }
 
 export const services: Services = new FakeServices()

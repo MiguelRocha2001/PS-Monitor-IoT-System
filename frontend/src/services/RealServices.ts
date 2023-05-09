@@ -58,8 +58,8 @@ export class RealServices implements Services {
      * @param email email
      * @param mobile mobile
      */
-    async createUser(username: string, password: string, email: string, mobile: string): Promise<void> {
-        logger.info(`Creating user ${username}`)
+    async createUser(password: string, email: string): Promise<void> {
+        logger.info(`Creating user ${email}`)
         const createUserAction = SirenModule.getCreateUserAction()
         if (!createUserAction) {
             const msg = 'Create user action not found'
@@ -69,10 +69,10 @@ export class RealServices implements Services {
         const request = {
             url: createUserAction.href,
             method: createUserAction.method,
-            body: toBody({username, password, email, mobile})
+            body: toBody({password, email})
         }
         await doFetch(request, ResponseType.Siren)
-        logger.info(`User ${username} created`)
+        logger.info(`User ${email} created`)
     }
 
     // TODO: fix this
@@ -143,6 +143,10 @@ export class RealServices implements Services {
     }
 
     getDeviceCountByName(s: string): Promise<number> {
+        throw new Error("Method not implemented.");//todo
+    }
+
+    checkIfUserExists(email: string): Promise<boolean> {
         throw new Error("Method not implemented.");//todo
     }
 
