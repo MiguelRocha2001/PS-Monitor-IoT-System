@@ -3,6 +3,7 @@ import "./SignUpForm.css"
 import { Link } from 'react-router-dom';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faGoogle} from "@fortawesome/free-brands-svg-icons";
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import CodeInput from "./CodeInput";
 import CodeEmailVerification from "./CodeEmailVerification";
 import {createUser} from "../auth/IoTServerAuthentication";
@@ -10,6 +11,12 @@ import {Logger} from "tslog";
 import {services} from "../../services/services";
 
 const logger = new Logger({ name: "Authentication" });
+
+/*show the password in plain text
+*
+*                     <button type="button" onClick={()=>setIsPasswordVisible(!isPasswordVisible)}> icon = {isPasswordVisible ? <FontAwesomeIcon icon={faEyeSlash} /> : <FontAwesomeIcon icon={faEye} />}
+                    </button>
+* */
 
 function SignUpForm() {
     const [email, setEmail] = useState('');
@@ -21,7 +28,7 @@ function SignUpForm() {
     const [hasDigit, setHasDigit] = useState(false);
     const [hasUpperCase, setHasUpperCase] = useState(false);
     const [isBadInputPassword, setIsBadInputPassword] = useState(false);
-
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -50,7 +57,7 @@ function SignUpForm() {
             })
     }
     return (
-        sendCodeToEmail ? <CodeEmailVerification email={email}/> :
+        sendCodeToEmail ? <CodeEmailVerification email={email} password={password}/> :
             <div className="signup-form">
                 <h2>Sign Up</h2>
                 <p>Please fill out the following information to create an account:</p>
@@ -59,9 +66,10 @@ function SignUpForm() {
                     <input className={isBadInputEmail ? "bad-input" : ""} type="text" id="email" value={email}
                            onChange={(e) => setEmail(e.target.value)}/>
                     <label htmlFor="password">Password:</label>
+
                     <input
                         className={isBadInputPassword ? "bad-input" : ""}
-                        type="password"
+                        type={isPasswordVisible ? "text" : "password"}
                         value={password}
                         onChange={(e) =>{
                             inputValidation(e.target.value, setHasMinChars, setHasDigit, setHasUpperCase);

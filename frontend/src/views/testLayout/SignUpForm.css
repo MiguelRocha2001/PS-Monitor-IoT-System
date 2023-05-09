@@ -136,3 +136,9 @@ google-icon {
     margin-right: 5px;
     color: green;
 }
+
+.eye {
+    margin-left: -30px;
+    cursor: pointer;
+}
+
