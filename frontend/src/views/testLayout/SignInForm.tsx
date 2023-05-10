@@ -35,7 +35,7 @@ function SignInForm() {
                     setErrorMessage(result.message)
                 } else {
                     setIsLoggedIn(true)
-                    setRedirect("/")
+                    setRedirect("/devices")
                 }
             })
             .catch(error => {

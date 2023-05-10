@@ -8,6 +8,8 @@ import {createUser} from "../auth/IoTServerAuthentication";
 import {useSetIsLoggedIn} from "../auth/Authn";
 import {Logger} from "tslog";
 import InputCode from "./CodeInput";
+import {RequireAuthn} from "../auth/RequireAuthn";
+import {UserCreated} from "../auth/UserCreated";
 const logger = new Logger({ name: "Authentication" });
 
 
@@ -23,6 +25,7 @@ function CodeVerification({ email,password }: OwnerDetails) {
     const [coolDownCode, setCoolDownCode] = useState<boolean>(false);
     const navigate = useNavigate()
     const setIsLoggedIn = useSetIsLoggedIn()
+    const [isUserCreated, setIsUserCreated] = useState<boolean>(false);
 
     function handleResendCodeClick() {
         // Disable the resend code button
@@ -39,7 +42,7 @@ function CodeVerification({ email,password }: OwnerDetails) {
             createUser(password, email)
                 .then((result) => {
                         setIsLoggedIn(false)
-                        navigate('/auth/user-created')
+                        setIsUserCreated(true)
                 })
                 .catch(error => {
                     logger.error('Create user: ', error)
@@ -54,8 +57,7 @@ function CodeVerification({ email,password }: OwnerDetails) {
 
     }
 
-
-    return (
+    return isUserCreated ? <UserCreated/>:(
         <div className="code-verification">
             <h2>A code was sent to <b>{email}</b></h2>
             <p>Please enter the 5-digit code to verify your account:</p>

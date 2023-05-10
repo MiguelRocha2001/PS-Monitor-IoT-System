@@ -56,6 +56,9 @@ function SignUpForm() {
 
             })
     }
+
+
+
     return (
         sendCodeToEmail ? <CodeEmailVerification email={email} password={password}/> :
             <div className="signup-form">
