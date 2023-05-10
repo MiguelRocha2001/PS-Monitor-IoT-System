@@ -11,8 +11,10 @@ import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.http.SirenMediaType
 import pt.isel.iot_data_server.http.infra.siren
 import pt.isel.iot_data_server.http.model.Problem
+import pt.isel.iot_data_server.http.model.device.DeviceErrorsOutputModel
 import pt.isel.iot_data_server.http.model.map
 import pt.isel.iot_data_server.http.model.sensor_data.*
+import pt.isel.iot_data_server.service.device.DeviceErrorService
 import pt.isel.iot_data_server.service.device.DeviceService
 import pt.isel.iot_data_server.service.sensor_data.*
 import pt.isel.iot_data_server.service.user.Role
@@ -21,152 +23,81 @@ import java.util.*
 @Tag(name = "Sensor data", description = "Sensor data API")
 @RestController
 class SensorDataController(
-    val deviceService: DeviceService,
-    val phDataService: PhDataService,
-    val temperatureDataService: TemperatureDataService,
-    val humidityDataService: HumidityDataService,
-    val waterFlowDataService: WaterFlowDataService,
-    val waterLevelDataService: WaterLevelDataService
+    val sensorDataService: SensorDataService,
+    val sensorErrorService: SensorErrorService
 ) {
+    @GetMapping(Uris.Devices.Sensor.NAMES)
+    fun getSensorsAvailable(): ResponseEntity<*> {
+        val result = sensorDataService.getAvailableSensors()
+        return ResponseEntity.status(200)
+            .contentType(SirenMediaType)
+            .header(
+                "Location",
+                Uris.Devices.Sensor.all().toASCIIString()
+            )
+            .body(
+                siren(SensorNamesOutputModel(result)) {
+                    clazz("sensor-names")
+                }
+            )
+    }
+
     @Operation(summary = "Get Ph records", description = "Get all ph records associated with a device")
     @ApiResponse(responseCode = "200", description = "Ph successfully retrieved", content = [Content(
         mediaType = "application/vnd.siren+json",
-        schema = Schema(implementation = PhRecordsOutputModel::class)
+        schema = Schema(implementation = SensorRecordsOutputModel::class)
     )])
     @ApiResponse(responseCode = "400", description = "Device not found", content = [Content(
         mediaType = "application/problem+json",
         schema = Schema(implementation = Problem::class)
     )])
-    @GetMapping(Uris.Devices.PH.ALL_1)
-    fun getPhRecords(
+    @GetMapping(Uris.Devices.Sensor.ALL_1)
+    fun getSensorRecords(
         user: User,
         @PathVariable device_id: String,
+        @RequestParam("sensor-name", required = false) sensorName: String,
     ): ResponseEntity<*> {
         val result = if (user.userInfo.role === Role.ADMIN)
-            phDataService.getPhRecords(device_id)
+            sensorDataService.getSensorRecords(device_id, sensorName)
         else
-            phDataService.getPhRecordsIfIsOwner(device_id, user.id)
+            sensorDataService.getSensorRecordsIfIsOwner(device_id, user.id, sensorName)
         return result.map {
             ResponseEntity.status(200)
                 .contentType(SirenMediaType)
                 .header(
                     "Location",
-                    Uris.Devices.PH.all().toASCIIString()
+                    Uris.Devices.Sensor.all().toASCIIString()
                 )
                 .body(
-                    siren(PhRecordsOutputModel.from(it)) {
-                        clazz("ph-records")
+                    siren(SensorRecordsOutputModel.from(it)) {
+                        clazz("records")
                     }
                 )
         }
     }
 
-    @Operation(summary = "Get temperature records", description = "Get all temperature records associated with a device")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved", content = [Content(
-        mediaType = "application/vnd.siren+json",
-        schema = Schema(implementation = TemperatureRecordsOutputModel::class)
-    )])
-    @ApiResponse(responseCode = "400", description = "Device not found", content = [Content(
-        mediaType = "application/problem+json",
-        schema = Schema(implementation = Problem::class)
-    )])
-    @GetMapping(Uris.Devices.Temperature.ALL_1)
-    fun getTemperatureRecords(
-        user: User,
-        @PathVariable device_id: String
-    ): ResponseEntity<*> {
-        val result = if (user.userInfo.role === Role.ADMIN)
-            temperatureDataService.getTemperatureRecords(device_id)
-        else {
-            temperatureDataService.getTemperatureRecordsIfIsOwner(device_id, user.id)
+    @GetMapping(Uris.Devices.SensorError.ALL_1)
+        fun getSensorErrors(
+            user: User,
+            @PathVariable device_id: String
+        ): ResponseEntity<*> {
+            val result = if (user.userInfo.role === Role.ADMIN)
+                sensorErrorService.getSensorErrorRecords(device_id)
+            else {
+                sensorErrorService.getSensorErrorRecordsIfIsOwner(device_id, user.id)
+            }
+            return result.map {
+                ResponseEntity.status(200)
+                    .contentType(SirenMediaType)
+                    .header(
+                        "Location",
+                        Uris.Devices.SensorError.all().toASCIIString()
+                    )
+                    .body(
+                        siren(SensorErrorsOutputModel.from(it)) {
+                            clazz("sensor-errors")
+                        }
+                    )
+            }
         }
-        return result.map {
-            ResponseEntity.status(200)
-                .contentType(SirenMediaType)
-                .header(
-                    "Location",
-                    Uris.Devices.Temperature.all().toASCIIString()
-                )
-                .body(
-                    siren(TemperatureRecordsOutputModel.from(it)) {
-                        clazz("temperature-records")
-                    }
-                )
-        }
-    }
-
-    @GetMapping(Uris.Devices.Humidity.ALL_1)
-    fun getHumidityRecords(
-        user: User,
-        @PathVariable device_id: String
-    ): ResponseEntity<*> {
-        val result = if (user.userInfo.role === Role.ADMIN)
-            humidityDataService.getHumidityRecords(device_id)
-        else {
-            humidityDataService.getHumidityRecordsIfIsOwner(device_id, user.id)
-        }
-        return result.map {
-            ResponseEntity.status(200)
-                .contentType(SirenMediaType)
-                .header(
-                    "Location",
-                    Uris.Devices.Humidity.all().toASCIIString()
-                )
-                .body(
-                    siren(HumidityRecordsOutputModel.from(it)) {
-                        clazz("humidity-records")
-                    }
-                )
-        }
-    }
-
-    @GetMapping(Uris.Devices.WaterFlow.ALL_1)
-    fun getWaterFlowRecords(
-        user: User,
-        @PathVariable device_id: String
-    ): ResponseEntity<*> {
-        val result = if (user.userInfo.role === Role.ADMIN)
-            waterFlowDataService.getWaterFlowRecords(device_id)
-        else {
-            waterFlowDataService.getWaterFlowRecordsIfIsOwner(device_id, user.id)
-        }
-        return result.map {
-            ResponseEntity.status(200)
-                .contentType(SirenMediaType)
-                .header(
-                    "Location",
-                    Uris.Devices.WaterFlow.all().toASCIIString()
-                )
-                .body(
-                    siren(WaterFlowRecordsOutputModel.from(it)) {
-                        clazz("water-flow-records")
-                    }
-                )
-        }
-    }
-
-    @GetMapping(Uris.Devices.WaterLevel.ALL_1)
-    fun getWaterLevelRecords(
-        user: User,
-        @PathVariable device_id: String
-    ): ResponseEntity<*> {
-        val result = if (user.userInfo.role === Role.ADMIN)
-            waterLevelDataService.getWaterLevelRecords(device_id)
-        else {
-            waterLevelDataService.getWaterLevelRecordsIfIsOwner(device_id, user.id)
-        }
-        return result.map {
-            ResponseEntity.status(200)
-                .contentType(SirenMediaType)
-                .header(
-                    "Location",
-                    Uris.Devices.WaterLevel.all().toASCIIString()
-                )
-                .body(
-                    siren(WaterLevelRecordsOutputModel.from(it)) {
-                        clazz("water-level-records")
-                    }
-                )
-        }
-    }
 }

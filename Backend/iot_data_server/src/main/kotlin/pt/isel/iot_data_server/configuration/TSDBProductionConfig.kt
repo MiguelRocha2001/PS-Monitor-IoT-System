@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class TSDBProductionConfig {
-    private val tsdbConfig = TSDBBuilder("my_bucket")
+    private val tsdbConfig = TSDBBuilder("production")
     @Bean
     fun getInfluxDBClientKotlin(): InfluxDBClientKotlin {
         return tsdbConfig.getClient()

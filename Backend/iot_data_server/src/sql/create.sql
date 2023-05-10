@@ -21,10 +21,25 @@ create table device(
     foreign key (user_id) references _user(_id)
 );
 
-create table device_error(
+create table sensor(
+    type varchar,
+    alert_threshold int,
+    primary key (type)
+);
+
+create table sensor_error(
     device_id varchar,
     sensor varchar,
     timestamp timestamp,
+    primary key (device_id, sensor, timestamp),
+    foreign key (device_id) references device(id)
+);
+
+create table device_error(
+    device_id varchar,
+    timestamp timestamp,
+    error varchar,
+    primary key (device_id, timestamp),
     foreign key (device_id) references device(id)
 );
 
