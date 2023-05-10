@@ -21,7 +21,7 @@ const root = ReactDOM.createRoot(
 root.render(
     <React.StrictMode>
         <BrowserRouter >
-            <Col ><App /></Col>
+            <Col><App /></Col>
         </BrowserRouter>
     </React.StrictMode>
 );

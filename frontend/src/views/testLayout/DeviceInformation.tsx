@@ -28,6 +28,7 @@ export function DeviceInfo() {
 
         fetchDevice();
     }, [deviceId]);
+    
 
     if (device == null)
         return <></>

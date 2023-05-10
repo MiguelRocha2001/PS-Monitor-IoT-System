@@ -43,6 +43,7 @@ function CodeVerification({ email,password }: OwnerDetails) {
                 .then((result) => {
                         setIsLoggedIn(false)
                         setIsUserCreated(true)
+                         localStorage.setItem('email', email);
                 })
                 .catch(error => {
                     logger.error('Create user: ', error)

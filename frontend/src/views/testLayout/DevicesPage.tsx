@@ -4,9 +4,9 @@ import {services} from "../../services/services";
 import {MyLink} from "../Commons";
 import {useSetError} from "../error/ErrorContainer";
 import {ErrorController} from "../error/ErrorController";
-//import Pagination from 'react-bootstrap/Pagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faChevronRight,faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import {useNavigate} from "react-router-dom";
 
 import './DevicesPage.css'
 import Button from "react-bootstrap/Button";
@@ -19,15 +19,35 @@ export function Devices() {
 
     const [page, setPage] = useState(1)
     const [pageSize, setPageSize] = useState(5)
+    const [filteredDevices, setFilteredDevices] = useState(0)
     const [totalDevices, setTotalDevices] = useState(0)
+    const [loggedOut, setLoggedOut] = useState(false)
 
+    useEffect(
+        () => {
+            if (loggedOut) {
+                const navigate = useNavigate()
+                return navigate("/")
+            }
+        }, [loggedOut]
+    )
 
+    useEffect(() => {
+        async function fetchNumberOfDevices() {
+            services.getDeviceCount()
+                .then((number)=>
+                    setTotalDevices(number)
+                )
+                .catch(error => setError(error))
+        }
+        fetchNumberOfDevices()
+    }, [])
 
     useEffect(() => { //TODO IF I FETCH DEVICE I STORE THEME SO WHEN I CLICK IN THE PREVIOUS BUTTON A NEW REQUEST IS NOT MADE
         async function fetchNumberOfDevices() {
             services.getDeviceCount()
                 .then((number)=>
-                    setTotalDevices(number)
+                    setFilteredDevices(number)
                 )
                 .catch(error => setError(error))
         }
@@ -47,33 +67,47 @@ export function Devices() {
     }, [page, pageSize,searchQuery])
 
     const handleLogout = async () => {
-        await services.logout()
+        await services.logout().then(()=> {
+                localStorage.removeItem('email')
+                setLoggedOut(true)
+            }
+        )
             .catch(error => setError(error))
+
+        //remove email from local storage
+
+
+
     }
 
     const handleButtonPress = () => {
          services.getDevicesByName(page, pageSize, searchQuery.toUpperCase()).then(
              devices => {setDevices(devices);})
              .then(()=> services.getDeviceCountByName(searchQuery.toUpperCase()))
-             .then((devicesSize)=>setTotalDevices(devicesSize))
+             .then((devicesSize)=>setFilteredDevices(devicesSize))
              .catch(error => setError(error)
          )
     }
 
     return (
         <ErrorController>
-            <LogoutButton handleLogout={handleLogout}/>
+            <div className={"upper-section"}>
+                <LogoutButton handleLogout={handleLogout}/>
+            </div>
+
             <DeviceList devices={devices} searchQuery={searchQuery} setSearchQuery={setSearchQuery} handleButtonPress={handleButtonPress} totalDevices={totalDevices}/>
-            <Pagination currentPage={page} totalPages={Math.ceil(totalDevices/pageSize)} onPageChange={(selectedPage: number) => setPage(selectedPage)} />
+            <Pagination currentPage={page} totalPages={Math.ceil(filteredDevices/pageSize)} onPageChange={(selectedPage: number) => setPage(selectedPage)} />
         </ErrorController>
     )
 }
 
 function DeviceList({ devices, searchQuery, setSearchQuery, handleButtonPress,totalDevices }: { devices: Device[], searchQuery: string, setSearchQuery: (searchQuery: string) => void, handleButtonPress: () => void, totalDevices: number }) {
+    const lastLineText = devices.length === 0 ? "No devices found." : `Showing ${devices.length} of ${totalDevices} devices.`
+
     return (
         <div className="card">
             <div className="card-header">
-                <h3>{totalDevices} devices currently selected</h3>
+                <h3 id={"logged-as"}> Showing devices associated with <u>{localStorage.getItem('email')}</u></h3>
             </div>
             <div className="card-body">
                 {devices.length > 0 ? (
@@ -91,7 +125,7 @@ function DeviceList({ devices, searchQuery, setSearchQuery, handleButtonPress,to
                         ))}
                     </ul>
                 ) : (
-                    <p>No devices found.</p>
+                    <p></p>
                 )}
                 <div className="add-device">
                     <MyLink
@@ -107,6 +141,7 @@ function DeviceList({ devices, searchQuery, setSearchQuery, handleButtonPress,to
                     setSearchQuery={setSearchQuery}
                     onSearch={handleButtonPress}
                 />
+                <b id={"last-line"}>{lastLineText}</b>
             </div>
         </div>
     );
@@ -148,15 +183,16 @@ function InputTextBox({ searchQuery, setSearchQuery, onSearch }: { searchQuery: 
 }
 
 interface LogoutButtonProps {
-    handleLogout: () => Promise<void>;
+    handleLogout: () =>  void
 }
 
 function LogoutButton(props: LogoutButtonProps) {
     return (
         <div className="button-container">
             <Button variant="outline-primary logout-btn" onClick={props.handleLogout}>
-                LOGOUT
+                <FontAwesomeIcon icon={faSignOutAlt} /> LOGOUT
             </Button>
         </div>
     );
 }
+
