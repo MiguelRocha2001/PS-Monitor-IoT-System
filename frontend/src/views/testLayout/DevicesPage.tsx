@@ -6,7 +6,7 @@ import {useSetError} from "../error/ErrorContainer";
 import {ErrorController} from "../error/ErrorController";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight,faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
-import {useNavigate} from "react-router-dom";
+import {useNavigate,Navigate} from "react-router-dom";
 
 import './DevicesPage.css'
 import Button from "react-bootstrap/Button";
@@ -22,16 +22,17 @@ export function Devices() {
     const [filteredDevices, setFilteredDevices] = useState(0)
     const [totalDevices, setTotalDevices] = useState(0)
     const [loggedOut, setLoggedOut] = useState(false)
-
+/*
     useEffect(
         () => {
             if (loggedOut) {
                 const navigate = useNavigate()
+                console.log("logged out")
                 return navigate("/")
             }
         }, [loggedOut]
     )
-
+*/
     useEffect(() => {
         async function fetchNumberOfDevices() {
             services.getDeviceCount()
@@ -66,18 +67,17 @@ export function Devices() {
         fetchDevices()
     }, [page, pageSize,searchQuery])
 
-    const handleLogout = async () => {
+    async function handleLogout() {
+        const navigate = useNavigate()
         await services.logout().then(()=> {
                 localStorage.removeItem('email')
                 setLoggedOut(true)
+                //return navigate("/")
             }
         )
             .catch(error => setError(error))
 
         //remove email from local storage
-
-
-
     }
 
     const handleButtonPress = () => {
@@ -89,12 +89,22 @@ export function Devices() {
          )
     }
 
-    return (
-        <ErrorController>
-            <div className={"upper-section"}>
-                <LogoutButton handleLogout={handleLogout}/>
-            </div>
+    const navigate = useNavigate();
 
+    async function handleButtonPressed() {
+        await services.logout().then(()=> {
+                localStorage.removeItem('email')
+                setLoggedOut(true)
+                console.log("redirecting");
+                navigate("/", { replace: true });
+        })
+    }
+
+
+    return (
+
+        <ErrorController>
+            <LogoutButton handleButtonPressed={handleButtonPressed}/>
             <DeviceList devices={devices} searchQuery={searchQuery} setSearchQuery={setSearchQuery} handleButtonPress={handleButtonPress} totalDevices={totalDevices}/>
             <Pagination currentPage={page} totalPages={Math.ceil(filteredDevices/pageSize)} onPageChange={(selectedPage: number) => setPage(selectedPage)} />
         </ErrorController>
@@ -182,17 +192,13 @@ function InputTextBox({ searchQuery, setSearchQuery, onSearch }: { searchQuery: 
     );
 }
 
-interface LogoutButtonProps {
-    handleLogout: () =>  void
-}
-
-function LogoutButton(props: LogoutButtonProps) {
-    return (
+function LogoutButton({handleButtonPressed}: {handleButtonPressed: () => void}) {
+   return  <div className={"upper-section"}>
         <div className="button-container">
-            <Button variant="outline-primary logout-btn" onClick={props.handleLogout}>
+            <Button variant="outline-primary logout-btn" onClick={handleButtonPressed}>
                 <FontAwesomeIcon icon={faSignOutAlt} /> LOGOUT
             </Button>
         </div>
-    );
+    </div>
 }
 
