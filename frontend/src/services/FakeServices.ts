@@ -34,6 +34,7 @@ export class FakeServices implements Services {
     }
 
     async googleLogin(): Promise<void> {
+        console.log('FakeServices.googleLogin')
         throw new Error('Dont call this method in fake mode')
     }
 

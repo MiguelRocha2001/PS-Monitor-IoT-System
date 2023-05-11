@@ -1,13 +1,8 @@
 import React, {useEffect} from "react";
 import {useParams} from "react-router-dom";
 import {services} from "../../services/services";
-import {Loading} from "../Loading";
-import {MyCard, MyLink} from "../Commons";
 import {Device} from "../../services/domain";
-import {Col} from "react-bootstrap";
 import {useSetError} from "../error/ErrorContainer";
-import {ErrorController} from "../error/ErrorController";
-import {DeviceSensorialData} from "./deviceSensorialData";
 import {ChartWithPeriodSelection} from "./text";
 import {Devices} from "./DevicesPage";
 import "./DeviceInformation.css";
@@ -43,13 +38,4 @@ export function DeviceInfo() {
                 </div>
             </div>
         );
-}
-
-function DeviceInfoAux({device}: { device: Device }) {
-    return (
-        <div className = {"information-about-device"}>
-            <p><b>Identifier:</b> {device.id}</p>
-            <p><b>Associated email:</b> {device.email}</p>
-        </div>
-    );
 }

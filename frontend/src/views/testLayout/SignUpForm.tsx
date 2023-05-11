@@ -9,6 +9,7 @@ import CodeEmailVerification from "./CodeEmailVerification";
 import {createUser} from "../auth/IoTServerAuthentication";
 import {Logger} from "tslog";
 import {services} from "../../services/services";
+import {GoogleLoginButton} from "./GoogleLogin";
 
 const logger = new Logger({ name: "Authentication" });
 
@@ -93,10 +94,7 @@ function SignUpForm() {
                     </div>
                     <p id="error-message">{errorMessage}</p>
                     <button type="submit">Sign Up</button>
-                    <button className="google-button" onClick={() => console.log('Google login clicked')}>
-                        <FontAwesomeIcon icon={faGoogle} className="google-icon"/>
-                        Sign up with Google
-                    </button>
+                    <GoogleLoginButton text={"Sign up"}/>
                 </form>
                 <p>Already have an account? <Link to="/auth/login">Sign in here</Link>.</p>
             </div>

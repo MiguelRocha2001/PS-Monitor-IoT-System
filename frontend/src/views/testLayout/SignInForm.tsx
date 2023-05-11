@@ -6,6 +6,7 @@ import {faGoogle} from '@fortawesome/free-brands-svg-icons';
 import {authenticate} from "../auth/IoTServerAuthentication";
 import {Logger} from "tslog";
 import {useSetIsLoggedIn} from "../auth/Authn";
+import {GoogleLoginButton} from "./GoogleLogin";
 
 const logger = new Logger({ name: "Authentication" });
 
@@ -55,10 +56,7 @@ function SignInForm() {
                 <input className={isBadInput ? "bad-input" : ""} id={"password"} type="password" value={password} onChange={(e) => {setPassword(e.target.value)}} />
                 <p id="error-message">{errorMessage}</p>
                 <button type="submit">Sign In </button>
-                <button className="google-button" onClick={() => console.log('Google login clicked')}>
-                    <FontAwesomeIcon icon={faGoogle} className="google-icon" />
-                    Sign in with Google
-                </button>
+                <GoogleLoginButton text = "Sign in" />
             </form>
             <p>Don't have an account? <Link to="/auth/register">Sign up here</Link>.</p>
         </div>
