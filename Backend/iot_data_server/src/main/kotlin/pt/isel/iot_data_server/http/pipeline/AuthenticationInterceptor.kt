@@ -16,8 +16,6 @@ class AuthenticationInterceptor(
 ) : HandlerInterceptor {
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         if (handler is HandlerMethod) {
-            val authorization = handler.getMethodAnnotation(Authorization::class.java)
-
             // deals with authentication
             if (handler.methodParameters.any { it.parameterType == User::class.java }) {
                 // enforce authentication
@@ -34,6 +32,7 @@ class AuthenticationInterceptor(
                 return false.also { logger.info("Request: ${request.method} ${request.requestURI} - Unauthenticated") }
             }
 
+            val authorization = handler.getMethodAnnotation(Authorization::class.java)
             // deals with authorization
             if (authorization != null) {
                 val role = authorization.role

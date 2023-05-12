@@ -7,7 +7,7 @@ import org.springframework.test.util.AssertionErrors.assertTrue
 import pt.isel.iot_data_server.configuration.TSDBBuilder
 import pt.isel.iot_data_server.domain.PhRecord
 import pt.isel.iot_data_server.domain.TemperatureRecord
-import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
+import pt.isel.iot_data_server.repository.tsdb.SensorDataRepo
 import pt.isel.iot_data_server.utils.generateRandomPh
 import pt.isel.iot_data_server.utils.generateRandomTemperature
 import java.time.Instant
@@ -17,7 +17,7 @@ import java.time.Instant
  */
 class TsdbRepoDuplicateTests {
     private val tsdbBuilder: TSDBBuilder = TSDBBuilder("test")
-    private val repo: TSDBRepository = TSDBRepository(
+    private val repo: SensorDataRepo = SensorDataRepo(
         tsdbBuilder.getClient(),
         tsdbBuilder.getBucket()
     )
