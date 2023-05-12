@@ -32,8 +32,9 @@ class SirenInfoController {
                 getDeviceCountLink(this)
                 getDeviceLink(this)
                 createDeviceAction(this)
-                getPhLink(this)
-                getTemperatureLink(this)
+                // getPhLink(this) deprecated
+                // getTemperatureLink(this) deprecated
+                getSensorDataLink(this)
             })
     }
 }

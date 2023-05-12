@@ -43,7 +43,7 @@ class UserController(
     fun create(
         @RequestBody input: UserCreateInputModel
     ): ResponseEntity<*> {
-        val res = service.createUser(input.toUserInfo())
+        val res = service.createUser(input.toUserInfo(Role.USER)) // Role is always User
         return res.map {
             val userId = it.first
             val token = it.second
@@ -85,6 +85,7 @@ class UserController(
             user.id,
             user.userInfo.username,
             user.userInfo.email,
+            user.userInfo.role
         )
         return ResponseEntity.status(200)
             .contentType(SirenMediaType)

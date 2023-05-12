@@ -1,23 +1,17 @@
 package pt.isel.iot_data_server.repo.time_series
 
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.test.util.AssertionErrors.assertTrue
 import pt.isel.iot_data_server.configuration.TSDBBuilder
 import pt.isel.iot_data_server.domain.PhRecord
-import pt.isel.iot_data_server.domain.TemperatureRecord
-import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
+import pt.isel.iot_data_server.repository.tsdb.SensorDataRepo
 import pt.isel.iot_data_server.utils.generateRandomPh
-import pt.isel.iot_data_server.utils.getRandomInstantWithinLastWeek
 import java.time.Instant
 import kotlin.concurrent.thread
 
 class SensorDataRepoConcurrentTests {
     private val tsdbBuilder: TSDBBuilder = TSDBBuilder("test")
-    private val repo: TSDBRepository = TSDBRepository(
+    private val repo: SensorDataRepo = SensorDataRepo(
         tsdbBuilder.getClient(),
         tsdbBuilder.getBucket()
     )

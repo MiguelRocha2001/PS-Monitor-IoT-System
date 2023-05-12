@@ -41,14 +41,22 @@ fun getDeviceLink(sirenBuilderScope: SirenBuilderScope<*>) =
         rel = Rels.DEVICE_BY_ID
     )
 
+@Deprecated("Deprecated in favor of getSensorDataLink")
 fun getPhLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
         href = Uris.Devices.PH.all(),
         rel = Rels.PH_DATA
     )
 
+@Deprecated("Deprecated in favor of getSensorDataLink")
 fun getTemperatureLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
         href = Uris.Devices.Temperature.all(),
         rel = Rels.TEMPERATURE_DATA
+    )
+
+fun getSensorDataLink(sirenBuilderScope: SirenBuilderScope<*>) =
+    sirenBuilderScope.link(
+        href = URI(Uris.Devices.Sensor.ALL_1),
+        rel = Rels.SENSOR_DATA
     )

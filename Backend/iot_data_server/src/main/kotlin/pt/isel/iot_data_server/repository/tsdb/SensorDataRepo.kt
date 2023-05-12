@@ -22,7 +22,7 @@ TODO: check server status
 
 //TODO isto retorna os dados referentes a um nos ultimos 7 dias,se calhar devia ser possivel escolher o intervalo de tempo
 @Repository
-class TSDBRepository(
+class SensorDataRepo(
     private val client: InfluxDBClientKotlin,
     bucket : Bucket
 ) : CollectedDataRepository {

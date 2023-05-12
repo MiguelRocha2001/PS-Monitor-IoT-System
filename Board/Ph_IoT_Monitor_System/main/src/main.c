@@ -72,6 +72,13 @@ void sendWaterAlert(esp_mqtt_client_handle_t client, int timestamp, char* device
     mqtt_send_water_alert(client, timestamp, deviceID);
 }
 
+void sendUnknowWokeUpReasonAlert() {
+    ESP_LOGE(TAG, "Sending unknown woke up reason alert...");
+    esp_mqtt_client_handle_t client = setup_mqtt();
+    int current_timestamp = getNowTimestamp(); // get current time
+    mqtt_send_unknown_woke_up_reason_alert(client, current_timestamp);
+}
+
 void compute_sensors(char* deviceID) {
     if (sensors_reading_is_complete(&sensor_records)) {
         setup_wifi();
@@ -82,6 +89,11 @@ void compute_sensors(char* deviceID) {
 
         start_deep_sleep(LONG_SLEEP_TIME);
     } else {
+        // needs wifi to ajust time, because the fake readings will get the real time
+        int sensor_status_result = check_sensors_status(deviceID);
+        if (sensor_status_result == -1) {
+            start_deep_sleep(LONG_SLEEP_TIME);
+        }
         setup_wifi();
         read_sensor_records(&sensor_records);
         start_deep_sleep(SENSOR_MULTIPLE_READING_INTERVAL);
@@ -118,19 +130,13 @@ void app_main(void) {
 
     esp_sleep_wakeup_cause_t cause = esp_sleep_get_wakeup_cause();
     printDeepSleepWokeCause(cause);
-   if(cause == ESP_SLEEP_WAKEUP_UNDEFINED) { // maybe duo to an abort
+    if(cause == ESP_SLEEP_WAKEUP_UNDEFINED) { // maybe duo to an abort
         sendUnknowWokeUpReasonAlert();
+        // TODO: long sleep
     }
 
     char* deviceID;
     get_device_id(&deviceID);
-
-    
-    // needs wifi to ajust time, because the fake readings will get the real time
-    int sensor_status_result = check_sensors_status(deviceID);
-    if (sensor_status_result == -1) {
-        start_deep_sleep(LONG_SLEEP_TIME);
-    }
 
     // Woker duo to water leak sensor
     if (cause == ESP_SLEEP_WAKEUP_EXT0) {
@@ -141,6 +147,7 @@ void app_main(void) {
 
         int current_timestamp = getNowTimestamp(); // get current time
         sendWaterAlert(client, current_timestamp, deviceID);
+        // TODO: long sleep
     } else { // Normal woke up
         compute_sensors(deviceID);
     }

@@ -144,26 +144,16 @@ void mqtt_send_encrypted_data(esp_mqtt_client_handle_t client, char* buf, char* 
 }
 */
 
-void mqtt_send_sensor_record1(esp_mqtt_client_handle_t client, struct sensor_record1 *sensor_record, char* deviceID, char* topic)
+void mqtt_send_sensor_record(esp_mqtt_client_handle_t client, struct sensor_record1 *sensor_record, char* deviceID, char* sensor_type)
 {
     char buf[100];
-    sprintf(buf, "{deviceId: %s, value: %f, timestamp: %d}", deviceID, sensor_record -> value, sensor_record -> timestamp);
+    sprintf(buf, "deviceId: %s, value: %f, timestamp: %d, sensor_type", deviceID, sensor_record -> value, sensor_record -> timestamp, sensor_type);
 
     // mqtt_send_encrypted_data(client, buf, "ph");
+    char topic[100] = "sensor_record";
     esp_mqtt_client_publish(client, topic, buf, 0, 1, 0);
     
-    ESP_LOGI(TAG, "Message: %s published on topic /ph", buf);
-}
-
-void mqtt_send_sensor_record2(esp_mqtt_client_handle_t client, struct sensor_record2 *sensor_record, char* deviceID, char* topic)
-{
-    char buf[100];
-    sprintf(buf, "{deviceId: %s, value: %d, timestamp: %d}", deviceID, sensor_record -> value, sensor_record -> timestamp);
-
-    // mqtt_send_encrypted_data(client, buf, "ph");
-    esp_mqtt_client_publish(client, topic, buf, 0, 1, 0);
-    
-    ESP_LOGI(TAG, "Message: %s published on topic /ph", buf);
+    ESP_LOGI(TAG, "Message: %s published on topic /sensor_record", buf);
 }
 
 void mqtt_send_water_alert(esp_mqtt_client_handle_t client, int timestamp, char* deviceID)
