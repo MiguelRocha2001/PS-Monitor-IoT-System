@@ -43,7 +43,7 @@ class UserController(
     fun create(
         @RequestBody input: UserCreateInputModel
     ): ResponseEntity<*> {
-        val res = service.createUser(input.toUserInfo())
+        val res = service.createUser(input.toUserInfo(Role.USER)) // Role is always User
         return res.map {
             val userId = it.first
             val token = it.second

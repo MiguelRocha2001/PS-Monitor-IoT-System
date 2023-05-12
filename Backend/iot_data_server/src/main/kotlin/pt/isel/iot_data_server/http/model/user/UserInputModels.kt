@@ -3,7 +3,7 @@ package pt.isel.iot_data_server.http.model.user
 import pt.isel.iot_data_server.domain.UserInfo
 import pt.isel.iot_data_server.service.user.Role
 
-class UserCreateInputModel(username: String, password: String, val email: String, val role: String) {
+class UserCreateInputModel(username: String, password: String, val email: String) {
     val username: String
     val password: String
 
@@ -13,15 +13,8 @@ class UserCreateInputModel(username: String, password: String, val email: String
     }
 }
 
-fun String.toRole() =
-    when {
-        this == "admin" -> Role.ADMIN
-        this == "user" -> Role.USER
-        else -> throw IllegalArgumentException("Invalid role")
-    }
-
-fun UserCreateInputModel.toUserInfo() =
-    UserInfo(username, password, email, role.toRole())
+fun UserCreateInputModel.toUserInfo(role: Role) =
+    UserInfo(username, password, email, role)
 
 
 class UserCreateTokenInputModel(username: String, password: String) {
