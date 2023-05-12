@@ -54,6 +54,16 @@ class UserController(
         }
     }
 
+    @GetMapping(Uris.Users.exists.BY_EMAIL_1)
+    fun isEmailAlreadyRegistered(
+        @PathVariable email: String
+    ): ResponseEntity<*> {
+        val res = service.isEmailAlreadyRegistered(email)
+        return ResponseEntity.status(200)
+            .contentType(SirenMediaType)
+            .body(siren(UserEmailAlreadyRegisteredOutputModel(res)) { clazz("users") })
+    }
+
     @GetMapping(Uris.Users.ALL)
     @Authorization(Role.ADMIN)
     fun getAllUsers(

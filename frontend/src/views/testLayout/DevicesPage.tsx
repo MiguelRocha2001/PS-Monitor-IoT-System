@@ -40,7 +40,7 @@ export function Devices() {
     useEffect(() => {
         async function fetchNumberOfDevices() {
             services.getDeviceCount()
-                .then((number)=>
+                .then((number) =>
                     setTotalDevices(number)
                 )
                 .catch(error => setError(error))
@@ -64,12 +64,13 @@ export function Devices() {
         async function fetchDevices() {
             services.getDevices(page, pageSize)
                 .then(devices => {
+                    console.log(devices)
                     setDevices(devices);
                 })
                 .catch(error => setError(error))
         }
         fetchDevices()
-    }, [page, pageSize,searchQuery])
+    }, [page, pageSize, searchQuery, totalDevices])
 
     const handleButtonPress = () => {
          services.getDevicesByName(page, pageSize, searchQuery.toUpperCase()).then(
@@ -84,11 +85,9 @@ export function Devices() {
 
     async function handleButtonPressed() {
         await services.logout().then(()=> {
-                localStorage.removeItem('email')
-                setLoggedOut(true)
-                setIsLoggedIn(false)
-                console.log("redirecting");
-                navigate("/", { replace: true });
+            localStorage.removeItem('email')//FIXME use context instead
+            setLoggedOut(true)
+            setIsLoggedIn(false)
         })
     }
 

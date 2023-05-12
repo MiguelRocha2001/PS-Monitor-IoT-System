@@ -60,3 +60,9 @@ fun getSensorDataLink(sirenBuilderScope: SirenBuilderScope<*>) =
         href = URI(Uris.Devices.Sensor.ALL_2),
         rel = Rels.SENSOR_DATA
     )
+
+fun getIsEmailAlreadyRegisteredLink(sirenBuilderScope: SirenBuilderScope<*>) =
+    sirenBuilderScope.link(
+        href = URI(Uris.Users.exists.BY_EMAIL_2),
+        rel = Rels.IS_EMAIL_ALREADY_REGISTERED
+    )

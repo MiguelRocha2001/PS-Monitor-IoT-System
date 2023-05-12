@@ -41,6 +41,13 @@ object Uris {
         fun all(): URI = URI(ALL)
         fun create() = URI(ALL)
         fun byId(id: String) = UriTemplate(BY_ID1).expand(id)
+
+        object exists {
+            const val BY_EMAIL_1 = "$ALL/exists/email/{email}"
+            const val BY_EMAIL_2 = "$ALL/exists/email/:email"
+
+            fun byEmail(email: String) = UriTemplate(BY_EMAIL_2).expand(email)
+        }
     }
 
     object Devices {

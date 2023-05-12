@@ -80,6 +80,7 @@ let GET_DEVICE_COUNT_LINK: Link
 let GET_DEVICE_LINK: Link
 let GET_SENSOR_DATA_LINK: Link
 let GET_DEVICES_BY_NAME_LINK: Link
+let GET_EMAIL_ALREADY_REGISTERED_LINK: Link
 
 
 function getGoogleLoginLink(): Link {
@@ -124,6 +125,10 @@ function getGetDeviceLink(): Link {
 
 function getGetSensorDataLink(): Link {
     return GET_SENSOR_DATA_LINK
+}
+
+function getIsEmailAlreadyRegisteredLink(): Link {
+    return GET_EMAIL_ALREADY_REGISTERED_LINK
 }
 
 
@@ -173,6 +178,10 @@ function extractGetSensorDataLink(links: Link[]) {
 
 function getDevicesByNameLink(links: Link[]): Link {
     return GET_DEVICES_BY_NAME_LINK = extractLink(links, "devices-by-name")
+}
+
+function extractGetIsEmailAlreadyRegisteredLink(links: Link[]) {
+    return GET_EMAIL_ALREADY_REGISTERED_LINK = extractLink(links, "is-email-already-registered")
 }
 
 function extractLink(linksArg: Link[], rel: string): Link {
@@ -237,6 +246,8 @@ export const SirenModule = {
     extractGetDeviceLink,
     getGetSensorDataLink,
     extractGetSensorDataLink,
+    extractGetIsEmailAlreadyRegisteredLink,
+    getIsEmailAlreadyRegisteredLink,
     validateFields,
     getDevicesByNameLink,
 }

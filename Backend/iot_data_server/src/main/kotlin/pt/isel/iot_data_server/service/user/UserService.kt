@@ -105,6 +105,12 @@ class UserService(
             it.userRepo.deleteUser(userId)
         }
     }
+
+    fun isEmailAlreadyRegistered(email: String): Boolean {
+        return transactionManager.run {
+            it.userRepo.existsEmail(email)
+        }
+    }
 }
 
 

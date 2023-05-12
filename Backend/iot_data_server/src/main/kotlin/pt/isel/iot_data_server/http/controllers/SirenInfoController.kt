@@ -24,6 +24,7 @@ class SirenInfoController {
                 clazz("siren-info")
                 createGoogleAuthLink(this)
                 createUserSirenAction(this)
+                getIsEmailAlreadyRegisteredLink(this)
                 createTokenSirenAction(this)
                 createLogoutSirenAction(this)
                 isLoggedInLink(this)

@@ -22,6 +22,7 @@ export class RealServices implements Services {
             SirenModule.extractGetDeviceCountLink(response.links)
             SirenModule.extractGetDeviceLink(response.links)
             SirenModule.extractGetSensorDataLink(response.links)
+            SirenModule.extractGetIsEmailAlreadyRegisteredLink(response.links)
         }
 
         const request = {
@@ -145,8 +146,16 @@ export class RealServices implements Services {
         throw new Error("Method not implemented.");//todo
     }
 
-    checkIfUserExists(email: string): Promise<boolean> {
-        throw new Error("Method not implemented.");//todo
+    async checkIfUserExists(email: string): Promise<boolean> {
+        const isEmailAlreadyRegisteredLink = SirenModule.getIsEmailAlreadyRegisteredLink()
+        if (!isEmailAlreadyRegisteredLink) throw new Error('Is email already registered link not found')
+        const linkWithEmail = isEmailAlreadyRegisteredLink.href.replace(':email', email)
+        const request = {
+            url: linkWithEmail,
+            method: 'GET'
+        }
+        const response = await doFetch(request, ResponseType.Siren)
+        return response.properties.exists
     }
 
     verifyCode(code: string): Promise<boolean> {
