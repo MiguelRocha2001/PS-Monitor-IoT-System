@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import pt.isel.iot_data_server.domain.*
 import pt.isel.iot_data_server.repository.TransactionManager
-import pt.isel.iot_data_server.repository.tsdb.TSDBRepository
+import pt.isel.iot_data_server.repository.tsdb.SensorDataRepo
 import pt.isel.iot_data_server.service.Either
 import pt.isel.iot_data_server.service.device.DeviceService
 import pt.isel.iot_data_server.service.email.EmailManager
@@ -14,7 +14,7 @@ import pt.isel.iot_data_server.service.email.EmailManager
 @Service
 class SensorDataService(
     private val emailSenderService: EmailManager,
-    private val tsdbRepository: TSDBRepository,
+    private val sensorDataRepo: SensorDataRepo,
     private val transactionManager: TransactionManager,
     private val deviceService: DeviceService,
     client: MqttClient
@@ -29,14 +29,14 @@ class SensorDataService(
         deviceId: String,
         sensorRecord: SensorRecord
     ) {
-        tsdbRepository.saveSensorRecord(deviceId, sensorRecord)
+        sensorDataRepo.saveSensorRecord(deviceId, sensorRecord)
     }
 
     fun getSensorRecords(deviceId: String, sensorName: String): SensorDataResult {
         return if (!deviceService.existsDevice(deviceId))
             Either.Left(SensorDataError.DeviceNotFound)
         else
-            Either.Right(tsdbRepository.getSensorRecords(deviceId, sensorName))
+            Either.Right(sensorDataRepo.getSensorRecords(deviceId, sensorName))
     }
 
     fun getSensorRecordsIfIsOwner(deviceId: String, userId: String, sensorName: String): SensorDataResult {
@@ -45,7 +45,7 @@ class SensorDataService(
         else if (!deviceService.belongsToUser(deviceId, userId))
             Either.Left(SensorDataError.DeviceNotBelongsToUser(userId))
         else
-            Either.Right(tsdbRepository.getSensorRecords(deviceId, sensorName))
+            Either.Right(sensorDataRepo.getSensorRecords(deviceId, sensorName))
     }
 
     private fun subscribeSensorTopic(client: MqttClient) {
@@ -75,7 +75,7 @@ class SensorDataService(
 
     private fun alertIfDangerous(device: Device, sensorRecord: SensorRecord) {
         transactionManager.run {
-            val repo = it.sensorRepo
+            val repo = it.sensorMetadataRepo
             val threshold = repo.getSensorAlertValue(sensorRecord.type)
             if (threshold != null && sensorRecord.value > threshold) {
                 sendEmailAlert(sensorRecord, device, threshold)
@@ -84,7 +84,7 @@ class SensorDataService(
     }
 
     fun getAvailableSensors(): List<String> {
-        return tsdbRepository.getSensorNames()
+        return sensorDataRepo.getSensorNames()
     }
 
     private fun sendEmailAlert(sensorRecord: SensorRecord, device: Device, limit: Double) {

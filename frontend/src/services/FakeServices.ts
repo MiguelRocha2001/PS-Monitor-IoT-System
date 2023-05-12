@@ -2,7 +2,9 @@ import {Device, PhData, PhRecord, TemperatureData, TemperatureRecord, User} from
 import {Services} from "./services";
 
 export class FakeServices implements Services {
-    private readonly users: User[] = []
+    private readonly users: User[] = [
+        new User('admin@gmail.com', 'admin'),
+    ]
     private user: User | null = null
 
     private readonly email = 'some_email_1@gmail.com'
