@@ -36,8 +36,10 @@ function CodeVerification({ email,password }: OwnerDetails) {
         console.log('Resending code...');
     }
 
-    function onCodeSubmit(code: string):boolean {
-        if(code === '12345') { //TODO number of allowed tries 5, max duration token time is 30 minutes, if this happens change the error message to "Your code has expired, please request a new one"
+    function onCodeSubmit(code: string):boolean {//correct code is 12345 for fake
+         //TODO number of allowed tries 5, max duration token time is 30 minutes, if this happens change the error message to "Your code has expired, please request a new one"
+        services.verifyCode(code).then((result) => {
+            if(result){
             setIsCodeIncorrect(false);
             createUser(password, email)
                 .then((result) => {
@@ -55,7 +57,15 @@ function CodeVerification({ email,password }: OwnerDetails) {
             setIsCodeSent('')
             return false;
         }
-
+        }).catch(
+            error => {
+                logger.error('Verify code: ', error)
+                setErrorMessage('Incorrect code, please try again');
+                setIsCodeSent('')
+                return false;
+            }
+        )
+        return false;
     }
 
     return isUserCreated ? <UserCreated/>:(

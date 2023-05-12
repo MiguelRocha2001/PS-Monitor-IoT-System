@@ -102,6 +102,25 @@ class DeviceController(
         }
     }
 
+
+    @Operation(summary = "Device by id", description = "Get a device associated with part of an id ")
+    @ApiResponse(responseCode = "200", description = "Device found", content = [Content(mediaType = "application/vnd.siren+json", schema = Schema(implementation = DeviceOutputModel::class))])
+    @ApiResponse(responseCode = "400", description = "Bad request - The request was not valid, check the given id", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
+    @GetMapping(Uris.Devices.BY_WORD)
+    fun searchDevicesByWords(
+        user: User,
+        @PathVariable word: String
+    ): ResponseEntity<*> {
+        val device = service.getDevicesFilteredById(word)
+        return ResponseEntity.status(200)
+            .contentType(SirenMediaType)
+            .body(siren(
+                DevicesOutputModel.from(device)
+            ) {
+                clazz("device")
+            })
+    }
+
     @Operation(summary = "Device by email", description = "Get a device associated with  email")
     @ApiResponse(responseCode = "200", description = "Device found", content = [Content(mediaType = "application/vnd.siren+json", schema = Schema(implementation = DeviceOutputModel::class))])
     @ApiResponse(responseCode = "400", description = "Bad request - The request was not valid, check the given email", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])

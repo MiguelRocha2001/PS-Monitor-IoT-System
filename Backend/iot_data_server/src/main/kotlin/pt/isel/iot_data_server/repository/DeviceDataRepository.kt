@@ -20,4 +20,5 @@ interface DeviceDataRepository {
     fun saveDeviceErrorRecord(deviceId: String, deviceErrorRecord: DeviceErrorRecord)
     fun getDeviceErrorRecords(deviceId: String): List<DeviceErrorRecord>
     fun getAllDeviceErrorRecords(): List<DeviceErrorRecord>
+    fun getDevicesFilteredById(deviceId: String): List<Device>
 }

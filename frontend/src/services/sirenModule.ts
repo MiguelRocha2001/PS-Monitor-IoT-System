@@ -80,6 +80,7 @@ let GET_DEVICE_COUNT_LINK: Link
 let GET_DEVICE_LINK: Link
 let GET_PH_DATA_LINK: Link
 let GET_TEMPERATURE_DATA_LINK: Link
+let GET_DEVICES_BY_NAME_LINK: Link
 
 
 function getGoogleLoginLink(): Link {
@@ -179,6 +180,10 @@ function extractGetTemperatureDataLink(links: Link[]) {
     GET_TEMPERATURE_DATA_LINK = extractLink(links, "temperature-data")
 }
 
+function getDevicesByNameLink(links: Link[]): Link {
+    return GET_DEVICES_BY_NAME_LINK = extractLink(links, "devices-by-name")
+}
+
 function extractLink(linksArg: Link[], rel: string): Link {
     for (let i = 0; i < linksArg.length; i++) {
         const link = linksArg[i]
@@ -216,6 +221,8 @@ function extractAction(actions: any[], name: string): Action {
     return true
 }
 
+
+
 export const SirenModule = {
     getGoogleLoginLink,
     extractGoogleLoginLink,
@@ -241,5 +248,6 @@ export const SirenModule = {
     extractGetTemperatureDataLink,
     getGetDeviceLink,
     extractGetDeviceLink,
-    validateFields
+    validateFields,
+    getDevicesByNameLink,
 }

@@ -212,4 +212,8 @@ export class FakeServices implements Services {
         return new TemperatureData(data);
     }
 
+    async verifyCode(code: string): Promise<boolean> {
+        return code === '12345'
+    }
+
 }

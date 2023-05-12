@@ -10,6 +10,7 @@ import {useNavigate,Navigate} from "react-router-dom";
 
 import './DevicesPage.css'
 import Button from "react-bootstrap/Button";
+import {useSetIsLoggedIn} from "../auth/Authn";
 
 export function Devices() {
     const setError = useSetError()
@@ -22,17 +23,20 @@ export function Devices() {
     const [filteredDevices, setFilteredDevices] = useState(0)
     const [totalDevices, setTotalDevices] = useState(0)
     const [loggedOut, setLoggedOut] = useState(false)
-/*
-    useEffect(
-        () => {
-            if (loggedOut) {
-                const navigate = useNavigate()
-                console.log("logged out")
-                return navigate("/")
-            }
-        }, [loggedOut]
-    )
-*/
+    const setIsLoggedIn = useSetIsLoggedIn()
+
+
+    /*
+        useEffect(
+            () => {
+                if (loggedOut) {
+                    const navigate = useNavigate()
+                    console.log("logged out")
+                    return navigate("/")
+                }
+            }, [loggedOut]
+        )
+    */
     useEffect(() => {
         async function fetchNumberOfDevices() {
             services.getDeviceCount()
@@ -67,19 +71,6 @@ export function Devices() {
         fetchDevices()
     }, [page, pageSize,searchQuery])
 
-    async function handleLogout() {
-        const navigate = useNavigate()
-        await services.logout().then(()=> {
-                localStorage.removeItem('email')
-                setLoggedOut(true)
-                //return navigate("/")
-            }
-        )
-            .catch(error => setError(error))
-
-        //remove email from local storage
-    }
-
     const handleButtonPress = () => {
          services.getDevicesByName(page, pageSize, searchQuery.toUpperCase()).then(
              devices => {setDevices(devices);})
@@ -95,14 +86,13 @@ export function Devices() {
         await services.logout().then(()=> {
                 localStorage.removeItem('email')
                 setLoggedOut(true)
+                setIsLoggedIn(false)
                 console.log("redirecting");
                 navigate("/", { replace: true });
         })
     }
 
-
     return (
-
         <ErrorController>
             <LogoutButton handleButtonPressed={handleButtonPressed}/>
             <DeviceList devices={devices} searchQuery={searchQuery} setSearchQuery={setSearchQuery} handleButtonPress={handleButtonPress} totalDevices={totalDevices}/>

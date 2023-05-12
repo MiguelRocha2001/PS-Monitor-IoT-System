@@ -165,4 +165,18 @@ class JdbiDeviceDataRepository(
     override fun getAllDeviceErrorRecords(): List<DeviceErrorRecord> {
         TODO("Not yet implemented")
     }
+
+    override fun getDevicesFilteredById(deviceId: String): List<Device> {
+        return handle.createQuery(
+            """
+            select id, user_id, email 
+            from device 
+            where id like :id
+            """
+        )
+            .bind("id", "%$deviceId%")
+            .mapTo<DeviceMapper>()
+            .list()
+            .map { it.toDevice() }
+    }
 }

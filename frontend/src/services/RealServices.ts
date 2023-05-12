@@ -23,6 +23,7 @@ export class RealServices implements Services {
             SirenModule.extractGetDeviceLink(response.links)
             SirenModule.extractGetPhDataLink(response.links)
             SirenModule.extractGetTemperatureDataLink(response.links)
+
         }
 
         const request = {
@@ -139,7 +140,7 @@ export class RealServices implements Services {
     }
 
     getDevicesByName(page: number, limit: number, name: string): Promise<Device[]> {
-        throw new Error("Method not implemented.");//todo
+      throw new Error("Method not implemented.");//todo
     }
 
     getDeviceCountByName(s: string): Promise<number> {
@@ -147,6 +148,10 @@ export class RealServices implements Services {
     }
 
     checkIfUserExists(email: string): Promise<boolean> {
+        throw new Error("Method not implemented.");//todo
+    }
+
+    verifyCode(code: string): Promise<boolean> {
         throw new Error("Method not implemented.");//todo
     }
 

@@ -131,6 +131,12 @@ class DeviceService (
         }
     }
 
+    fun getDevicesFilteredById(deviceId: String): List<Device> {
+        return transactionManager.run {
+            return@run it.deviceRepo.getDevicesFilteredById(deviceId)
+        }
+    }
+
     /*
     fun deleteDevice(deviceId: DeviceId): DeleteDeviceResult {
         return transactionManager.run {
