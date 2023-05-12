@@ -21,9 +21,7 @@ export class RealServices implements Services {
             SirenModule.extractGetDevicesLink(response.links)
             SirenModule.extractGetDeviceCountLink(response.links)
             SirenModule.extractGetDeviceLink(response.links)
-            SirenModule.extractGetPhDataLink(response.links)
-            SirenModule.extractGetTemperatureDataLink(response.links)
-
+            SirenModule.extractGetSensorDataLink(response.links)
         }
 
         const request = {
@@ -180,12 +178,13 @@ export class RealServices implements Services {
     }
 
     async getPhData(deviceId: string): Promise<PhData> {
-        const getPhDataLink = SirenModule.getGetPhDataLink()
-        if (!getPhDataLink) throw new Error('Get ph data link not found')
+        const getSensorDataLink = SirenModule.getGetSensorDataLink()
+        if (!getSensorDataLink) throw new Error('Get sensor data link not found')
 
-        const urlWithId = getPhDataLink.href.replace(':device_id', deviceId)
+        const urlWithId = getSensorDataLink.href.replace(':device_id', deviceId)
+        const urlWithIdAndSensorName = urlWithId + '?sensor-name=ph'
         const request = {
-            url: urlWithId,
+            url: urlWithIdAndSensorName,
             method: 'GET'
         }
         const response = await doFetch(request, ResponseType.Siren)
@@ -193,12 +192,13 @@ export class RealServices implements Services {
     }
 
     async getTemperatureData(deviceId: string): Promise<TemperatureData> {
-        const getTemperatureDataLink = SirenModule.getGetTemperatureDataLink()
-        if (!getTemperatureDataLink) throw new Error('Get temperature data link not found')
+        const getSensorDataLink = SirenModule.getGetSensorDataLink()
+        if (!getSensorDataLink) throw new Error('Get sensor data link not found')
 
-        const urlWithId = getTemperatureDataLink.href.replace(':device_id', deviceId)
+        const urlWithId = getSensorDataLink.href.replace(':device_id', deviceId)
+        const urlWithIdAndSensorName = urlWithId + '?sensor-name=temperature'
         const request = {
-            url: urlWithId,
+            url: urlWithIdAndSensorName,
             method: 'GET'
         }
         const response = await doFetch(request, ResponseType.Siren)

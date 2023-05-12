@@ -25,9 +25,9 @@ class JdbiDeviceDataRepository(
     }
 
     override fun getAllDevices(page: Int?, limit: Int?): List<Device> {
-        val offset = (page ?: 0) * (limit ?: 10)
+        val offset = ((page ?: 1) - 1) * (limit ?: 10)
         return handle.createQuery("""
-            select id, user_id, email 
+            select id, user_id, email
             from device 
             limit :limit 
             offset :offset

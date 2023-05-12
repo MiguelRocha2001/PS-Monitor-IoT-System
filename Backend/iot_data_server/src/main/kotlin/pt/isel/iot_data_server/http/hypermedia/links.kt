@@ -31,7 +31,7 @@ fun getDevicesLink(sirenBuilderScope: SirenBuilderScope<*>) =
 
 fun getDeviceCountLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
-        href = URI(Uris.Devices.COUNT),
+        href = URI(Uris.Devices.My.COUNT),
         rel = Rels.DEVICE_COUNT
     )
 
@@ -57,6 +57,6 @@ fun getTemperatureLink(sirenBuilderScope: SirenBuilderScope<*>) =
 
 fun getSensorDataLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
-        href = URI(Uris.Devices.Sensor.ALL_1),
+        href = URI(Uris.Devices.Sensor.ALL_2),
         rel = Rels.SENSOR_DATA
     )

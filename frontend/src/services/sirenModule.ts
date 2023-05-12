@@ -78,8 +78,7 @@ let ADD_DEVICE_ACTION: Action
 let GET_DEVICES_LINK: Link
 let GET_DEVICE_COUNT_LINK: Link
 let GET_DEVICE_LINK: Link
-let GET_PH_DATA_LINK: Link
-let GET_TEMPERATURE_DATA_LINK: Link
+let GET_SENSOR_DATA_LINK: Link
 let GET_DEVICES_BY_NAME_LINK: Link
 
 
@@ -123,12 +122,8 @@ function getGetDeviceLink(): Link {
     return GET_DEVICE_LINK
 }
 
-function getGetPhDataLink(): Link {
-    return GET_PH_DATA_LINK
-}
-
-function getGetTemperatureDataLink(): Link {
-    return GET_TEMPERATURE_DATA_LINK
+function getGetSensorDataLink(): Link {
+    return GET_SENSOR_DATA_LINK
 }
 
 
@@ -172,12 +167,8 @@ function extractGetDeviceLink(links: Link[]) {
     GET_DEVICE_LINK = extractLink(links, "device-by-id")
 }
 
-function extractGetPhDataLink(links: Link[]) {
-    GET_PH_DATA_LINK = extractLink(links, "ph-data")
-}
-
-function extractGetTemperatureDataLink(links: Link[]) {
-    GET_TEMPERATURE_DATA_LINK = extractLink(links, "temperature-data")
+function extractGetSensorDataLink(links: Link[]) {
+    GET_SENSOR_DATA_LINK = extractLink(links, "sensor-data")
 }
 
 function getDevicesByNameLink(links: Link[]): Link {
@@ -242,12 +233,10 @@ export const SirenModule = {
     getGetDeviceCountLink,
     extractGetDeviceCountLink,
     extractGetDevicesLink,
-    getGetPhDataLink,
-    extractGetPhDataLink,
-    getGetTemperatureDataLink,
-    extractGetTemperatureDataLink,
     getGetDeviceLink,
     extractGetDeviceLink,
+    getGetSensorDataLink,
+    extractGetSensorDataLink,
     validateFields,
     getDevicesByNameLink,
 }

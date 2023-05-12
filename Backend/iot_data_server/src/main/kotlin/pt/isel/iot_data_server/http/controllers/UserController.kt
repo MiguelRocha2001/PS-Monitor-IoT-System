@@ -179,7 +179,7 @@ class UserController(
             response.addCookie(cookie)
         }
 
-        response.sendRedirect("http://localhost:8080/auth/login")
+        response.sendRedirect("http://localhost:8080/devices") // FIXME
     }
 
     @Operation(summary = "Delete user", description = "Delete the user")

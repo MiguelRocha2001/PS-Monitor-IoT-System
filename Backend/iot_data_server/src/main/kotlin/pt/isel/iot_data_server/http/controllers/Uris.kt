@@ -70,7 +70,7 @@ object Uris {
 
         object Sensor {
             const val ALL_1 = "${BY_ID1}/sensors"
-            private const val ALL_2 = "${BY_ID2}/sensors"
+            const val ALL_2 = "${BY_ID2}/sensors"
             const val NAMES = "${ALL_2}/names"
             fun all(): URI = URI(ALL_2)
         }

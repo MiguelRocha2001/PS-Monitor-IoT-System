@@ -46,35 +46,16 @@ class DeviceController(
         }
     }
 
-    @Operation(summary = "All devices", description = "Get all devices associated with our system")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved", content = [Content(mediaType = "application/vnd.siren+json", schema = Schema(implementation = DevicesOutputModel::class))])
-    @ApiResponse(responseCode = "401", description = "Not authorized", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
-    @GetMapping(Uris.Devices.My.ALL)
-    @Authorization(Role.ADMIN)
-    fun getMyDevices(
-        user: User,
-        @RequestParam(required = false) page: Int?,
-        @RequestParam(required = false) limit: Int?
-    ): ResponseEntity<*> {
-        val result = service.getUserDevices(user.id, page, limit)
-        return result.map {
-            ResponseEntity.status(200)
-                .contentType(SirenMediaType)
-                .body(siren(
-                    DevicesOutputModel.from(it)
-                ) {
-                    clazz("devices")
-                })
-        }
-    }
-
     @GetMapping(Uris.Devices.ALL)
     fun getDevices(
         user: User,
         @RequestParam(required = false) page: Int?,
         @RequestParam(required = false) limit: Int?
     ): ResponseEntity<*> {
-        val result = service.getAllDevices(page, limit)
+        val result = if (user.userInfo.role === Role.ADMIN)
+            service.getAllDevices(page, limit)
+        else
+            service.getUserDevices(user.id, page, limit)
         return result.map {
             ResponseEntity.status(200)
                 .contentType(SirenMediaType)

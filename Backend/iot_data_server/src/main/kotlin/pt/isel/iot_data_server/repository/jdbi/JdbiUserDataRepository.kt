@@ -25,7 +25,7 @@ class JdbiUserDataRepository(
     }
 
     override fun getAllUsers(): List<User> {
-        return handle.createQuery("select _id, username, password, email from _USER")
+        return handle.createQuery("select _id, username, password, email, role from _USER")
             .mapTo<UserMapper>()
             .list()
             .map { it.toUser() }
@@ -34,7 +34,7 @@ class JdbiUserDataRepository(
     override fun getUserByToken(token: String): User? {
         return handle.createQuery(
             """
-            select _id, username, password, email 
+            select _id, username, password, email, role 
             from _USER as users 
             inner join TOKEN as tokens
             on users._id = tokens.user_id
@@ -50,7 +50,7 @@ class JdbiUserDataRepository(
     override fun getUserByIdOrNull(userId: String): User? {
         return handle.createQuery(
             """
-            select _id, username, password, email 
+            select _id, username, password, email, role
             from _USER as users 
             where _id = :user_id
             """
@@ -85,11 +85,17 @@ class JdbiUserDataRepository(
     }
 
     override fun getUserByUsernameOrNull(username: String): User? {
-        return handle.createQuery("select _id, username, password, email from _USER")
+        return handle.createQuery(
+            """
+            select _id, username, password, email, role
+            from _USER as users 
+            where username = :username
+            """
+        )
+            .bind("username", username)
             .mapTo<UserMapper>()
-            .list()
-            .map { it.toUser() }
-            .firstOrNull { it.userInfo.username == username }
+            .singleOrNull()
+            ?.toUser()
     }
 
     override fun existsEmail(email: String): Boolean {
@@ -128,7 +134,7 @@ class JdbiUserDataRepository(
     override fun getUserByEmailAddressOrNull(email: String): User? {
         return handle.createQuery(
             """
-            select _id, username, password, email 
+            select _id, username, password, email, role
             from _USER 
             where email = :email
             """
