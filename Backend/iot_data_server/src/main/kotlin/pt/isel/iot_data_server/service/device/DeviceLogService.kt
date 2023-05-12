@@ -10,61 +10,61 @@ import pt.isel.iot_data_server.service.email.EmailManager
 
 
 @Service
-class DeviceErrorService(
+class DeviceLogService(
     private val transactionManager: TransactionManager,
     private val emailSenderService: EmailManager,
     private val deviceService: DeviceService,
     client: MqttClient
 ) {
-    private val logger = LoggerFactory.getLogger(DeviceErrorService::class.java)
+    private val logger = LoggerFactory.getLogger(DeviceLogService::class.java)
 
     init {
-        subscribeDeviceErrorTopic(client)
+        subscribeDeviceLogTopic(client)
     }
 
-    fun saveDeviceErrorRecord(
+    fun saveDeviceLogRecord(
         deviceId: String,
-        deviceErrorRecord: DeviceErrorRecord,
+        deviceLogRecord: DeviceLogRecord,
     ) {
         transactionManager.run {
-            it.deviceRepo.saveDeviceErrorRecord(deviceId, deviceErrorRecord)
+            it.deviceRepo.saveDeviceLogRecord(deviceId, deviceLogRecord)
         }
     }
 
-    fun getDeviceErrorRecords(deviceId: String): DeviceErrorRecordsResult {
+    fun getDeviceLogRecords(deviceId: String): DeviceErrorRecordsResult {
         return transactionManager.run {
             if (!deviceService.existsDevice(deviceId))
                 Either.Left(DeviceErrorRecordsError.DeviceNotFound)
             else
-                Either.Right(it.deviceRepo.getDeviceErrorRecords(deviceId))
+                Either.Right(it.deviceRepo.getDeviceLogRecords(deviceId))
         }
     }
 
-    fun getDeviceErrorRecordsIfIsOwner(deviceId: String, userId: String): DeviceErrorRecordsResult {
+    fun getDeviceLogRecordsIfIsOwner(deviceId: String, userId: String): DeviceErrorRecordsResult {
         return transactionManager.run {
             if (!deviceService.existsDevice(deviceId))
                 Either.Left(DeviceErrorRecordsError.DeviceNotFound)
             else if (!deviceService.belongsToUser(deviceId, userId))
                 Either.Left(DeviceErrorRecordsError.DeviceNotBelongsToUser(userId))
             else
-                Either.Right(it.deviceRepo.getDeviceErrorRecords(deviceId))
+                Either.Right(it.deviceRepo.getDeviceLogRecords(deviceId))
         }
     }
-    private fun subscribeDeviceErrorTopic(client: MqttClient) {
-        client.subscribe("unknown_woke_up_reason") { topic, message ->
+    private fun subscribeDeviceLogTopic(client: MqttClient) {
+        client.subscribe("device_wake_up_reason") { topic, message ->
             try {
                 logger.info("Received message from topic: $topic")
 
                 val byteArray = message.payload
                 val string = String(byteArray)
 
-                val deviceErrorRecord = fromMqttMsgStringToDeviceErrorRecord(string)
+                val deviceErrorRecord = fromMqttMsgStringToDeviceLogRecord(string)
                 val deviceId = fromMqttMsgStringToDeviceId(string)
 
                 val deviceResult = deviceService.getDeviceByIdOrNull(deviceId)
                 if (deviceResult != null) {
                     // TODO: alert user immediately
-                    saveDeviceErrorRecord(deviceId, deviceErrorRecord)
+                    saveDeviceLogRecord(deviceId, deviceErrorRecord)
                     logger.info("Saved sensor error record from device: $deviceId")
                 } else {
                     logger.info("Received sensor error record from unknown device: $deviceId")

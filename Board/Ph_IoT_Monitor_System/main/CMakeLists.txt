@@ -1,11 +1,11 @@
 idf_component_register(
         SRCS
-            "src/main.c"
+            "src/tests/wake_up_cause_test.c"
             "src/utils/nvs_util.c"
             "src/utils/pushingbox_util.c"
             "src/utils/esp_touch_util.c"
             "src/utils/wifi_connect_util.c"
-            "src/utils/broker_util.c"
+            "src/utils/mqtt_util.c"
             "src/utils/deep_sleep.c"
             "src/utils/dht11.c"
             "src/utils/time_util.c"

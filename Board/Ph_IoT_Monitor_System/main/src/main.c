@@ -116,6 +116,52 @@ int check_sensors_status(char* deviceID) {
     return res;
 }
 
+/**
+ * Checks the wake up reason. Returns 0 if it is the timer, 1 otherwise.
+ * If it is not the timer, it sends an alert to the broker:
+ * - Power up;
+ * - Software reset;
+ * - Exception/panic;
+ * - Brownout;
+ * - Unknown.
+*/
+void handle_wake_up_reason() {
+     // Read the Reset Reason Register
+    uint32_t reset_reason = esp_reset_reason();
+
+    // Check the reset reason flags
+    if (reset_reason & ESP_RST_UNKNOWN) {
+        printf("Reset reason: unknown\n");
+        mqtt_send_device_wake_up_reason_alert
+    }
+    if (reset_reason & ESP_RST_POWERON) {
+        printf("Reset reason: power-on reset\n");
+    }
+    if (reset_reason & ESP_RST_SW) {
+        printf("Reset reason: software reset\n");
+    }
+    if (reset_reason & ESP_RST_PANIC) {
+        printf("Reset reason: exception/panic reset\n");
+    }
+    if (reset_reason & ESP_RST_BROWNOUT) {
+        printf("Reset reason: brownout reset\n");
+    }
+    if (reset_reason & ESP_RST_DEEPSLEEP) {
+        esp_sleep_wakeup_cause_t cause = esp_sleep_get_wakeup_cause();
+        printDeepSleepWokeCause(cause);
+        if (cause == ESP_SLEEP_WAKEUP_EXT0) {
+            ESP_LOGE(TAG, "Woke up from water leak sensor");
+
+            setup_wifi();
+            esp_mqtt_client_handle_t client = setup_mqtt();
+
+            int current_timestamp = getNowTimestamp(); // get current time
+            sendWaterAlert(client, current_timestamp, deviceID);
+            // TODO: long sleep
+        }
+    }
+}
+
 // IMPORTANT -> run with $idf.py monitor
 
 /**
@@ -128,27 +174,23 @@ void app_main(void) {
     ESP_LOGE(TAG, "Starting app_main...");
     ESP_ERROR_CHECK(nvs_flash_init());
 
-    esp_sleep_wakeup_cause_t cause = esp_sleep_get_wakeup_cause();
-    printDeepSleepWokeCause(cause);
-    if(cause == ESP_SLEEP_WAKEUP_UNDEFINED) { // maybe duo to an abort
-        sendUnknowWokeUpReasonAlert();
-        // TODO: long sleep
-    }
+    int timer = handle_wake_up_reason();
 
-    char* deviceID;
-    get_device_id(&deviceID);
-
-    // Woker duo to water leak sensor
-    if (cause == ESP_SLEEP_WAKEUP_EXT0) {
-        ESP_LOGE(TAG, "Woke up from water leak sensor");
-
-        setup_wifi();
-        esp_mqtt_client_handle_t client = setup_mqtt();
-
-        int current_timestamp = getNowTimestamp(); // get current time
-        sendWaterAlert(client, current_timestamp, deviceID);
-        // TODO: long sleep
-    } else { // Normal woke up
+   if (res == 0) // timer wake up
+   {
+        char* deviceID;
+        get_device_id(&deviceID);
         compute_sensors(deviceID);
-    }
+   }
+   else // other wake up reason
+   {
+       if (readings_started)
+       {
+            // TODO: go to short sleep
+       }
+       else
+       {
+           // TODO: go to long sleep
+       }
+   }
 }

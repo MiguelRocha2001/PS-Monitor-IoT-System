@@ -11,11 +11,8 @@ import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.http.SirenMediaType
 import pt.isel.iot_data_server.http.infra.siren
 import pt.isel.iot_data_server.http.model.Problem
-import pt.isel.iot_data_server.http.model.device.DeviceErrorsOutputModel
 import pt.isel.iot_data_server.http.model.map
 import pt.isel.iot_data_server.http.model.sensor_data.*
-import pt.isel.iot_data_server.service.device.DeviceErrorService
-import pt.isel.iot_data_server.service.device.DeviceService
 import pt.isel.iot_data_server.service.sensor_data.*
 import pt.isel.iot_data_server.service.user.Role
 import java.util.*

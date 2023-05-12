@@ -6,9 +6,9 @@ import kotlin.random.Random
 
 
 data class Device(val deviceId: String, val ownerEmail: String)
-data class DeviceErrorRecord(val deviceId: String, val instant: Instant, val error: String)
+data class DeviceLogRecord(val deviceId: String, val instant: Instant, val reason: String)
 
-fun fromMqttMsgStringToDeviceErrorRecord(str: String): DeviceErrorRecord {
+fun fromMqttMsgStringToDeviceLogRecord(str: String): DeviceLogRecord {
     val split = str.split(",")
 
     val deviceId = split
@@ -21,13 +21,13 @@ fun fromMqttMsgStringToDeviceErrorRecord(str: String): DeviceErrorRecord {
     val instant = getInstant(split)
 
     val error = split
-        .find { it.contains("error") }
+        .find { it.contains("reason") }
         ?.split(":")
         ?.get(1)
         ?.trim()
         ?: throw IllegalArgumentException("Invalid json string")
 
-    return DeviceErrorRecord(deviceId, instant, error)
+    return DeviceLogRecord(deviceId, instant, error)
 }
 
 /**

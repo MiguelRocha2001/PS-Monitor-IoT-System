@@ -1,7 +1,7 @@
 package pt.isel.iot_data_server.http.model.device
 
 import pt.isel.iot_data_server.domain.Device
-import pt.isel.iot_data_server.domain.DeviceErrorRecord
+import pt.isel.iot_data_server.domain.DeviceLogRecord
 
 data class DeviceIdOutputModel(val id: String)
 
@@ -25,13 +25,13 @@ data class DeviceErrorRecordOutputModel(
     val error: String
 )
 
-fun DeviceErrorRecord.toDeviceErrorRecordOutputModel() = DeviceErrorRecordOutputModel(
+fun DeviceLogRecord.toDeviceErrorRecordOutputModel() = DeviceErrorRecordOutputModel(
     deviceId = this.deviceId,
     timestamp = this.instant.toString(),
     error = this.error
 )
 data class DeviceErrorsOutputModel(val errors: List<DeviceErrorRecordOutputModel>) {
     companion object {
-        fun from(errors: List<DeviceErrorRecord>) = DeviceErrorsOutputModel(errors.map { it.toDeviceErrorRecordOutputModel() })
+        fun from(errors: List<DeviceLogRecord>) = DeviceErrorsOutputModel(errors.map { it.toDeviceErrorRecordOutputModel() })
     }
 }

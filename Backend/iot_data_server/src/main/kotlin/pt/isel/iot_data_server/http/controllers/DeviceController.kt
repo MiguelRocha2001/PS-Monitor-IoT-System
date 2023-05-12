@@ -14,7 +14,7 @@ import pt.isel.iot_data_server.http.infra.siren
 import pt.isel.iot_data_server.http.model.Problem
 import pt.isel.iot_data_server.http.model.device.*
 import pt.isel.iot_data_server.http.model.map
-import pt.isel.iot_data_server.service.device.DeviceErrorService
+import pt.isel.iot_data_server.service.device.DeviceLogService
 import pt.isel.iot_data_server.service.device.DeviceService
 import pt.isel.iot_data_server.service.user.Role
 import java.util.*
@@ -23,7 +23,7 @@ import java.util.*
 @RestController
 class DeviceController(
     val service: DeviceService,
-    val deviceErrorService: DeviceErrorService,
+    val deviceLogService: DeviceLogService,
 ) {
     @Operation(summary = "Add device", description = "Add a device associated with  email")
     @ApiResponse(responseCode = "201", description = "Device created", content = [Content(mediaType = "application/vnd.siren+json", schema = Schema(implementation = CreateDeviceOutputModel::class))])
@@ -144,9 +144,9 @@ class DeviceController(
         @PathVariable device_id: String
     ): ResponseEntity<*> {
         val result = if (user.userInfo.role === Role.ADMIN)
-            deviceErrorService.getDeviceErrorRecords(device_id)
+            deviceLogService.getDeviceLogRecords(device_id)
         else {
-            deviceErrorService.getDeviceErrorRecordsIfIsOwner(device_id, user.id)
+            deviceLogService.getDeviceLogRecordsIfIsOwner(device_id, user.id)
         }
         return result.map {
             ResponseEntity.status(200)
