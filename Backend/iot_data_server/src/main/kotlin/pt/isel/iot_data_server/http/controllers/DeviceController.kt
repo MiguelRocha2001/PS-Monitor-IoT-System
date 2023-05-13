@@ -139,7 +139,7 @@ class DeviceController(
     }
 
     @GetMapping(Uris.Devices.Error.ALL_1)
-    fun getDeviceErrors(
+    fun getDeviceWakeUpLogs(
         user: User,
         @PathVariable device_id: String
     ): ResponseEntity<*> {
@@ -156,7 +156,7 @@ class DeviceController(
                     Uris.Devices.Error.all().toASCIIString()
                 )
                 .body(
-                    siren(DeviceErrorsOutputModel.from(it)) {
+                    siren(DeviceWakeUpLogsOutputModel.from(it)) {
                         clazz("device-errors")
                     }
                 )

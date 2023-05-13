@@ -6,9 +6,9 @@ import kotlin.random.Random
 
 
 data class Device(val deviceId: String, val ownerEmail: String)
-data class DeviceLogRecord(val deviceId: String, val instant: Instant, val reason: String)
+data class DeviceWakeUpLog(val deviceId: String, val instant: Instant, val reason: String)
 
-fun fromMqttMsgStringToDeviceLogRecord(str: String): DeviceLogRecord {
+fun fromMqttMsgStringToDeviceLogRecord(str: String): DeviceWakeUpLog {
     val split = str.split(",")
 
     val deviceId = split
@@ -27,7 +27,7 @@ fun fromMqttMsgStringToDeviceLogRecord(str: String): DeviceLogRecord {
         ?.trim()
         ?: throw IllegalArgumentException("Invalid json string")
 
-    return DeviceLogRecord(deviceId, instant, error)
+    return DeviceWakeUpLog(deviceId, instant, error)
 }
 
 /**

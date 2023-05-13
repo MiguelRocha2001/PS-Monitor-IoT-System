@@ -156,45 +156,12 @@ void mqtt_send_sensor_record(esp_mqtt_client_handle_t client, struct sensor_reco
     ESP_LOGI(TAG, "Message: %s published on topic /sensor_record", buf);
 }
 
-void mqtt_send_water_alert(esp_mqtt_client_handle_t client, int timestamp, char* deviceID)
-{
-    // convert ph_record -> value to string
-    char buf[100];
-    sprintf(buf, "{deviceId: %s, timestamp: %d}", deviceID, timestamp);
-
-    esp_mqtt_client_publish(client, "flood", buf, 0, 1, 0);
-    
-    ESP_LOGI(TAG, "Message: %s published on topic /flood", buf);
-}
-
-void mqtt_send_sensor_not_working_alert(esp_mqtt_client_handle_t client, int timestamp, char* deviceID, char** sensors)
-{
-    // convert ph_record -> value to string
-    char buf[100];
-
-    char sensors_list_buff[100] = "";
-
-    for (int i = 0; i < 3; i++)
-    {
-        if (sensors[i] != NULL)
-        {
-            strcat(sensors_list_buff, sensors[i]);
-            strcat(sensors_list_buff, ", ");
-        }
-    }
-    sprintf(buf, "deviceId: %s, timestamp: %d, sensors: %s", deviceID, timestamp, sensors_list_buff);
-
-    esp_mqtt_client_publish(client, "sensor_error", buf, 0, 1, 0);
-
-    ESP_LOGI(TAG, "Message: %s published on topic /sensor_error", buf);
-}
-
-void mqtt_send_unknown_woke_up_reason_alert(esp_mqtt_client_handle_t client, int timestamp, char* deviceID, char* reason)
+void mqtt_send_device_wake_up_reason_alert(esp_mqtt_client_handle_t client, int timestamp, char* deviceID, char* wake_up_reason)
 {
     char buf[100];
-    sprintf(buf, "{deviceId: %s, timestamp: %d, error: %s}", deviceID, timestamp, reason);
+    sprintf(buf, "{deviceId: %s, timestamp: %d, reason: %s}", deviceID, timestamp, wake_up_reason);
 
-    esp_mqtt_client_publish(client, "device_error", buf, 0, 1, 0);
+    esp_mqtt_client_publish(client, "device_wake_up_log", buf, 0, 1, 0);
 
-    ESP_LOGI(TAG, "Message: %s published on topic /device_error", buf);
+    ESP_LOGI(TAG, "Message: %s published on topic /device_wake_up_log", buf);
 }

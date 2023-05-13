@@ -1,5 +1,5 @@
 drop table if exists salt;
-drop table if exists device_error;
+drop table if exists device_wake_up_log;
 drop table if exists sensor_error;
 drop table if exists sensor;
 drop table if exists device;

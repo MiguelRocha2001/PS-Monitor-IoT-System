@@ -3,7 +3,7 @@ package pt.isel.iot_data_server.repository.jdbi
 import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.iot_data_server.domain.Device
-import pt.isel.iot_data_server.domain.DeviceLogRecord
+import pt.isel.iot_data_server.domain.DeviceWakeUpLog
 import pt.isel.iot_data_server.domain.SensorErrorRecord
 import pt.isel.iot_data_server.repository.DeviceDataRepository
 import pt.isel.iot_data_server.repository.jdbi.mappers.DeviceMapper
@@ -145,24 +145,24 @@ class JdbiDeviceDataRepository(
             .list()
     }
 
-    override fun saveDeviceLogRecord(deviceId: String, deviceLogRecord: DeviceLogRecord) {
+    override fun saveDeviceLogRecord(deviceId: String, deviceWakeUpLog: DeviceWakeUpLog) {
         handle.createUpdate(
             """
-            insert into device_error (device_id, timestamp, error)
-            values (:device_id, :timestamp, :error)
+            insert into device_wake_up_log (device_id, timestamp, reason)
+            values (:device_id, :timestamp, :reason)
             """
         )
             .bind("device_id", deviceId)
-            .bind("timestamp", deviceLogRecord.instant)
-            .bind("error", deviceLogRecord.error)
+            .bind("timestamp", deviceWakeUpLog.instant)
+            .bind("reason", deviceWakeUpLog.reason)
             .execute()
     }
 
-    override fun getDeviceLogRecords(deviceId: String): List<DeviceLogRecord> {
+    override fun getDeviceLogRecords(deviceId: String): List<DeviceWakeUpLog> {
         TODO("Not yet implemented")
     }
 
-    override fun getAllDeviceLogRecords(): List<DeviceLogRecord> {
+    override fun getAllDeviceLogRecords(): List<DeviceWakeUpLog> {
         TODO("Not yet implemented")
     }
 

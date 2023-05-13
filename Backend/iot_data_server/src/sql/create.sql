@@ -35,10 +35,10 @@ create table sensor_error(
     foreign key (device_id) references device(id)
 );
 
-create table device_error(
+create table device_wake_up_log(
     device_id varchar,
     timestamp timestamp,
-    error varchar,
+    reason varchar,
     primary key (device_id, timestamp),
     foreign key (device_id) references device(id)
 );

@@ -1,7 +1,7 @@
 package pt.isel.iot_data_server.http.model.device
 
 import pt.isel.iot_data_server.domain.Device
-import pt.isel.iot_data_server.domain.DeviceLogRecord
+import pt.isel.iot_data_server.domain.DeviceWakeUpLog
 
 data class DeviceIdOutputModel(val id: String)
 
@@ -19,19 +19,19 @@ data class DeviceOutputModel(val id: String, val email: String)
 
 data class CreateDeviceOutputModel(val deviceId: String)
 
-data class DeviceErrorRecordOutputModel(
+data class DeviceWakeUpLogOutputModel(
     val deviceId: String,
     val timestamp: String,
-    val error: String
+    val reason: String
 )
 
-fun DeviceLogRecord.toDeviceErrorRecordOutputModel() = DeviceErrorRecordOutputModel(
+fun DeviceWakeUpLog.toDeviceErrorRecordOutputModel() = DeviceWakeUpLogOutputModel(
     deviceId = this.deviceId,
     timestamp = this.instant.toString(),
-    error = this.error
+    reason = this.reason
 )
-data class DeviceErrorsOutputModel(val errors: List<DeviceErrorRecordOutputModel>) {
+data class DeviceWakeUpLogsOutputModel(val errors: List<DeviceWakeUpLogOutputModel>) {
     companion object {
-        fun from(errors: List<DeviceLogRecord>) = DeviceErrorsOutputModel(errors.map { it.toDeviceErrorRecordOutputModel() })
+        fun from(errors: List<DeviceWakeUpLog>) = DeviceWakeUpLogsOutputModel(errors.map { it.toDeviceErrorRecordOutputModel() })
     }
 }

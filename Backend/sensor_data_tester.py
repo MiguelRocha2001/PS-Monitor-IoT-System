@@ -24,11 +24,11 @@ def get_message_with_sensors_error():
     sensors = "ph, humidity, temperature, water_flow, water_level, flood"
     return "device_id: " + device_id + ", timestamp: " + timestamp + ", sensors: " + sensors + ""
 
-def get_message_with_device_error():
+def get_message_with_device_log(reason):
     device_id = "device_manual_tests"
     timestamp = str(round(time.time()))
-    error = "something went wrong"
-    return "device_id: " + device_id + ", timestamp: " + timestamp + ", error: " + error + ""
+    reason = "something went wrong"
+    return "device_id: " + device_id + ", timestamp: " + timestamp + ", reason: " + reason + ""
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -70,11 +70,19 @@ class thread2(threading.Thread):
     # helper function to execute the threads
     def run(self):
         while True:
-            client.publish("sensor_error", get_message_with_sensors_error())
+            # client.publish("sensor_error", get_message_with_sensors_error())
+            # time.sleep(5)
+            client.publish("device_wake_up_log", get_message_with_device_log("water-leak"))
             time.sleep(5)
-            client.publish("device_error", get_message_with_device_error())
+            client.publish("device_wake_up_log", get_message_with_device_log("unknown"))
             time.sleep(5)
-            client.publish("water_leak", get_message_without_value())
+            client.publish("device_wake_up_log", get_message_with_device_log("power-on"))
+            time.sleep(5)
+            client.publish("device_wake_up_log", get_message_with_device_log("software"))
+            time.sleep(5)
+            client.publish("device_wake_up_log", get_message_with_device_log("exception-panic"))
+            time.sleep(5)
+            client.publish("device_wake_up_log", get_message_with_device_log("brownout"))
             time.sleep(5)
 
 client = mqtt.Client()

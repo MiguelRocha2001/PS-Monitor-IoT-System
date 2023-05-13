@@ -73,6 +73,7 @@ class SensorDataController(
         }
     }
 
+    @Deprecated("Ask for device wake up logs")
     @GetMapping(Uris.Devices.SensorError.ALL_1)
         fun getSensorErrors(
             user: User,

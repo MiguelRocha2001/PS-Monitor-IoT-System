@@ -1,7 +1,7 @@
 package pt.isel.iot_data_server.repository
 
 import pt.isel.iot_data_server.domain.Device
-import pt.isel.iot_data_server.domain.DeviceLogRecord
+import pt.isel.iot_data_server.domain.DeviceWakeUpLog
 import pt.isel.iot_data_server.domain.SensorErrorRecord
 
 interface DeviceDataRepository {
@@ -14,11 +14,15 @@ interface DeviceDataRepository {
     fun getDeviceById(deviceId: String): Device?
     fun deleteAllDevices()
     fun deviceCount(userId: String): Int // TODO: test this
+
+    @Deprecated("Discontinued")
     fun saveSensorErrorRecord(deviceId: String, sensorErrorRecord: SensorErrorRecord)
+    @Deprecated("Discontinued")
     fun getSensorErrorRecords(deviceId: String): List<SensorErrorRecord>
+    @Deprecated("Discontinued")
     fun getAllSensorErrorRecords(): List<SensorErrorRecord>
-    fun saveDeviceLogRecord(deviceId: String, deviceLogRecord: DeviceLogRecord)
-    fun getDeviceLogRecords(deviceId: String): List<DeviceLogRecord>
-    fun getAllDeviceLogRecords(): List<DeviceLogRecord>
+    fun saveDeviceLogRecord(deviceId: String, deviceWakeUpLog: DeviceWakeUpLog)
+    fun getDeviceLogRecords(deviceId: String): List<DeviceWakeUpLog>
+    fun getAllDeviceLogRecords(): List<DeviceWakeUpLog>
     fun getDevicesFilteredById(deviceId: String): List<Device>
 }
