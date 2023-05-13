@@ -19,6 +19,8 @@
 
 const static char* TAG = "MAIN";
 
+#define GPIO_RESET_PIN (CONFIG_GPIO_RESET_PIN)
+
 const static long SENSOR_MULTIPLE_READING_INTERVAL = 1000000 * 3; // 3 seconds
 const static long LONG_SLEEP_TIME = 1000000 * 3; // 3 seconds
 
@@ -165,23 +167,36 @@ void app_main(void) {
     ESP_LOGE(TAG, "Starting app_main...");
     ESP_ERROR_CHECK(nvs_flash_init());
 
-    char* deviceID;
-    get_device_id(&deviceID);
-    int not_timer = handle_wake_up_reason(deviceID);
+    gpio_set_direction(GPIO_RESET_PIN, GPIO_MODE_DEF_INPUT);
+    if (gpio_get_level(GPIO_RESET_PIN) == 1) // if LOW normal behavior, if HIGH reset memory
+    {
+        ESP_LOGE(TAG, "normal behavior");
+        char* deviceID;
+        get_device_id(&deviceID);
+        int not_timer = handle_wake_up_reason(deviceID);
 
-   if (not_timer == 1) // timer wake up
-   {
-        if (readings_started)
+        if (not_timer == 1) // timer wake up
         {
-            start_deep_sleep(SENSOR_MULTIPLE_READING_INTERVAL);
+                if (readings_started)
+                {
+                    start_deep_sleep(SENSOR_MULTIPLE_READING_INTERVAL);
+                }
+                else
+                {
+                    start_deep_sleep(LONG_SLEEP_TIME);
+                }
         }
-        else
+        else // other wake up reason
         {
-            start_deep_sleep(LONG_SLEEP_TIME);
+            compute_sensors(deviceID);
         }
-   }
-   else // other wake up reason
-   {
-       compute_sensors(deviceID);
-   }
+    }
+    else
+    {
+        ESP_LOGE(TAG, "Resetting params");
+        delete_saved_wifi();
+        delete_device_id();
+
+        start_deep_sleep(SENSOR_MULTIPLE_READING_INTERVAL);        
+    }
 }

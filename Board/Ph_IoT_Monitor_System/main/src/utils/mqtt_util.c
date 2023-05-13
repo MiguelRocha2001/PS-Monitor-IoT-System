@@ -26,7 +26,7 @@
 
 static const char *TAG = "MQTT_MODULE";
 
-static const char *CONFIG_BROKER_URL = "mqtt://2.tcp.eu.ngrok.io:14133/";
+static const char *CONFIG_BROKER_URL = "mqtt://6.tcp.eu.ngrok.io:12947/";
 
 static void log_error_if_nonzero(const char *message, int error_code)
 {
@@ -147,7 +147,7 @@ void mqtt_send_encrypted_data(esp_mqtt_client_handle_t client, char* buf, char* 
 void mqtt_send_sensor_record(esp_mqtt_client_handle_t client, struct sensor_record1 *sensor_record, char* deviceID, char* sensor_type)
 {
     char buf[100];
-    sprintf(buf, "deviceId: %s, value: %f, timestamp: %d, sensor_type", deviceID, sensor_record -> value, sensor_record -> timestamp, sensor_type);
+    sprintf(buf, "device_id: %s, value: %f, timestamp: %d, sensor_type", deviceID, sensor_record -> value, sensor_record -> timestamp, sensor_type);
 
     // mqtt_send_encrypted_data(client, buf, "ph");
     char topic[100] = "sensor_record";
@@ -159,7 +159,7 @@ void mqtt_send_sensor_record(esp_mqtt_client_handle_t client, struct sensor_reco
 void mqtt_send_device_wake_up_reason_alert(esp_mqtt_client_handle_t client, int timestamp, char* deviceID, char* wake_up_reason)
 {
     char buf[100];
-    sprintf(buf, "{deviceId: %s, timestamp: %d, reason: %s}", deviceID, timestamp, wake_up_reason);
+    sprintf(buf, "{device_id: %s, timestamp: %d, reason: %s}", deviceID, timestamp, wake_up_reason);
 
     esp_mqtt_client_publish(client, "device_wake_up_log", buf, 0, 1, 0);
 
