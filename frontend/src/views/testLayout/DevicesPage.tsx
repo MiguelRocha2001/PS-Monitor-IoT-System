@@ -73,6 +73,7 @@ export function Devices() {
     }, [page, pageSize, searchQuery, totalDevices])
 
     const handleButtonPress = () => {
+        if(searchQuery === "") return
          services.getDevicesByName(page, pageSize, searchQuery.toUpperCase()).then(
              devices => {setDevices(devices);})
              .then(()=> services.getDeviceCountByName(searchQuery.toUpperCase()))

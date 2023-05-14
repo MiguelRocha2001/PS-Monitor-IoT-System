@@ -63,7 +63,7 @@ class JdbiDeviceDataRepository(
             select id, user_id, email 
             from device 
             where user_id = :user_id
-            and id like :id
+            and id  LIKE '%' || :id || '%'
             limit :limit 
             offset :offset
         """
@@ -82,7 +82,7 @@ class JdbiDeviceDataRepository(
             select count(*) 
             from device 
             where user_id = :user_id
-            and id like :id
+            and id  LIKE '%' || :id || '%'
             """
         )
             .bind("user_id", userId)
