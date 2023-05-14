@@ -4,7 +4,6 @@ import Home from "./views/Home";
 //import NewDevice from "./views/device/NewDevice";
 import {Container} from "react-bootstrap";
 //import {Devices} from "./views/device/Devices";
-import NavBar from "./views/NavBar";
 import {services} from "./services/services";
 import {SomethingWentWrong} from "./views/SomethingWentWrong";
 import {Logger} from "tslog";

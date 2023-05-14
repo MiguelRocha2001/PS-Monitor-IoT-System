@@ -50,6 +50,7 @@ function SignUpForm() {
             setErrorMessage("Password does not meet requirements")
             return;
         }
+        if(sendCodeToEmail)return;
         services.checkIfUserExists(email)
             .then((result) => {
                 if (!result) {
