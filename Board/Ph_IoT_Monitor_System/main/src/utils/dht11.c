@@ -1,3 +1,27 @@
+/*
+ * MIT License
+ * 
+ * Copyright (c) 2018 Michele Biondi
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+*/
+
 #include "esp_timer.h"
 #include "driver/gpio.h"
 #include "rom/ets_sys.h"
@@ -5,8 +29,6 @@
 #include "freertos/task.h"
 
 #include "dht11.h"
-
-// Code taken from: https://github.com/Anacron-mb/esp32-DHT11
 
 static gpio_num_t dht_gpio;
 static int64_t last_read_time = -2000000;
@@ -78,14 +100,18 @@ struct dht11_reading DHT11_read() {
 
     _sendStartSignal();
 
-    if(_checkResponse() == DHT11_TIMEOUT_ERROR)
+    if(_checkResponse() == DHT11_TIMEOUT_ERROR) {
+        printf("DHT11 Timeout waiting for response.\n");
         return last_read = _timeoutError();
+    }
     
     /* Read response */
     for(int i = 0; i < 40; i++) {
         /* Initial data */
-        if(_waitOrTimeout(50, 0) == DHT11_TIMEOUT_ERROR)
+        if(_waitOrTimeout(50, 0) == DHT11_TIMEOUT_ERROR) {
+            printf("DHT11 Timeout waiting for bit %d.\n", i);
             return last_read = _timeoutError();
+        }
                 
         if(_waitOrTimeout(70, 1) > 28) {
             /* Bit received was a 1 */
@@ -99,6 +125,7 @@ struct dht11_reading DHT11_read() {
         last_read.humidity = data[0];
         return last_read;
     } else {
+        printf("DHT11 CRC error.\n");
         return last_read = _crcError();
     }
 }

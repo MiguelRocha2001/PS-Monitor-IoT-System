@@ -168,7 +168,7 @@ void app_main(void) {
     ESP_ERROR_CHECK(nvs_flash_init());
 
     gpio_set_direction(GPIO_RESET_PIN, GPIO_MODE_DEF_INPUT);
-    if (gpio_get_level(GPIO_RESET_PIN) == 1) // if LOW normal behavior, if HIGH reset memory
+    if (gpio_get_level(GPIO_RESET_PIN) == 0) // if LOW normal behavior, if HIGH reset memory
     {
         ESP_LOGE(TAG, "normal behavior");
         char* deviceID;

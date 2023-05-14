@@ -8,11 +8,11 @@
 
 const static char* TAG = "TEMP_READER_FAKE";
 
-int read_temperature_record(struct sensor_record2 *temp_record)
+int read_humidity_record(struct sensor_record2 *temp_record)
 {
     ESP_LOGE(TAG, "Reading temperature...");
     DHT11_init(GPIO_NUM_1);
-    temp_record -> value = DHT11_read().temperature;
+    temp_record -> value = DHT11_read().humidity;
     temp_record -> timestamp = getNowTimestamp();
     return 0;
 }
