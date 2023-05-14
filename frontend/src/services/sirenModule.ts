@@ -81,6 +81,8 @@ let GET_DEVICE_LINK: Link
 let GET_SENSOR_DATA_LINK: Link
 let GET_DEVICES_BY_NAME_LINK: Link
 let GET_EMAIL_ALREADY_REGISTERED_LINK: Link
+let ADD_AND_SEND_VERIFICATION_CODE: Action
+let VERIFY_CODE:Link
 
 
 function getGoogleLoginLink(): Link {
@@ -129,6 +131,14 @@ function getGetSensorDataLink(): Link {
 
 function getIsEmailAlreadyRegisteredLink(): Link {
     return GET_EMAIL_ALREADY_REGISTERED_LINK
+}
+
+function getVerifyCodeLink():Link {
+    return VERIFY_CODE
+}
+
+function getAddAndSendEmailCode():Action {
+    return ADD_AND_SEND_VERIFICATION_CODE
 }
 
 
@@ -183,6 +193,15 @@ function getDevicesByNameLink(links: Link[]): Link {
 function extractGetIsEmailAlreadyRegisteredLink(links: Link[]) {
     return GET_EMAIL_ALREADY_REGISTERED_LINK = extractLink(links, "is-email-already-registered")
 }
+
+function extractGetVerificationCodeAction(actions: any[]) {
+    return ADD_AND_SEND_VERIFICATION_CODE = extractAction(actions, "generate-and-send-code")
+}
+
+function extractGetVerifyCodeLink(links: Link[]) {
+    return VERIFY_CODE = extractLink(links, "verify-code")
+}
+
 
 function extractLink(linksArg: Link[], rel: string): Link {
     for (let i = 0; i < linksArg.length; i++) {
@@ -248,6 +267,10 @@ export const SirenModule = {
     extractGetSensorDataLink,
     extractGetIsEmailAlreadyRegisteredLink,
     getIsEmailAlreadyRegisteredLink,
+    getAddAndSendEmailCode,
+    extractGetVerifyCodeLink,
+    extractGetVerificationCodeAction,
+    getVerifyCodeLink,
     validateFields,
     getDevicesByNameLink,
 }

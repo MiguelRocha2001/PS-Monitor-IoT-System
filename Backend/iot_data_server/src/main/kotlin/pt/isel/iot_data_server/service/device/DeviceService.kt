@@ -66,6 +66,24 @@ class DeviceService (
         }
     }
 
+    fun getDevicesFilteredById(deviceId: String,userId: String, page: Int? = null, limit: Int? = null): GetAllDevicesResult {
+        return transactionManager.run {
+            val devices = it.deviceRepo.getDevicesFilteredById(deviceId,userId, page, limit).also {
+                logger.debug("All devices filtered by id returned")
+            }
+            return@run Either.Right(devices)
+        }
+    }
+
+    fun getCountOfDevicesFilteredById(userId:String,deviceId: String): DeviceCountResult {
+        return transactionManager.run {
+            val count = it.deviceRepo.getCountOfDevicesFilteredById(userId,deviceId).also {
+                logger.debug("Count of devices filtered by id returned")
+            }
+            return@run Either.Right(count)
+        }
+    }
+
     fun getUserDeviceById(userId: String, deviceId: String): GetDeviceResult {
         return transactionManager.run {
             val device = getUserDeviceByIdOrNull(userId, deviceId)
@@ -77,6 +95,8 @@ class DeviceService (
             return@run Either.Right(device)
         }
     }
+
+
 
     fun belongsToUser(deviceId: String, userId: String): Boolean {
         return getUserDeviceById(userId, deviceId) is Either.Right
@@ -131,11 +151,7 @@ class DeviceService (
         }
     }
 
-    fun getDevicesFilteredById(deviceId: String): List<Device> {
-        return transactionManager.run {
-            return@run it.deviceRepo.getDevicesFilteredById(deviceId)
-        }
-    }
+
 
     /*
     fun deleteDevice(deviceId: DeviceId): DeleteDeviceResult {

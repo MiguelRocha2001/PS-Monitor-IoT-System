@@ -1,12 +1,7 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import "./SignUpForm.css"
-import { Link } from 'react-router-dom';
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faGoogle} from "@fortawesome/free-brands-svg-icons";
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import CodeInput from "./CodeInput";
+import {Link} from 'react-router-dom';
 import CodeEmailVerification from "./CodeEmailVerification";
-import {createUser} from "../auth/IoTServerAuthentication";
 import {Logger} from "tslog";
 import {services} from "../../services/services";
 import {GoogleLoginButton} from "./GoogleLogin";
@@ -30,12 +25,21 @@ function SignUpForm() {
     const [hasUpperCase, setHasUpperCase] = useState(false);
     const [isBadInputPassword, setIsBadInputPassword] = useState(false);
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    const [expectedCode,setExpectedCode] = useState("")
 
+
+    useEffect(() => {
+        console.log("expected code: ", expectedCode);
+    }, [expectedCode]);
+
+    async function fetchCode () {
+        return await services.sendValidationCode(email)
+    }
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        if(!isValidEmail(email)){
+        if (!isValidEmail(email)) {
             setIsBadInputEmail(true)
             setErrorMessage("Invalid email")
             return;
@@ -51,17 +55,20 @@ function SignUpForm() {
                 if (!result) {
                     setErrorMessage('');
                     setSendCodeToEmail(true);
+                    fetchCode()
+                        .then((code) => {
+                            setExpectedCode(code);
+                        });
                 } else {
                     setErrorMessage('Email already exists');
                 }
+            });
 
-            })
     }
 
 
-
     return (
-        sendCodeToEmail ? <CodeEmailVerification email={email} password={password}/> :
+        expectedCode !== "" ? <CodeEmailVerification email={email} password={password} verificationCode={expectedCode}/> :
             <div className="signup-form">
                 <h2>Sign Up</h2>
                 <p>Please fill out the following information to create an account:</p>

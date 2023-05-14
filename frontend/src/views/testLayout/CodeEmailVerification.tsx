@@ -8,7 +8,6 @@ import {createUser} from "../auth/IoTServerAuthentication";
 import {useSetIsLoggedIn} from "../auth/Authn";
 import {Logger} from "tslog";
 import InputCode from "./CodeInput";
-import {RequireAuthn} from "../auth/RequireAuthn";
 import {UserCreated} from "../auth/UserCreated";
 const logger = new Logger({ name: "Authentication" });
 
@@ -16,9 +15,10 @@ const logger = new Logger({ name: "Authentication" });
 type OwnerDetails = {
     email: string;
     password: string;
+    verificationCode:string
 };
 
-function CodeVerification({ email,password }: OwnerDetails) {
+function CodeVerification({ email,password,verificationCode }: OwnerDetails) {
     const [isCodeIncorrect, setIsCodeIncorrect] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [isCodeSent, setIsCodeSent] = useState<string>('');
@@ -26,20 +26,32 @@ function CodeVerification({ email,password }: OwnerDetails) {
     const navigate = useNavigate()
     const setIsLoggedIn = useSetIsLoggedIn()
     const [isUserCreated, setIsUserCreated] = useState<boolean>(false);
+    const [expectedCode, setExpectedCode] = useState<string>(verificationCode)
+
+
+    async function fetchCode () {
+        const code = await services.sendValidationCode(email)
+        if (code) {
+            setExpectedCode(code)
+        }
+    }
+
 
     function handleResendCodeClick() {
         // Disable the resend code button
         setCoolDownCode(true);
-
+         fetchCode()
         // TODO: implement the logic for resending the code,the resent code needs to be different from the previous one
+
         setIsCodeSent("Code sent")
         console.log('Resending code...');
     }
 
     function onCodeSubmit(code: string):boolean {//correct code is 12345 for fake
+        console.log("code",code)
+        console.log("expectedcode",expectedCode)
          //TODO number of allowed tries 5, max duration token time is 30 minutes, if this happens change the error message to "Your code has expired, please request a new one"
-        services.verifyCode(code).then((result) => {
-            if(result){
+            if(expectedCode == code){
             setIsCodeIncorrect(false);
             createUser(password, email)
                 .then((result) => {
@@ -51,21 +63,12 @@ function CodeVerification({ email,password }: OwnerDetails) {
                     logger.error('Create user: ', error)
                 })
             return true;
-        }else {
+        } else {
             setIsCodeIncorrect(true);
             setErrorMessage('Incorrect code, please try again');
             setIsCodeSent('')
             return false;
         }
-        }).catch(
-            error => {
-                logger.error('Verify code: ', error)
-                setErrorMessage('Incorrect code, please try again');
-                setIsCodeSent('')
-                return false;
-            }
-        )
-        return false;
     }
 
     return isUserCreated ? <UserCreated/>:(

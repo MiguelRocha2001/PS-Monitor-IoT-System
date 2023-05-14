@@ -23,6 +23,9 @@ export class RealServices implements Services {
             SirenModule.extractGetDeviceLink(response.links)
             SirenModule.extractGetSensorDataLink(response.links)
             SirenModule.extractGetIsEmailAlreadyRegisteredLink(response.links)
+            SirenModule.extractGetVerificationCodeAction(response.actions)
+            SirenModule.extractGetVerifyCodeLink(response.links)
+
         }
 
         const request = {
@@ -51,6 +54,18 @@ export class RealServices implements Services {
         }
     }
 
+
+     generateRandomString(length: number): string {
+        const allowedChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'; // Define the characters allowed in the random string
+        let randomString = '';
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * allowedChars.length);
+            randomString += allowedChars.charAt(randomIndex);
+        }
+        return randomString;
+    }
+
+
     /**
      * Creates a new user
      * @param username username
@@ -66,11 +81,13 @@ export class RealServices implements Services {
             logger.error(msg)
             throw new Error(msg)
         }
+        const username:string = this.generateRandomString(8)
         const request = {
             url: createUserAction.href,
             method: createUserAction.method,
-            body: toBody({password, email})
+            body: toBody({username,password, email})
         }
+        console.log(request)
         await doFetch(request, ResponseType.Siren)
         logger.info(`User ${email} created`)
     }
@@ -158,8 +175,28 @@ export class RealServices implements Services {
         return response.properties.exists
     }
 
-    verifyCode(code: string): Promise<boolean> {
-        throw new Error("Method not implemented.");//todo
+    async verifyCode(email:string, code: string): Promise<boolean> {
+        const verifyCodeLink = SirenModule.getVerifyCodeLink()
+        if (!verifyCodeLink) throw new Error('Is email already registered link not found')
+        const linkWithEmail = verifyCodeLink + "?email=${email}&code=${code}"
+        const request = {
+            url: linkWithEmail,
+            method: 'GET'
+        }
+        const response = await doFetch(request, ResponseType.Siren)
+        return response.properties.valid
+    }
+
+    async sendValidationCode(email:string): Promise<string> {
+        const emailCode = SirenModule.getAddAndSendEmailCode()
+        if (!emailCode) throw new Error('Is email already registered link not found')
+        const request = {
+            url: emailCode.href,
+            method: emailCode.method,
+            body: toBody({email: email})
+        }
+        const response = await doFetch(request, ResponseType.Siren)
+        return response.properties.code
     }
 
     async getDeviceCount(): Promise<number> {

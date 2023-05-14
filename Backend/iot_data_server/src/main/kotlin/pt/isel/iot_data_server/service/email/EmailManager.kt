@@ -59,7 +59,7 @@ class EmailManager {
 
     private fun createMessageFromTemplate(templateName : String, subjectDynamicContent: Map<String, String>, bodyDynamicContent: Map<String, String>):Pair<String,String> {
         val rootPath = System.getProperty("user.dir")
-        val templatesJson = String(Files.readAllBytes(Paths.get("$rootPath/src/main/kotlin/pt/isel/iot_data_server/utils/templateEmailMessages.json")))
+        val templatesJson = String(Files.readAllBytes(Paths.get("$rootPath/src/main/kotlin/pt/isel/iot_data_server/utils/templateEmailMessages.json")))//fixme isto está hardcoded
         val templates = JSONObject(templatesJson)
 
         // Determine which template to use based on the conditions

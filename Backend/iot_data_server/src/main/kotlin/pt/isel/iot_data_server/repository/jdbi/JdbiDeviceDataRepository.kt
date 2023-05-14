@@ -56,6 +56,40 @@ class JdbiDeviceDataRepository(
             .map { it.toDevice() }
     }
 
+    override fun getDevicesFilteredById(deviceId: String, userId: String, page: Int?, limit: Int?): List<Device> {
+        val offset = ((page ?: 1) - 1) * (limit ?: 10)
+        return handle.createQuery(
+            """
+            select id, user_id, email 
+            from device 
+            where user_id = :user_id
+            where id like :id
+            limit :limit 
+            offset :offset
+        """
+        )
+            .bind("user_id", userId)
+            .bind("id", deviceId)
+            .bind("limit", limit ?: 10)
+            .bind("offset", offset)
+            .mapTo<DeviceMapper>()
+            .list()
+            .map { it.toDevice() }
+    }
+    override fun getCountOfDevicesFilteredById(userId:String,deviceId: String): Int {
+        return handle.createQuery(
+            """
+            select count(*) 
+            from device 
+            where user_id = :user_id
+            where id like :id
+            """
+        )
+            .bind("user_id", userId)
+            .bind("id", deviceId)
+            .mapTo<Int>()
+            .single()
+    }
     override fun deleteDevice(deviceId: String) {
         handle.createUpdate("delete from device where id = :id")
             .bind("id", deviceId)
@@ -166,17 +200,5 @@ class JdbiDeviceDataRepository(
         TODO("Not yet implemented")
     }
 
-    override fun getDevicesFilteredById(deviceId: String): List<Device> {
-        return handle.createQuery(
-            """
-            select id, user_id, email 
-            from device 
-            where id like :id
-            """
-        )
-            .bind("id", "%$deviceId%")
-            .mapTo<DeviceMapper>()
-            .list()
-            .map { it.toDevice() }
-    }
+
 }

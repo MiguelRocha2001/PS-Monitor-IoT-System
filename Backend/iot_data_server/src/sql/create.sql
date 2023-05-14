@@ -47,3 +47,8 @@ create table salt(
     salt varchar primary key,
     user_id varchar
 );
+
+create table verification_code(
+    code varchar primary key,
+    user_email varchar
+);

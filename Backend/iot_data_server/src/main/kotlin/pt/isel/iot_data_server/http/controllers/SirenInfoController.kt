@@ -25,6 +25,10 @@ class SirenInfoController {
                 createGoogleAuthLink(this)
                 createUserSirenAction(this)
                 getIsEmailAlreadyRegisteredLink(this)
+
+                getVerificationCodeAction(this)
+                getVerifyCodeLink(this)
+
                 createTokenSirenAction(this)
                 createLogoutSirenAction(this)
                 isLoggedInLink(this)

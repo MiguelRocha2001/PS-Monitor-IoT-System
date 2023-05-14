@@ -24,4 +24,9 @@ class UserCreateTokenInputModel(username: String, password: String) {
         this.username = username.trim()
         this.password = password.trim()
     }
+
 }
+
+data class EmailRequest(
+    val email: String
+)

@@ -14,6 +14,9 @@ object Rels {
     val ME = LinkRelation("users-me")
     val IS_EMAIL_ALREADY_REGISTERED = LinkRelation("is-email-already-registered")
 
+    //--------------------VERIFICATION ---------------
+    val VERIFY_CODE = LinkRelation("verify-code")
+
     // ------------------- Devices -------------------
     val DEVICES = LinkRelation("devices")
     val DEVICE_COUNT = LinkRelation("device-count")

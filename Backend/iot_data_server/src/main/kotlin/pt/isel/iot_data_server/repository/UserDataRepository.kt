@@ -17,4 +17,6 @@ interface UserDataRepository {
     fun deleteAllUsers()
     fun deleteAllTokens()
     fun deleteUser(userId: String)
+    fun addVerificationCode(email: String, code: String)
+    fun getVerificationCode(email: String): String?
 }

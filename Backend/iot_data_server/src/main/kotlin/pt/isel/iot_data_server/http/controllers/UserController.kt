@@ -22,6 +22,7 @@ import pt.isel.iot_data_server.http.model.user.*
 import pt.isel.iot_data_server.service.Either
 import pt.isel.iot_data_server.service.user.Role
 import pt.isel.iot_data_server.service.user.UserService
+
 import java.util.*
 
 @Tag(name = "User", description = "User API")
@@ -235,4 +236,31 @@ class UserController(
     fun deleteAllUsers() {
         service.deleteAllUsers()
     }
+
+
+    //FIXME ADICIONAR DOCUMENTACAO
+    @GetMapping(Uris.Verification.CODE)
+    fun verifyCode(
+        @RequestParam("email") email: String,
+        @RequestParam("code") code: String
+    ): ResponseEntity<*> {
+        val res = service.codeVerification(email, code)
+        return ResponseEntity.status(200)
+            .contentType(SirenMediaType)
+            .body(siren(UserEmailAndVerificationCodeOutputModel(res)){ clazz("users") })
+    }
+
+    @PostMapping(Uris.Verification.GENERATE)
+    fun generateCode(
+        @RequestBody request: EmailRequest
+    ): ResponseEntity<*> {
+        val code = service.generateVerificationCode(request.email)
+        return ResponseEntity.status(200).
+        contentType(SirenMediaType)
+            .body(siren(UserCodeOutputModel(code)){clazz("users")})
+    }
+
+
+
+
 }

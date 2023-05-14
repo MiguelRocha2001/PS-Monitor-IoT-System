@@ -19,7 +19,8 @@ export interface Services {
     getDevicesByName(page: number, limit: number, name: string): Promise<Device[]>
     getDeviceCountByName(s: string): Promise<number>
     checkIfUserExists(email: string): Promise<boolean>
-    verifyCode(code: string): Promise<boolean>
+    verifyCode(email:string, code: string): Promise<boolean>
+    sendValidationCode(email:string):Promise<string>
 }
 
 export const services: Services = new RealServices()

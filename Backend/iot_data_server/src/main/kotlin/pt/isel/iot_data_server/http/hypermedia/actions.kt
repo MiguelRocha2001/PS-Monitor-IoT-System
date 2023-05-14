@@ -2,6 +2,7 @@ package pt.isel.iot_data_server.http.hypermedia
 
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
+import pt.isel.iot_data_server.http.controllers.Rels
 import pt.isel.iot_data_server.http.controllers.Uris
 import pt.isel.iot_data_server.http.infra.SirenBuilderScope
 import java.net.URI
@@ -44,4 +45,13 @@ fun createDeviceAction(sirenBuilderScope: SirenBuilderScope<*>) =
         type = MediaType.APPLICATION_JSON
     ) {
         this.textField("email")
+    }
+
+fun getVerificationCodeAction(sirenBuilderScope: SirenBuilderScope<*>) =
+    sirenBuilderScope.action(
+        href = URI(Uris.Verification.GENERATE),
+        name = "generate-and-send-code",
+        method = HttpMethod.POST,
+        type = MediaType.APPLICATION_JSON
+    ){
     }

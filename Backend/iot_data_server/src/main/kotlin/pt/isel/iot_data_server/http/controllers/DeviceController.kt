@@ -90,16 +90,39 @@ class DeviceController(
     @GetMapping(Uris.Devices.BY_WORD)
     fun searchDevicesByWords(
         user: User,
+        @PathVariable word: String,
+        @RequestParam(required = false) page: Int?,
+        @RequestParam(required = false) limit: Int?
+    ): ResponseEntity<*> {
+
+        val result = service.getDevicesFilteredById(word, user.id, page, limit)
+        return result.map {
+            ResponseEntity.status(200)
+                .contentType(SirenMediaType)
+                .body(siren(
+                    DevicesOutputModel.from(it)
+                ) {
+                    clazz("devices")
+                })
+        }
+    }
+
+
+    @GetMapping(Uris.Devices.COUNT_FILTERED)
+    fun countFilteredDevices(
+        user: User,
         @PathVariable word: String
     ): ResponseEntity<*> {
-        val device = service.getDevicesFilteredById(word)
-        return ResponseEntity.status(200)
-            .contentType(SirenMediaType)
-            .body(siren(
-                DevicesOutputModel.from(device)
-            ) {
-                clazz("device")
-            })
+        val result = service.getCountOfDevicesFilteredById (user.id,word)
+        return result.map { deviceCount ->
+            ResponseEntity.status(200)
+                .contentType(SirenMediaType)
+                .body(siren(
+                    DeviceCountOutputModel(deviceCount)
+                ) {
+                    clazz("device-count")
+                })
+        }
     }
 
     @Operation(summary = "Device by email", description = "Get a device associated with  email")

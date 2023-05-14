@@ -7,12 +7,14 @@ import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.domain.UserInfo
 import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.service.Either
+import pt.isel.iot_data_server.service.email.EmailManager
 import java.util.*
 
 @Service
 class UserService(
     private val transactionManager: TransactionManager,
-    private val saltPasswordOperations: SaltPasswordOperations
+    private val saltPasswordOperations: SaltPasswordOperations,
+    private val emailSenderService: EmailManager,
 ) {
     fun createUser(userInfo: UserInfo): UserCreationResult {
         return transactionManager.run {
@@ -109,6 +111,40 @@ class UserService(
     fun isEmailAlreadyRegistered(email: String): Boolean {
         return transactionManager.run {
             it.userRepo.existsEmail(email)
+        }
+    }
+
+    fun codeVerification(email: String, code: String): Boolean {
+        return transactionManager.run {
+            val codeFromDB = it.userRepo.getVerificationCode(email)
+            if (codeFromDB == null) {
+                return@run false
+            }
+            return@run codeFromDB == code
+        }
+    }
+
+    fun generateVerificationCode(email: String): String {
+        //generate a 5 character long code
+
+        val code = (10000..99999).random().toString()
+
+        //add an element to a map
+        val bodyMessage = mapOf(
+            "verification_code" to code
+        )
+        val subject = emptyMap<String, String>()
+
+
+        addVerificationCode(email,code)
+        emailSenderService.sendEmail(email, subject, bodyMessage, "VerificationCode")
+        return code
+
+    }
+
+    fun addVerificationCode(email: String,code:String){
+        return transactionManager.run {
+            it.userRepo.addVerificationCode(email, code)
         }
     }
 }

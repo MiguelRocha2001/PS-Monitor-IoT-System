@@ -161,4 +161,30 @@ class JdbiUserDataRepository(
     override fun deleteAllUsers() {
         handle.createUpdate("delete from _USER").execute()
     }
+
+    override fun addVerificationCode(email: String, code: String) {
+        handle.createUpdate(
+            """
+        insert into verification_code (user_email, code) values (:user_email, :code)
+        """
+        )
+            .bind("user_email", email)
+            .bind("code", code)
+            .execute()
+    }
+
+
+
+    override fun getVerificationCode(email: String): String {
+        return handle.createQuery(
+            """
+            select code 
+            from verification_code 
+            where email = :email
+            """
+        )
+            .bind("email", email)
+            .mapTo<String>()
+            .single()
+    }
 }

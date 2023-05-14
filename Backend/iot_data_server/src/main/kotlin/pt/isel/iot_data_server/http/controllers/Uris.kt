@@ -59,6 +59,7 @@ object Uris {
         private const val BY_ID2 = ALL + "/:device_id"
         const val BY_EMAIL = ALL + "/email/{email}"
         const val BY_WORD = FILTER + "/{word}"
+        const val COUNT_FILTERED = BY_WORD + "/count"
 
         object My {
             const val ALL = "/my${Devices.ALL}"
@@ -130,5 +131,11 @@ object Uris {
 
             fun all(): URI = URI(ALL_2)
         }
+    }
+
+    object Verification {
+        const val ALL = "/verification"
+        const val CODE = "$ALL/code"
+        const val GENERATE = "$ALL/generate"
     }
 }

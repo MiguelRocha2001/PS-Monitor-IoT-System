@@ -6,5 +6,9 @@
   "TemperatureProblem": {
     "subject": "Temperature Intervention needed",
     "body": "Greetings,<p>The temperature level of your filter unit <b>{{device_id}}</b> is <b>{{temperature_level}}</b> , since it is over the established limit <b>{{temperature_limit}}</b> we recommend a maintenance for your filter.<p>Best regards,<p>Our Team"
+  },
+  "VerificationCode": {
+    "subject": "Verification Code",
+    "body": "Greetings,<p>Here is your sign up verification code: <b>{{verification_code}}</b><p>Best regards,<p>Our Team"
   }
 }

@@ -6,6 +6,8 @@ import pt.isel.iot_data_server.service.user.Role
 
 data class UserCreateOutputModel(val userId: String, val token: String)
 data class UserEmailAlreadyRegisteredOutputModel(val exists: Boolean)
+data class UserCodeOutputModel(val code:String)
+data class UserEmailAndVerificationCodeOutputModel(val valid:Boolean)
 
 data class UsersOutputModel(val users: List<UserOutputModel>) {
     companion object {
