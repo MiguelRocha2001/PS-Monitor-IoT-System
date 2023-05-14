@@ -83,6 +83,9 @@ let GET_DEVICES_BY_NAME_LINK: Link
 let GET_EMAIL_ALREADY_REGISTERED_LINK: Link
 let ADD_AND_SEND_VERIFICATION_CODE: Action
 let VERIFY_CODE:Link
+let GET_DEVICES_FILTERED_BY_ID_LINK: Link
+let GET_DEVICES_FILTERED_BY_ID_COUNT_LINK: Link
+
 
 
 function getGoogleLoginLink(): Link {
@@ -139,6 +142,14 @@ function getVerifyCodeLink():Link {
 
 function getAddAndSendEmailCode():Action {
     return ADD_AND_SEND_VERIFICATION_CODE
+}
+
+function getGetDevicesByIdFilteredLink(): Link {
+    return GET_DEVICES_FILTERED_BY_ID_LINK
+}
+
+function getGetDevicesByIdFilteredCountLink(): Link {
+    return GET_DEVICES_FILTERED_BY_ID_COUNT_LINK
 }
 
 
@@ -200,6 +211,14 @@ function extractGetVerificationCodeAction(actions: any[]) {
 
 function extractGetVerifyCodeLink(links: Link[]) {
     return VERIFY_CODE = extractLink(links, "verify-code")
+}
+
+function extractGetDevicesByIDLink(links: Link[]) {
+    return GET_DEVICES_FILTERED_BY_ID_LINK = extractLink(links, "filtered-devices")
+}
+
+function extractCountDevicesByIDLink(links: Link[]) {
+    return GET_DEVICES_FILTERED_BY_ID_COUNT_LINK = extractLink(links, "filtered-devices-count")
 }
 
 
@@ -273,4 +292,8 @@ export const SirenModule = {
     getVerifyCodeLink,
     validateFields,
     getDevicesByNameLink,
+    getGetDevicesByIdFilteredCountLink,
+    extractCountDevicesByIDLink,
+    extractGetDevicesByIDLink,
+    getGetDevicesByIdFilteredLink
 }

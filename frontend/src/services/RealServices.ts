@@ -25,7 +25,8 @@ export class RealServices implements Services {
             SirenModule.extractGetIsEmailAlreadyRegisteredLink(response.links)
             SirenModule.extractGetVerificationCodeAction(response.actions)
             SirenModule.extractGetVerifyCodeLink(response.links)
-
+            SirenModule.extractGetDevicesByIDLink(response.links)
+            SirenModule.extractCountDevicesByIDLink(response.links)
         }
 
         const request = {
@@ -155,12 +156,27 @@ export class RealServices implements Services {
         return toDevices(response.properties)
     }
 
-    getDevicesByName(page: number, limit: number, name: string): Promise<Device[]> {
-      throw new Error("Method not implemented.");//todo
+    async getDevicesByName(page: number, limit: number, name: string): Promise<Device[]> {
+        const getDevicesLink = SirenModule.getGetDevicesByIdFilteredLink().href
+        const getDeviceLinkAfterParams = getDevicesLink + '?page=' + page + '&limit=' + limit
+        if (!getDevicesLink) throw new Error('Get devices link not found')
+        const request = {
+            url: getDeviceLinkAfterParams.replace(':word', name),
+            method: 'GET'
+        }
+        const response = await doFetch(request, ResponseType.Siren)
+        return toDevices(response.properties)
     }
 
-    getDeviceCountByName(s: string): Promise<number> {
-        throw new Error("Method not implemented.");//todo
+    async getDeviceCountByName(device_id: string): Promise<number> {
+        const getDeviceCountLink = SirenModule.getGetDevicesByIdFilteredCountLink()
+        if (!getDeviceCountLink) throw new Error('Get devices link not found')
+        const request = {
+            url: getDeviceCountLink.href.replace(':word', device_id),
+            method: 'GET'
+        }
+        const response = await doFetch(request, ResponseType.Siren)
+        return response.properties.deviceCount
     }
 
     async checkIfUserExists(email: string): Promise<boolean> {

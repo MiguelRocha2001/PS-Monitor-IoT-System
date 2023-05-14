@@ -28,7 +28,8 @@ class SirenInfoController {
 
                 getVerificationCodeAction(this)
                 getVerifyCodeLink(this)
-
+                getFilteredDevicesByIdCountLink(this)
+                getFilteredDevicesByIdLink(this)
                 createTokenSirenAction(this)
                 createLogoutSirenAction(this)
                 isLoggedInLink(this)

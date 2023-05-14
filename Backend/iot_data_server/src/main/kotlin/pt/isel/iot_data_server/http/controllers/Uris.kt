@@ -59,7 +59,10 @@ object Uris {
         private const val BY_ID2 = ALL + "/:device_id"
         const val BY_EMAIL = ALL + "/email/{email}"
         const val BY_WORD = FILTER + "/{word}"
+        const val BY_WORD_2 = FILTER + "/:word"
         const val COUNT_FILTERED = BY_WORD + "/count"
+        const val COUNT_FILTERED_2 = BY_WORD_2 + "/count"
+
 
         object My {
             const val ALL = "/my${Devices.ALL}"

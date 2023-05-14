@@ -74,3 +74,15 @@ fun getVerifyCodeLink(sirenBuilderScope: SirenBuilderScope<*>) =
         href = URI(Uris.Verification.CODE),
         rel = Rels.VERIFY_CODE
     )
+
+fun getFilteredDevicesByIdLink(sirenBuilderScope: SirenBuilderScope<*>) =
+    sirenBuilderScope.link(
+        href = URI(Uris.Devices.BY_WORD_2),
+        rel = Rels.FILTERED_DEVICES
+    )
+
+fun getFilteredDevicesByIdCountLink(sirenBuilderScope: SirenBuilderScope<*>) =
+    sirenBuilderScope.link(
+        href = URI(Uris.Devices.COUNT_FILTERED_2),
+        rel = Rels.FILTERED_DEVICES_COUNT
+    )

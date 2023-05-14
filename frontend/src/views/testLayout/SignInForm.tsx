@@ -55,7 +55,7 @@ function SignInForm() {
                 <label htmlFor="password">Password:</label>
                 <input className={isBadInput ? "bad-input" : ""} id={"password"} type="password" value={password} onChange={(e) => {setPassword(e.target.value)}} />
                 <p id="error-message">{errorMessage}</p>
-                <button type="submit">Sign In </button>
+                <button type="submit" >Sign In </button>
                 <GoogleLoginButton text = "Sign in" />
             </form>
             <p>Don't have an account? <Link to="/auth/register">Sign up here</Link>.</p>
