@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.DependsOn
+import pt.isel.iot_data_server.configuration.SensorInfoFromFile
 import pt.isel.iot_data_server.hive.HiveMQManager
 import pt.isel.iot_data_server.hive.MqttClient.Companion.getMqttClient
 import pt.isel.iot_data_server.repository.jdbi.configure
@@ -33,6 +34,9 @@ class IotDataServerApplication {
 		client.connect()
 		return client
 	}
+
+	@Bean
+	fun getSensorInfo() = SensorInfoFromFile()
 }
 
 fun main(args: Array<String>) {

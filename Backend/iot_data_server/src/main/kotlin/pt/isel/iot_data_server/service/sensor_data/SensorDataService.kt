@@ -17,6 +17,7 @@ class SensorDataService(
     private val sensorDataRepo: SensorDataRepo,
     private val transactionManager: TransactionManager,
     private val deviceService: DeviceService,
+    private val sensorInfo: SensorInfo,
     client: MqttClient
 ) {
     private val logger = LoggerFactory.getLogger(SensorDataService::class.java)
@@ -75,8 +76,7 @@ class SensorDataService(
 
     private fun alertIfDangerous(device: Device, sensorRecord: SensorRecord) {
         transactionManager.run {
-            val repo = it.sensorMetadataRepo
-            val threshold = repo.getSensorAlertValue(sensorRecord.type)
+            val threshold = sensorInfo.getSensorThreshold(sensorRecord.type)
             if (threshold != null && sensorRecord.value > threshold) {
                 sendEmailAlert(sensorRecord, device, threshold)
             }

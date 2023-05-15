@@ -3,6 +3,10 @@ package pt.isel.iot_data_server.domain
 import java.sql.Timestamp
 import java.time.Instant
 
+interface SensorInfo {
+    fun getSensorThreshold(sensorName: String): Double?
+}
+
 data class SensorRecord(val type: String, val value: Double, val instant: Instant)
 data class SensorErrorRecord(val sensorName: String, val instant: Instant)
 
