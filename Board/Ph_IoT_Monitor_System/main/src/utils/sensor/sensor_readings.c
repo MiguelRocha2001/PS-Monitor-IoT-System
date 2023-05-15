@@ -16,17 +16,19 @@ const static char* TAG = "sensor_readings";
 int read_sensor_records(sensor_records_struct *sensor_records) {
     int index = sensor_records->index;
     if (index < MAX_SENSOR_RECORDS) {
-        if (read_start_ph_record(&sensor_records->start_ph_records[index]) == -1) return START_PH_SENSOR_ERROR;
-        if (read_end_ph_record(&sensor_records->end_ph_records[index]) == -1) return END_PH_SENSOR_ERROR;
-        if (read_temperature_record(&sensor_records->temperature_records[index]) == -1) return TEMP_SENSOR_ERROR;
-        if (read_water_level_record(&sensor_records->water_level_records[index]) == -1) return WATER_LEVEL_SENSOR_ERROR;
-        if (read_water_flow_record(&sensor_records->water_flow_records[index]) == -1) return WATER_FLOW_SENSOR_ERROR;
-        if (read_humidity_record(&sensor_records->humidity_records[index]) == -1) return HUMIDITY_SENSOR_ERROR;
-    
-        sensor_records->index = (index + 1) % MAX_SENSOR_RECORDS;
+        ESP_LOGE(TAG, "Reading sensor records");
+
+        read_start_ph_record(&sensor_records->start_ph_records[index]);
+        read_end_ph_record(&sensor_records->end_ph_records[index]);
+        read_temperature_record(&sensor_records->temperature_records[index]);
+        read_water_level_record(&sensor_records->water_level_records[index]);
+        read_water_flow_record(&sensor_records->water_flow_records[index]);
+        read_humidity_record(&sensor_records->humidity_records[index]);
+        sensor_records->index = index + 1; // increment index
         return 0;
     }
-    return 1;
+    ESP_LOGE(TAG, "Sensor records full! Cannot read more records");
+    return -1;
 }
 
 /**
@@ -35,8 +37,8 @@ int read_sensor_records(sensor_records_struct *sensor_records) {
  * @returns 0 if all the sensors are working, -1 otherwise.
 */
 int check_if_sensors_are_working(int *sensors_not_working) {
-    struct sensor_record1 record1;
-    struct sensor_record2 record2;
+    struct sensor_record record1;
+    struct sensor_record record2;
     if (read_start_ph_record(&record1) == -1) {
         sensors_not_working[0] = START_PH_SENSOR_ERROR;
         ESP_LOGE(TAG, "Start PH sensor error");

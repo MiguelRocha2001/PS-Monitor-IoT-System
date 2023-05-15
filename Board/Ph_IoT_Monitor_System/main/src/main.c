@@ -21,23 +21,29 @@ const static char* TAG = "MAIN";
 
 #define GPIO_RESET_PIN (CONFIG_GPIO_RESET_PIN)
 
-const static long SENSOR_MULTIPLE_READING_INTERVAL = 1000000 * 3; // 3 seconds
-const static long LONG_SLEEP_TIME = 1000000 * 3; // 3 seconds
+const static long SENSOR_MULTIPLE_READING_INTERVAL = 2; // 3 seconds
+const static long LONG_SLEEP_TIME = 5; // 3 seconds
 
 RTC_DATA_ATTR struct sensor_records_struct sensor_records;
 RTC_DATA_ATTR int readings_started;
+RTC_DATA_ATTR char action[100];
 
 void send_sensor_records(esp_mqtt_client_handle_t client, char* deviceID) {
+    strcpy(action, "sending_sensor_records");
     ESP_LOGE(TAG, "Sending sensor records...");
     for (int i = 0; i < MAX_SENSOR_RECORDS; i++) {
-        mqtt_send_sensor_record(client, &sensor_records.start_ph_records[i], deviceID, "ph");
-        mqtt_send_sensor_record(client, &sensor_records.end_ph_records[i], deviceID, "ph");
+        mqtt_send_sensor_record(client, &sensor_records.start_ph_records[i], deviceID, "initial ph");
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        mqtt_send_sensor_record(client, &sensor_records.end_ph_records[i], deviceID, "final ph");
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
         mqtt_send_sensor_record(client, &sensor_records.temperature_records[i], deviceID, "temperature");
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
         // TODO: send water level, water flow and humidity
     }
 }
 
 void erase_sensor_records() {
+    strcpy(action, "erasing_sensor_records");
     ESP_LOGE(TAG, "Erasing sensor records...");
     for (int i = 0; i < MAX_SENSOR_RECORDS; i++) {
         sensor_records.start_ph_records[i].value = 0;
@@ -47,9 +53,11 @@ void erase_sensor_records() {
         sensor_records.temperature_records[i].value = 0;
         sensor_records.temperature_records[i].timestamp = 0;
     }
+    sensor_records.index = 0; // resets the index
 }
 
 void setup_wifi(void) {
+    strcpy(action, "seting_up_wifi");
     ESP_LOGE(TAG, "Setting up WiFi...");
 
     char* deviceID;
@@ -66,35 +74,41 @@ void setup_wifi(void) {
     ESP_LOGE(TAG, "Finished setting up WiFi");
 }
 
-void compute_sensors(char* deviceID) {
-    setup_wifi();
+void compute_sensors(char* deviceID, esp_mqtt_client_handle_t client) {
     readings_started = 1;
+
+    strcpy(action, "reading_sensors");
     read_sensor_records(&sensor_records);
     if (sensors_reading_is_complete(&sensor_records)) 
     {
+        ESP_LOGE(TAG, "Sensors reading is complete. Sending records...");
         readings_started = 0;
-        setup_wifi();
-        esp_mqtt_client_handle_t client = setup_mqtt();
-
         send_sensor_records(client, deviceID);
         erase_sensor_records();
-
         start_deep_sleep(LONG_SLEEP_TIME);
     } 
     else 
     {
+        ESP_LOGE(TAG, "Sensors reading is not complete. Going to sleep...");
         start_deep_sleep(SENSOR_MULTIPLE_READING_INTERVAL);
     }
 }
 
 void printDeepSleepWokeCause(esp_sleep_wakeup_cause_t cause) {
-    if (cause == ESP_SLEEP_WAKEUP_TIMER) {
-        ESP_LOGI(TAG, "Woke up from timer");
-    } if(cause == ESP_SLEEP_WAKEUP_UNDEFINED) {
-        ESP_LOGI(TAG, "Woke up from undefined");
-    }
-    else {
-        ESP_LOGI(TAG, "Woke up duo to unknown reason");
+    switch (cause)
+    {
+        case ESP_SLEEP_WAKEUP_TIMER:
+            ESP_LOGI(TAG, "Woke up from timer");
+            break;
+        case ESP_SLEEP_WAKEUP_UNDEFINED:
+            ESP_LOGI(TAG, "Woke up from undefined");
+            break;
+        case ESP_SLEEP_WAKEUP_EXT0:
+            ESP_LOGI(TAG, "Woke up from ext0 (water leak)");
+            break;
+        default:
+            ESP_LOGI(TAG, "Woke up duo to unknown reason");
+            break;
     }
 }
 
@@ -107,14 +121,11 @@ void printDeepSleepWokeCause(esp_sleep_wakeup_cause_t cause) {
  * - Brownout;
  * - Unknown.
 */
-int handle_wake_up_reason(char* deviceID) {
+int handle_wake_up_reason(char* deviceID, esp_mqtt_client_handle_t client) {
     ESP_LOGE(TAG, "Checking wake up reason...");
 
-     // Read the Reset Reason Register
+    // Read the Reset Reason Register
     uint32_t reset_reason = esp_reset_reason();
-
-    setup_wifi();
-    esp_mqtt_client_handle_t client = setup_mqtt();
 
     // Check the reset reason flags
     if (reset_reason & ESP_RST_UNKNOWN) {
@@ -134,19 +145,20 @@ int handle_wake_up_reason(char* deviceID) {
     }
     if (reset_reason & ESP_RST_PANIC) {
         ESP_LOGE(TAG, "Reset reason: exception/panic");
-        mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "exception-panic");
+        mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, action);
         return 1;
     }
+    /*
     if (reset_reason & ESP_RST_BROWNOUT) {
         ESP_LOGE(TAG, "Reset reason: brownout");
         mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "brownout");
         return 1;
     }
+    */
     if (reset_reason & ESP_RST_DEEPSLEEP) {
         esp_sleep_wakeup_cause_t cause = esp_sleep_get_wakeup_cause();
         printDeepSleepWokeCause(cause);
         if (cause == ESP_SLEEP_WAKEUP_EXT0) { // water leak sensor
-            ESP_LOGE(TAG, "Sending water alert...");
             mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "water-leak");
             return 1;
         }
@@ -167,36 +179,28 @@ void app_main(void) {
     ESP_LOGE(TAG, "Starting app_main...");
     ESP_ERROR_CHECK(nvs_flash_init());
 
-    gpio_set_direction(GPIO_RESET_PIN, GPIO_MODE_DEF_INPUT);
-    if (gpio_get_level(GPIO_RESET_PIN) == 0) // if LOW normal behavior, if HIGH reset memory
-    {
-        ESP_LOGE(TAG, "normal behavior");
-        char* deviceID;
-        get_device_id(&deviceID);
-        int not_timer = handle_wake_up_reason(deviceID);
+    char* deviceID;
+    get_device_id(&deviceID);
 
-        if (not_timer == 1) // timer wake up
-        {
-                if (readings_started)
-                {
-                    start_deep_sleep(SENSOR_MULTIPLE_READING_INTERVAL);
-                }
-                else
-                {
-                    start_deep_sleep(LONG_SLEEP_TIME);
-                }
-        }
-        else // other wake up reason
-        {
-            compute_sensors(deviceID);
-        }
+    setup_wifi();
+    esp_mqtt_client_handle_t client = setup_mqtt();
+
+    int res = handle_wake_up_reason(deviceID, client);
+    if (res == 0) // timer wake up
+    {
+        ESP_LOGE(TAG, "Here1");
+        compute_sensors(deviceID, client);
     }
-    else
+    else // other wake up reason
     {
-        ESP_LOGE(TAG, "Resetting params");
-        delete_saved_wifi();
-        delete_device_id();
-
-        start_deep_sleep(SENSOR_MULTIPLE_READING_INTERVAL);        
+        ESP_LOGE(TAG, "Here2");
+        if (readings_started)
+            {
+                start_deep_sleep(SENSOR_MULTIPLE_READING_INTERVAL);
+            }
+        else
+            {
+                start_deep_sleep(LONG_SLEEP_TIME);
+            }
     }
 }
