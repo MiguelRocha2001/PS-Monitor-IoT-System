@@ -18,7 +18,7 @@ idf_component_register(
             "src/utils/entropy_poll.c"
             "src/utils/sensor/sensor_readings.c"
             "src/utils/ph/ph_reader_fake.c"
-            "src/utils/temp/temperature_reader_fake.c"
+            "src/utils/temperature/temperature_reader_fake.c"
             "src/utils/humidity/humidity_reader_fake.c"
             "src/utils/water_level/water_level_reader_fake.c"
             "src/utils/water_flow/water_flow_reader_fake.c"

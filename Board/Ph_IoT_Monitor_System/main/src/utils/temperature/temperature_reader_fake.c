@@ -10,7 +10,7 @@ const static char* TAG = "TEMP_READER_FAKE";
 int read_temperature_record(struct sensor_record *temp_record)
 {
     ESP_LOGE(TAG, "Reading temperature...");
-    int temp_value = generate_random_float();
+    float temp_value = (float) (int) generate_random_float();
     int timestamp = getNowTimestamp();
     temp_record -> value = temp_value;
     temp_record -> timestamp = timestamp;

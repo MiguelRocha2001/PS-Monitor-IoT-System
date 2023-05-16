@@ -4,7 +4,7 @@
     "idf.openOcdConfigs": [
         "board/esp32s2-bridge.cfg"
     ],
-    "idf.portWin": "COM8",
+    "idf.portWin": "COM5",
     "idf.flashType": "UART",
     "files.associations": {
         "adc.h": "c",

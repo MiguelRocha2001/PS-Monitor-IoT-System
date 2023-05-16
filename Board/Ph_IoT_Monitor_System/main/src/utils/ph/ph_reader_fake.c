@@ -11,7 +11,6 @@ int read_start_ph_record(struct sensor_record *sensor_record)
 {
     ESP_LOGE(TAG, "Reading start pH...");
     float ph_value = generate_random_float();
-    // int timestamp = generate_random_int();
     int timestamp = getNowTimestamp();
     sensor_record -> value = ph_value;
     sensor_record -> timestamp = timestamp;
@@ -22,7 +21,6 @@ int read_end_ph_record(struct sensor_record *sensor_record)
 {
     ESP_LOGE(TAG, "Reading end pH...");
     float ph_value = generate_random_float();
-    // int timestamp = generate_random_int();
     int timestamp = getNowTimestamp();
     sensor_record -> value = ph_value;
     sensor_record -> timestamp = timestamp;

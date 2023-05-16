@@ -1,5 +1,6 @@
 package pt.isel.iot_data_server.domain
 
+import pt.isel.iot_data_server.utils.removeJsonBrackets
 import pt.isel.iot_data_server.utils.trimJsonString
 import java.time.Instant
 import kotlin.random.Random
@@ -9,13 +10,14 @@ data class Device(val deviceId: String, val ownerEmail: String)
 data class DeviceWakeUpLog(val deviceId: String, val instant: Instant, val reason: String)
 
 fun fromMqttMsgStringToDeviceLogRecord(str: String): DeviceWakeUpLog {
-    val split = str.split(",")
+    val split = str.removeJsonBrackets().split(",")
 
     val deviceId = split
         .find { it.contains("device_id") }
         ?.split(":")
         ?.get(1)
         ?.trim()
+        ?.trim('"')
         ?: throw IllegalArgumentException("Invalid json string")
 
     val instant = getInstant(split)
@@ -25,6 +27,7 @@ fun fromMqttMsgStringToDeviceLogRecord(str: String): DeviceWakeUpLog {
         ?.split(":")
         ?.get(1)
         ?.trim()
+        ?.trim('"')
         ?: throw IllegalArgumentException("Invalid json string")
 
     return DeviceWakeUpLog(deviceId, instant, error)

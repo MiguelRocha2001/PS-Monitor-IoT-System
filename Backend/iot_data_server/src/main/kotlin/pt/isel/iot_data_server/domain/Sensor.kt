@@ -1,5 +1,6 @@
 package pt.isel.iot_data_server.domain
 
+import pt.isel.iot_data_server.utils.removeJsonBrackets
 import java.sql.Timestamp
 import java.time.Instant
 
@@ -11,7 +12,7 @@ data class SensorRecord(val type: String, val value: Double, val instant: Instan
 data class SensorErrorRecord(val sensorName: String, val instant: Instant)
 
 fun fromMqttMsgStringToSensorRecord(str: String): SensorRecord {
-    val split = str.split(",")
+    val split = str.removeJsonBrackets().split(",")
 
     val name = getName(split)
     val instant = getInstant(split)
@@ -21,6 +22,7 @@ fun fromMqttMsgStringToSensorRecord(str: String): SensorRecord {
         ?.split(":")
         ?.get(1)
         ?.trim()
+        ?.trim('"')
         ?.toDouble()
         ?: throw IllegalArgumentException("Invalid json string")
 
@@ -32,6 +34,7 @@ fun getInstant(split: List<String>): Instant {
         .find { it.contains("timestamp") }
         ?.substringAfter(":")
         ?.trim()
+        ?.trim('"')
         ?.toLong() ?: throw IllegalArgumentException("Invalid string")
 
     // String to Timestamp
@@ -45,6 +48,7 @@ private fun getName(split: List<String>): String {
         ?.split(":")
         ?.get(1)
         ?.trim()
+        ?.trim('"')
         ?: throw IllegalArgumentException("Invalid json string")
 }
 
