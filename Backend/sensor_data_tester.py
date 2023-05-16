@@ -7,28 +7,31 @@ import threading
 
 # see: https://pypi.org/project/paho-mqtt/
 
+def sorround_with_quotes(value):
+    return "\"" + value + "\""
+
 def get_sensor_record_mqtt_message(sensor_type):
     device_id = "device_manual_tests"
     value = str(random.uniform(1.0, 12.0))
     timestamp = str(round(time.time()))
-    return "device_id: " + device_id + ", value: " + value + ", timestamp: " + timestamp + ", sensor_type: " + sensor_type + ""
+    return "device_id: " + sorround_with_quotes(device_id) + ", value: " + sorround_with_quotes(value) + ", timestamp: " + sorround_with_quotes(timestamp) + ", sensor_type: " + sorround_with_quotes(sensor_type) + ""
 
 def get_message_without_value():
     device_id = "device_manual_tests"
     timestamp = str(round(time.time()))
-    return "device_id: " + device_id + ", timestamp: " + timestamp + ""
+    return "device_id: " + sorround_with_quotes(device_id) + ", timestamp: " + sorround_with_quotes(timestamp) + ""
 
 def get_message_with_sensors_error():
     device_id = "device_manual_tests"
     timestamp = str(round(time.time()))
     sensors = "ph, humidity, temperature, water_flow, water_level, flood"
-    return "device_id: " + device_id + ", timestamp: " + timestamp + ", sensors: " + sensors + ""
+    return "device_id: " + sorround_with_quotes(device_id) + ", timestamp: " + sorround_with_quotes(timestamp) + ", sensors: " + sensors + ""
 
 def get_message_with_device_log(reason):
     device_id = "device_manual_tests"
     timestamp = str(round(time.time()))
     reason = "something went wrong"
-    return "device_id: " + device_id + ", timestamp: " + timestamp + ", reason: " + reason + ""
+    return "device_id: " + sorround_with_quotes(device_id) + ", timestamp: " + sorround_with_quotes(timestamp) + ", reason: " + sorround_with_quotes(reason) + ""
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
