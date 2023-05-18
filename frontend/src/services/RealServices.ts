@@ -193,7 +193,7 @@ export class RealServices implements Services {
 
     async verifyCode(email:string, code: string): Promise<boolean> {
         const verifyCodeLink = SirenModule.getVerifyCodeLink()
-        if (!verifyCodeLink) throw new Error('Is email already registered link not found')
+        if (!verifyCodeLink) throw new Error('Verify code link not found')
         const linkWithEmail = verifyCodeLink + "?email=${email}&code=${code}"
         const request = {
             url: linkWithEmail,
@@ -203,7 +203,7 @@ export class RealServices implements Services {
         return response.properties.valid
     }
 
-    async sendValidationCode(email:string): Promise<string> {
+    async sendValidationCode(email: string): Promise<string> {
         const emailCode = SirenModule.getAddAndSendEmailCode()
         if (!emailCode) throw new Error('Is email already registered link not found')
         const request = {

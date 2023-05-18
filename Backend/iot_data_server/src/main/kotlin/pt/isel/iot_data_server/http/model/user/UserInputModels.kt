@@ -3,30 +3,26 @@ package pt.isel.iot_data_server.http.model.user
 import pt.isel.iot_data_server.domain.UserInfo
 import pt.isel.iot_data_server.service.user.Role
 
-class UserCreateInputModel(username: String, password: String, val email: String) {
-    val username: String
+class UserCreateInputModel(val email: String, password: String) {
     val password: String
 
     init {
-        this.username = username.trim()
         this.password = password.trim()
     }
 }
 
 fun UserCreateInputModel.toUserInfo(role: Role) =
-    UserInfo(username, password, email, role)
+    UserInfo(email, password, role)
 
 
-class UserCreateTokenInputModel(username: String, password: String) {
-    val username: String
+class UserCreateTokenInputModel(email: String, password: String) {
+    val email: String
     val password: String
     init {
-        this.username = username.trim()
+        this.email = email.trim()
         this.password = password.trim()
     }
 
 }
 
-data class EmailRequest(
-    val email: String
-)
+data class EmailInputModel(val email: String)

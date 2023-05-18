@@ -2,9 +2,8 @@
 
 create table _user(
     _id varchar primary key,
-    username varchar unique,
-    password varchar,
     email varchar unique,
+    password varchar,
     role varchar
 );
 

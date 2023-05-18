@@ -32,7 +32,7 @@ function SignUpForm() {
         console.log("expected code: ", expectedCode);
     }, [expectedCode]);
 
-    async function fetchCode () {
+    async function sendValidationCodeToEmail () {
         return await services.sendValidationCode(email)
     }
 
@@ -50,13 +50,15 @@ function SignUpForm() {
             setErrorMessage("Password does not meet requirements")
             return;
         }
-        if(sendCodeToEmail)return;
+
+        if(sendCodeToEmail) return;
+
         services.checkIfUserExists(email)
             .then((result) => {
                 if (!result) {
                     setErrorMessage('');
                     setSendCodeToEmail(true);
-                    fetchCode()
+                    sendValidationCodeToEmail()
                         .then((code) => {
                             setExpectedCode(code);
                         });

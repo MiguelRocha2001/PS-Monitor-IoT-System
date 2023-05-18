@@ -21,20 +21,20 @@ class UserService(
             // generate random int
             val userId = UUID.randomUUID().toString()
 
-            if (it.userRepo.existsUsername(userInfo.username))
+            if (it.userRepo.existsEmail(userInfo.email))
                 return@run Either.Left(CreateUserError.UserAlreadyExists)
 
             if (it.userRepo.existsEmail(userInfo.email))
                 return@run Either.Left(CreateUserError.EmailAlreadyExists)
 
             val passwordHash = saltPasswordOperations.saltAndHashPass(userInfo.password, userId)
-            val newUserInfo = UserInfo(userInfo.username, passwordHash.hashedPassword, userInfo.email, userInfo.role)
+            val newUserInfo = UserInfo(userInfo.email, passwordHash.hashedPassword, userInfo.role)
             val newUser = User(userId, newUserInfo)
             it.userRepo.createUser(newUser)
 
-            val tokenCreationResult = createAndGetToken(userInfo.username)
+            val tokenCreationResult = createAndGetToken(userInfo.email)
             if (tokenCreationResult is Either.Left)
-                throw RuntimeException("Failed to create token for user ${userInfo.username}")
+                throw RuntimeException("Failed to create token for user with email: ${userInfo.email}")
 
             tokenCreationResult as Either.Right
             return@run Either.Right(userId to tokenCreationResult.value)
@@ -69,9 +69,9 @@ class UserService(
      * Creates a token for the user with the given username and password.
      * @throws RuntimeException if the user does not exist.
      */
-    fun createAndGetToken(username: String): TokenCreationResult {
+    fun createAndGetToken(email: String): TokenCreationResult {
         return transactionManager.run {
-            val user = it.userRepo.getUserByUsernameOrNull(username)
+            val user = it.userRepo.getUserByEmailOrNull(email)
                 ?: return@run Either.Left(TokenCreationError.UserOrPasswordAreInvalid)
             val token = UUID.randomUUID().toString()
            // val aesCipher = AESCipher("AES/CBC/PKCS5Padding", AES.generateIv())// todo store the iv in the db

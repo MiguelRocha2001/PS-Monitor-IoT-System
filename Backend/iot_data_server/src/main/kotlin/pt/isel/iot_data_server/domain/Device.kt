@@ -60,13 +60,11 @@ fun generateRandomDeviceId(): String {
 fun fromMqttMsgStringToDeviceId(str: String): String {
     val split = str.trimJsonString().split(",")
 
-    val deviceId = split
-        .find { it.contains("device_id") }
+    return split
+        .find { it.contains("\"device_id\"") }
         ?.split(":")
         ?.get(1)
         ?.trim()
         ?.replace("\"", "")
         ?: throw IllegalArgumentException("Invalid json string")
-
-    return deviceId
 }

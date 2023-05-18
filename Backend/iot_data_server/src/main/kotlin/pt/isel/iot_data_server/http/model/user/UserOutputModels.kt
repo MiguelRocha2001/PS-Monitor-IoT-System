@@ -15,9 +15,9 @@ data class UsersOutputModel(val users: List<UserOutputModel>) {
     }
 }
 
-data class UserOutputModel(val id: String, val username: String, val email: String, val role: Role)
+data class UserOutputModel(val id: String, val email: String, val role: Role)
 
-fun User.toOutputModel() = UserOutputModel(id, userInfo.username, userInfo.email, userInfo.role)
+fun User.toOutputModel() = UserOutputModel(id, userInfo.email, userInfo.role)
 
 data class TokenOutputModel(val token: String)
 

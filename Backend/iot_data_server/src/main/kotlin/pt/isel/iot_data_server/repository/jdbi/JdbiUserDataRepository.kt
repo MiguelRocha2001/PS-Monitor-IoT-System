@@ -13,11 +13,10 @@ class JdbiUserDataRepository(
     override fun createUser(user: User) {
         handle.createUpdate(
             """
-            insert into _USER (_id, username, password, email, role) values (:_id, :username, :password, :email, :role)
+            insert into _USER (_id, password, email, role) values (:_id, :password, :email, :role)
             """
         )
             .bind("_id", user.id)
-            .bind("username", user.userInfo.username)
             .bind("password", user.userInfo.password)
             .bind("email", user.userInfo.email)
             .bind("role", user.userInfo.role)
@@ -25,7 +24,10 @@ class JdbiUserDataRepository(
     }
 
     override fun getAllUsers(): List<User> {
-        return handle.createQuery("select _id, username, password, email, role from _USER")
+        return handle.createQuery("""
+            select _id, password, email, role 
+            from _USER
+        """)
             .mapTo<UserMapper>()
             .list()
             .map { it.toUser() }
@@ -34,7 +36,7 @@ class JdbiUserDataRepository(
     override fun getUserByToken(token: String): User? {
         return handle.createQuery(
             """
-            select _id, username, password, email, role 
+            select _id, password, email, role 
             from _USER as users 
             inner join TOKEN as tokens
             on users._id = tokens.user_id
@@ -50,7 +52,7 @@ class JdbiUserDataRepository(
     override fun getUserByIdOrNull(userId: String): User? {
         return handle.createQuery(
             """
-            select _id, username, password, email, role
+            select _id, password, email, role
             from _USER as users 
             where _id = :user_id
             """
@@ -72,27 +74,15 @@ class JdbiUserDataRepository(
             .execute()
     }
 
-    override fun existsUsername(username: String): Boolean {
-        return handle.createQuery("""
-            select username 
-            from _USER 
-            where username = :username
-        """)
-            .bind("username", username)
-            .mapTo<String>()
-            .list()
-            .isNotEmpty()
-    }
-
-    override fun getUserByUsernameOrNull(username: String): User? {
+    override fun getUserByEmailOrNull(email: String): User? {
         return handle.createQuery(
             """
-            select _id, username, password, email, role
+            select _id, password, email, role
             from _USER as users 
-            where username = :username
+            where email = :email
             """
         )
-            .bind("username", username)
+            .bind("email", email)
             .mapTo<UserMapper>()
             .singleOrNull()
             ?.toUser()
@@ -134,7 +124,7 @@ class JdbiUserDataRepository(
     override fun getUserByEmailAddressOrNull(email: String): User? {
         return handle.createQuery(
             """
-            select _id, username, password, email, role
+            select _id, password, email, role
             from _USER 
             where email = :email
             """

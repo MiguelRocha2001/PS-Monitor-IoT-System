@@ -94,7 +94,6 @@ class UserController(
     ): ResponseEntity<*> {
         val userOutputModel = UserOutputModel(
             user.id,
-            user.userInfo.username,
             user.userInfo.email,
             user.userInfo.role
         )
@@ -133,7 +132,7 @@ class UserController(
         response: HttpServletResponse,
         @RequestBody input: UserCreateTokenInputModel
     ): ResponseEntity<*> {
-        val res = service.createAndGetToken(input.username)
+        val res = service.createAndGetToken(input.email)
 
         // adds cookie to response
         if (res is Either.Right) {
@@ -176,7 +175,7 @@ class UserController(
 
         val user = service.getUserByEmailAddress(email)
         if (user == null) {
-            val userCreationResult = service.createUser(UserInfo(username, password, email, Role.USER))
+            val userCreationResult = service.createUser(UserInfo(email, password, Role.USER))
             if (userCreationResult is Either.Left) {
                 throw RuntimeException("Error creating user")
             }
@@ -251,16 +250,13 @@ class UserController(
     }
 
     @PostMapping(Uris.Verification.GENERATE)
-    fun generateCode(
-        @RequestBody request: EmailRequest
+    fun generateAndSendCodeToUserEmail(
+        @RequestBody request: EmailInputModel,
+        user: User
     ): ResponseEntity<*> {
         val code = service.generateVerificationCode(request.email)
         return ResponseEntity.status(200).
         contentType(SirenMediaType)
-            .body(siren(UserCodeOutputModel(code)){clazz("users")})
+            .body(siren(UserCodeOutputModel(code)) { clazz("users") } )
     }
-
-
-
-
 }

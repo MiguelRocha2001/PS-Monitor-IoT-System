@@ -214,11 +214,11 @@ export class FakeServices implements Services {
         return new TemperatureData(data);
     }
 
-    async verifyCode(email:string,code: string): Promise<boolean> {
+    async verifyCode(email: string, code: string): Promise<boolean> {
         return code === '12345'
     }
 
-    async sendValidationCode(email:string) :Promise<string>{
+    async sendValidationCode(email: string): Promise<string> {
         return '12345'
     }
 

@@ -3,13 +3,10 @@ package pt.isel.iot_data_server.domain
 import pt.isel.iot_data_server.service.user.Role
 import java.util.regex.Pattern
 
-data class UserInfo(val username: String, val password: String, val email: String, val role: Role) {
+data class UserInfo(val email: String, val password: String, val role: Role) {
     init {
         val emailRegexPattern = "^(.+)@(\\S+)$"
-        require(patternMatches(email, emailRegexPattern)) { "Invalid email address" }
-
-        val usernameMinLength = 5
-        require(username.length >= usernameMinLength) { "Username must be at least $usernameMinLength characters long" }
+        require(patternMatches(email, emailRegexPattern)) { "Invalid email address: $email" }
 
      //   val passwordRegexPattern = "/^(?=.*\\d)(?=.*[A-Z]).{8,}\$/"
         //  require(patternMatches(password, passwordRegexPattern)) { "Password must contain at least 8 characters, including at least one uppercase letter, one lowercase letter, one number" }

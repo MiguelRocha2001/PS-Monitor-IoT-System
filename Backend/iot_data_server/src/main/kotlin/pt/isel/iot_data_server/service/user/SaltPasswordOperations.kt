@@ -44,7 +44,7 @@ class SaltPasswordOperations(
     //username is used to get the stored pass from the database
     //password is the password received from the user (CLEAR TEXT)
     fun verifyPassword(username: String, password: String): Boolean = transactionManager.run {
-        val user = it.userRepo.getUserByUsernameOrNull(username) ?: return@run false
+        val user = it.userRepo.getUserByEmailOrNull(username) ?: return@run false
         val storedSalt = getSalt(user.id)
         val receivedHashPassword = hashPassword(password,storedSalt).hashedPassword
         val storedHashedPassword = user.userInfo.password

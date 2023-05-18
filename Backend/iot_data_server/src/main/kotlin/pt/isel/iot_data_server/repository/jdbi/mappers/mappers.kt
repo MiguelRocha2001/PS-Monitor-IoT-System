@@ -7,18 +7,17 @@ import pt.isel.iot_data_server.service.user.Role
 
 data class UserMapper(
     val _id: String,
-    val username: String,
-    val password: String,
     val email: String,
+    val password: String,
     val role: String
 )
 
 internal fun UserMapper.toUser() = User(
     id = _id,
-    userInfo = UserInfo(username, password, email, role.toRole())
+    userInfo = UserInfo(email, password, role.toRole())
 )
 
-private fun String.toRole() = when (this) {
+private fun String.toRole() = when (this.uppercase()) {
     "ADMIN" -> Role.ADMIN
     "USER" -> Role.USER
     else -> throw IllegalArgumentException("Invalid role: $this")
