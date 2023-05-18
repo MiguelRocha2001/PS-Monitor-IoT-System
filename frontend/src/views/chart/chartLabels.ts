@@ -11,6 +11,9 @@ export function toLabels(start: Date, end: Date, timeUnit: TimeUnit): string[] {
     if (timeUnit === "month") {
         return monthLabels(start, end)
     }
+    if (timeUnit === "year") {
+        return yearLabels(start, end)
+    }
     throw new Error(`Unsupported time unit ${timeUnit}`)
 }
 
@@ -53,6 +56,19 @@ export function monthLabels(startDate: Date, endDate: Date): string[] {
     return labels
 }
 
+export function yearLabels(startDate: Date, endDate: Date): string[] {
+    const labels: number[] = []
+    labels.push(startDate.getFullYear())
+
+    let nextYear = new Date(startDate.getTime())
+    nextYear.setFullYear(nextYear.getFullYear() + 1)
+    while (nextYear.getTime() <= endDate.getTime()) {
+        labels.push(nextYear.getFullYear())
+        nextYear.setFullYear(nextYear.getFullYear() + 1)
+    }
+    return labels.map((year) => year.toString())
+}
+
 export function mapRecordToHourLabel(start: Date, end: Date, records: PhRecord[]): any[] {
     const filtered = filterByDate(start, end, records)
         .map((record) => {
@@ -80,6 +96,17 @@ function mapRecordToMonthLabel(start: Date, end: Date, records: PhRecord[]): any
         .map((record) => {
             return {
                 x: record.date.getMonth().toString(),
+                y: record.value
+            };
+        });
+    return toAverage(filtered);
+}
+
+function mapRecordToYearLabel(start: Date, end: Date, records: PhRecord[]): any[] {
+    const filtered = filterByDate(start, end, records)
+        .map((record) => {
+            return {
+                x: record.date.getFullYear().toString(),
                 y: record.value
             };
         });
@@ -124,6 +151,9 @@ export function mapToData(start: Date, end: Date, timeUnit: TimeUnit, record: Ph
     }
     if (timeUnit === "month") {
         return mapRecordToMonthLabel(start, end, record)
+    }
+    if (timeUnit === "year") {
+        return mapRecordToYearLabel(start, end, record)
     }
     throw new Error(`Unsupported time unit ${timeUnit}`)
 }

@@ -67,7 +67,7 @@ export function ChartWithPeriodSelection({deviceId,deviceEmail}: { deviceId: str
                 setStart(today); // today
                 setEnd(tomorrow); // tomorrow
                 break;
-            case "last 5 days":
+            case "last5days":
                 setTimeUnit("day");
                 const today2 = new Date(new Date().setHours(0, 0, 0, 0));
                 const yesterday2 = new Date(today2.getTime() - 1);
@@ -75,7 +75,7 @@ export function ChartWithPeriodSelection({deviceId,deviceEmail}: { deviceId: str
                 setStart(fiveDaysAgo); // 5 days ago
                 setEnd(yesterday2);
                 break;
-            case "last 31 days":
+            case "last31days":
                 setTimeUnit("day");
                 const today3 = new Date(new Date());
                 const yesterday = new Date(today3.getTime() - (1 * 24 * 60 * 60 * 1000));
@@ -92,19 +92,44 @@ export function ChartWithPeriodSelection({deviceId,deviceEmail}: { deviceId: str
                 setEnd(lastMonth2); // last month
                 break;
             case "last6months":
-                // setPeriod(new Year(new Date().getFullYear() - 1));
+                setTimeUnit("month");
+                const today5 = new Date();
+                const sixMonthsAgo = new Date(today5.getFullYear(), today5.getMonth() - 6, 1);
+                const lastMonth3 = new Date(today5.getFullYear(), today5.getMonth() - 1, today5.getDate());
+                setStart(sixMonthsAgo); // 6 months ago
+                setEnd(lastMonth3); // last month
                 break;
             case "lastyear":
-                // setPeriod(new Year(new Date().getFullYear() - 1));
+                setTimeUnit("month");
+                const today6 = new Date();
+                const lastYear = new Date(today6.getFullYear() - 1, today6.getMonth(), today6.getDate());
+                const lastMonth4 = new Date(today6.getFullYear(), today6.getMonth() - 1, today6.getDate());
+                setStart(lastYear); // last year
+                setEnd(lastMonth4); // last month
                 break;
             case "last2years":
-                // setPeriod(new Year(new Date().getFullYear() - 2));
+                setTimeUnit("year");
+                const today7 = new Date();
+                const lastYear2 = new Date(today7.getFullYear() - 1, today7.getMonth(), today7.getDate());
+                const twoYearsAgo = new Date(today7.getFullYear() - 2, today7.getMonth(), today7.getDate());
+                setStart(twoYearsAgo); // last year
+                setEnd(lastYear2); // 2 years ago
                 break;
             case "last5years":
-                // setPeriod(new Year(new Date().getFullYear() - 5));
+                setTimeUnit("year");
+                const today8 = new Date();
+                const lastYear3 = new Date(today8.getFullYear() - 1, today8.getMonth(), today8.getDate());
+                const fiveYearsAgo = new Date(today8.getFullYear() - 5, today8.getMonth(), today8.getDate());
+                setStart(fiveYearsAgo); // 5 years ago
+                setEnd(lastYear3); // last year
                 break;
             case "last10years":
-                // setPeriod(new Year(new Date().getFullYear() - 10));
+                setTimeUnit("year");
+                const today9 = new Date();
+                const lastYear4 = new Date(today9.getFullYear() - 1, today9.getMonth(), today9.getDate());
+                const tenYearsAgo = new Date(today9.getFullYear() - 10, today9.getMonth(), today9.getDate());
+                setStart(tenYearsAgo); // 10 years ago
+                setEnd(lastYear4); // last year
                 break;
             default:
                 break;
@@ -117,8 +142,8 @@ export function ChartWithPeriodSelection({deviceId,deviceEmail}: { deviceId: str
                 <select onChange={handlePeriodSelection}>
                     <option value="">Select period</option>
                     <option value="today">Today</option>
-                    <option value="last 5 days">Last 5 days</option>
-                    <option value="last 31 days">Last 31 days</option>
+                    <option value="last5days">Last 5 days</option>
+                    <option value="last31days">Last 31 days</option>
                     <option value="last3months">Last 3 months</option>
                     <option value="last6months">Last 6 months</option>
                     <option value="lastyear">Last year</option>
