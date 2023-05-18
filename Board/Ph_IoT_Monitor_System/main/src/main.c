@@ -27,6 +27,21 @@ const static long LONG_SLEEP_TIME = 5; // 3 seconds
 RTC_DATA_ATTR struct sensor_records_struct sensor_records;
 RTC_DATA_ATTR int readings_started;
 RTC_DATA_ATTR char action[100];
+RTC_DATA_ATTR int time_to_wake_up = 0;
+
+void continue_long_sleep() {
+    int current_timestamp = getNowTimestamp();
+    if(current_timestamp < time_to_wake_up) 
+    {
+        ESP_LOGE(TAG, "Going to long sleep...");
+        start_deep_sleep(time_to_wake_up - current_timestamp);
+    } 
+    else 
+    {
+        ESP_LOGE(TAG, "Going to long sleep...");
+        start_deep_sleep(LONG_SLEEP_TIME);
+    }
+}
 
 void send_sensor_records(esp_mqtt_client_handle_t client, char* deviceID) {
     strcpy(action, "sending_sensor_records");
@@ -85,7 +100,11 @@ void compute_sensors(char* deviceID, esp_mqtt_client_handle_t client) {
         readings_started = 0;
         send_sensor_records(client, deviceID);
         erase_sensor_records();
-        start_deep_sleep(LONG_SLEEP_TIME);
+
+        int new_time_to_wake_up = getNowTimestamp() + LONG_SLEEP_TIME;
+        ESP_LOGE(TAG, "Setting new time to wake up: %d", new_time_to_wake_up);
+        time_to_wake_up = new_time_to_wake_up; // sets new time to wake up
+        continue_long_sleep();
     } 
     else 
     {
@@ -94,21 +113,15 @@ void compute_sensors(char* deviceID, esp_mqtt_client_handle_t client) {
     }
 }
 
-void printDeepSleepWokeCause(esp_sleep_wakeup_cause_t cause) {
-    switch (cause)
+void printDeepSleepWokeCause(esp_sleep_wakeup_cause_t wakeup_reason) {
+    switch(wakeup_reason)
     {
-        case ESP_SLEEP_WAKEUP_TIMER:
-            ESP_LOGI(TAG, "Woke up from timer");
-            break;
-        case ESP_SLEEP_WAKEUP_UNDEFINED:
-            ESP_LOGI(TAG, "Woke up from undefined");
-            break;
-        case ESP_SLEEP_WAKEUP_EXT0:
-            ESP_LOGI(TAG, "Woke up from ext0 (water leak)");
-            break;
-        default:
-            ESP_LOGI(TAG, "Woke up duo to unknown reason");
-            break;
+        case ESP_SLEEP_WAKEUP_EXT0 : Serial.println("Wakeup caused by external signal using RTC_IO"); break;
+        case ESP_SLEEP_WAKEUP_EXT1 : Serial.println("Wakeup caused by external signal using RTC_CNTL"); break;
+        case ESP_SLEEP_WAKEUP_TIMER : Serial.println("Wakeup caused by timer"); break;
+        case ESP_SLEEP_WAKEUP_TOUCHPAD : Serial.println("Wakeup caused by touchpad"); break;
+        case ESP_SLEEP_WAKEUP_ULP : Serial.println("Wakeup caused by ULP program"); break;
+        default : Serial.printf("Wakeup was not caused by deep sleep: %d\n",wakeup_reason);
     }
 }
 
@@ -200,7 +213,7 @@ void app_main(void) {
             }
         else
             {
-                start_deep_sleep(LONG_SLEEP_TIME);
+                continue_long_sleep(LONG_SLEEP_TIME);
             }
     }
 }

@@ -11,6 +11,8 @@ interface SensorInfo {
 data class SensorRecord(val type: String, val value: Double, val instant: Instant)
 data class SensorErrorRecord(val sensorName: String, val instant: Instant)
 
+// TODO: use built in json parser
+
 fun fromMqttMsgStringToSensorRecord(str: String): SensorRecord {
     val split = str.removeJsonBrackets().split(",")
 
@@ -18,7 +20,7 @@ fun fromMqttMsgStringToSensorRecord(str: String): SensorRecord {
     val instant = getInstant(split)
 
     val value = split
-        .find { it.contains("value") }
+        .find { it.contains("\"value\"") }
         ?.split(":")
         ?.get(1)
         ?.trim()
@@ -31,7 +33,7 @@ fun fromMqttMsgStringToSensorRecord(str: String): SensorRecord {
 
 fun getInstant(split: List<String>): Instant {
     val timestampInSeconds: Long = split
-        .find { it.contains("timestamp") }
+        .find { it.contains("\"timestamp\"") }
         ?.substringAfter(":")
         ?.trim()
         ?.trim('"')
@@ -44,7 +46,7 @@ fun getInstant(split: List<String>): Instant {
 
 private fun getName(split: List<String>): String {
     return split
-        .find { it.contains("sensor_type") }
+        .find { it.contains("\"sensor_type\"") }
         ?.split(":")
         ?.get(1)
         ?.trim()
