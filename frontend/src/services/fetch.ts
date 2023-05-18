@@ -64,27 +64,27 @@ export async function doFetch(
             return null
         }
 
-        const data = await getSirenOrProblemOrAny(resp)
+        const respData = await getResponseObject(resp)
 
         // if response is not ok
         if (!resp.ok) {
-            if (data instanceof ProblemJson) {
-                logger.error("Response Error: ", data.title)
-                // return new BackendError(data.title, resp.statusCode)
-                return Promise.reject(data.title)
+            if (respData instanceof ProblemJson) {
+                logger.error("Response Error: ", respData.title)
+                // return new BackendError(respData.title, resp.statusCode)
+                return Promise.reject(respData.title)
             } else {
-                logger.error("Response Error: ", resp)
-                return Promise.reject("Unknown error: " + resp.status + " " + resp.statusText)
+                logger.error("Response Error: ", respData)
+                return Promise.reject(respData)
             }
         }
 
         // if expected format is not verified
-        if (responseType === ResponseType.Siren && !(data instanceof Siren)) {
-            throw new Error(`Expected Siren response, got ${typeof data}`)
-        } else if (responseType === ResponseType.Any && data instanceof Siren) {
+        if (responseType === ResponseType.Siren && !(respData instanceof Siren)) {
+            throw new Error(`Expected Siren response, got ${typeof respData}`)
+        } else if (responseType === ResponseType.Any && respData instanceof Siren) {
             throw new Error(`Expected any response, got Siren`)
         }
-        return data
+        return respData
     }
     return Promise.reject('Invalid request')
 }
@@ -114,11 +114,13 @@ export function toBody(obj: any): Body {
 }
 
 /**
- *
- * @param response
- * @throws Error if response status code is 204 (No Content)
+ * @Returns Siren object if the response is OK and the content-type is application/vnd.siren+json.
+ * @Returns any object if the response is OK and the content-type is not application/vnd.siren+json.
+ * @Returns ProblemJson object if the response is not OK and the content-type is application/problem+json.
+ * @Returns string if the response is not OK and the content-type is not application/problem+json.
+ * @throws Error if there is no content.
  */
-export async function getSirenOrProblemOrAny(response: Response): Promise<Siren | any | ProblemJson> {
+export async function getResponseObject(response: Response): Promise<Siren | any | ProblemJson | undefined> {
     if (response.status === 204) throw new Error('No Content')
     if (response.ok) {
         const isSiren = response.headers.get('content-type')?.includes('application/vnd.siren+json');
@@ -128,8 +130,11 @@ export async function getSirenOrProblemOrAny(response: Response): Promise<Siren 
         }
         return await response.json(); // any
     } else {
-        const problemJson = await response.json()
-        return new ProblemJson(problemJson.title, response.status, problemJson.detail)
+        if (response.headers.get('content-type')?.includes('application/problem+json')) {
+            const problemJson = await response.json()
+            return new ProblemJson(problemJson.title, response.status, problemJson.detail)
+        }
+        return 'Unknown error: ' + response.status + ' ' + response.statusText
     }
 }
 
