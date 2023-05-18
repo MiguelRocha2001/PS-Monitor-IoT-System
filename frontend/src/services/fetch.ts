@@ -48,7 +48,8 @@ export enum ResponseType {Siren, Any}
  * The url is relative to the API host (host should not be included).
  * @param responseType Expected response format. Default is Siren.
  * @returns Promise of the response. This could be a Siren object or any other object.
- * If the status is 204 (No Content) then the response is null.
+ * @returns If the status is 204 (No Content) then the response is null.
+ * @returns Promise.reject if the response is not ok.
  */
 export async function doFetch(
     request: Request,
@@ -65,9 +66,16 @@ export async function doFetch(
 
         const data = await getSirenOrProblemOrAny(resp)
 
-        if (data instanceof ProblemJson) {
-            logger.error("Response Error: ", data.title)
-            return new BackendError(data.title, resp.status)
+        // if response is not ok
+        if (!resp.ok) {
+            if (data instanceof ProblemJson) {
+                logger.error("Response Error: ", data.title)
+                // return new BackendError(data.title, resp.statusCode)
+                return Promise.reject(new Error(data.title))
+            } else {
+                logger.error("Response Error: ", resp)
+                return Promise.reject(new Error("Unknown error: " + resp.status + " " + resp.statusText))
+            }
         }
 
         // if expected format is not verified
@@ -106,7 +114,13 @@ export function toBody(obj: any): Body {
     return body
 }
 
+/**
+ *
+ * @param response
+ * @throws Error if response status code is 204 (No Content)
+ */
 export async function getSirenOrProblemOrAny(response: Response): Promise<Siren | any | ProblemJson> {
+    if (response.status === 204) throw new Error('No Content')
     if (response.ok) {
         const isSiren = response.headers.get('content-type')?.includes('application/vnd.siren+json');
         if (isSiren) {

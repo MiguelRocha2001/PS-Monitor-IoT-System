@@ -93,14 +93,13 @@ export class RealServices implements Services {
         logger.info(`User ${email} created`)
     }
 
-    // TODO: fix this
-    async authenticateUser(username: string, password: string) {
-        logger.info(`Creating user ${username}`)
+    async authenticateUser(email: string, password: string): Promise<void> {
+        logger.info(`Creating user ${email}`)
         const action = SirenModule.getCreateTokenAction()
         const request = {
             url: action.href,
             method: action.method,
-            body: toBody({username, password})
+            body: toBody({email, password})
         }
         await doFetch(request, ResponseType.Siren)
     }

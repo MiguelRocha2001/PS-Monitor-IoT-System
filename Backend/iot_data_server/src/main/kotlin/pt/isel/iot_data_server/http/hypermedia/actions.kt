@@ -14,7 +14,7 @@ fun createUserSirenAction(sirenBuilderScope: SirenBuilderScope<*>) =
         method = HttpMethod.POST,
         type = MediaType.APPLICATION_JSON
     ) {
-        this.textField("username")
+        this.textField("email")
         this.textField("password")
     }
 
@@ -25,7 +25,7 @@ fun createTokenSirenAction(sirenBuilderScope: SirenBuilderScope<*>) =
         method = HttpMethod.POST,
         type = MediaType.APPLICATION_JSON
     ) {
-        this.textField("username")
+        this.textField("email")
         this.textField("password")
     }
 

@@ -113,7 +113,7 @@ class DeviceController(
         user: User,
         @PathVariable word: String
     ): ResponseEntity<*> {
-        val result = service.getCountOfDevicesFilteredById (user.id,word)
+        val result = service.getCountOfDevicesFilteredById(user.id, word)
         return result.map { deviceCount ->
             ResponseEntity.status(200)
                 .contentType(SirenMediaType)
@@ -161,7 +161,7 @@ class DeviceController(
         }
     }
 
-    @GetMapping(Uris.Devices.Error.ALL_1)
+    @GetMapping(Uris.Devices.WakeUpLogs.ALL_1)
     fun getDeviceWakeUpLogs(
         user: User,
         @PathVariable device_id: String
@@ -174,10 +174,6 @@ class DeviceController(
         return result.map {
             ResponseEntity.status(200)
                 .contentType(SirenMediaType)
-                .header(
-                    "Location",
-                    Uris.Devices.Error.all().toASCIIString()
-                )
                 .body(
                     siren(DeviceWakeUpLogsOutputModel.from(it)) {
                         clazz("device-errors")

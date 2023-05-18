@@ -13,9 +13,14 @@ import {Stack} from "react-bootstrap";
 
 const logger = new Logger({ name: "Authentication" });
 
+/**
+ * @returns Promise<void> if successful, Error if not
+ * @param email
+ * @param password
+ */
 export async function authenticate(email: string, password: string): Promise<void | Error> {
     try {
-        return services.authenticateUser(email, password);
+        return await services.authenticateUser(email, password);
     } catch (e) {
         return new Error("Something went wrong");
     }

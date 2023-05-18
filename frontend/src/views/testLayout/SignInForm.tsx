@@ -7,6 +7,7 @@ import {authenticate} from "../auth/IoTServerAuthentication";
 import {Logger} from "tslog";
 import {useSetIsLoggedIn} from "../auth/Authn";
 import {GoogleLoginButton} from "./GoogleLogin";
+import {services} from "../../services/services";
 
 const logger = new Logger({ name: "Authentication" });
 
@@ -30,17 +31,13 @@ function SignInForm() {
             setIsBadInput(true)
             return
         }
-        authenticate(email, password)
-            .then((result) => {
-                if (result instanceof Error) {
-                    setErrorMessage(result.message)
-                } else {
-                    setIsLoggedIn(true)
-                    setRedirect("/devices")
-                }
-            })
-            .catch(error => {
-                logger.error('Login: ', error)
+        services.authenticateUser(email, password)
+            .then(() => {
+                logger.info("Successfully logged in")
+                setIsLoggedIn(true)
+                setRedirect("/devices")
+            }).catch(error => {
+                console.log(error)
                 setErrorMessage("Invalid username or password")
             })
     }

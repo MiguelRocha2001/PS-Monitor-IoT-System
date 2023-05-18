@@ -100,30 +100,9 @@ object Uris {
             fun all(): URI = URI(ALL_2)
         }
 
-        object WaterFlow {
-            const val ALL_1 = "${BY_ID1}/water-flow-data"
-            private const val ALL_2 = "${BY_ID2}/water-flow-data"
-
-            fun all(): URI = URI(ALL_2)
-        }
-
-        object WaterLevel {
-            const val ALL_1 = "${BY_ID1}/water-level-data"
-            private const val ALL_2 = "${BY_ID2}/water-level-data"
-
-            fun all(): URI = URI(ALL_2)
-        }
-
-        object Humidity {
-            const val ALL_1 = "${BY_ID1}/humidity-data"
-            private const val ALL_2 = "${BY_ID2}/humidity-data"
-
-            fun all(): URI = URI(ALL_2)
-        }
-
-        object Error {
-            const val ALL_1 = "${BY_ID1}/error-data"
-            private const val ALL_2 = "${BY_ID2}/error-data"
+        object WakeUpLogs {
+            const val ALL_1 = "${BY_ID1}/wake-up-logs"
+            private const val ALL_2 = "${BY_ID2}/wake-up-logs"
 
             fun all(): URI = URI(ALL_2)
         }
