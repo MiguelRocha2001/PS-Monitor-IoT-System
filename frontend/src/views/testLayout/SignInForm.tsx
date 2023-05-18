@@ -37,8 +37,7 @@ function SignInForm() {
                 setIsLoggedIn(true)
                 setRedirect("/devices")
             }).catch(error => {
-                console.log(error)
-                setErrorMessage("Invalid username or password")
+                setErrorMessage(error)
             })
     }
 

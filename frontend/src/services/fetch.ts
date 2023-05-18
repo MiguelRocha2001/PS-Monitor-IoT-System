@@ -71,10 +71,10 @@ export async function doFetch(
             if (data instanceof ProblemJson) {
                 logger.error("Response Error: ", data.title)
                 // return new BackendError(data.title, resp.statusCode)
-                return Promise.reject(new Error(data.title))
+                return Promise.reject(data.title)
             } else {
                 logger.error("Response Error: ", resp)
-                return Promise.reject(new Error("Unknown error: " + resp.status + " " + resp.statusText))
+                return Promise.reject("Unknown error: " + resp.status + " " + resp.statusText)
             }
         }
 
@@ -84,10 +84,9 @@ export async function doFetch(
         } else if (responseType === ResponseType.Any && data instanceof Siren) {
             throw new Error(`Expected any response, got Siren`)
         }
-
         return data
     }
-    return Promise.reject(new Error('Invalid request'))
+    return Promise.reject('Invalid request')
 }
 
 function toFullUrl(request: Request): string {

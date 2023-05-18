@@ -249,10 +249,10 @@ class UserController(
             .body(siren(UserEmailAndVerificationCodeOutputModel(res)){ clazz("users") })
     }
 
+    // FIXME: what if an attacker keeps sending requests to this endpoint?
     @PostMapping(Uris.Verification.GENERATE)
     fun generateAndSendCodeToUserEmail(
-        @RequestBody request: EmailInputModel,
-        user: User
+        @RequestBody request: EmailInputModel
     ): ResponseEntity<*> {
         val code = service.generateVerificationCode(request.email)
         return ResponseEntity.status(200).

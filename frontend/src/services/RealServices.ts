@@ -88,7 +88,6 @@ export class RealServices implements Services {
             method: createUserAction.method,
             body: toBody({username,password, email})
         }
-        console.log(request)
         await doFetch(request, ResponseType.Siren)
         logger.info(`User ${email} created`)
     }

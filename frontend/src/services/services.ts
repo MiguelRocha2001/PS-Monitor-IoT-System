@@ -2,6 +2,10 @@ import {Device, PhData, TemperatureData, User} from "./domain";
 import {RealServices} from "./RealServices";
 import {FakeServices} from "./FakeServices";
 
+/**
+ * All functions can return a rejected promise if something goes wrong.
+ * The promise will be rejected with a string describing the error.
+ */
 export interface Services {
     googleLogin(): Promise<void>
     getBackendSirenInfo(): Promise<void>
@@ -20,7 +24,7 @@ export interface Services {
     getDeviceCountByName(s: string): Promise<number>
     checkIfUserExists(email: string): Promise<boolean>
     verifyCode(email:string, code: string): Promise<boolean>
-    sendValidationCode(email:string):Promise<string>
+    sendValidationCode(email:string): Promise<string>
 }
 
 export const services: Services = new RealServices()
