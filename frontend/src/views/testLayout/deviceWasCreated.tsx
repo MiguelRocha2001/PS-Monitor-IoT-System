@@ -1,9 +1,8 @@
 import React from "react";
-import { useParams } from "react-router-dom";
-import { MyCard } from "../Commons";
+import {Link, useParams} from "react-router-dom";
+import {MyCard} from "../Commons";
 import "./deviceWasCreated.css";
-import { Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import {Button} from "react-bootstrap";
 
 export function DeviceCreated() {
     const { deviceId } = useParams<string>();

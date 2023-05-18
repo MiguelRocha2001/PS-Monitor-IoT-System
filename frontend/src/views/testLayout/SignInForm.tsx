@@ -1,9 +1,6 @@
 import React, {useState} from 'react';
 import {Link, Navigate} from 'react-router-dom';
 import './SignInForm.css';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faGoogle} from '@fortawesome/free-brands-svg-icons';
-import {authenticate} from "../auth/IoTServerAuthentication";
 import {Logger} from "tslog";
 import {useSetIsLoggedIn} from "../auth/Authn";
 import {GoogleLoginButton} from "./GoogleLogin";

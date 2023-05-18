@@ -1,7 +1,7 @@
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import React, {useEffect} from "react";
+import React from "react";
 import {MyLink} from "./Commons";
 import {useIsLoggedIn, useSetIsLoggedIn} from "./auth/Authn";
 import {services} from "../services/services";

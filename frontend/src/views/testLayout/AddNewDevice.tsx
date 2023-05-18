@@ -1,11 +1,10 @@
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import {Card} from "react-bootstrap";
-import {Navigate, useNavigate} from "react-router-dom"
+import {Navigate} from "react-router-dom"
 import React from "react";
 import {services} from "../../services/services";
-import {SomethingWentWrong} from "../SomethingWentWrong";
-import {useError, useSetError} from "../error/ErrorContainer";
+import {useSetError} from "../error/ErrorContainer";
 import {ErrorController} from "../error/ErrorController";
 import './AddNewDevice.css'
 

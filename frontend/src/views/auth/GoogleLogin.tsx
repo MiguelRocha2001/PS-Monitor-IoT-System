@@ -1,4 +1,4 @@
-import {useLocation, useNavigate,Navigator} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import React, {useEffect, useMemo, useRef} from "react";
 import Button from "react-bootstrap/Button";
 import {MyCard} from "../Commons";

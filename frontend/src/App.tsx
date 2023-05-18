@@ -1,6 +1,5 @@
 import React, {useEffect, useReducer} from "react";
 import {Route, Routes} from 'react-router-dom'
-import Home from "./views/Home";
 //import NewDevice from "./views/device/NewDevice";
 import {Container} from "react-bootstrap";
 //import {Devices} from "./views/device/Devices";
@@ -9,13 +8,10 @@ import {SomethingWentWrong} from "./views/SomethingWentWrong";
 import {Logger} from "tslog";
 import {Loading} from "./views/Loading";
 //import {DeviceInfo} from "./views/device/DeviceInfo";
-import {Authentication} from "./views/auth/Authentication";
-import {DeviceSensorialData} from "./views/device/DeviceData";
 import {DeviceCreated} from "./views/testLayout/deviceWasCreated";
 import {AuthnContainer} from "./views/auth/Authn";
 import {RequireAuthn} from "./views/auth/RequireAuthn";
 import {ErrorContainer} from "./views/error/ErrorContainer";
-import {UserCreated} from "./views/auth/UserCreated";
 import FrontPage from "./views/testLayout/FrontPage";
 import SignUpForm from "./views/testLayout/SignUpForm";
 import SignInForm from "./views/testLayout/SignInForm";

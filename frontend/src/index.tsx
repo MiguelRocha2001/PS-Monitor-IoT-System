@@ -4,15 +4,8 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter} from "react-router-dom";
-import CodeInput from "./views/testLayout/CodeEmailVerification";
-import CodeVerification from "./views/testLayout/CodeEmailVerification";
-import InputCode from "./views/testLayout/CodeInput";
-import SignInForm from "./views/testLayout/SignInForm";
-import FrontPage from "./views/testLayout/FrontPage";
 import {Col} from "react-bootstrap";
 import {App} from "./App";
-import SignUpForm from "./views/testLayout/SignUpForm";
-import {Devices} from "./views/testLayout/DevicesPage";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

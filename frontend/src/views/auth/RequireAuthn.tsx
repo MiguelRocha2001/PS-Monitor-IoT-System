@@ -2,7 +2,6 @@ import * as React from 'react'
 import {Navigate, useLocation} from 'react-router-dom'
 import {useIsLoggedIn} from './Authn'
 import {Logger} from "tslog";
-import {Loading} from "../Loading";
 
 const logger = new Logger({ name: "RequireAuthn" });
 

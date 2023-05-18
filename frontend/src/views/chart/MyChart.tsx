@@ -1,18 +1,22 @@
 import {JSXElementConstructor, ReactElement, ReactFragment, ReactPortal} from "react";
 import {PhRecord} from "../../services/domain";
 import {mapToData, toLabels} from "./chartLabels";
+
 const {useChart} = require("./useChart");
 const {dataSet} = require("./data");
 const React = require("react");
 
-export interface Period {}
-export class Year implements Period {constructor(public year: number) {}}
-export class Month implements Period {constructor(public month: number, public year: Year) {}}
-export class Day implements Period {constructor(public day: number, public month: Month) {}}
-export class Hour implements Period {constructor(public hour: number, public day: Day) {}}
+export type TimeUnit = "hour" | "day" | "month" | "year";
 
 export function MyChart(
-    {period, phRecords, tempRecords}: { period: Period, phRecords: PhRecord[], tempRecords: PhRecord[] } //FIXME os dados nao estão bem representados
+    {start, end, timeUnit, phRecords, tempRecords} :
+        {
+            start: Date
+            end: Date
+            timeUnit: TimeUnit
+            phRecords: PhRecord[],
+            tempRecords: PhRecord[]
+        } //FIXME os dados nao estão bem representados
 ) {
     const canvasRef = React.useRef(null);
     const [metadata, setMetadata] = React.useState(dataSet);
@@ -29,11 +33,13 @@ export function MyChart(
         }));
     };
 
-    const labels = toLabels(period)
+    const labels = toLabels(start, end, timeUnit);
+    console.log("labels", labels)
 
-    const phData = mapToData(period, phRecords)
+    const phData = mapToData(start, end, timeUnit, phRecords);
+    console.log("phData", phData)
 
-    const tempData = mapToData(period, tempRecords)
+    const tempData = mapToData(start, end, timeUnit, tempRecords);
 
     const phDataset = metadata["PH"].isVisible ? {
         label: metadata["PH"].label,
@@ -59,7 +65,7 @@ export function MyChart(
         console.log("No dataset")
     }
 
-    //check if its temperature or ph dataset
+    // check if its temperature or ph dataset
     if(dataset.filter((d: any) => d.label === "Temperature").length === 1) {
         console.log("Temperature dataset")
     }
@@ -68,11 +74,7 @@ export function MyChart(
     }
 
     const labelY = dataset.filter((d: any) => d.label === "Temperature").length === 1 ? "Temperature" : "pH"
-    const labelX = "Time in " + period.constructor.name //FIXME: miguel da fix disto
-
-
-    //print dataset
-    console.log(dataset)
+    const labelX = "Time in " + timeUnit
 
     const options = {
         scales: {

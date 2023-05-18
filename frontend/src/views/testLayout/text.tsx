@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Day, Hour, Month, MyChart, Period, Year} from "../chart/MyChart";
+import {MyChart, TimeUnit} from "../chart/MyChart";
 import {services} from "../../services/services";
 import {PhRecord, TemperatureRecord} from "../../services/domain";
 import "./text.css";
@@ -8,14 +8,10 @@ import "./text.css";
 export function ChartWithPeriodSelection({deviceId,deviceEmail}: { deviceId: string, deviceEmail: string }) {
     const [phRecords, setPhRecords] = React.useState<PhRecord[]>([]);
     const [tempRecords, setTempRecords] = React.useState<TemperatureRecord[]>([]);
+    const [start, setStart] = React.useState<Date>(new Date());
+    const [end, setEnd] = React.useState<Date>(new Date());
+    const [timeUnit, setTimeUnit] = React.useState<TimeUnit|undefined>(undefined);
     const [errorMessage, setErrorMessage] = useState<string>();
-
-    const [period, setPeriod] = useState<Period>();
-
-    const handlePeriodButtonClick = (newPeriod: Period) => {
-        setPeriod(newPeriod);
-    };
-
 
     useEffect(() => {
         async function fetchPh() {
@@ -65,31 +61,50 @@ export function ChartWithPeriodSelection({deviceId,deviceEmail}: { deviceId: str
         const value = event.target.value;
         switch (value) {
             case "today":
-                setPeriod(new Day(new Date().getDate(), new Month(new Date().getMonth() + 1, new Year(new Date().getFullYear()))));
+                setTimeUnit("hour");
+                const today = new Date(new Date().setHours(0));
+                const tomorrow = new Date(new Date().setHours(23));
+                setStart(today); // today
+                setEnd(tomorrow); // tomorrow
                 break;
-            case "last5days":
-                setPeriod(new Day(new Date().getDate() - 4, new Month(new Date().getMonth() + 1, new Year(new Date().getFullYear()))));
+            case "last 5 days":
+                setTimeUnit("day");
+                const today2 = new Date(new Date().setHours(0, 0, 0, 0));
+                const yesterday2 = new Date(today2.getTime() - 1);
+                const fiveDaysAgo = new Date(today2.getTime() - (5 * 24 * 60 * 60 * 1000));
+                setStart(fiveDaysAgo); // 5 days ago
+                setEnd(yesterday2);
                 break;
-            case "lastmonth":
-                setPeriod(new Month(new Date().getMonth(), new Year(new Date().getFullYear())));
+            case "last 31 days":
+                setTimeUnit("day");
+                const today3 = new Date(new Date());
+                const yesterday = new Date(today3.getTime() - (1 * 24 * 60 * 60 * 1000));
+                const lastMonth = new Date(today3.getFullYear(), today3.getMonth() - 1, today3.getDate());
+                setStart(lastMonth); // last month
+                setEnd(yesterday); // today
                 break;
             case "last3months":
-                setPeriod(new Month(new Date().getMonth() - 2, new Year(new Date().getFullYear())));
+                setTimeUnit("month");
+                const today4 = new Date();
+                const threeMonthsAgo = new Date(today4.getFullYear(), today4.getMonth() - 3, 1);
+                const lastMonth2 = new Date(today4.getFullYear(), today4.getMonth() - 1, today4.getDate());
+                setStart(threeMonthsAgo); // 3 months ago
+                setEnd(lastMonth2); // last month
                 break;
             case "last6months":
-                setPeriod(new Year(new Date().getFullYear() - 1));
+                // setPeriod(new Year(new Date().getFullYear() - 1));
                 break;
             case "lastyear":
-                setPeriod(new Year(new Date().getFullYear() - 1));
+                // setPeriod(new Year(new Date().getFullYear() - 1));
                 break;
             case "last2years":
-                setPeriod(new Year(new Date().getFullYear() - 2));
+                // setPeriod(new Year(new Date().getFullYear() - 2));
                 break;
             case "last5years":
-                setPeriod(new Year(new Date().getFullYear() - 5));
+                // setPeriod(new Year(new Date().getFullYear() - 5));
                 break;
             case "last10years":
-                setPeriod(new Year(new Date().getFullYear() - 10));
+                // setPeriod(new Year(new Date().getFullYear() - 10));
                 break;
             default:
                 break;
@@ -102,8 +117,8 @@ export function ChartWithPeriodSelection({deviceId,deviceEmail}: { deviceId: str
                 <select onChange={handlePeriodSelection}>
                     <option value="">Select period</option>
                     <option value="today">Today</option>
-                    <option value="last5days">Last 5 days</option>
-                    <option value="lastmonth">Last month</option>
+                    <option value="last 5 days">Last 5 days</option>
+                    <option value="last 31 days">Last 31 days</option>
                     <option value="last3months">Last 3 months</option>
                     <option value="last6months">Last 6 months</option>
                     <option value="lastyear">Last year</option>
@@ -112,13 +127,13 @@ export function ChartWithPeriodSelection({deviceId,deviceEmail}: { deviceId: str
                     <option value="last10years">Last 10 years</option>
                 </select>
             </div>
-            {period && <MyChart period={period} phRecords={phRecords} tempRecords={tempRecords}/>}
+            {timeUnit && <MyChart start={start} end={end} timeUnit={timeUnit} phRecords={phRecords} tempRecords={tempRecords}/>}
             <div className={"get-information"}>
                 <div>
                 <p><b>Device identifier: </b>{deviceId}</p>
                 <p><b>Associated email: </b>{deviceEmail}</p>
                 </div>
-                {period && <button id={"export-csv"} onClick={() => exportToCsv(phRecords, tempRecords)}>
+                {timeUnit && <button id={"export-csv"} onClick={() => exportToCsv(phRecords, tempRecords)}>
                     Export CSV
                 </button>}
             </div>

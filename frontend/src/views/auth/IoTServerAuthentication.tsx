@@ -4,7 +4,6 @@ import {Navigate, useLocation, useNavigate} from "react-router-dom"
 import {useIsLoggedIn, useSetIsLoggedIn} from "./Authn"
 import {Logger} from "tslog";
 import {services} from "../../services/services";
-import {User} from "../../services/domain";
 import Form from "react-bootstrap/esm/Form"
 import Button from "react-bootstrap/Button";
 import {MyCard} from "../Commons";

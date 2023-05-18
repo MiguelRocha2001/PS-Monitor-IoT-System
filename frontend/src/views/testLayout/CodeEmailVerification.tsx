@@ -1,14 +1,13 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {useNavigate} from "react-router-dom"
-import axios from 'axios';
 import './CodeEmailVerification.css';
-import CodeInput from "./CodeInput";
+import InputCode from "./CodeInput";
 import {services} from "../../services/services";
 import {createUser} from "../auth/IoTServerAuthentication";
 import {useSetIsLoggedIn} from "../auth/Authn";
 import {Logger} from "tslog";
-import InputCode from "./CodeInput";
 import {UserCreated} from "../auth/UserCreated";
+
 const logger = new Logger({ name: "Authentication" });
 
 

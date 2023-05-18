@@ -189,27 +189,23 @@ export class FakeServices implements Services {
 */
 //2023 occurences
     async getPhData(deviceId: string): Promise<PhData> {
-        const startDate = new Date('2023-01-01T00:00:00.000Z');
-        const endDate = new Date('2023-12-31T23:59:59.999Z');
-        const numDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24));
         const data: PhRecord[] = [];
-        for (let i = 0; i < numDays; i++) {
-            const date = new Date(startDate.getTime() + i * (1000 * 3600 * 24));
-            const phValue = i / numDays * 2 + 7; // linear growth from 7 to 9
-            data.push(new PhRecord(phValue, date));
+        let current = new Date();
+        for (let i = 0; i < 50000; i++) {
+            const value = Math.random() * 14;
+            data.push(new PhRecord(value, new Date(current)));
+            current = new Date(current.getTime() - 1000 * 60 * 60); // subtract 1 hour
         }
         return new PhData(data);
     }
 
     async getTemperatureData(deviceId: string): Promise<TemperatureData> {
-        const startDate = new Date('2023-01-01T00:00:00.000Z');
-        const endDate = new Date('2023-12-31T23:59:59.999Z');
-        const numDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24));
         const data: TemperatureRecord[] = [];
-        for (let i = 0; i < numDays; i++) {
-            const date = new Date(startDate.getTime() + i * (1000 * 3600 * 24));
-            const temperatureValue = i / numDays * 5 + 20; // linear growth from 20 to 25
-            data.push(new TemperatureRecord(temperatureValue, date));
+        let current = new Date();
+        for (let i = 0; i < 50000; i++) {
+            const value = Math.random() * 10 + 20;
+            data.push(new TemperatureRecord(value, new Date(current)));
+            current = new Date(current.getTime() - 1000 * 60 * 60); // subtract 1 hour
         }
         return new TemperatureData(data);
     }

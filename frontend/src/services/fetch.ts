@@ -1,4 +1,4 @@
-import {BackendError, NetworkError} from "./erros";
+import {NetworkError} from "./erros";
 import {Logger} from "tslog";
 import {fromJson, Siren} from "./sirenModule";
 

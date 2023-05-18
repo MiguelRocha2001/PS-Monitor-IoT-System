@@ -4,9 +4,9 @@ import {services} from "../../services/services";
 import {MyLink} from "../Commons";
 import {useSetError} from "../error/ErrorContainer";
 import {ErrorController} from "../error/ErrorController";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faChevronRight,faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
-import {useNavigate,Navigate} from "react-router-dom";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faChevronLeft, faChevronRight, faSignOutAlt} from '@fortawesome/free-solid-svg-icons';
+import {useNavigate} from "react-router-dom";
 
 import './DevicesPage.css'
 import Button from "react-bootstrap/Button";
@@ -61,25 +61,23 @@ export function Devices() {
     }, [searchQuery])
 
     useEffect(() => {
-        async function fetchDevices() {
+        async function updateDevices() {
             services.getDevices(page, pageSize)
                 .then(devices => {
-                    console.log(devices)
                     setDevices(devices);
                 })
                 .catch(error => setError(error))
         }
-        fetchDevices()
+        updateDevices()
     }, [page, pageSize, searchQuery, totalDevices])
 
     const handleButtonPress = () => {
         if(searchQuery === "") return
-         services.getDevicesByName(page, pageSize, searchQuery.toUpperCase()).then(
-             devices => {setDevices(devices);})
-             .then(()=> services.getDeviceCountByName(searchQuery.toUpperCase()))
-             .then((devicesSize)=>setFilteredDevices(devicesSize))
-             .catch(error => setError(error)
-         )
+        services.getDevicesByName(page, pageSize, searchQuery.toUpperCase())
+            .then(devices => {setDevices(devices)})
+            .then(()=> services.getDeviceCountByName(searchQuery.toUpperCase()))
+            .then((devicesSize)=>setFilteredDevices(devicesSize))
+            .catch(error => setError(error))
     }
 
     const navigate = useNavigate();
@@ -101,7 +99,7 @@ export function Devices() {
     )
 }
 
-function DeviceList({ devices, searchQuery, setSearchQuery, handleButtonPress,totalDevices }: { devices: Device[], searchQuery: string, setSearchQuery: (searchQuery: string) => void, handleButtonPress: () => void, totalDevices: number }) {
+function DeviceList({ devices, searchQuery, setSearchQuery, handleButtonPress, totalDevices }: { devices: Device[], searchQuery: string, setSearchQuery: (searchQuery: string) => void, handleButtonPress: () => void, totalDevices: number }) {
     const lastLineText = devices.length === 0 ? "No devices found." : `Showing ${devices.length} of ${totalDevices} devices.`
 
     return (

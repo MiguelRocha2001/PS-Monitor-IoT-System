@@ -1,5 +1,4 @@
 import {Device, PhData, TemperatureData, User} from "./domain";
-import {RealServices} from "./RealServices";
 import {FakeServices} from "./FakeServices";
 
 /**
@@ -27,4 +26,4 @@ export interface Services {
     sendValidationCode(email:string): Promise<string>
 }
 
-export const services: Services = new RealServices()
+export const services: Services = new FakeServices()

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {createContext, useContext, useEffect, useState} from 'react'
+import {createContext, useContext, useState} from 'react'
 
 type ContextType = {
     error: Error | undefined

@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {createContext, useContext, useEffect, useState} from 'react'
 import {services} from "../../services/services";
-import {User} from "../../services/domain";
 
 
 type ContextType = {
