@@ -1,5 +1,6 @@
 import {Device, SensorData, User} from "./domain";
 import {FakeServices} from "./FakeServices";
+import {RealServices} from "./RealServices";
 
 /**
  * All functions can return a rejected promise if something goes wrong.
@@ -26,4 +27,4 @@ export interface Services {
     availableSensors(deviceId: string): Promise<string[]>
 }
 
-export const services: Services = new FakeServices()
+export const services: Services = new RealServices()

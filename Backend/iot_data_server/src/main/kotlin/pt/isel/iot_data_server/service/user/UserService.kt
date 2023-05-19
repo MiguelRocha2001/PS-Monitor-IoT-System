@@ -16,23 +16,23 @@ class UserService(
     private val saltPasswordOperations: SaltPasswordOperations,
     private val emailSenderService: EmailManager,
 ) {
-    fun createUser(userInfo: UserInfo): UserCreationResult {
+    fun createUser(email: String, password: String, role: Role): UserCreationResult {
         return transactionManager.run {
             // generate random int
             val userId = UUID.randomUUID().toString()
 
-            if (it.userRepo.existsEmail(userInfo.email))
+            if (it.userRepo.existsEmail(email))
                 return@run Either.Left(CreateUserError.UserAlreadyExists)
 
-            if (it.userRepo.existsEmail(userInfo.email))
+            if (it.userRepo.existsEmail(email))
                 return@run Either.Left(CreateUserError.EmailAlreadyExists)
 
-            val passwordHash = saltPasswordOperations.saltAndHashPass(userInfo.password, userId)
-            val newUserInfo = UserInfo(userInfo.email, passwordHash.hashedPassword, userInfo.role)
-            val newUser = User(userId, newUserInfo)
+            val passwordHash = saltPasswordOperations.saltAndHashPass(password, userId)
+            val userInfo = UserInfo(email, passwordHash.hashedPassword, role)
+            val newUser = User(userId, userInfo)
             it.userRepo.createUser(newUser)
 
-            val tokenCreationResult = createAndGetToken(userInfo.email)
+            val tokenCreationResult = createAndGetToken(userInfo.email, password)
             if (tokenCreationResult is Either.Left)
                 throw RuntimeException("Failed to create token for user with email: ${userInfo.email}")
 
@@ -66,16 +66,18 @@ class UserService(
     }
 
     /**
-     * Creates a token for the user with the given username and password.
+     * Creates a token for the user with the given email and password.
      * @throws RuntimeException if the user does not exist.
      */
-    fun createAndGetToken(email: String): TokenCreationResult {
+    fun createAndGetToken(email: String, password: String): TokenCreationResult {
         return transactionManager.run {
             val user = it.userRepo.getUserByEmailOrNull(email)
                 ?: return@run Either.Left(TokenCreationError.UserOrPasswordAreInvalid)
+            if (!saltPasswordOperations.verifyPassword(email, password))
+                return@run Either.Left(TokenCreationError.UserOrPasswordAreInvalid)
             val token = UUID.randomUUID().toString()
-           // val aesCipher = AESCipher("AES/CBC/PKCS5Padding", AES.generateIv())// todo store the iv in the db
-          //  saveEncryptedToken(aesCipher,token,user.id)
+            // val aesCipher = AESCipher("AES/CBC/PKCS5Padding", AES.generateIv())// todo store the iv in the db
+            // saveEncryptedToken(aesCipher,token,user.id)
             it.userRepo.createToken(user.id, token)
 
             return@run Either.Right(token)

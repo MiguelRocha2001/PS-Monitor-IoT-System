@@ -29,8 +29,8 @@ class SaltTests {
             service.createUser(newUser2)
 
 
-            val userStoredPassword = service.getUserByEmailAddress(newUser.email)?.userInfo?.password
-            val user2StoredPassword = service.getUserByEmailAddress(newUser2.email)?.userInfo?.password
+            val userStoredPassword = service.getUserByEmailAddress(newUser.email)?.userInfo?.hashedPassword
+            val user2StoredPassword = service.getUserByEmailAddress(newUser2.email)?.userInfo?.hashedPassword
 
             assertFalse("Password is not the same", userStoredPassword == user2StoredPassword)
         }

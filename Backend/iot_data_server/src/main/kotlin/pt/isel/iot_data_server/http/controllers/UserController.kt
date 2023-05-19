@@ -44,7 +44,7 @@ class UserController(
     fun create(
         @RequestBody input: UserCreateInputModel
     ): ResponseEntity<*> {
-        val res = service.createUser(input.toUserInfo(Role.USER)) // Role is always User
+        val res = service.createUser(input.email, input.password, Role.USER) // Role is always User
         return res.map {
             val userId = it.first
             val token = it.second
@@ -132,7 +132,7 @@ class UserController(
         response: HttpServletResponse,
         @RequestBody input: UserCreateTokenInputModel
     ): ResponseEntity<*> {
-        val res = service.createAndGetToken(input.email)
+        val res = service.createAndGetToken(input.email, input.password)
 
         // adds cookie to response
         if (res is Either.Right) {
@@ -171,17 +171,17 @@ class UserController(
             throw RuntimeException("Error getting user info")
         }
 
-        val password = "Static=password1"
+        val password = "Static=password1" // TODO: change this
 
         val user = service.getUserByEmailAddress(email)
         if (user == null) {
-            val userCreationResult = service.createUser(UserInfo(email, password, Role.USER))
+            val userCreationResult = service.createUser(email, password, Role.USER)
             if (userCreationResult is Either.Left) {
                 throw RuntimeException("Error creating user")
             }
         }
 
-        val res = service.createAndGetToken(username)
+        val res = service.createAndGetToken(username, password)
 
         // adds cookie to response
         if (res is Either.Right) {

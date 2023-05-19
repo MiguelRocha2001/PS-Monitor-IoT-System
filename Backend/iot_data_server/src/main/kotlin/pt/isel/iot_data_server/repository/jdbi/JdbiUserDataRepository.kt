@@ -17,7 +17,7 @@ class JdbiUserDataRepository(
             """
         )
             .bind("_id", user.id)
-            .bind("password", user.userInfo.password)
+            .bind("password", user.userInfo.hashedPassword)
             .bind("email", user.userInfo.email)
             .bind("role", user.userInfo.role)
             .execute()
