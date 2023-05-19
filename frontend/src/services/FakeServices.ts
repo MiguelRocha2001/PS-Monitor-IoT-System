@@ -1,4 +1,4 @@
-import {Device, PhData, PhRecord, TemperatureData, TemperatureRecord, User} from "./domain";
+import {Device, SensorData, SensorRecord, User} from "./domain";
 import {Services} from "./services";
 
 export class FakeServices implements Services {
@@ -9,6 +9,7 @@ export class FakeServices implements Services {
 
     private readonly email = 'some_email_1@gmail.com'
     private readonly devices: Device[] = []
+    private readonly sensors: string[] = ['ph', 'temperature']
 
     constructor() {
         this.devices.push(new Device(this.getNewDeviceId(), this.email))
@@ -188,26 +189,17 @@ export class FakeServices implements Services {
 
 */
 //2023 occurences
-    async getPhData(deviceId: string): Promise<PhData> {
-        const data: PhRecord[] = [];
+    async getSensorData(deviceId: string, sensor: string): Promise<SensorData> {
+        if (this.sensors.find(s => s === sensor) === undefined)
+            throw new Error('Sensor not found')
+        const data: SensorRecord[] = [];
         let current = new Date();
         for (let i = 0; i < 50000; i++) {
-            const value = Math.random() * 14;
-            data.push(new PhRecord(value, new Date(current)));
+            const value = (sensor === "ph") ? Math.random() * 14 : Math.random() * 10 + 20;
+            data.push(new SensorRecord(value, new Date(current)));
             current = new Date(current.getTime() - 1000 * 60 * 60); // subtract 1 hour
         }
-        return new PhData(data);
-    }
-
-    async getTemperatureData(deviceId: string): Promise<TemperatureData> {
-        const data: TemperatureRecord[] = [];
-        let current = new Date();
-        for (let i = 0; i < 50000; i++) {
-            const value = Math.random() * 10 + 20;
-            data.push(new TemperatureRecord(value, new Date(current)));
-            current = new Date(current.getTime() - 1000 * 60 * 60); // subtract 1 hour
-        }
-        return new TemperatureData(data);
+        return new SensorData(sensor, data);
     }
 
     async verifyCode(email: string, code: string): Promise<boolean> {
@@ -216,6 +208,10 @@ export class FakeServices implements Services {
 
     async sendValidationCode(email: string): Promise<string> {
         return '12345'
+    }
+
+    async availableSensors(): Promise<string[]> {
+        return this.sensors
     }
 
 }

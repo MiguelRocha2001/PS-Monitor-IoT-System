@@ -1,4 +1,4 @@
-import {Device, PhData, TemperatureData, User} from "./domain";
+import {Device, SensorData, User} from "./domain";
 import {FakeServices} from "./FakeServices";
 
 /**
@@ -16,14 +16,14 @@ export interface Services {
     getDevices(page: number, limit: number): Promise<Device[]>
     getDeviceCount(): Promise<number>
     getDevice(deviceId: string): Promise<Device>
-    getPhData(deviceId: string): Promise<PhData>
-    getTemperatureData(deviceId: string): Promise<TemperatureData>
+    getSensorData(deviceId: string, sensor: String): Promise<SensorData>
     logout(): Promise<void>
     getDevicesByName(page: number, limit: number, name: string): Promise<Device[]>
     getDeviceCountByName(s: string): Promise<number>
     checkIfUserExists(email: string): Promise<boolean>
     verifyCode(email:string, code: string): Promise<boolean>
     sendValidationCode(email:string): Promise<string>
+    availableSensors(deviceId: string): Promise<string[]>
 }
 
 export const services: Services = new FakeServices()

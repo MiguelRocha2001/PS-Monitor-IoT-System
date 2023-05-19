@@ -52,7 +52,7 @@ class SensorDataController(
     fun getSensorRecords(
         user: User,
         @PathVariable device_id: String,
-        @RequestParam("sensor-name", required = false) sensorName: String,
+        @RequestParam("sensor-name", required = true) sensorName: String,
     ): ResponseEntity<*> {
         val result = if (user.userInfo.role === Role.ADMIN)
             sensorDataService.getSensorRecords(device_id, sensorName)

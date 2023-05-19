@@ -25,14 +25,14 @@ export function toDevice(propertiesJson: any): Device {
     return new Device(id, propertiesJson.email)
 }
 
-export class PhRecord {
+export class SensorRecord {
     constructor(
         public value: number,
         public date: Date
     ) {}
 }
 
-function toPhRecord(json: any): PhRecord {
+function toSensorRecord(json: any): SensorRecord {
     const value = json.value
     if (typeof value !== 'number') {
         throw new Error(`Invalid value: ${value}`)
@@ -42,54 +42,23 @@ function toPhRecord(json: any): PhRecord {
         throw new Error(`Invalid timestamp: ${timestamp}`)
     }
     const date = new Date(timestamp * 1000)
-    return new PhRecord(value, date)
+    return new SensorRecord(value, date)
 }
 
-export class PhData {
+export class SensorData {
     constructor(
-        public records: PhRecord[]
+        public type: string,
+        public records: SensorRecord[]
     ) {}
 }
 
-export function toPhData(json: any): PhData {
-    console.log(`toPhData: ${JSON.stringify(json)}`)
+export function toSensorData(json: any): SensorData {
     const records = json.records
     if (!Array.isArray(records)) {
         throw new Error(`Invalid records: ${records}`)
     }
-    return new PhData(records.map(toPhRecord))
-}
-
-export class TemperatureRecord {
-    constructor(
-        public value: number,
-        public date: Date
-    ) {}
-}
-
-function toTemperatureRecord(json: any): TemperatureRecord {
-    const value = json.value
-    if (typeof value !== 'number') {
-        throw new Error(`Invalid value: ${value}`)
-    }
-    const timestamp = json.timestamp
-    if (typeof timestamp !== 'number') {
-        throw new Error(`Invalid timestamp: ${timestamp}`)
-    }
-    const date = new Date(timestamp)
-    return new TemperatureRecord(value, date)
-}
-
-export class TemperatureData {
-    constructor(
-        public records: TemperatureRecord[]
-    ) {}
-}
-
-export function toTemperatureData(json: any): TemperatureData {
-    const records = json.records
-    if (!Array.isArray(records)) {
-        throw new Error(`Invalid records: ${records}`)
-    }
-    return new TemperatureData(records.map(toTemperatureRecord))
+    return new SensorData(
+        json.type,
+        records.map(toSensorRecord)
+    )
 }

@@ -8,21 +8,26 @@ data class SensorNamesOutputModel(val sensorNames: List<String>) {
     }
 }
 
-data class SensorRecordsOutputModel(val records: List<SensorRecordOutputModel>) {
+data class SensorRecordsOutputModel(
+    val type: String,
+    val records: List<SensorRecordOutputModel>
+) {
     companion object {
-        fun from(records: List<SensorRecord>) = SensorRecordsOutputModel(records.map { it.toSensorOutputModel() })
+        fun from(records: List<SensorRecord>) =
+            SensorRecordsOutputModel(
+                type = records.first().type,
+                records = records.map { it.toSensorOutputModel() }
+            )
     }
 }
 data class SensorRecordOutputModel(
     val value: Double,
-    val timestamp: Long,
-    val sensorName: String
+    val timestamp: Long
 )
 
 fun SensorRecord.toSensorOutputModel() = SensorRecordOutputModel(
     value = this.value,
-    timestamp = this.instant.epochSecond,
-    sensorName = this.type
+    timestamp = this.instant.epochSecond
 )
 
 data class SensorErrorsOutputModel(val errors: List<SensorErrorRecordOutputModel>) {

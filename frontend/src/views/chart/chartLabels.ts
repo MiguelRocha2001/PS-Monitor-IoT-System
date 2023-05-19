@@ -1,5 +1,5 @@
-import {PhRecord} from "../../services/domain";
 import {TimeUnit} from "./MyChart";
+import {SensorRecord} from "../../services/domain";
 
 export function toLabels(start: Date, end: Date, timeUnit: TimeUnit): string[] {
     if (timeUnit === "hour") {
@@ -69,7 +69,7 @@ export function yearLabels(startDate: Date, endDate: Date): string[] {
     return labels.map((year) => year.toString())
 }
 
-export function mapRecordToHourLabel(start: Date, end: Date, records: PhRecord[]): any[] {
+export function mapRecordToHourLabel(start: Date, end: Date, records: SensorRecord[]): any[] {
     const filtered = filterByDate(start, end, records)
         .map((record) => {
             return {
@@ -80,7 +80,7 @@ export function mapRecordToHourLabel(start: Date, end: Date, records: PhRecord[]
     return toAverage(filtered);
 }
 
-function mapRecordToDayLabel(start: Date, end: Date, records: PhRecord[]): any[] {
+function mapRecordToDayLabel(start: Date, end: Date, records: SensorRecord[]): any[] {
     const filtered = filterByDate(start, end, records)
         .map((record) => {
             return {
@@ -91,7 +91,7 @@ function mapRecordToDayLabel(start: Date, end: Date, records: PhRecord[]): any[]
     return toAverage(filtered);
 }
 
-function mapRecordToMonthLabel(start: Date, end: Date, records: PhRecord[]): any[] {
+function mapRecordToMonthLabel(start: Date, end: Date, records: SensorRecord[]): any[] {
     const filtered = filterByDate(start, end, records)
         .map((record) => {
             return {
@@ -102,7 +102,7 @@ function mapRecordToMonthLabel(start: Date, end: Date, records: PhRecord[]): any
     return toAverage(filtered);
 }
 
-function mapRecordToYearLabel(start: Date, end: Date, records: PhRecord[]): any[] {
+function mapRecordToYearLabel(start: Date, end: Date, records: SensorRecord[]): any[] {
     const filtered = filterByDate(start, end, records)
         .map((record) => {
             return {
@@ -113,7 +113,7 @@ function mapRecordToYearLabel(start: Date, end: Date, records: PhRecord[]): any[
     return toAverage(filtered);
 }
 
-function filterByDate(start: Date, end: Date, records: PhRecord[]): PhRecord[] {
+function filterByDate(start: Date, end: Date, records: SensorRecord[]): SensorRecord[] {
     return records.filter((record) => {
         return record.date.getTime() >= start.getTime() && record.date.getTime() <= end.getTime();
     });
@@ -142,7 +142,7 @@ function toAverage(records: Records): any[] {
     return result;
 }
 
-export function mapToData(start: Date, end: Date, timeUnit: TimeUnit, record: PhRecord[]): any[] {
+export function mapToData(start: Date, end: Date, timeUnit: TimeUnit, record: SensorRecord[]): any[] {
     if (timeUnit === "hour") {
         return mapRecordToHourLabel(start, end, record)
     }

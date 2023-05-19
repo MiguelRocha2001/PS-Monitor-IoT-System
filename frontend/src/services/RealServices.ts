@@ -1,5 +1,5 @@
 import {doFetch, fetchRequest, ResponseType, toBody} from "./fetch";
-import {Device, PhData, TemperatureData, toDevice, toDevices, toPhData, toTemperatureData, User} from "./domain";
+import {Device, SensorData, toDevice, toDevices, toSensorData, User} from "./domain";
 import {Services} from "./services";
 import {Siren, SirenModule} from "./sirenModule";
 import {Logger} from "tslog";
@@ -237,32 +237,18 @@ export class RealServices implements Services {
         return toDevice(response.properties)
     }
 
-    async getPhData(deviceId: string): Promise<PhData> {
+    async getSensorData(deviceId: string, sensor: string): Promise<SensorData> {
         const getSensorDataLink = SirenModule.getGetSensorDataLink()
         if (!getSensorDataLink) throw new Error('Get sensor data link not found')
 
         const urlWithId = getSensorDataLink.href.replace(':device_id', deviceId)
-        const urlWithIdAndSensorName = urlWithId + '?sensor-name=ph'
+        const urlWithIdAndSensorName = urlWithId + '?sensor-name=' + sensor
         const request = {
             url: urlWithIdAndSensorName,
             method: 'GET'
         }
         const response = await doFetch(request, ResponseType.Siren)
-        return toPhData(response.properties)
-    }
-
-    async getTemperatureData(deviceId: string): Promise<TemperatureData> {
-        const getSensorDataLink = SirenModule.getGetSensorDataLink()
-        if (!getSensorDataLink) throw new Error('Get sensor data link not found')
-
-        const urlWithId = getSensorDataLink.href.replace(':device_id', deviceId)
-        const urlWithIdAndSensorName = urlWithId + '?sensor-name=temperature'
-        const request = {
-            url: urlWithIdAndSensorName,
-            method: 'GET'
-        }
-        const response = await doFetch(request, ResponseType.Siren)
-        return toTemperatureData(response.properties)
+        return toSensorData(response.properties)
     }
 
     async logout(): Promise<void> {
@@ -273,5 +259,9 @@ export class RealServices implements Services {
             method: logoutAction.method
         }
         await doFetch(request, ResponseType.Any)
+    }
+
+    availableSensors(deviceId: string): Promise<string[]> {
+        return Promise.resolve([]);
     }
 }

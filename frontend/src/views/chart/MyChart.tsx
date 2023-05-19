@@ -1,25 +1,42 @@
-import {JSXElementConstructor, ReactElement, ReactFragment, ReactPortal} from "react";
-import {PhRecord} from "../../services/domain";
+import {JSXElementConstructor, ReactElement, ReactFragment, ReactPortal, useEffect} from "react";
 import {mapToData, toLabels} from "./chartLabels";
+import {SensorData} from "../../services/domain";
 
 const {useChart} = require("./useChart");
-const {dataSet} = require("./data");
 const React = require("react");
 
 export type TimeUnit = "hour" | "day" | "month" | "year";
 
 export function MyChart(
-    {start, end, timeUnit, phRecords, tempRecords} :
+    {start, end, timeUnit, sensorsData} :
         {
             start: Date
             end: Date
             timeUnit: TimeUnit
-            phRecords: PhRecord[],
-            tempRecords: PhRecord[]
-        } //FIXME os dados nao estão bem representados
+            sensorsData: SensorData[],
+        }
 ) {
     const canvasRef = React.useRef(null);
-    const [metadata, setMetadata] = React.useState(dataSet);
+    const [metadata, setMetadata] = React.useState(undefined);
+
+    // metadata initialization
+    useEffect(() => {
+        // generate random rgb color
+        const randomColor = () => {
+            const r = Math.floor(Math.random() * 256)
+            const g = Math.floor(Math.random() * 256)
+            const b = Math.floor(Math.random() * 256)
+            return "rgba(" + r + "," + g + "," + b + ")"
+        }
+        setMetadata(sensorsData.map((sensorData: SensorData) => ({
+            [sensorData.type]: {
+                isVisible: true,
+                label: sensorData.type,
+                bgColor: "rgba(255, 99, 132, 0.2)",
+                borderColor: "rgba(255, 99, 132, 1)"
+            }
+        })));
+    }, [sensorsData]);
 
     const handleToggleBars = (property: string) => {
         setMetadata((prev: { [x: string]: { isVisible: any; }; }) => ({
@@ -34,32 +51,19 @@ export function MyChart(
     };
 
     const labels = toLabels(start, end, timeUnit);
-    console.log("labels", labels)
-
-    const phData = mapToData(start, end, timeUnit, phRecords);
-    console.log("phData", phData)
-
-    const tempData = mapToData(start, end, timeUnit, tempRecords);
-
-    const phDataset = metadata["PH"].isVisible ? {
-        label: metadata["PH"].label,
-        data: phData,
-        backgroundColor: metadata["PH"].bgColor,
-        borderColor: metadata["PH"].borderColor,
-        borderWidth: 1
-    } : {};
-
-    const tempDataset = metadata["Temperature"].isVisible ? {
-        label: metadata["Temperature"].label,
-        data: tempData,
-        backgroundColor: metadata["Temperature"].bgColor,
-        borderColor: metadata["Temperature"].borderColor,
-        borderWidth: 1
-    } : {};
+    const datasets = (metadata !== undefined) ? sensorsData.map((sensorData: SensorData, index: number) => {
+        const data = mapToData(start, end, timeUnit, sensorData.records);
+        return metadata[index].isVisible ? {
+            label: sensorData.type,
+            data: data,
+            backgroundColor: metadata[index].bgColor,
+            borderColor: metadata[index].borderColor,
+            borderWidth: 1
+        } : {};
+    }) : [];
 
     const dataset =
-        [phDataset, tempDataset]
-        .filter((d: any) => Object.keys(d).length > 0);
+        datasets.filter((d: any) => Object.keys(d).length > 0);
 
     if(dataset.length === 0) {
         console.log("No dataset")
@@ -108,11 +112,8 @@ export function MyChart(
 
     useChart(canvasRef, config);
 
-    return (
-        <div className="App">
-            <canvas ref={canvasRef} width="600" height="400"/>
-
-            {Object.keys(dataSet).map(key => (
+    const button = (metadata !== undefined) ?
+        Object.keys(metadata).map(key => (
                 <Button
                     key={key}
                     handleToggleBars={handleToggleBars}
@@ -123,7 +124,12 @@ export function MyChart(
                         isVisible: metadata[key].isVisible
                     }}
                 />
-            ))}
+            )) : <></>;
+    return (
+        <div className="App">
+            <canvas ref={canvasRef} width="600" height="400"/>
+
+            {button}
         </div>
     );
 }

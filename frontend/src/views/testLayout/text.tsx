@@ -1,51 +1,51 @@
 import React, {useEffect, useState} from "react";
 import {MyChart, TimeUnit} from "../chart/MyChart";
 import {services} from "../../services/services";
-import {PhRecord, TemperatureRecord} from "../../services/domain";
+import {SensorData} from "../../services/domain";
 import "./text.css";
 
 
-export function ChartWithPeriodSelection({deviceId,deviceEmail}: { deviceId: string, deviceEmail: string }) {
-    const [phRecords, setPhRecords] = React.useState<PhRecord[]>([]);
-    const [tempRecords, setTempRecords] = React.useState<TemperatureRecord[]>([]);
+export function ChartWithPeriodSelection({deviceId, deviceEmail}: { deviceId: string, deviceEmail: string }) {
+    const [availableSensors, setAvailableSensors] = useState<string[]>([]);
+    const [sensorsData, setSensorsData] = React.useState<SensorData[]>([]);
     const [start, setStart] = React.useState<Date>(new Date());
     const [end, setEnd] = React.useState<Date>(new Date());
     const [timeUnit, setTimeUnit] = React.useState<TimeUnit|undefined>(undefined);
     const [errorMessage, setErrorMessage] = useState<string>();
 
     useEffect(() => {
-        async function fetchPh() {
-            if (deviceId !== undefined) {
-                const ph = await services.getPhData(deviceId);
-                setPhRecords(ph.records);
-            }
+        async function fetchAvailableSensors() {
+            const availableSensors = await services.availableSensors(deviceId);
+            setAvailableSensors(availableSensors);
         }
-        async function fetchTemp() {
+        async function fetchSensorData(sensor: string) {
             if (deviceId !== undefined) {
-                const temp = await services.getTemperatureData(deviceId);
-                setTempRecords(temp.records);
+                const sensorData = await services.getSensorData(deviceId, sensor);
+                setSensorsData((prev) => [...prev, sensorData]);
             }
         }
         try {
-            fetchPh();
-            fetchTemp();
+            if (availableSensors.length === 0) {
+                fetchAvailableSensors();
+            } else {
+                availableSensors.forEach((sensor) => fetchSensorData(sensor));
+            }
         } catch (e: any) {
             setErrorMessage(e.message);
         }
-    }, [deviceId]);
+    }, [availableSensors]);
 
 
-    function exportToCsv(phRecords: PhRecord[], tempRecords: TemperatureRecord[]) {
+    function exportToCsv(sensorsData: SensorData[]) {
         let csvContent = "data:text/csv;charset=utf-8,";
 
         csvContent += "Date,PH,Temperature\n";
 
-        phRecords.forEach(function (phRecord) {
-            csvContent += phRecord.date + "," + phRecord.value + "\n";
-        });
-
-        tempRecords.forEach(function (tempRecord) {
-            csvContent += tempRecord.date + "," + tempRecord.value + "\n";
+        sensorsData.forEach(function (sensorRecord) {
+            sensorRecord.records.forEach(function (record) {
+                const row = record.date + "," + record.value + "\n";
+                csvContent += row;
+            });
         });
 
         const encodedUri = encodeURI(csvContent);
@@ -152,13 +152,13 @@ export function ChartWithPeriodSelection({deviceId,deviceEmail}: { deviceId: str
                     <option value="last10years">Last 10 years</option>
                 </select>
             </div>
-            {timeUnit && <MyChart start={start} end={end} timeUnit={timeUnit} phRecords={phRecords} tempRecords={tempRecords}/>}
+            {timeUnit && <MyChart start={start} end={end} timeUnit={timeUnit} sensorsData={sensorsData} />}
             <div className={"get-information"}>
                 <div>
                 <p><b>Device identifier: </b>{deviceId}</p>
                 <p><b>Associated email: </b>{deviceEmail}</p>
                 </div>
-                {timeUnit && <button id={"export-csv"} onClick={() => exportToCsv(phRecords, tempRecords)}>
+                {timeUnit && <button id={"export-csv"} onClick={() => exportToCsv(sensorsData)}>
                     Export CSV
                 </button>}
             </div>
