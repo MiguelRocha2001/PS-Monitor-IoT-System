@@ -21,24 +21,27 @@ export function MyChart(
 
     // metadata initialization
     useEffect(() => {
-        // generate random rgb color
-        const randomColor = () => {
+        const meta: any = {}
+        sensorsData.forEach((sensorData: SensorData) => {
             const r = Math.floor(Math.random() * 256)
             const g = Math.floor(Math.random() * 256)
             const b = Math.floor(Math.random() * 256)
-            return "rgba(" + r + "," + g + "," + b + ")"
-        }
-        setMetadata(sensorsData.map((sensorData: SensorData) => ({
-            [sensorData.type]: {
-                isVisible: true,
+            meta[sensorData.type] = {
+                isVisible: false,
                 label: sensorData.type,
-                bgColor: "rgba(255, 99, 132, 0.2)",
-                borderColor: "rgba(255, 99, 132, 1)"
+                // bgColor: "rgba(" + r + "," + g + "," + b + ",0.2)",
+                // borderColor: "rgba(" + r + "," + g + "," + b + ",1)",
             }
-        })));
+        })
+        setMetadata(meta);
     }, [sensorsData]);
 
     const handleToggleBars = (property: string) => {
+        const newMetadata = {...metadata};
+        Object.keys(newMetadata).map(key => ( // set all to false
+            newMetadata[key].isVisible = false
+        ));
+
         setMetadata((prev: { [x: string]: { isVisible: any; }; }) => ({
             ...prev,
 
@@ -51,16 +54,17 @@ export function MyChart(
     };
 
     const labels = toLabels(start, end, timeUnit);
-    const datasets = (metadata !== undefined) ? sensorsData.map((sensorData: SensorData, index: number) => {
-        const data = mapToData(start, end, timeUnit, sensorData.records);
-        return metadata[index].isVisible ? {
-            label: sensorData.type,
-            data: data,
-            backgroundColor: metadata[index].bgColor,
-            borderColor: metadata[index].borderColor,
-            borderWidth: 1
-        } : {};
-    }) : [];
+    const datasets = (metadata !== undefined) ?
+        sensorsData.map((sensorData: SensorData) => {
+            const data = mapToData(start, end, timeUnit, sensorData.records);
+            return metadata[sensorData.type].isVisible ? {
+                label: sensorData.type,
+                data: data,
+                backgroundColor: metadata[sensorData.type].bgColor,
+                borderColor: metadata[sensorData.type].borderColor,
+                borderWidth: 1
+            } : {};
+        }) : [];
 
     const dataset =
         datasets.filter((d: any) => Object.keys(d).length > 0);
@@ -69,15 +73,9 @@ export function MyChart(
         console.log("No dataset")
     }
 
-    // check if its temperature or ph dataset
-    if(dataset.filter((d: any) => d.label === "Temperature").length === 1) {
-        console.log("Temperature dataset")
-    }
-    if(dataset.filter((d: any) => d.label === "pH").length === 1) {
-        console.log("PH dataset")
-    }
 
-    const labelY = dataset.filter((d: any) => d.label === "Temperature").length === 1 ? "Temperature" : "pH"
+    const sensors = Object.keys(dataset)
+    const labelY = (sensors.length > 0) ? dataset[0].label : ""
     const labelX = "Time in " + timeUnit
 
     const options = {
@@ -112,7 +110,7 @@ export function MyChart(
 
     useChart(canvasRef, config);
 
-    const button = (metadata !== undefined) ?
+    const sensorOptionButtons = (metadata !== undefined) ?
         Object.keys(metadata).map(key => (
                 <Button
                     key={key}
@@ -128,8 +126,7 @@ export function MyChart(
     return (
         <div className="App">
             <canvas ref={canvasRef} width="600" height="400"/>
-
-            {button}
+            {sensorOptionButtons}
         </div>
     );
 }
