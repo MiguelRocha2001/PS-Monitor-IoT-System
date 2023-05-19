@@ -11,7 +11,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.springframework.stereotype.Repository
-import pt.isel.iot_data_server.domain.*
+import pt.isel.iot_data_server.domain.SensorRecord
 import pt.isel.iot_data_server.repository.CollectedDataRepository
 import java.time.Instant
 

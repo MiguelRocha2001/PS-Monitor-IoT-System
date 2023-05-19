@@ -1,6 +1,7 @@
 package pt.isel.iot_data_server.http.model.sensor_data
 
-import pt.isel.iot_data_server.domain.*
+import pt.isel.iot_data_server.domain.SensorErrorRecord
+import pt.isel.iot_data_server.domain.SensorRecord
 
 data class SensorNamesOutputModel(val sensorNames: List<String>) {
     companion object {

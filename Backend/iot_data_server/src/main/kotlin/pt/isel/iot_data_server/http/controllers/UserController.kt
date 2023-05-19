@@ -13,7 +13,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.oauth2.core.oidc.user.OidcUser
 import org.springframework.web.bind.annotation.*
 import pt.isel.iot_data_server.domain.User
-import pt.isel.iot_data_server.domain.UserInfo
 import pt.isel.iot_data_server.http.SirenMediaType
 import pt.isel.iot_data_server.http.infra.siren
 import pt.isel.iot_data_server.http.model.Problem
@@ -22,7 +21,6 @@ import pt.isel.iot_data_server.http.model.user.*
 import pt.isel.iot_data_server.service.Either
 import pt.isel.iot_data_server.service.user.Role
 import pt.isel.iot_data_server.service.user.UserService
-
 import java.util.*
 
 @Tag(name = "User", description = "User API")
@@ -164,24 +162,17 @@ class UserController(
         @AuthenticationPrincipal oidcUser: OidcUser?,
         response: HttpServletResponse
     ) {
-        val email = oidcUser?.userInfo?.email
-        val username = email?.substringBefore('@')
+        val email = oidcUser?.userInfo?.email ?: throw RuntimeException("Error getting user info")
 
-        if (email == null || username == null) {
-            throw RuntimeException("Error getting user info")
-        }
-
-        val password = "Static=password1" // TODO: change this
-
-        val user = service.getUserByEmailAddress(email)
+        val user = service.getUserByEmail(email)
         if (user == null) {
-            val userCreationResult = service.createUser(email, password, Role.USER)
+            val userCreationResult = service.createUser(email, null, Role.USER) // password is not needed
             if (userCreationResult is Either.Left) {
                 throw RuntimeException("Error creating user")
             }
         }
 
-        val res = service.createAndGetToken(username, password)
+        val res = service.createAndGetToken(email, null) // password is not needed
 
         // adds cookie to response
         if (res is Either.Right) {

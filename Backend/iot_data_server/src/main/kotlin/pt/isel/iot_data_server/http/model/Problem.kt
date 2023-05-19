@@ -80,7 +80,7 @@ data class Problem(
 
         val userNotFound = Problem(
             URI("https://github.com/isel-leic-daw/2022-daw-leic52d-2-22-daw-leic52d-g11/docs/problem/user-not-found"),
-            "Invalid user id",
+            "Invalid User",
             "User not found"
         )
 

@@ -14,6 +14,7 @@ sealed class CreateUserError: Error() {
 typealias UserCreationResult = Either<CreateUserError, Pair<String, String>>
 
 sealed class TokenCreationError: Error() {
-    object UserOrPasswordAreInvalid: TokenCreationError()
+    object UserNotFound: TokenCreationError()
+    object InvalidPassword: TokenCreationError()
 }
 typealias TokenCreationResult = Either<TokenCreationError, String>

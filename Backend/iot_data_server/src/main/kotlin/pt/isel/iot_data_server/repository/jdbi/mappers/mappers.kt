@@ -8,13 +8,12 @@ import pt.isel.iot_data_server.service.user.Role
 data class UserMapper(
     val _id: String,
     val email: String,
-    val password: String,
     val role: String
 )
 
 internal fun UserMapper.toUser() = User(
     id = _id,
-    userInfo = UserInfo(email, password, role.toRole())
+    userInfo = UserInfo(email, role.toRole())
 )
 
 private fun String.toRole() = when (this.uppercase()) {
@@ -31,3 +30,8 @@ data class DeviceMapper(
 
 fun DeviceMapper.toDevice() =
     Device(id, email)
+
+class PasswordAndSaltMapper(
+    val value: String,
+    val salt: String
+)

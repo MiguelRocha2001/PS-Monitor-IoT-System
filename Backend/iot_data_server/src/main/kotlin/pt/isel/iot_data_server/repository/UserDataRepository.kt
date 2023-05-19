@@ -10,12 +10,11 @@ interface UserDataRepository {
     fun createToken(userId: String, token: String)
     fun existsEmail(email: String): Boolean
     fun getUserByEmailOrNull(email: String): User?
-    fun saveSalt(userId: String, salt: String)
-    fun getSalt(userId: String): String
-    fun getUserByEmailAddressOrNull(email: String): User?
     fun deleteAllUsers()
     fun deleteAllTokens()
     fun deleteUser(userId: String)
     fun addVerificationCode(email: String, code: String)
     fun getVerificationCode(email: String): String?
+    fun storePasswordAndSalt(userId: String, value: String, salt: String)
+    fun getPasswordAndSalt(userId: String): Pair<String, String>
 }

@@ -2,7 +2,6 @@ package pt.isel.iot_data_server.http.hypermedia
 
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
-import pt.isel.iot_data_server.http.controllers.Rels
 import pt.isel.iot_data_server.http.controllers.Uris
 import pt.isel.iot_data_server.http.infra.SirenBuilderScope
 import java.net.URI

@@ -29,8 +29,8 @@ class SaltTests {
             service.createUser(newUser2)
 
 
-            val userStoredPassword = service.getUserByEmailAddress(newUser.email)?.userInfo?.hashedPassword
-            val user2StoredPassword = service.getUserByEmailAddress(newUser2.email)?.userInfo?.hashedPassword
+            val userStoredPassword = service.getUserByEmail(newUser.email)?.userInfo?.hashedPassword
+            val user2StoredPassword = service.getUserByEmail(newUser2.email)?.userInfo?.hashedPassword
 
             assertFalse("Password is not the same", userStoredPassword == user2StoredPassword)
         }
@@ -51,7 +51,7 @@ class SaltTests {
             service.createUser(newUser)
 
             //stored user password
-            val user = service.getUserByEmailAddress(newUser.email)?.userInfo
+            val user = service.getUserByEmail(newUser.email)?.userInfo
             if(user == null) throw Exception("User not found")
 
             //verify password
@@ -72,7 +72,7 @@ class SaltTests {
             service.createUser(newUser)
 
             //stored user password
-            val user = service.getUserByEmailAddress(newUser.email)?.userInfo
+            val user = service.getUserByEmail(newUser.email)?.userInfo
             if(user == null) throw Exception("User not found")
 
             val fakePass = "LKMSDOVCJ09Jouin0fake"

@@ -10,7 +10,15 @@ create table _user(
 create table token(
     user_id varchar primary key,
     token varchar,
-    iv varchar
+    iv varchar,
+    foreign key (user_id) references _user(_id)
+);
+
+create table password(
+    user_id varchar primary key,
+    value varchar,
+    salt varchar,
+    foreign key (user_id) references _user(_id)
 );
 
 create table device(
@@ -40,11 +48,6 @@ create table device_wake_up_log(
     reason varchar,
     primary key (device_id, timestamp),
     foreign key (device_id) references device(id)
-);
-
-create table salt(
-    salt varchar primary key,
-    user_id varchar
 );
 
 create table verification_code(

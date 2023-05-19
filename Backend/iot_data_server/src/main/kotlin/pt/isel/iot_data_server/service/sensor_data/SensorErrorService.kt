@@ -3,7 +3,9 @@ package pt.isel.iot_data_server.service.sensor_data
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import pt.isel.iot_data_server.domain.*
+import pt.isel.iot_data_server.domain.SensorErrorRecord
+import pt.isel.iot_data_server.domain.fromMqttMsgStringToDeviceId
+import pt.isel.iot_data_server.domain.fromMqttMsgStringToSensorErrorRecord
 import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.service.Either
 import pt.isel.iot_data_server.service.device.DeviceService

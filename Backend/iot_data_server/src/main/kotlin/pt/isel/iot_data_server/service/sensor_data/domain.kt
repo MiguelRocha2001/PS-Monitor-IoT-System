@@ -1,6 +1,7 @@
 package pt.isel.iot_data_server.service.sensor_data
 
-import pt.isel.iot_data_server.domain.*
+import pt.isel.iot_data_server.domain.SensorErrorRecord
+import pt.isel.iot_data_server.domain.SensorRecord
 import pt.isel.iot_data_server.service.Either
 
 sealed class SensorDataError: Error() {
