@@ -85,6 +85,7 @@ let ADD_AND_SEND_VERIFICATION_CODE: Action
 let VERIFY_CODE:Link
 let GET_DEVICES_FILTERED_BY_ID_LINK: Link
 let GET_DEVICES_FILTERED_BY_ID_COUNT_LINK: Link
+let AVAILABLE_DEVICE_SENSORS_LINK: Link
 
 
 
@@ -150,6 +151,10 @@ function getGetDevicesByIdFilteredLink(): Link {
 
 function getGetDevicesByIdFilteredCountLink(): Link {
     return GET_DEVICES_FILTERED_BY_ID_COUNT_LINK
+}
+
+function availableDeviceSensorsLink(): Link {
+    return AVAILABLE_DEVICE_SENSORS_LINK
 }
 
 
@@ -219,6 +224,10 @@ function extractGetDevicesByIDLink(links: Link[]) {
 
 function extractCountDevicesByIDLink(links: Link[]) {
     return GET_DEVICES_FILTERED_BY_ID_COUNT_LINK = extractLink(links, "filtered-devices-count")
+}
+
+function extractAvailableDeviceSensorsLink(links: Link[]) {
+    return AVAILABLE_DEVICE_SENSORS_LINK = extractLink(links, "available-device-sensors")
 }
 
 
@@ -295,5 +304,7 @@ export const SirenModule = {
     getGetDevicesByIdFilteredCountLink,
     extractCountDevicesByIDLink,
     extractGetDevicesByIDLink,
-    getGetDevicesByIdFilteredLink
+    getGetDevicesByIdFilteredLink,
+    availableDeviceSensorsLink,
+    extractAvailableDeviceSensorsLink
 }

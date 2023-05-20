@@ -83,7 +83,7 @@ class SensorDataService(
         }
     }
 
-    fun getAvailableSensors(): List<String> {
+    fun getAvailableSensors(deviceId: String): List<String> {
         return sensorDataRepo.getSensorNames()
     }
 

@@ -26,6 +26,7 @@ object Rels {
 
     // ------------------- Sensor Data -------------------
     val SENSOR_DATA = LinkRelation("sensor-data")
+    val AVAILABLE_DEVICE_SENSORS = LinkRelation("available-device-sensors")
 
     // ------------------- PH -------------------
     val PH_DATA = LinkRelation("ph-data")

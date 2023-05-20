@@ -41,6 +41,7 @@ class SirenInfoController {
                 // getPhLink(this) deprecated
                 // getTemperatureLink(this) deprecated
                 getSensorDataLink(this)
+                getAvailableDeviceSensorsLink(this)
             })
     }
 }

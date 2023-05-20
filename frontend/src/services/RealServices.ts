@@ -27,6 +27,7 @@ export class RealServices implements Services {
             SirenModule.extractGetVerifyCodeLink(response.links)
             SirenModule.extractGetDevicesByIDLink(response.links)
             SirenModule.extractCountDevicesByIDLink(response.links)
+            SirenModule.extractAvailableDeviceSensorsLink(response.links)
         }
 
         const request = {
@@ -261,7 +262,15 @@ export class RealServices implements Services {
         await doFetch(request, ResponseType.Any)
     }
 
-    availableSensors(deviceId: string): Promise<string[]> {
-        return Promise.resolve([]);
+    async availableSensors(deviceId: string): Promise<string[]> {
+        const availableDeviceSensorsLink = SirenModule.availableDeviceSensorsLink()
+        if (!availableDeviceSensorsLink) throw new Error('Available device sensors link not found')
+        const urlWithId = availableDeviceSensorsLink.href.replace(':device_id', deviceId)
+        const request = {
+            url: urlWithId,
+            method: 'GET'
+        }
+        const response = await doFetch(request, ResponseType.Siren)
+        return response.properties.types//.map((type: string) => type.replace('_', ' ')) // FIXME: not working
     }
 }

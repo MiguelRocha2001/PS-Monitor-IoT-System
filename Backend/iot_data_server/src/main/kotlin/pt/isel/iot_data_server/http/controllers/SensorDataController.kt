@@ -23,9 +23,11 @@ class SensorDataController(
     val sensorDataService: SensorDataService,
     val sensorErrorService: SensorErrorService
 ) {
-    @GetMapping(Uris.Devices.Sensor.NAMES)
-    fun getSensorsAvailable(): ResponseEntity<*> {
-        val result = sensorDataService.getAvailableSensors()
+    @GetMapping(Uris.Devices.Sensor.TYPES_1)
+    fun getSensorsAvailable(
+        @PathVariable device_id: String
+    ): ResponseEntity<*> {
+        val result = sensorDataService.getAvailableSensors(device_id)
         return ResponseEntity.status(200)
             .contentType(SirenMediaType)
             .header(

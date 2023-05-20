@@ -86,3 +86,9 @@ fun getFilteredDevicesByIdCountLink(sirenBuilderScope: SirenBuilderScope<*>) =
         href = URI(Uris.Devices.COUNT_FILTERED_2),
         rel = Rels.FILTERED_DEVICES_COUNT
     )
+
+fun getAvailableDeviceSensorsLink(sirenBuilderScope: SirenBuilderScope<*>) =
+    sirenBuilderScope.link(
+        href = URI(Uris.Devices.Sensor.TYPES_2),
+        rel = Rels.AVAILABLE_DEVICE_SENSORS
+    )

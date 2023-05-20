@@ -28,25 +28,30 @@ class SensorDataRepo(
 ) : CollectedDataRepository {
     private val bucketName = bucket.name
     val mutex = Mutex() // Use Mutex for synchronization
+    private val MEASUREMENT_PREFIX = "my_sensor" // Modify this line
 
     override fun saveSensorRecord(deviceId: String, sensorRecord: SensorRecord) = runBlocking {
         runBlocking {
             mutex.withLock {
-                val point = Point(sensorRecord.type)
+                val measurement = MEASUREMENT_PREFIX + sensorRecord.type  // Modify this line
+
+                val point = Point(measurement)
                     .addTag("device", deviceId)
                     .addField("value", sensorRecord.value)
                     .time(sensorRecord.instant, WritePrecision.NS)
+
                 client.getWriteKotlinApi().writePoint(point)
             }
         }
     }
 
     override fun getSensorRecords(deviceId: String, sensorName: String): List<SensorRecord> = runBlocking {
+        val measurement = MEASUREMENT_PREFIX + sensorName
         val query =
             """from(bucket: "$bucketName")
                 |> range(start: -7d)
                 |> filter(fn: (r) => r.device == "$deviceId")
-                |> filter(fn: (r) => r._measurement == "$sensorName")
+                |> filter(fn: (r) => r._measurement == "$measurement")
                  """
         // Result is returned as a stream
         val results = client.getQueryKotlinApi().query(query)
@@ -59,8 +64,23 @@ class SensorDataRepo(
     }
 
     override fun getSensorNames(): List<String> = runBlocking {
-        throw NotImplementedError("Not implemented yet")
+        val query =
+            """from(bucket: "$bucketName")
+            |> range(start: -7d)
+            |> filter(fn: (r) => r._measurement =~ /^$MEASUREMENT_PREFIX/)
+            |> distinct(column: "_measurement")
+             """
+        // Result is returned as a stream
+        val results = client.getQueryKotlinApi().query(query)
+
+        results.consumeAsFlow().map { result ->
+            result.measurement
+        }
+            .toList()
+            .filterNotNull()
+            .map { it.removePrefix(MEASUREMENT_PREFIX) }
     }
+
 }
 
 
