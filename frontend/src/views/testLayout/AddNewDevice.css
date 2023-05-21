@@ -49,3 +49,26 @@
 #wrong-email {
     border-color: red;
 }
+
+@media (max-width: 767px) {
+
+    .mt-4{
+        margin-top: 0 !important;
+    }
+
+    .card {
+        transform: scale(0.9);
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+    }
+
+    .card-subtitle {
+        font-size: 1rem;
+    }
+
+    .container{
+        padding: 0 !important;
+    }
+}

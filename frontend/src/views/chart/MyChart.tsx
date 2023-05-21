@@ -1,9 +1,11 @@
 import {JSXElementConstructor, ReactElement, ReactFragment, ReactPortal, useEffect} from "react";
 import {mapToData, toLabels} from "./chartLabels";
 import {SensorData} from "../../services/domain";
+import "./chart.css";
 
 const {useChart} = require("./useChart");
 const React = require("react");
+
 
 export type TimeUnit = "hour" | "day" | "month" | "year";
 
@@ -125,7 +127,7 @@ export function MyChart(
             )) : <></>;
     return (
         <div className="App">
-            <canvas ref={canvasRef} width="600" height="400"/>
+            <canvas className={"chart"} ref={canvasRef}/>
             {sensorOptionButtons}
         </div>
     );

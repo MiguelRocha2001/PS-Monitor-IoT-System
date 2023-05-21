@@ -48,3 +48,14 @@
   align-items: center;
   justify-content: center;
 }
+
+@media (min-width: 767px){
+
+  .navigate-device{
+    display:none;
+  }
+
+}
+.buttons-graph{
+  display:contents;
+}

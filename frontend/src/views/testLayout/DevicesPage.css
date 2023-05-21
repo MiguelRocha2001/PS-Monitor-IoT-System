@@ -132,25 +132,22 @@ body{
     background-color : #3e8e41;
 }
 
+@media (max-width: 767px) {
 
-@media only screen and (max-width: 600px) {
+    h3 {
+        font-size: 1.5rem;
+    }
+    .card{
+        transform: scale(0.88);
+        margin-top:0;
+    }
+}
+@media only screen and (max-width: 767px) {
     .card {
         max-width: 90%;
     }
-}
-
-@media only screen and (max-width: 450px) {
-    .card-header {
-        font-size: 1.2rem;
-    }
-
-    .list-item-info {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .list-item-info a {
-        margin-top: 0.5rem;
+    h3 {
+        font-size: 1rem !important;
     }
 }
 
@@ -229,3 +226,8 @@ body{
 .last-line{
     padding-bottom: 0;
 }
+
+#searchButton{
+    margin-bottom: 0;
+}
+

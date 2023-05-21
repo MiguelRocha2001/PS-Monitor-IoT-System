@@ -55,6 +55,7 @@
 html{
   scroll-behavior: smooth;
   scroll-padding-top: 75px;
+  transform: scale(0.5);
 }
 
 body{

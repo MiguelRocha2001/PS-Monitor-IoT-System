@@ -27,4 +27,4 @@ export interface Services {
     availableSensors(deviceId: string): Promise<string[]>
 }
 
-export const services: Services = new RealServices()
+export const services: Services = new FakeServices()

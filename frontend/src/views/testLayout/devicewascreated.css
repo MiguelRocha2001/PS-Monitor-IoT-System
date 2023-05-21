@@ -67,3 +67,8 @@
     font-size: 16px;
 }
 
+@media (max-width: 767px) {
+    .button-container {
+        margin: 0 0 0 1rem;
+    }
+}

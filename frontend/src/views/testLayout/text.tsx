@@ -3,7 +3,7 @@ import {MyChart, TimeUnit} from "../chart/MyChart";
 import {services} from "../../services/services";
 import {SensorData} from "../../services/domain";
 import "./text.css";
-
+import {Navigate, useLocation, useNavigate} from "react-router-dom"
 
 export function ChartWithPeriodSelection({deviceId, deviceEmail}: { deviceId: string, deviceEmail: string }) {
     const [availableSensors, setAvailableSensors] = useState<string[]>([]);
@@ -58,6 +58,8 @@ export function ChartWithPeriodSelection({deviceId, deviceEmail}: { deviceId: st
     }
 
     const handlePeriodSelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
+
+
         const value = event.target.value;
         switch (value) {
             case "today":
@@ -135,7 +137,7 @@ export function ChartWithPeriodSelection({deviceId, deviceEmail}: { deviceId: st
                 break;
         }
     };
-
+    const navigate = useNavigate()
     return (
         <div className={"graph-view"}>
             <div className={"chart-buttons"}>
@@ -158,9 +160,13 @@ export function ChartWithPeriodSelection({deviceId, deviceEmail}: { deviceId: st
                 <p><b>Device identifier: </b>{deviceId}</p>
                 <p><b>Associated email: </b>{deviceEmail}</p>
                 </div>
-                {timeUnit && <button id={"export-csv"} onClick={() => exportToCsv(sensorsData)}>
-                    Export CSV
-                </button>}
+                <div className={"buttons-graph"}>
+                    {timeUnit && <button id={"export-csv"} onClick={() => exportToCsv(sensorsData)}>
+                        Export CSV
+                    </button>
+                    }
+                    {timeUnit &&<button className={"navigate-device"} onClick={()=> navigate("/auth/login") }>Devices </button>}
+                </div>
             </div>
 
         </div>

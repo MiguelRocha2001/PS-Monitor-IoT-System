@@ -42,3 +42,22 @@
 .shake {
     animation: shake 0.4s;
 }
+
+@media (max-width: 767px) {
+    .code-input {
+        width: 200px;
+        height: 40px;
+    }
+
+    .code-input-square {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+        line-height: 20px;
+    }
+
+    h2{
+        font-size: 15px !important;
+    }
+
+}
