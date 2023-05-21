@@ -19,7 +19,9 @@ export function Devices() {
 
 
     const [page, setPage] = useState(1)
-    const [pageSize, setPageSize] = useState(5)
+    const [pageSize, setPageSize] = useState(() => {
+        return window.innerWidth <= 767 ? 3 : 5; // Adjust the breakpoint as needed
+    });
     const [filteredDevices, setFilteredDevices] = useState(0)
     const [totalDevices, setTotalDevices] = useState(0)
     const [loggedOut, setLoggedOut] = useState(false)
