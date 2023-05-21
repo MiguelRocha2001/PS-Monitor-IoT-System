@@ -26,6 +26,23 @@ export function Devices() {
     const setIsLoggedIn = useSetIsLoggedIn()
 
 
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth <= 767) { // Adjust the breakpoint as needed
+                setPageSize(3);
+            } else {
+                setPageSize(5);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        // Cleanup the event listener when the component unmounts
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
     /*
         useEffect(
             () => {
