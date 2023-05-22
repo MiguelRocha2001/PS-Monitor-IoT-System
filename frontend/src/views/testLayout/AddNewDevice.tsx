@@ -51,7 +51,7 @@ function NewIoTDeviceForm() {
         setIsEmailWrong(false)
         services.createDevice(email)
             .then(deviceId => setDeviceId(deviceId))
-            .catch(error => setError(error))
+            .catch(error => setError(error.message))
     }
 
     return(

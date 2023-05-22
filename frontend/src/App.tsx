@@ -77,10 +77,11 @@ export function App() {
     }
 }
 
+// TODO: some component should be able to set the error
 function Router() {
     return (
         <div>
-            <ErrorContainer> // TODO: some component should be able to set the error
+            <ErrorContainer>
                 <AuthnContainer>
                     <Container>
                         <Routes>

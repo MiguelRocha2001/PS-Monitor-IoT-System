@@ -71,10 +71,10 @@ export async function doFetch(
             if (respData instanceof ProblemJson) {
                 logger.error("Response Error: ", respData.title)
                 // return new BackendError(respData.title, resp.statusCode)
-                return Promise.reject(respData.title)
+                return Promise.reject(Error(respData.title))
             } else {
                 logger.error("Response Error: ", respData)
-                return Promise.reject(respData) // should be string
+                return Promise.reject(Error(respData)) // respData should be a string
             }
         }
 
@@ -120,7 +120,7 @@ export function toBody(obj: any): Body {
  * @Returns string if the response is not OK and the content-type is not application/problem+json.
  * @throws Error if there is no content.
  */
-export async function getResponseObject(response: Response): Promise<Siren | any | ProblemJson | undefined> {
+export async function getResponseObject(response: Response): Promise<Siren | any | ProblemJson | string> {
     if (response.status === 204) throw new Error('No Content')
     if (response.ok) {
         const isSiren = response.headers.get('content-type')?.includes('application/vnd.siren+json');

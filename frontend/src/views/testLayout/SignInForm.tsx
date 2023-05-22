@@ -34,7 +34,7 @@ function SignInForm() {
                 setIsLoggedIn(true)
                 setRedirect("/devices")
             }).catch(error => {
-                setErrorMessage(error)
+                setErrorMessage(error.message)
             })
     }
 

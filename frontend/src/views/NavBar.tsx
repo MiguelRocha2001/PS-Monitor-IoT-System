@@ -21,7 +21,7 @@ function NavBar() {
             (<Button variant="outline-primary" onClick={async () => {
                 await services.logout()
                     .then(() => setIsLoggedIn(false))
-                    .catch(error => setError(error))
+                    .catch(error => setError(error.message))
             }}>LOGOUT</Button> ) : <></>
 
     const devicesLink = isLoggedIn ? <MyLink text={'Devices'} to="/devices" center={true} margin={'1em'}/> : <></>
