@@ -2,6 +2,7 @@ package pt.isel.iot_data_server.repository.jdbi
 
 import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.kotlin.mapTo
+import org.springframework.stereotype.Repository
 import pt.isel.iot_data_server.domain.Device
 import pt.isel.iot_data_server.domain.DeviceWakeUpLog
 import pt.isel.iot_data_server.domain.SensorErrorRecord

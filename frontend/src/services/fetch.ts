@@ -74,7 +74,7 @@ export async function doFetch(
                 return Promise.reject(respData.title)
             } else {
                 logger.error("Response Error: ", respData)
-                return Promise.reject(respData)
+                return Promise.reject(respData) // should be string
             }
         }
 

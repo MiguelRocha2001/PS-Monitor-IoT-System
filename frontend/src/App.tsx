@@ -58,7 +58,7 @@ export function App() {
 
     useEffect(() => {
         // Ensures that the Services module extracts all available Siren information, from the backend.
-        services.getBackendSirenInfo().then(() => {
+        services.getBackendApiInfo().then(() => {
             logger.info("Siren information extracted from the backend.")
             dispatcher({type: "setSirenInfoFetched"})
         }).catch((error) => {
@@ -80,7 +80,7 @@ export function App() {
 function Router() {
     return (
         <div>
-            <ErrorContainer>
+            <ErrorContainer> // TODO: some component should be able to set the error
                 <AuthnContainer>
                     <Container>
                         <Routes>

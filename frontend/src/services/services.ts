@@ -8,7 +8,7 @@ import {RealServices} from "./RealServices";
  */
 export interface Services {
     googleLogin(): Promise<void>
-    getBackendSirenInfo(): Promise<void>
+    getBackendApiInfo(): Promise<void>
     createUser(password: string, email: string): Promise<void>
     authenticateUser(username: string, password: string): Promise<void>
     isLoggedIn(): Promise<boolean>
@@ -27,4 +27,4 @@ export interface Services {
     availableSensors(deviceId: string): Promise<string[]>
 }
 
-export const services: Services = new RealServices()
+export const services: Services = new FakeServices()

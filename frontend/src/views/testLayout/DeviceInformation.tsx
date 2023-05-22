@@ -20,7 +20,6 @@ export function DeviceInfo() {
                     .catch(error => setError(error))
             }
         }
-
         fetchDevice();
     }, [deviceId]);
     

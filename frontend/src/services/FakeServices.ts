@@ -32,7 +32,7 @@ export class FakeServices implements Services {
         this.devices.push(new Device(this.getNewDeviceId(), this.email))
     }
 
-    async getBackendSirenInfo() {
+    async getBackendApiInfo() {
         // Nothing to do
     }
 
