@@ -9,7 +9,7 @@ const logger = new Logger({name: "Real Services"});
 logger.settings.minLevel = 3 // LogLevel: INFO
 
 export class RealServices implements Services {
-    async getBackendSirenInfo() {
+    async getBackendApiInfo() {
         function extractSirenInfo(response: Siren) {
             SirenModule.extractGoogleLoginLink(response.links)
             SirenModule.extractCreateUserAction(response.actions)
