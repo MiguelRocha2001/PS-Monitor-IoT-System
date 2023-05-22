@@ -59,10 +59,8 @@ export function Devices() {
     useEffect(() => {
         async function fetchNumberOfDevices() {
             services.getDeviceCount()
-                .then((number) =>
-                    setTotalDevices(number)
-                )
-                .catch(error => setError(error))
+                .then((number) => setTotalDevices(number))
+                .catch(error => setError(error.message))
         }
         fetchNumberOfDevices()
     }, [])
@@ -70,10 +68,8 @@ export function Devices() {
     useEffect(() => { //TODO IF I FETCH DEVICE I STORE THEME SO WHEN I CLICK IN THE PREVIOUS BUTTON A NEW REQUEST IS NOT MADE
         async function fetchNumberOfDevices() {
             services.getDeviceCount()
-                .then((number)=>
-                    setFilteredDevices(number)
-                )
-                .catch(error => setError(error))
+                .then((number) => setFilteredDevices(number))
+                .catch(error => setError(error.message))
         }
         if(searchQuery === "") fetchNumberOfDevices()
 
@@ -82,10 +78,8 @@ export function Devices() {
     useEffect(() => {
         async function updateDevices() {
             services.getDevices(page, pageSize)
-                .then(devices => {
-                    setDevices(devices);
-                })
-                .catch(error => setError(error))
+                .then(devices => setDevices(devices))
+                .catch(error => setError(error.message))
         }
         updateDevices()
     }, [page, pageSize, searchQuery, totalDevices])
@@ -96,7 +90,7 @@ export function Devices() {
             .then(devices => {setDevices(devices)})
             .then(()=> services.getDeviceCountByName(searchQuery.toUpperCase()))
             .then((devicesSize)=>setFilteredDevices(devicesSize))
-            .catch(error => setError(error))
+            .catch(error => setError(error.message))
     }
 
     const navigate = useNavigate();

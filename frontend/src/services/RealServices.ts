@@ -9,7 +9,7 @@ const logger = new Logger({name: "Real Services"});
 logger.settings.minLevel = 3 // LogLevel: INFO
 
 export class RealServices implements Services {
-    async getBackendSirenInfo() {
+    async getBackendApiInfo() {
         function extractSirenInfo(response: Siren) {
             SirenModule.extractGoogleLoginLink(response.links)
             SirenModule.extractCreateUserAction(response.actions)
@@ -39,6 +39,8 @@ export class RealServices implements Services {
     }
 
     async googleLogin(): Promise<void> {
+        window.location.href = "http://localhost:9000/oidc-principal"
+        /*
         const googleLoginLink = SirenModule.getGoogleLoginLink()
         if (!googleLoginLink) {
             const msg = 'Google login link not found'
@@ -54,8 +56,8 @@ export class RealServices implements Services {
         } catch (e) {
             logger.error(`Failed to login with google: ${e}`)
         }
+         */
     }
-
 
      generateRandomString(length: number): string {
         const allowedChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'; // Define the characters allowed in the random string

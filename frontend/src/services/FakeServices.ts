@@ -32,13 +32,12 @@ export class FakeServices implements Services {
         this.devices.push(new Device(this.getNewDeviceId(), this.email))
     }
 
-    async getBackendSirenInfo() {
+    async getBackendApiInfo() {
         // Nothing to do
     }
 
     async googleLogin(): Promise<void> {
-        console.log('FakeServices.googleLogin')
-        throw new Error('Dont call this method in fake mode')
+        this.user = this.users[0]
     }
 
     checkIfUserExists(email: string): Promise<boolean> {

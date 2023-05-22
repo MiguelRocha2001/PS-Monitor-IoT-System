@@ -1,7 +1,9 @@
 import {useLocation, useNavigate} from "react-router-dom";
-import React, {useEffect, useMemo, useRef} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faGoogle} from "@fortawesome/free-brands-svg-icons";
+import {services} from "../../services/services";
+import {useSetIsLoggedIn} from "../auth/Authn";
 
 
 interface GoogleLoginButtonProps {
@@ -10,6 +12,8 @@ interface GoogleLoginButtonProps {
 
 export const GoogleLoginButton = ({text}: GoogleLoginButtonProps) => {
     const {search} = useLocation();
+    const setIsLoggedIn = useSetIsLoggedIn()
+    const [redirect, setRedirect] = useState<string | undefined>(undefined)
     const navigate = useNavigate();
     // const {progress, signInError, isAuthenticated, handleSignIn, signIn} = useAuth();
     const signInRef = useRef(false);
@@ -41,7 +45,11 @@ export const GoogleLoginButton = ({text}: GoogleLoginButtonProps) => {
      */
 
     const handleLoginClick = () => {
-        window.location.href = "http://localhost:9000/oidc-principal"
+        services.googleLogin().then((res) => {
+            console.log('google login success')
+            setIsLoggedIn(true)
+            setRedirect("/devices")
+        })
     }
 
     function handleLoginClick2 (){

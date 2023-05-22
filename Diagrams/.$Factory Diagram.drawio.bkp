@@ -1,6 +1,6 @@
-<mxfile host="Electron" modified="2023-05-11T11:12:07.800Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.2.8 Chrome/112.0.5615.165 Electron/24.2.0 Safari/537.36" etag="Qo6P6de9Y4C9a_Lm3sYo" version="21.2.8" type="device">
+<mxfile host="Electron" modified="2023-05-21T13:49:13.855Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.2.8 Chrome/112.0.5615.165 Electron/24.2.0 Safari/537.36" etag="EzdRkckkdJ7Ba6fKIR2U" version="21.2.8" type="device">
   <diagram name="Página-1" id="hPsSL6qZW7xpYR3QuTbb">
-    <mxGraphModel dx="2327" dy="887" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1702" dy="518" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -17,7 +17,7 @@
             <mxPoint x="-70" y="190" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="d_SXLutLmjOx1EQiBmjM-48" value="ESP TOUCH PHONE" style="whiteSpace=wrap;html=1;aspect=fixed;fontStyle=0;fontSize=15;" parent="1" vertex="1">
+        <mxCell id="d_SXLutLmjOx1EQiBmjM-48" value="MCU&lt;br&gt;CONFIG&lt;br&gt;APP" style="whiteSpace=wrap;html=1;aspect=fixed;fontStyle=0;fontSize=15;" parent="1" vertex="1">
           <mxGeometry x="-40" y="190" width="80" height="80" as="geometry" />
         </mxCell>
         <mxCell id="d_SXLutLmjOx1EQiBmjM-50" value="ACCESS POINT" style="whiteSpace=wrap;html=1;aspect=fixed;fontStyle=0;fontSize=15;" parent="1" vertex="1">
@@ -26,13 +26,13 @@
         <mxCell id="dxivSuH3IM0CT77Aezv6-2" value="FACTORY" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=0;fontSize=22;" parent="1" vertex="1">
           <mxGeometry x="-90" y="90" width="130" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="UxGGxqC0vyLlW2N5m067-21" value="MCU" style="whiteSpace=wrap;html=1;aspect=fixed;fontSize=15;fontStyle=0" vertex="1" parent="1">
+        <mxCell id="UxGGxqC0vyLlW2N5m067-21" value="MCU" style="whiteSpace=wrap;html=1;aspect=fixed;fontSize=15;fontStyle=0" parent="1" vertex="1">
           <mxGeometry x="100" y="190" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="UxGGxqC0vyLlW2N5m067-22" value="SENSORS" style="whiteSpace=wrap;html=1;aspect=fixed;fontSize=15;fontStyle=0" vertex="1" parent="1">
+        <mxCell id="UxGGxqC0vyLlW2N5m067-22" value="SENSORS" style="whiteSpace=wrap;html=1;aspect=fixed;fontSize=15;fontStyle=0" parent="1" vertex="1">
           <mxGeometry x="100" y="330" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="UxGGxqC0vyLlW2N5m067-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontStyle=0" edge="1" parent="1" source="UxGGxqC0vyLlW2N5m067-22" target="UxGGxqC0vyLlW2N5m067-21">
+        <mxCell id="UxGGxqC0vyLlW2N5m067-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontStyle=0" parent="1" source="UxGGxqC0vyLlW2N5m067-22" target="UxGGxqC0vyLlW2N5m067-21" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="190" y="240" as="sourcePoint" />
             <mxPoint x="250" y="240" as="targetPoint" />

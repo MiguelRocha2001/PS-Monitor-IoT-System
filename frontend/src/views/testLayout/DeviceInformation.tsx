@@ -17,10 +17,9 @@ export function DeviceInfo() {
             if (deviceId) { // TODO: SHOULDN'T BE NEEDED !!! passar email e id como props
                 services.getDevice(deviceId)
                     .then(device => setDevice(device))
-                    .catch(error => setError(error))
+                    .catch(error => setError(error.message))
             }
         }
-
         fetchDevice();
     }, [deviceId]);
     

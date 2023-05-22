@@ -15,7 +15,6 @@ import pt.isel.iot_data_server.service.email.EmailManager
 class SensorDataService(
     private val emailSenderService: EmailManager,
     private val sensorDataRepo: SensorDataRepo,
-    private val transactionManager: TransactionManager,
     private val deviceService: DeviceService,
     private val sensorInfo: SensorInfo,
     client: MqttClient
@@ -75,11 +74,9 @@ class SensorDataService(
     }
 
     private fun alertIfDangerous(device: Device, sensorRecord: SensorRecord) {
-        transactionManager.run {
-            val threshold = sensorInfo.getSensorThreshold(sensorRecord.type)
-            if (threshold != null && sensorRecord.value > threshold) {
-                sendEmailAlert(sensorRecord, device, threshold)
-            }
+        val threshold = sensorInfo.getSensorThreshold(sensorRecord.type)
+        if (threshold != null && sensorRecord.value > threshold) {
+            sendEmailAlert(sensorRecord, device, threshold)
         }
     }
 
