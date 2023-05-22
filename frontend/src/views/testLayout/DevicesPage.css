@@ -231,3 +231,7 @@ body{
     margin-bottom: 0;
 }
 
+.devices-sensor{
+    transform: scale(0.95);
+}
+

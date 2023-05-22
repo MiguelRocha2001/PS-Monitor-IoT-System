@@ -6,7 +6,7 @@ class MQTTHandlerTests {
     @Test
     fun `From json to PhRecord`() {
         val json = "{\"value\": 7.0, \"timestamp\": 1622550000, \"device_id\": \"device1\"}"
-        val phRecord = fromMqttMsgStringToPhRecord(json)
+        val phRecord = fromMqttMsgStringToSensorRecord(json)
         val deviceId = fromMqttMsgStringToDeviceId(json)
 
         assert(phRecord.value == 7.0)

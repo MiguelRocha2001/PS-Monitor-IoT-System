@@ -110,11 +110,13 @@ export function Devices() {
     }
 
     return (
-        <ErrorController>
-            <LogoutButton handleButtonPressed={handleButtonPressed}/>
-            <DeviceList devices={devices} searchQuery={searchQuery} setSearchQuery={setSearchQuery} handleButtonPress={handleButtonPress} totalDevices={totalDevices}/>
-            <Pagination currentPage={page} totalPages={Math.ceil(filteredDevices/pageSize)} onPageChange={(selectedPage: number) => setPage(selectedPage)} />
-        </ErrorController>
+        <div className={"devices-sensor"}>
+            <ErrorController>
+                <LogoutButton handleButtonPressed={handleButtonPressed}/>
+                <DeviceList devices={devices} searchQuery={searchQuery} setSearchQuery={setSearchQuery} handleButtonPress={handleButtonPress} totalDevices={totalDevices}/>
+                <Pagination currentPage={page} totalPages={Math.ceil(filteredDevices/pageSize)} onPageChange={(selectedPage: number) => setPage(selectedPage)} />
+            </ErrorController>
+        </div>
     )
 }
 
