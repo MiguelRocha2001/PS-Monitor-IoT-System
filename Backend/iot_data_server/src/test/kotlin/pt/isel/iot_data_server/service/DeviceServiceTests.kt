@@ -11,38 +11,39 @@ import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 @SpringBootTest
 class DeviceServiceTests {
 
-	@BeforeEach
-	fun `remove all devices`() {
-		deleteAllDeviceRecords()
-	}
-	@Test
-	fun `generate device ids`() {
-		testWithTransactionManagerAndRollback { transactionManager ->
-			val (deviceService, _) = getNewDeviceAndUserService(transactionManager)
-			repeat(1000) { deviceService.generateDeviceId() }
-		}
-	}
+    @BeforeEach
+    fun `remove all devices`() {
+        deleteAllDeviceRecords()
+    }
 
-	@Test
-	fun `create a device correctly`() {
-		testWithTransactionManagerAndRollback {
-			val (deviceService, userService) = getNewDeviceAndUserService(it)
-			//service.removeAllDevices()// just in case there are any devices in the database
+    @Test
+    fun `generate device ids`() {
+        testWithTransactionManagerAndRollback { transactionManager ->
+            val (deviceService, _) = getNewDeviceAndUserService(transactionManager)
+            repeat(1000) { deviceService.generateDeviceId() }
+        }
+    }
 
-			val userID = createRandomUser(userService)
-			var devicesResult = deviceService.getUserDevices(userID)
-			assertTrue(devicesResult is Either.Right && devicesResult.value.isEmpty())
+    @Test
+    fun `create a device correctly`() {
+        testWithTransactionManagerAndRollback {
+            val (deviceService, userService) = getNewDeviceAndUserService(it)
+            //service.removeAllDevices()// just in case there are any devices in the database
 
-			val ownerEmail = generateRandomEmail()
-			val result = deviceService.addDevice(userID, ownerEmail)
-			assertTrue(result is Either.Right)
+            val userID = createRandomUser(userService)
+            var devicesResult = deviceService.getUserDevices(userID)
+            assertTrue(devicesResult is Either.Right && devicesResult.value.isEmpty())
 
-			devicesResult = deviceService.getUserDevices(userID)
-			assertTrue(devicesResult is Either.Right && devicesResult.value.size == 1)
-			devicesResult as Either.Right
-			assertTrue(devicesResult.value[0].ownerEmail == ownerEmail)
-		}
-	}
+            val ownerEmail = generateRandomEmail()
+            val result = deviceService.addDevice(userID, ownerEmail)
+            assertTrue(result is Either.Right)
+
+            devicesResult = deviceService.getUserDevices(userID)
+            assertTrue(devicesResult is Either.Right && devicesResult.value.size == 1)
+            devicesResult as Either.Right
+            assertTrue(devicesResult.value[0].ownerEmail == ownerEmail)
+        }
+    }
 
 	@Test
 	fun `create invalid device`(){

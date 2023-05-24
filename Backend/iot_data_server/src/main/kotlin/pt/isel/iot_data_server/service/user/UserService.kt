@@ -25,8 +25,8 @@ class UserService(
             // generate random int
             val userId = UUID.randomUUID().toString()
 
-            if (it.userRepo.existsEmail(email))
-                return@run Either.Left(CreateUserError.UserAlreadyExists)
+            if(!isValidEmail(email))
+                return@run Either.Left(CreateUserError.InvalidEmail)
 
             if (it.userRepo.existsEmail(email))
                 return@run Either.Left(CreateUserError.EmailAlreadyExists)
@@ -45,6 +45,11 @@ class UserService(
             tokenCreationResult as Either.Right
             return@run Either.Right(userId to tokenCreationResult.value)
         }
+    }
+
+    private fun isValidEmail(email: String): Boolean {
+        val emailRegexPattern = "^(.+)@(\\S+)$"
+        return emailRegexPattern.toRegex().matches(email)
     }
 
     fun getAllUsers(): List<User> {

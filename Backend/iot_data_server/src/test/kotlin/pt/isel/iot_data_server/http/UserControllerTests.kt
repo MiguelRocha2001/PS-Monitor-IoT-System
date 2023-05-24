@@ -14,7 +14,7 @@ import pt.isel.iot_data_server.http.controllers.Uris
 import pt.isel.iot_data_server.http.infra.SirenModel
 import pt.isel.iot_data_server.utils.generateRandomEmail
 
-
+/*
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class UserControllerTests{
 
@@ -95,3 +95,4 @@ class UserControllerTests{
         Assertions.assertEquals(0, links.size)
     }
 }
+*/

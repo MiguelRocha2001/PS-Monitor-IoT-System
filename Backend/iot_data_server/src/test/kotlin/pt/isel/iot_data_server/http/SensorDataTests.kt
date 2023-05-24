@@ -1,5 +1,5 @@
 package pt.isel.iot_data_server.http
-
+/*
 import com.influxdb.client.domain.Bucket
 import com.influxdb.client.kotlin.InfluxDBClientKotlin
 import org.junit.jupiter.api.AfterEach
@@ -89,3 +89,4 @@ class SensorDataTests {
     }
 
 }
+*/

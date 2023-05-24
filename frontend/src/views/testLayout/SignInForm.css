@@ -112,4 +112,43 @@
 .bad-input{
     border-color: red !important;
 }
+.form-separator {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+}
 
+.separator-line {
+    flex-grow: 1;
+    border: none;
+    border-top: 2px solid #ccc; /* Adjust the thickness as needed */
+}
+
+.separator-text {
+    padding: 0 10px;
+    color: #999;
+    font-weight: bold;
+    text-transform: uppercase;
+    position: relative;
+    font-size: 12px; /* Adjust the font size as needed */
+}
+
+.separator-text:before,
+.separator-text:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 50%;
+    height: 2px; /* Adjust the thickness as needed */
+    background-color: #ccc;
+}
+
+.separator-text:before {
+    right: 100%;
+    margin-right: 10px; /* Adjust the spacing as needed */
+}
+
+.separator-text:after {
+    left: 100%;
+    margin-left: 10px; /* Adjust the spacing as needed */
+}

@@ -28,12 +28,12 @@ class SensorDataRepo(
 ) : CollectedDataRepository {
     private val bucketName = bucket.name
     val mutex = Mutex() // Use Mutex for synchronization
-    private val MEASUREMENT_PREFIX = "my_sensor" // Modify this line
+    private val MEASUREMENT_PREFIX = "my_sensor " // Modify this line
 
     override fun saveSensorRecord(deviceId: String, sensorRecord: SensorRecord) = runBlocking {
         runBlocking {
             mutex.withLock {
-                val measurement = MEASUREMENT_PREFIX + sensorRecord.type  // Modify this line
+                val measurement = MEASUREMENT_PREFIX + sensorRecord.type  //TODO: Modify this line
 
                 val point = Point(measurement)
                     .addTag("device", deviceId)

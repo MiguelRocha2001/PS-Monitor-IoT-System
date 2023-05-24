@@ -9,6 +9,7 @@ sealed class CreateUserError: Error() {
     object InsecurePassword: CreateUserError()
     object InvalidUsername: CreateUserError()
     object EmailAlreadyExists: CreateUserError()
+    object InvalidEmail: CreateUserError()
 }
 /** returns the newly created User userId, and token for authentication */
 typealias UserCreationResult = Either<CreateUserError, Pair<String, String>>

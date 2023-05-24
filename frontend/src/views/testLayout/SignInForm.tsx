@@ -49,6 +49,10 @@ function SignInForm() {
                 <input className={isBadInput ? "bad-input" : ""} id={"password"} type="password" value={password} onChange={(e) => {setPassword(e.target.value)}} />
                 <p id="error-message">{errorMessage}</p>
                 <button type="submit" >Sign In </button>
+                <div className="form-separator">
+                    <hr className="separator-line"/>
+                        <span className="separator-text">or</span>
+                </div>
                 <GoogleLoginButton text = "Sign in" />
             </form>
             <p>Don't have an account? <Link to="/auth/register">Sign up here</Link>.</p>

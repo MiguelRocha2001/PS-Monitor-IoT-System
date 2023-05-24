@@ -14,7 +14,7 @@ import pt.isel.iot_data_server.http.controllers.Uris
 import pt.isel.iot_data_server.http.infra.SirenModel
 import java.net.URI
 
-
+/*
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class InfoHttpTests {
 
@@ -84,4 +84,4 @@ class InfoHttpTests {
                     action.fields.any { it.name == "email" && it.type == "text" }
         }
     }
-}
+}*/

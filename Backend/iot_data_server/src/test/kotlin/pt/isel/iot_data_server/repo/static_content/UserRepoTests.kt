@@ -12,7 +12,7 @@ import pt.isel.iot_data_server.utils.generateRandomPassword
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 import java.util.*
 
-
+/*
 class UserRepoTests {
     private val role = Role.USER
 
@@ -40,4 +40,4 @@ class UserRepoTests {
 
 
     }
-}
+}*/

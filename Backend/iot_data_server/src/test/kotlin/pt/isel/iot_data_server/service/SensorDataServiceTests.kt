@@ -6,57 +6,75 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import pt.isel.iot_data_server.configuration.TSDBBuilder
-import pt.isel.iot_data_server.domain.PhRecord
-import pt.isel.iot_data_server.domain.TemperatureRecord
+import pt.isel.iot_data_server.domain.SensorInfo
+import pt.isel.iot_data_server.domain.SensorRecord
 import pt.isel.iot_data_server.repo.time_series.deleteAllPhMeasurements
+import pt.isel.iot_data_server.repo.time_series.deleteAllSensorMeasurements
 import pt.isel.iot_data_server.repo.time_series.deleteAllTemperatureMeasurements
 import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.repository.tsdb.SensorDataRepo
 import pt.isel.iot_data_server.service.email.EmailManager
-import pt.isel.iot_data_server.service.sensor_data.PhDataService
-import pt.isel.iot_data_server.service.sensor_data.TemperatureDataService
+import pt.isel.iot_data_server.service.sensor_data.SensorDataService
 import pt.isel.iot_data_server.utils.*
 
-
+private const val BUCKET_FOR_TESTS = "test" //Its is mandatory to have a bucket named "test" registered in InfluxDB
 class SensorDataServiceTest {
+
     private lateinit var mqttClient: MqttClient
-    private val tsdbBuilder: TSDBBuilder = TSDBBuilder("test")
+    private val tsdbBuilder: TSDBBuilder = TSDBBuilder(BUCKET_FOR_TESTS)
     private val sensorDataRepo: SensorDataRepo = SensorDataRepo(
         tsdbBuilder.getClient(),
         tsdbBuilder.getBucket()
     )
 
+    class MySensorInfo : SensorInfo {
+        override fun getSensorThreshold(sensorName: String): Double? {
+            // Implement your logic here to retrieve the sensor threshold based on the sensor name
+            // Return the threshold value as a Double or null if it is not found
+            return when (sensorName) {
+                "temperature" -> 25.0
+                "ph initial" -> 6.0
+                "ph final" -> 6.0
+                else -> null
+            }
+        }
+    }
+
     @BeforeEach
     fun setup() {
         // Mock Mqtt3Client instance
         mqttClient = Mockito.mock(MqttClient::class.java)
-        deleteAllPhMeasurements(tsdbBuilder)
-        deleteAllTemperatureMeasurements(tsdbBuilder)
+        deleteAllSensorMeasurements(tsdbBuilder, "initial Ph")
+
+        //  deleteAllTemperatureMeasurements(tsdbBuilder)
     }
 
     @Test
-    fun testSavePhRecordWithValidPhValue() {
+    fun testSaveASensorNamedPhRecordWithValidPhValue() {
         testWithTransactionManagerAndRollback { tra: TransactionManager ->
-            val emailSenderService = EmailManager()
 
+            val emailSenderService = EmailManager()
             val (deviceService, userService) = getNewDeviceAndUserService(tra)
             val userId = createRandomUser(userService)
 
+            val sensorInfo = MySensorInfo()
             // Create service instance
-            val sensorDataService = PhDataService(emailSenderService, sensorDataRepo, deviceService, mqttClient)
+            val sensorDataService =
+                SensorDataService(emailSenderService, sensorDataRepo, deviceService, sensorInfo, mqttClient)
 
             // Invoke savePhRecord with valid pH value
             val email = generateRandomEmail()
             deviceService.addDevice(userId, email)
             val deviceId = deviceService.getDevicesByOwnerEmail(email).first().deviceId
-            val phRecord = PhRecord(generateRandomPh(), getRandomInstantWithinLastWeek())
-            val phRecord2 = PhRecord(generateRandomPh(), getRandomInstantWithinLastWeek())
-            val phRecord3 = PhRecord(generateRandomPh(), getRandomInstantWithinLastWeek())
-            sensorDataService.savePhRecord(deviceId, phRecord)
-            sensorDataService.savePhRecord(deviceId, phRecord2)
-            sensorDataService.savePhRecord(deviceId, phRecord3)
+            val phType = "ph initial"
+            val phRecord = SensorRecord(phType, generateRandomPh(), getRandomInstantWithinLastWeek())
+            val phRecord2 = SensorRecord(phType, generateRandomPh(), getRandomInstantWithinLastWeek())
+            val phRecord3 = SensorRecord(phType, generateRandomPh(), getRandomInstantWithinLastWeek())
+            sensorDataService.saveSensorRecord(deviceId, phRecord)
+            sensorDataService.saveSensorRecord(deviceId, phRecord2)
+            sensorDataService.saveSensorRecord(deviceId, phRecord3)
 
-            val result = sensorDataService.getPhRecords(deviceId)
+            val result = sensorDataService.getSensorRecords(deviceId, phType)
             assert(result is Either.Right)
             val phRecords = (result as Either.Right).value
             assert(phRecords.size == 3)
@@ -66,8 +84,9 @@ class SensorDataServiceTest {
         }
     }
 
+
     @Test
-    fun testSavePhRecordWithInvalidPhValue() {
+    fun testSaveASensorNamedPhRecordWithInvalidDeviceId() {
         testWithTransactionManagerAndRollback { tra: TransactionManager ->
             val emailSenderService = EmailManager()
 
@@ -75,47 +94,20 @@ class SensorDataServiceTest {
             val userId = createRandomUser(userService)
 
             // Create service instance
-            val sensorDataService = PhDataService(emailSenderService, sensorDataRepo, deviceService, mqttClient)
-
-            // Invoke savePhRecord with invalid pH value
-            val email = generateRandomEmail()
-            deviceService.addDevice(userId, email)
-            val deviceId = deviceService.getDevicesByOwnerEmail(email).first().deviceId
-            val phRecord = PhRecord(-100.0, getRandomInstantWithinLastWeek())
-
-            try {
-                // Code that may throw an exception
-                sensorDataService.savePhRecord(deviceId, phRecord)
-            } catch (e: IllegalArgumentException) {
-                // Access the exception message
-                val errorMessage = e.message
-
-                // Assert that the exception message is as expected
-                assertEquals("Invalid pH value", errorMessage)
-            }
-        }
-    }
-
-    @Test
-    fun testSavePhRecordWithInvalidDeviceId() {
-        testWithTransactionManagerAndRollback { tra: TransactionManager ->
-            val emailSenderService = EmailManager()
-
-            val (deviceService, userService) = getNewDeviceAndUserService(tra)
-            val userId = createRandomUser(userService)
-
+            val sensorInfo = MySensorInfo()
             // Create service instance
-            val sensorDataService = PhDataService(emailSenderService, sensorDataRepo, deviceService, mqttClient)
+            val sensorDataService =
+                SensorDataService(emailSenderService, sensorDataRepo, deviceService, sensorInfo, mqttClient)
 
             // Invoke savePhRecord with invalid pH value
             val email = generateRandomEmail()
             deviceService.addDevice(userId, email)
             val deviceId = "invalid"
-            val phRecord = PhRecord(generateRandomPh(), getRandomInstantWithinLastWeek())
+            val phRecord = SensorRecord("ph initial", generateRandomPh(), getRandomInstantWithinLastWeek())
 
             try {
                 // Code that may throw an exception
-                sensorDataService.savePhRecord(deviceId, phRecord)
+                sensorDataService.saveSensorRecord(deviceId, phRecord)
             } catch (e: IllegalArgumentException) {
                 // Access the exception message
                 val errorMessage = e.message
@@ -126,92 +118,10 @@ class SensorDataServiceTest {
         }
     }
 
-    @Test
-    fun testGetTemperatureRecordWithInvalidDeviceId() {
-        testWithTransactionManagerAndRollback { tra: TransactionManager ->
-            val emailSenderService = EmailManager()
-
-            val (deviceService, userService) = getNewDeviceAndUserService(tra)
-            val userId = createRandomUser(userService)
-
-            // Create service instance
-            val sensorDataService = TemperatureDataService(emailSenderService, sensorDataRepo, deviceService, mqttClient)
-
-            // Invoke savePhRecord with invalid pH value
-            val email = generateRandomEmail()
-            deviceService.addDevice(userId, email)
-            val deviceId = "invalid"
-
-            try {
-                // Code that may throw an exception
-                sensorDataService.getTemperatureRecords(deviceId)
-            } catch (e: IllegalArgumentException) {
-                // Access the exception message
-                val errorMessage = e.message
-
-                // Assert that the exception message is as expected
-                assertEquals("Invalid device id", errorMessage)
-            }
-        }
-    }
-
-    @Test
-    fun testSaveValidTemperatureRecord() {
-        testWithTransactionManagerAndRollback { tra: TransactionManager ->
-            val emailSenderService = EmailManager()
-
-            val (deviceService, userService) = getNewDeviceAndUserService(tra)
-            val userId = createRandomUser(userService)
-
-            val sensorDataService = TemperatureDataService(emailSenderService, sensorDataRepo, deviceService, mqttClient)
-
-            val email = generateRandomEmail()
-            deviceService.addDevice(userId, email)
-            val deviceId = deviceService.getDevicesByOwnerEmail(email).first().deviceId
-            val temperatureRecord = TemperatureRecord(20.0, getRandomInstantWithinLastWeek())
-            val temperatureRecord2 = TemperatureRecord(20.0, getRandomInstantWithinLastWeek())
-            val temperatureRecord3 = TemperatureRecord(20.0, getRandomInstantWithinLastWeek())
-            sensorDataService.saveTemperatureRecord(deviceId, temperatureRecord)
-            sensorDataService.saveTemperatureRecord(deviceId, temperatureRecord2)
-            sensorDataService.saveTemperatureRecord(deviceId, temperatureRecord3)
-
-            val result = sensorDataService.getTemperatureRecords(deviceId)
-            assert(result is Either.Right)
-            val temperatureRecords = (result as Either.Right).value
-            assert(temperatureRecords.size == 3)
-            assert(temperatureRecords.contains(temperatureRecord))
-            assert(temperatureRecords.contains(temperatureRecord2))
-            assert(temperatureRecords.contains(temperatureRecord3))
-
-        }
-    }
-
-
-    @Test
-    fun testSaveInvalidTemperatureRecord() {
-        testWithTransactionManagerAndRollback { tra: TransactionManager ->
-            val emailSenderService = EmailManager()
-
-            val (deviceService, userService) = getNewDeviceAndUserService(tra)
-            val userId = createRandomUser(userService)
-
-            val sensorDataService = TemperatureDataService(emailSenderService, sensorDataRepo, deviceService, mqttClient)
-
-            val email = generateRandomEmail()
-            deviceService.addDevice(userId, email)
-            val deviceId = deviceService.getDevicesByOwnerEmail(email).first().deviceId
-            val temperatureRecord = TemperatureRecord(-100.0, getRandomInstantWithinLastWeek())
-
-            try {
-                // Code that may throw an exception
-                sensorDataService.saveTemperatureRecord(deviceId, temperatureRecord)
-            } catch (e: IllegalArgumentException) {
-                // Access the exception message
-                val errorMessage = e.message
-
-                // Assert that the exception message is as expected
-                assertEquals("Invalid temperature value", errorMessage)
-            }
-        }
-    }
+    //TODO ADICIONAR MAIS TESTES
 }
+
+
+
+
+
