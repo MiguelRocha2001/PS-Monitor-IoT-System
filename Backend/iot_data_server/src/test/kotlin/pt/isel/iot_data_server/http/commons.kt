@@ -30,7 +30,7 @@ fun createUserAndLogin(email: String, client: WebTestClient): String {
     val result = client.post().uri(Uris.Users.MY_TOKEN)
         .bodyValue(
             mapOf(
-                "username" to username,
+                "username" to email,
                 "password" to password,
             )
         )

@@ -22,21 +22,19 @@ class DeviceRepoTests {
                 val userRepo = transaction.userRepo
 
                 val userId = "some_id"
+
+                val device = Device(Random.nextInt().toString(), "exampleEmail@pront.com")
                 val user = User(
                     userId,
                     UserInfo(
-                        generateRandomName(),
-                        generateRandomPassword(),
                         generateRandomEmail(),
                         role
                     )
                 )
-                val device = Device(Random.nextInt().toString(), "exampleEmail@pront.com")
-
                 userRepo.createUser(user)
                 deviceDataRepository.createDevice(userId, device)
-
-                val foundDevice = deviceDataRepository.getAllDevices().any { it.deviceId == device.deviceId }
+                val foundDevices = deviceDataRepository.getAllDevices()
+                val foundDevice = foundDevices.any { it.deviceId == device.deviceId }
                 assertTrue("Device found", foundDevice)
             }
         }
@@ -56,8 +54,6 @@ class DeviceRepoTests {
                 val user = User(
                     userId,
                     UserInfo(
-                        generateRandomName(),
-                        generateRandomPassword(),
                         generateRandomEmail(),
                         role
                     )
