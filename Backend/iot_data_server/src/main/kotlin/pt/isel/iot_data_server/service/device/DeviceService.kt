@@ -59,7 +59,7 @@ class DeviceService (
     fun getUserDevices(userId: String, page: Int? = null, limit: Int? = null): GetAllDevicesResult {
         userService.getUserByIdOrNull(userId) ?: return Either.Left(GetAllDevicesError.UserNotFound)
         return transactionManager.run {
-            val devices = it.deviceRepo.getAllDevices(userId, page, limit).also {
+            val devices = it.deviceRepo.getAllDevicesByUserId(userId, page, limit).also {
                 logger.debug("All devices returned")
             }
             return@run Either.Right(devices)
@@ -105,7 +105,7 @@ class DeviceService (
     private fun getUserDeviceByIdOrNull(userId: String, deviceId: String): Device? {
         userService.getUserByIdOrNull(userId) ?: return null
         return transactionManager.run {
-            return@run it.deviceRepo.getAllDevices(userId)
+            return@run it.deviceRepo.getAllDevicesByUserId(userId)
                 .find<Device> { device: Device -> device.deviceId == deviceId }
         }
     }

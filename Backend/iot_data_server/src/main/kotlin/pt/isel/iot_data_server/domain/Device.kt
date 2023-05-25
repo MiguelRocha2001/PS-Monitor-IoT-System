@@ -41,7 +41,7 @@ fun fromMqttMsgStringToDeviceLogRecord(str: String): DeviceWakeUpLog {
  * 23^7 < 4,294,967,296 < 23^8
  */
 fun generateRandomDeviceId(): String {
-    // Use the current hour as the seed for your random number generator
+    // Use the current timestamp as the seed for your random number generator
     val timestamp = System.currentTimeMillis()
     val rand = Random(timestamp)
 

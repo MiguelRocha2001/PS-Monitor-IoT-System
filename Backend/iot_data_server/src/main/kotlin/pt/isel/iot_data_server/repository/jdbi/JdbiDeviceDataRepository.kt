@@ -40,7 +40,7 @@ class JdbiDeviceDataRepository(
             .map { it.toDevice() }
     }
 
-    override fun getAllDevices(userId: String, page: Int?, limit: Int?): List<Device> {
+    override fun getAllDevicesByUserId(userId: String, page: Int?, limit: Int?): List<Device> {
         val offset = ((page ?: 1) - 1) * (limit ?: 10)
         return handle.createQuery("""
             select id, user_id, email 
