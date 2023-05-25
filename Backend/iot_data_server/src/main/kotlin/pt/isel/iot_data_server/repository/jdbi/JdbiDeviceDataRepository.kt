@@ -56,7 +56,7 @@ class JdbiDeviceDataRepository(
             .map { it.toDevice() }
     }
 
-    override fun getDevicesFilteredById(deviceId: String, userId: String, page: Int?, limit: Int?): List<Device> {
+    override fun getDevicesFilteredById(id: String, userId: String, page: Int?, limit: Int?): List<Device> {
         val offset = ((page ?: 1) - 1) * (limit ?: 10)
         return handle.createQuery(
             """
@@ -69,7 +69,7 @@ class JdbiDeviceDataRepository(
         """
         )
             .bind("user_id", userId)
-            .bind("id", deviceId)
+            .bind("id", id)
             .bind("limit", limit ?: 10)
             .bind("offset", offset)
             .mapTo<DeviceMapper>()

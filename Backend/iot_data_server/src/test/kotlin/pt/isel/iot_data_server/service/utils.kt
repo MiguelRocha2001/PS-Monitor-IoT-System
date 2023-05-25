@@ -19,15 +19,16 @@ fun getNewDeviceAndUserService(transactionManager: TransactionManager): Pair<Dev
 
 
 /**
- * Creates a random user, with USER role and returns its ID.
+ * Creates a random user, with USER role and no password.
+ * @return the user ID
  */
 
 fun createRandomUser(userService: UserService): String {
     val user = userService.createUser(
         generateRandomEmail(),
-        generateRandomPassword(),
+        null,
         Role.USER
-      )
+    )
     Assertions.assertTrue(user is Either.Right)
     user as Either.Right
     return user.value.first // user ID

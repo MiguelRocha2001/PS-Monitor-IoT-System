@@ -160,4 +160,54 @@ class UserServiceTests {
 			assertTrue(res is Either.Left)
 		}
 	}
+
+	@Test
+	fun `Delete User by id`() {
+		testWithTransactionManagerAndRollback { transactionManager ->
+			val saltPasswordOperations = SaltPasswordOperations(transactionManager)
+			val service = UserService(transactionManager,saltPasswordOperations, EmailManager())
+
+			val email = "testSubject@email.com"
+			service.createUser(email, null, role)
+
+			val user = service.getUserByEmail(email)
+			assertNotNull(user)
+
+			service.deleteUser(user!!.id)
+
+			assertNull(service.getUserByEmail(email))
+		}
+	}
+
+	@Test
+	fun `Delete All Users`() {
+		testWithTransactionManagerAndRollback { transactionManager ->
+			val saltPasswordOperations = SaltPasswordOperations(transactionManager)
+			val service = UserService(transactionManager,saltPasswordOperations, EmailManager())
+
+			service.createUser("testSubject1@email.com", null, role)
+			service.createUser("testSubject2@email.com", null, role)
+			service.createUser("testSubject3@email.com", null, role)
+
+			assertEquals(3, service.getAllUsers().size)
+
+			service.deleteAllUsers()
+
+			assertEquals(0, service.getAllUsers().size)
+		}
+	}
+
+	@Test
+	fun `Is email already registered`() {
+		testWithTransactionManagerAndRollback { transactionManager ->
+			val saltPasswordOperations = SaltPasswordOperations(transactionManager)
+			val service = UserService(transactionManager,saltPasswordOperations, EmailManager())
+
+			val email = "testSubject1@email.com"
+			assertTrue(service.createUser(email, null, role) is Either.Right)
+
+			assertTrue(service.isEmailAlreadyRegistered(email))
+			assertFalse(service.isEmailAlreadyRegistered("testSubject2@email.com"))
+		}
+	}
 }

@@ -96,8 +96,6 @@ class DeviceService (
         }
     }
 
-
-
     fun belongsToUser(deviceId: String, userId: String): Boolean {
         return getUserDeviceById(userId, deviceId) is Either.Right
     }
