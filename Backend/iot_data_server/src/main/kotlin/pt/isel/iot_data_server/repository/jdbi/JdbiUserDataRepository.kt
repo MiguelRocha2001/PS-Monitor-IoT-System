@@ -73,6 +73,16 @@ class JdbiUserDataRepository(
             .execute()
     }
 
+    override fun deleteTokenByUserId(userId: String) {
+        handle.createUpdate(
+            """
+            delete from TOKEN where user_id = :user_id
+            """
+        )
+            .bind("user_id", userId)
+            .execute()
+    }
+
     override fun getTokenFromUser(userId: String): String? {
         return handle.createQuery(
             """

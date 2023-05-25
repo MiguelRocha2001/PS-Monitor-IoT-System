@@ -9,18 +9,17 @@ interface DeviceDataRepository {
     fun getAllDevices(page: Int? = null, limit: Int? = null): List<Device> // TODO: test with params
     fun getAllDevicesByUserId(userId: String, page: Int? = null, limit: Int? = null): List<Device> // TODO: test with params
     fun deleteDevice(deviceId: String)
-    fun removeAllDevices()
-    fun getDevicesByOwnerEmail(email: String): List<Device>
+    fun getDevicesByAlertEmail(email: String): List<Device>
     fun getDeviceById(deviceId: String): Device?
     fun deleteAllDevices()
-    fun deviceCount(userId: String): Int // TODO: test this
+    fun deviceCount(userId: String): Int
     @Deprecated("Discontinued")
     fun saveSensorErrorRecord(deviceId: String, sensorErrorRecord: SensorErrorRecord)
     @Deprecated("Discontinued")
     fun getSensorErrorRecords(deviceId: String): List<SensorErrorRecord>
     @Deprecated("Discontinued")
     fun getAllSensorErrorRecords(): List<SensorErrorRecord>
-    fun saveDeviceLogRecord(deviceId: String, deviceWakeUpLog: DeviceWakeUpLog)
+    fun createDeviceLogRecord(deviceId: String, deviceWakeUpLog: DeviceWakeUpLog)
     fun getDeviceLogRecords(deviceId: String): List<DeviceWakeUpLog>
     fun getAllDeviceLogRecords(): List<DeviceWakeUpLog>
     fun getDevicesFilteredById(id:String, userId: String, page: Int?, limit: Int?): List<Device>

@@ -2,7 +2,6 @@ package pt.isel.iot_data_server.repository.jdbi
 
 import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.kotlin.mapTo
-import org.springframework.stereotype.Repository
 import pt.isel.iot_data_server.domain.Device
 import pt.isel.iot_data_server.domain.DeviceWakeUpLog
 import pt.isel.iot_data_server.domain.SensorErrorRecord
@@ -96,11 +95,8 @@ class JdbiDeviceDataRepository(
             .bind("id", deviceId)
             .execute()
     }
-    override fun removeAllDevices() {
-        handle.createUpdate("delete from device").execute()
-    }
 
-    override fun getDevicesByOwnerEmail(email: String): List<Device> {
+    override fun getDevicesByAlertEmail(email: String): List<Device> {
         return handle.createQuery(
             """
             select id, user_id, email
@@ -180,7 +176,7 @@ class JdbiDeviceDataRepository(
             .list()
     }
 
-    override fun saveDeviceLogRecord(deviceId: String, deviceWakeUpLog: DeviceWakeUpLog) {
+    override fun createDeviceLogRecord(deviceId: String, deviceWakeUpLog: DeviceWakeUpLog) {
         handle.createUpdate(
             """
             insert into device_wake_up_log (device_id, timestamp, reason)

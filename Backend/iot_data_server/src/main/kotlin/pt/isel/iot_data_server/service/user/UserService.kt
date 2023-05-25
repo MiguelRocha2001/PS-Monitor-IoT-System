@@ -25,7 +25,7 @@ class UserService(
             // generate random int
             val userId = UUID.randomUUID().toString()
 
-            if(!isValidEmail(email))
+            if(!isEmailValid(email))
                 return@run Either.Left(CreateUserError.InvalidEmail)
 
             if (it.userRepo.existsEmail(email))
@@ -47,7 +47,7 @@ class UserService(
         }
     }
 
-    private fun isValidEmail(email: String): Boolean {
+    private fun isEmailValid(email: String): Boolean {
         val emailRegexPattern = "^(.+)@(\\S+)$"
         return emailRegexPattern.toRegex().matches(email)
     }
@@ -80,19 +80,22 @@ class UserService(
      * Creates a token for the user with the given email and password.
      * @throws RuntimeException if the user does not exist.
      */
+    // TODO: what if the user has a password and the caller passes null as the password?
     fun createAndGetToken(email: String, password: String?): TokenCreationResult {
         return transactionManager.run {
             val user = it.userRepo.getUserByEmailOrNull(email)
                 ?: return@run Either.Left(TokenCreationError.UserNotFound)
 
-            // Only check the password if it was provided.
+            // Only check the password if it was provided
             if (password !== null && !saltPasswordOperations.verifyPassword(email, password))
                 return@run Either.Left(TokenCreationError.InvalidPassword)
 
             val token = UUID.randomUUID().toString()
             // val aesCipher = AESCipher("AES/CBC/PKCS5Padding", AES.generateIv())// todo store the iv in the db
             // saveEncryptedToken(aesCipher,token,user.id)
-            it.userRepo.deleteUser(user.id)
+
+            // TODO: maybe use update token instead of delete and create
+            it.userRepo.deleteTokenByUserId(user.id)
             it.userRepo.createToken(user.id, token)
 
             return@run Either.Right(token)

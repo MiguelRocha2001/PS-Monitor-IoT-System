@@ -1,16 +1,5 @@
 package pt.isel.iot_data_server.security
 
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
-import org.springframework.test.util.AssertionErrors.assertFalse
-import org.springframework.test.util.AssertionErrors.assertTrue
-import pt.isel.iot_data_server.domain.UserInfo
-import pt.isel.iot_data_server.service.email.EmailManager
-import pt.isel.iot_data_server.service.user.Role
-import pt.isel.iot_data_server.service.user.SaltPasswordOperations
-import pt.isel.iot_data_server.service.user.UserService
-import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
-import java.util.*
 /*
 class SaltTests {
     private val role = Role.USER

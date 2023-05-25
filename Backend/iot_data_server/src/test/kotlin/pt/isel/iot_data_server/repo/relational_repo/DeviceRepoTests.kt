@@ -1,9 +1,13 @@
 package pt.isel.iot_data_server.repo.relational_repo
 
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import pt.isel.iot_data_server.domain.DeviceWakeUpLog
 import pt.isel.iot_data_server.service.user.Role
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
+import java.time.Instant
 
 class DeviceRepoTests {
     private val role = Role.USER
@@ -18,8 +22,7 @@ class DeviceRepoTests {
                 val alertEmail = "some_alert_email_1@gmail.com"
                 val device = createDevice(deviceDataRepository, user.id, alertEmail)
 
-                val foundDevices = deviceDataRepository.getAllDevices()
-                Assertions.assertEquals(device, foundDevices[0])
+                assertEquals(device, deviceDataRepository.getDeviceById(device.deviceId))
             }
         }
     }
@@ -39,10 +42,10 @@ class DeviceRepoTests {
                 val device2 = createDevice(deviceDataRepository, user.id, alertEmail)
 
                 val foundDevices = deviceDataRepository.getAllDevices()
-                Assertions.assertEquals(2, foundDevices.size)
+                assertEquals(2, foundDevices.size)
 
-                Assertions.assertEquals(device1, foundDevices[0])
-                Assertions.assertEquals(device2, foundDevices[1])
+                assertEquals(device1, foundDevices[0])
+                assertEquals(device2, foundDevices[1])
             }
         }
     }
@@ -63,10 +66,10 @@ class DeviceRepoTests {
                 val device2 = createDevice(deviceDataRepository, user2.id, alertEmail)
 
                 val foundDevices = deviceDataRepository.getAllDevices()
-                Assertions.assertEquals(2, foundDevices.size)
+                assertEquals(2, foundDevices.size)
 
-                Assertions.assertEquals(device1, foundDevices[0])
-                Assertions.assertEquals(device2, foundDevices[1])
+                assertEquals(device1, foundDevices[0])
+                assertEquals(device2, foundDevices[1])
             }
         }
     }
@@ -87,10 +90,10 @@ class DeviceRepoTests {
                 val device3 = createDevice(devicesRepo, user.id, "some_alert_email_3@gmail.com")
 
                 val devices = devicesRepo.getAllDevices()
-                Assertions.assertEquals(3, devices.size)
-                Assertions.assertTrue(devices.contains(device1))
-                Assertions.assertTrue(devices.contains(device2))
-                Assertions.assertTrue(devices.contains(device3))
+                assertEquals(3, devices.size)
+                assertTrue(devices.contains(device1))
+                assertTrue(devices.contains(device2))
+                assertTrue(devices.contains(device3))
             }
         }
     }
@@ -113,9 +116,9 @@ class DeviceRepoTests {
                 val device5 = createDevice(devicesRepo, user.id, "some_alert_email_5@gmail.com")
 
                 val devices = devicesRepo.getAllDevices(2, 3)
-                Assertions.assertEquals(2, devices.size)
-                Assertions.assertTrue(devices.contains(device4))
-                Assertions.assertTrue(devices.contains(device5))
+                assertEquals(2, devices.size)
+                assertTrue(devices.contains(device4))
+                assertTrue(devices.contains(device5))
             }
         }
     }
@@ -143,11 +146,141 @@ class DeviceRepoTests {
                 val device8 = createDevice(devicesRepo, user2.id, "some_alert_email_8@gmail.com")
 
                 val devices = devicesRepo.getAllDevicesByUserId(user2.id, 1, 3)
-                Assertions.assertEquals(3, devices.size)
-                Assertions.assertTrue(devices.contains(device4))
-                Assertions.assertTrue(devices.contains(device5))
-                Assertions.assertTrue(devices.contains(device6))
+                assertEquals(3, devices.size)
+                assertTrue(devices.contains(device4))
+                assertTrue(devices.contains(device5))
+                assertTrue(devices.contains(device6))
             }
         }
     }
+
+    @Test
+    fun `Delete Device`() {
+        testWithTransactionManagerAndRollback { transactionManager ->
+            transactionManager.run { transaction ->
+                val devicesRepo = transaction.deviceRepo
+                val userRepo = transaction.userRepo
+
+                val user = createUser(userRepo, "some_email_1@gmail.com")
+                val device = createDevice(devicesRepo, user.id, "some_alert_email_8@gmail.com")
+
+                assertEquals(device, devicesRepo.getDeviceById(device.deviceId))
+
+                devicesRepo.deleteDevice(device.deviceId)
+                Assertions.assertNull(devicesRepo.getDeviceById(device.deviceId))
+            }
+        }
+    }
+
+    @Test
+    fun `Remove All Devices`() {
+        testWithTransactionManagerAndRollback { transactionManager ->
+            transactionManager.run { transaction ->
+                val devicesRepo = transaction.deviceRepo
+                val userRepo = transaction.userRepo
+
+                val user = createUser(userRepo, "some_email_1@gmail.com")
+
+                checkDeviceCountIsZero(devicesRepo)
+                createDevice(devicesRepo, user.id, "some_alert_email_1@gmail.com")
+                createDevice(devicesRepo, user.id, "some_alert_email_2@gmail.com")
+                createDevice(devicesRepo, user.id, "some_alert_email_3@gmail.com")
+
+                assertEquals(3, devicesRepo.getAllDevices().size)
+
+                devicesRepo.deleteAllDevices()
+                assertEquals(0, devicesRepo.getAllDevices().size)
+            }
+        }
+    }
+
+    @Test
+    fun `Get devices by alert email`() {
+        testWithTransactionManagerAndRollback { transactionManager ->
+            transactionManager.run { transaction ->
+                val devicesRepo = transaction.deviceRepo
+                val userRepo = transaction.userRepo
+
+                val user = createUser(userRepo, "some_email_1@gmail.com")
+
+                checkDeviceCountIsZero(devicesRepo)
+                createDevice(devicesRepo, user.id, "some_alert_email_1@gmail.com")
+                val device1 = createDevice(devicesRepo, user.id, "some_alert_email_2@gmail.com")
+                val device2 = createDevice(devicesRepo, user.id, "some_alert_email_2@gmail.com")
+                val device3 = createDevice(devicesRepo, user.id, "some_alert_email_2@gmail.com")
+                createDevice(devicesRepo, user.id, "some_alert_email_3@gmail.com")
+                assertEquals(5, devicesRepo.getAllDevices().size)
+
+                val devices = devicesRepo.getDevicesByAlertEmail("some_alert_email_2@gmail.com")
+                assertEquals(3, devices.size)
+                assertTrue(devices.contains(device1))
+                assertTrue(devices.contains(device2))
+                assertTrue(devices.contains(device3))
+            }
+        }
+    }
+
+    @Test
+    fun `Device Count`() {
+        testWithTransactionManagerAndRollback { transactionManager ->
+            transactionManager.run { transaction ->
+                val devicesRepo = transaction.deviceRepo
+                val userRepo = transaction.userRepo
+
+                val user1 = createUser(userRepo, "some_email_1@gmail.com")
+                val user2 = createUser(userRepo, "some_email_2@gmail.com")
+
+                checkDeviceCountIsZero(devicesRepo)
+                createDevice(devicesRepo, user1.id, "some_alert_email_1@gmail.com")
+                createDevice(devicesRepo, user2.id, "some_alert_email_2@gmail.com")
+                createDevice(devicesRepo, user1.id, "some_alert_email_2@gmail.com")
+                createDevice(devicesRepo, user2.id, "some_alert_email_2@gmail.com")
+                createDevice(devicesRepo, user1.id, "some_alert_email_3@gmail.com")
+
+                assertEquals(3, devicesRepo.deviceCount(user1.id))
+                assertEquals(2, devicesRepo.deviceCount(user2.id))
+            }
+        }
+    }
+
+    @Test
+    fun `Create Device log record`() {
+        testWithTransactionManagerAndRollback { transactionManager ->
+            transactionManager.run { transaction ->
+                val devicesRepo = transaction.deviceRepo
+                val userRepo = transaction.userRepo
+
+                val user = createUser(userRepo, "some_email_1@gmail.com")
+
+                checkDeviceCountIsZero(devicesRepo)
+                val device1 = createDevice(devicesRepo, user.id, "some_alert_email_1@gmail.com")
+                val device2 = createDevice(devicesRepo, user.id, "some_alert_email_2@gmail.com")
+
+                val log1 = DeviceWakeUpLog(device1.deviceId, Instant.now(), "some_log_record1")
+                val log2 = DeviceWakeUpLog(device1.deviceId, Instant.now(), "some_log_record2")
+                val log3 = DeviceWakeUpLog(device1.deviceId, Instant.now(), "some_log_record3")
+                devicesRepo.createDeviceLogRecord(device1.deviceId, log1)
+                devicesRepo.createDeviceLogRecord(device1.deviceId, log2)
+                devicesRepo.createDeviceLogRecord(device1.deviceId, log3)
+
+                val log4 = DeviceWakeUpLog(device2.deviceId, Instant.now(), "some_log_record2")
+                val log5 = DeviceWakeUpLog(device2.deviceId, Instant.now(), "some_log_record6")
+                devicesRepo.createDeviceLogRecord(device2.deviceId, log4)
+                devicesRepo.createDeviceLogRecord(device2.deviceId, log5)
+
+                val logRecords = devicesRepo.getDeviceLogRecords(device1.deviceId)
+                assertEquals(3, logRecords.size)
+                assertTrue(logRecords.contains(log1))
+                assertTrue(logRecords.contains(log2))
+                assertTrue(logRecords.contains(log3))
+
+                val logRecords2 = devicesRepo.getDeviceLogRecords(device2.deviceId)
+                assertEquals(2, logRecords2.size)
+                assertTrue(logRecords2.contains(log4))
+                assertTrue(logRecords2.contains(log5))
+            }
+        }
+    }
+
+    // TODO: add more tests for device log records
 }

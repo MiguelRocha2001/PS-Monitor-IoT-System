@@ -8,7 +8,9 @@ interface UserDataRepository {
     fun getUserByToken(token: String): User?
     fun getUserByIdOrNull(userId: String): User?
     fun createToken(userId: String, token: String)
+    fun deleteTokenByUserId(userId: String) // TODO: test this
     fun getTokenFromUser(userId: String): String?
+    @Deprecated("Use deleteTokenByUserId instead")
     fun deleteToken(token: String)
     fun existsEmail(email: String): Boolean
     fun getUserByEmailOrNull(email: String): User?

@@ -29,7 +29,7 @@ class DeviceLogService(
         deviceWakeUpLog: DeviceWakeUpLog,
     ) {
         transactionManager.run {
-            it.deviceRepo.saveDeviceLogRecord(deviceId, deviceWakeUpLog)
+            it.deviceRepo.createDeviceLogRecord(deviceId, deviceWakeUpLog)
         }
     }
 

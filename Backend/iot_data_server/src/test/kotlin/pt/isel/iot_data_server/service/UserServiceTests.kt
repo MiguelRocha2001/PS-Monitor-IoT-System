@@ -1,9 +1,8 @@
 package pt.isel.iot_data_server.service
 
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.util.AssertionErrors.assertTrue
-import pt.isel.iot_data_server.domain.UserInfo
 import pt.isel.iot_data_server.service.email.EmailManager
 import pt.isel.iot_data_server.service.user.Role
 import pt.isel.iot_data_server.service.user.SaltPasswordOperations
@@ -15,20 +14,44 @@ class UserServiceTests {
     private val role = Role.USER
 
     @Test
-    fun `create user`() {
+    fun `create user with password`() {
         testWithTransactionManagerAndRollback { transactionManager ->
             val saltPasswordOperations = SaltPasswordOperations(transactionManager)
             val emailService = EmailManager()
             val service = UserService(transactionManager, saltPasswordOperations, emailService)
             val password = "LKMSDOVCJ09Jouin09JN@"
             val email = "testSubject@email.com"
-            service.createUser(email, password, role)
-            val users = service.getAllUsers()
-            //assertValues of every property of student with the expected values
-            val retrievedUser = users.first { it.userInfo.email == email }
-            assertTrue("User was created", retrievedUser.userInfo.email == email)
+
+            val res = service.createUser(email, password, role)
+			assertTrue(res is Either.Right)
+			res as Either.Right
+
+			val user = service.getUserByIdOrNull(res.value.first)
+			assertNotNull(user)
+			assertEquals(user?.userInfo?.email, email)
+			assertEquals(user?.userInfo?.role, role)
         }
     }
+
+	@Test
+	fun `create user without password`() {
+		testWithTransactionManagerAndRollback { transactionManager ->
+			val saltPasswordOperations = SaltPasswordOperations(transactionManager)
+			val emailService = EmailManager()
+			val service = UserService(transactionManager, saltPasswordOperations, emailService)
+			val password = null
+			val email = "testSubject@email.com"
+
+			val res = service.createUser(email, password, role)
+			assertTrue(res is Either.Right)
+			res as Either.Right
+
+			val user = service.getUserByIdOrNull(res.value.first)
+			assertNotNull(user)
+			assertEquals(user?.userInfo?.email, email)
+			assertEquals(user?.userInfo?.role, role)
+		}
+	}
 
     @Test
     fun `create user with invalid email`() {
@@ -37,15 +60,14 @@ class UserServiceTests {
             val service = UserService(transactionManager, saltPasswordOperations, EmailManager())
             val password = "LKMSDOVCJ09Jouin09JN@"
             val email = "testSubjectemail.com"
-                val result = service.createUser(email, password, role)
-                //verify that the result is Either.Left
-                assertTrue("User was not created", result is Either.Left)
+			val res = service.createUser(email, password, role)
+			//verify that the result is Either.Left
+			assertTrue(res is Either.Left)
         }
     }
 
-
 	@Test
-	fun `create multiple users`() {
+	fun `create multiple valid users`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
 			val saltPasswordOperations = SaltPasswordOperations(transactionManager)
 			val service = UserService(transactionManager,saltPasswordOperations, EmailManager())
@@ -61,15 +83,16 @@ class UserServiceTests {
 			val res1 = service.createUser(email1, password1, role)
 			val res2 = service.createUser(email2, password2, role)
 			val res3 = service.createUser(email3, password3, role)
-			assertTrue("User 1 was not created", res1 is Either.Right)
-			assertTrue("User 2 was not created", res2 is Either.Right)
-			assertTrue("User 3 was not created", res3 is Either.Right)
+
+			assertTrue(res1 is Either.Right)
+			assertTrue(res2 is Either.Right)
+			assertTrue(res3 is Either.Right)
 
 			val users = service.getAllUsers()
 
-			assertTrue("User was not created", users.any { it.userInfo.email == email1 })
-			assertTrue("User was not created", users.any { it.userInfo.email == email2 })
-			assertTrue("User was not created", users.any { it.userInfo.email == email3 })
+			assertTrue(users.any { it.userInfo.email == email1 })
+			assertTrue(users.any { it.userInfo.email == email2 })
+			assertTrue(users.any { it.userInfo.email == email3 })
 		}
 	}
 
@@ -87,8 +110,54 @@ class UserServiceTests {
 
 			service.createUser(email1, password1, role)
 			val result = service.createUser(email2, password2, role)
-			assertTrue("User was not created", result is Either.Left)
+			assertTrue(result is Either.Left)
 		}
 	}
 
+	@Test
+	fun `Create token for user`() {
+		testWithTransactionManagerAndRollback { transactionManager ->
+			val saltPasswordOperations = SaltPasswordOperations(transactionManager)
+			val service = UserService(transactionManager,saltPasswordOperations, EmailManager())
+
+			val email = "testSubject@email.com"
+			assertTrue(service.createUser(email, null, role) is Either.Right)
+			val res = service.createAndGetToken(email, null)
+			assertTrue(res is Either.Right)
+			val token = (res as Either.Right).value
+
+			val user = service.getUserByToken(token)
+			assertNotNull(user)
+			assertEquals(user?.userInfo?.email, email)
+			assertEquals(user?.userInfo?.role, role)
+		}
+	}
+
+	@Test
+	fun `Create token for invalid user`() {
+		testWithTransactionManagerAndRollback { transactionManager ->
+			val saltPasswordOperations = SaltPasswordOperations(transactionManager)
+			val service = UserService(transactionManager,saltPasswordOperations, EmailManager())
+
+			assertEquals(0, service.getAllUsers().size)
+
+			val email = "invalidEmail"
+			val res = service.createAndGetToken(email, null)
+			assertTrue(res is Either.Left)
+		}
+	}
+
+	@Test
+	fun `Create token with invalid password`() {
+		testWithTransactionManagerAndRollback { transactionManager ->
+			val saltPasswordOperations = SaltPasswordOperations(transactionManager)
+			val service = UserService(transactionManager,saltPasswordOperations, EmailManager())
+
+			val email = "testSubject@email.com"
+			val password = "LKMSDOVCJ09Jouin09JN@1"
+			assertTrue(service.createUser(email, password, role) is Either.Right)
+			val res = service.createAndGetToken(email, "invalidPassword")
+			assertTrue(res is Either.Left)
+		}
+	}
 }

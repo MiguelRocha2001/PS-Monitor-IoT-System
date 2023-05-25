@@ -13,7 +13,10 @@ import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.repository.tsdb.SensorDataRepo
 import pt.isel.iot_data_server.service.email.EmailManager
 import pt.isel.iot_data_server.service.sensor_data.SensorDataService
-import pt.isel.iot_data_server.utils.*
+import pt.isel.iot_data_server.utils.generateRandomEmail
+import pt.isel.iot_data_server.utils.generateRandomPh
+import pt.isel.iot_data_server.utils.getRandomInstantWithinLastWeek
+import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 
 private const val BUCKET_FOR_TESTS = "test" //Its is mandatory to have a bucket named "test" registered in InfluxDB
 class SensorDataServiceTest {
