@@ -148,10 +148,10 @@ class JdbiUserDataRepository(
             """
             select code 
             from verification_code 
-            where email = :email
+            where user_email = :user_email
             """
         )
-            .bind("email", email)
+            .bind("user_email", email)
             .mapTo<String>()
             .single()
     }
