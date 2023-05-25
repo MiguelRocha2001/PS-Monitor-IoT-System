@@ -1,12 +1,12 @@
-package pt.isel.iot_data_server.repo.time_series
+package pt.isel.iot_data_server.repo.time_series_repo
 
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.test.util.AssertionErrors.assertTrue
 import pt.isel.iot_data_server.configuration.TSDBBuilder
 import pt.isel.iot_data_server.domain.SensorRecord
 import pt.isel.iot_data_server.repository.tsdb.SensorDataRepo
+import pt.isel.iot_data_server.utils.generateRandomHumidity
 import pt.isel.iot_data_server.utils.generateRandomPh
 import pt.isel.iot_data_server.utils.generateRandomTemperature
 import java.time.Instant
@@ -86,5 +86,30 @@ class TsdbRepoTests {
         assertTrue( "Temperature found", temperatures1.size == 1)
         assertTrue("Ph found", phs2.size == 1)
         assertTrue("Temperature found", temperatures2.size == 1)
+    }
+
+    @Test
+    fun `Get all Sensor Types`() {
+        val deviceId1 = "80acf16c-d3bb-11ed-afa1-0242ac120002"
+        repo.saveSensorRecord(deviceId1, SensorRecord("ph initial", generateRandomPh(), Instant.now()))
+        repo.saveSensorRecord(deviceId1, SensorRecord("temperature", generateRandomTemperature(), Instant.now()))
+
+        val deviceId2 = "80acf16c-d3bb-11ed-afa1-0242ac120003"
+        repo.saveSensorRecord(deviceId2, SensorRecord("ph final", generateRandomPh(), Instant.now()))
+        repo.saveSensorRecord(deviceId2, SensorRecord("humidity", generateRandomHumidity(), Instant.now()))
+        repo.saveSensorRecord(deviceId2, SensorRecord("temperature", generateRandomTemperature(), Instant.now()))
+
+        val sensorTypes1 = repo.getAvailableSensorTypes(deviceId1)
+        val sensorTypes2 = repo.getAvailableSensorTypes(deviceId2)
+
+        assertTrue("Sensor types size is not 2", sensorTypes1.size == 2)
+        assertTrue("Sensor types size is not 3", sensorTypes2.size == 3)
+
+        assert(sensorTypes1.find { it == "ph initial" } != null)
+        assert(sensorTypes1.find { it == "temperature" } != null)
+
+        assert(sensorTypes2.find { it == "ph final" } != null)
+        assert(sensorTypes2.find { it == "humidity" } != null)
+        assert(sensorTypes2.find { it == "temperature" } != null)
     }
 }

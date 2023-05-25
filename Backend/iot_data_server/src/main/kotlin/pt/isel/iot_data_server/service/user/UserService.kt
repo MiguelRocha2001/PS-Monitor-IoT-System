@@ -92,6 +92,7 @@ class UserService(
             val token = UUID.randomUUID().toString()
             // val aesCipher = AESCipher("AES/CBC/PKCS5Padding", AES.generateIv())// todo store the iv in the db
             // saveEncryptedToken(aesCipher,token,user.id)
+            it.userRepo.deleteUser(user.id)
             it.userRepo.createToken(user.id, token)
 
             return@run Either.Right(token)

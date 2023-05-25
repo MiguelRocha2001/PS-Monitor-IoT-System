@@ -1,4 +1,4 @@
-package pt.isel.iot_data_server.repo.time_series
+package pt.isel.iot_data_server.repo.time_series_repo
 
 import org.junit.jupiter.api.Test
 import org.springframework.test.util.AssertionErrors.assertTrue

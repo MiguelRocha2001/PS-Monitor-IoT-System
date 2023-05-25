@@ -8,7 +8,7 @@ create table _user(
 
 create table token(
     user_id varchar primary key,
-    token varchar,
+    token varchar primary key,
     iv varchar,
     foreign key (user_id) references _user(_id)
 );

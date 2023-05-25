@@ -1,4 +1,4 @@
-package pt.isel.iot_data_server.repo.time_series
+package pt.isel.iot_data_server.repo.time_series_repo
 
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient

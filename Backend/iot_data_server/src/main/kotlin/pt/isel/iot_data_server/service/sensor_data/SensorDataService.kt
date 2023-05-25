@@ -4,7 +4,6 @@ import org.eclipse.paho.client.mqttv3.MqttClient
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import pt.isel.iot_data_server.domain.*
-import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.repository.tsdb.SensorDataRepo
 import pt.isel.iot_data_server.service.Either
 import pt.isel.iot_data_server.service.device.DeviceService
@@ -81,7 +80,7 @@ class SensorDataService(
     }
 
     fun getAvailableSensors(deviceId: String): List<String> {
-        return sensorDataRepo.getSensorNames()
+        return sensorDataRepo.getAvailableSensorTypes(deviceId)
     }
 
     private fun sendEmailAlert(sensorRecord: SensorRecord, device: Device, limit: Double) {

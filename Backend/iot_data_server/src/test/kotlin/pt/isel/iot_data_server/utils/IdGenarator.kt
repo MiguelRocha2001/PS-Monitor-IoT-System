@@ -40,6 +40,11 @@ fun generateRandomTemperature(): Double {
     return random.nextDouble(0.0, 50.0)
 }
 
+fun generateRandomHumidity(): Double {
+    val random = Random()
+    return random.nextDouble(0.0, 100.0)
+}
+
 fun getRandomInstantWithinLastWeek(): Instant {
     // Get the current instant
     val now = Instant.now()

@@ -36,11 +36,10 @@ class JdbiUserDataRepository(
     override fun getUserByToken(token: String): User? {
         return handle.createQuery(
             """
-            select _id, email, role 
+            select _id, email, role
             from _USER as users 
-            inner join TOKEN as tokens
-            on users._id = tokens.user_id
-            where token = :token
+            inner join TOKEN as tokens on users._id = tokens.user_id
+            where tokens.token = :token
             """
         )
             .bind("token", token)
@@ -64,13 +63,32 @@ class JdbiUserDataRepository(
     }
 
     override fun createToken(userId: String, token: String) {
-        handle.createUpdate("delete from TOKEN where user_id = :user_id")
-            .bind("user_id", userId)
-            .execute()
-
-        handle.createUpdate("insert into TOKEN(user_id, token) values (:user_id, :token)")
+        handle.createUpdate(
+            """
+            insert into TOKEN (user_id, token) values (:user_id, :token)
+            """
+        )
             .bind("user_id", userId)
             .bind("token", token)
+            .execute()
+    }
+
+    override fun getTokenFromUser(userId: String): String? {
+        return handle.createQuery(
+            """
+            select token 
+            from TOKEN
+            where user_id = :user_id
+            """
+        )
+            .bind("user_id", userId)
+            .mapTo<String>()
+            .singleOrNull()
+    }
+
+    override fun deleteToken(userId: String) {
+        handle.createUpdate("delete from TOKEN where user_id = :user_id")
+            .bind("user_id", userId)
             .execute()
     }
 

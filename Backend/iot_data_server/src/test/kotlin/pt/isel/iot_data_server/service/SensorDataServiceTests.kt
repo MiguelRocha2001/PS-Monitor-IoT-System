@@ -8,9 +8,7 @@ import org.mockito.Mockito
 import pt.isel.iot_data_server.configuration.TSDBBuilder
 import pt.isel.iot_data_server.domain.SensorInfo
 import pt.isel.iot_data_server.domain.SensorRecord
-import pt.isel.iot_data_server.repo.time_series.deleteAllPhMeasurements
-import pt.isel.iot_data_server.repo.time_series.deleteAllSensorMeasurements
-import pt.isel.iot_data_server.repo.time_series.deleteAllTemperatureMeasurements
+import pt.isel.iot_data_server.repo.time_series_repo.deleteAllSensorMeasurements
 import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.repository.tsdb.SensorDataRepo
 import pt.isel.iot_data_server.service.email.EmailManager

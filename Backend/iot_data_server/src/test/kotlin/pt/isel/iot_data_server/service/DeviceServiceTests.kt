@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
-import pt.isel.iot_data_server.repo.time_series.deleteAllDeviceRecords
+import pt.isel.iot_data_server.repo.time_series_repo.deleteAllDeviceRecords
 import pt.isel.iot_data_server.utils.generateRandomEmail
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 

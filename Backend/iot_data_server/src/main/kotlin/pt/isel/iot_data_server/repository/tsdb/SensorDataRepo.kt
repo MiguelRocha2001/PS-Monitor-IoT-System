@@ -12,7 +12,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.springframework.stereotype.Repository
 import pt.isel.iot_data_server.domain.SensorRecord
-import pt.isel.iot_data_server.repository.CollectedDataRepository
+import pt.isel.iot_data_server.repository.SensorDataRepository
 import java.time.Instant
 
 /*
@@ -25,7 +25,7 @@ TODO: check server status
 class SensorDataRepo(
     private val client: InfluxDBClientKotlin,
     bucket : Bucket
-) : CollectedDataRepository {
+) : SensorDataRepository {
     private val bucketName = bucket.name
     val mutex = Mutex() // Use Mutex for synchronization
     private val MEASUREMENT_PREFIX = "my_sensor " // Modify this line
@@ -63,22 +63,21 @@ class SensorDataRepo(
         }.toList()
     }
 
-    override fun getSensorNames(): List<String> = runBlocking {
+    override fun getAvailableSensorTypes(deviceId: String): List<String> = runBlocking {
         val query =
             """from(bucket: "$bucketName")
-            |> range(start: -7d)
-            |> filter(fn: (r) => r._measurement =~ /^$MEASUREMENT_PREFIX/)
-            |> distinct(column: "_measurement")
-             """
+                |> range(start: -7d)
+                |> filter(fn: (r) => r.device == "$deviceId")
+                |> group(columns: ["_measurement"])
+                |> distinct(column: "_measurement")
+                 """
         // Result is returned as a stream
         val results = client.getQueryKotlinApi().query(query)
 
         results.consumeAsFlow().map { result ->
-            result.measurement
-        }
-            .toList()
-            .filterNotNull()
-            .map { it.removePrefix(MEASUREMENT_PREFIX) }
+            val measurement = result.measurement ?: ""
+            measurement.removePrefix(MEASUREMENT_PREFIX)
+        }.toList()
     }
 
 }

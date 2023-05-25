@@ -8,6 +8,8 @@ interface UserDataRepository {
     fun getUserByToken(token: String): User?
     fun getUserByIdOrNull(userId: String): User?
     fun createToken(userId: String, token: String)
+    fun getTokenFromUser(userId: String): String?
+    fun deleteToken(token: String)
     fun existsEmail(email: String): Boolean
     fun getUserByEmailOrNull(email: String): User?
     fun deleteAllUsers()
