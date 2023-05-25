@@ -163,4 +163,8 @@ class JdbiUserDataRepository(
             .single()
             .let { it.value to it.salt }
     }
+
+    override fun deleteAllPasswords() {
+        handle.createUpdate("delete from password").execute()
+    }
 }

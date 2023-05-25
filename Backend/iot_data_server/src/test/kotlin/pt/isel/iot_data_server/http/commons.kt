@@ -10,15 +10,13 @@ import pt.isel.iot_data_server.http.infra.SirenModel
  * Creates a user and returns the token
  */
 fun createUserAndLogin(email: String, client: WebTestClient): String {
-    val username = email.split("@")[0]
     val password = "Static=password1"
 
     client.post().uri(Uris.Users.ALL)
         .bodyValue(
             mapOf(
-                "username" to username,
-                "password" to password,
-                "email" to email
+                "email" to email,
+                "password" to password
             )
         )
         .exchange()
@@ -30,7 +28,7 @@ fun createUserAndLogin(email: String, client: WebTestClient): String {
     val result = client.post().uri(Uris.Users.MY_TOKEN)
         .bodyValue(
             mapOf(
-                "username" to email,
+                "email" to email,
                 "password" to password,
             )
         )

@@ -3,7 +3,6 @@
 create table _user(
     _id varchar primary key,
     email varchar unique,
-    password varchar,
     role varchar
 );
 

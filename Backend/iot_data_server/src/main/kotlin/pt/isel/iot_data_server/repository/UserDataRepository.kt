@@ -17,4 +17,5 @@ interface UserDataRepository {
     fun getVerificationCode(email: String): String?
     fun storePasswordAndSalt(userId: String, value: String, salt: String)
     fun getPasswordAndSalt(userId: String): Pair<String, String>
+    fun deleteAllPasswords()
 }

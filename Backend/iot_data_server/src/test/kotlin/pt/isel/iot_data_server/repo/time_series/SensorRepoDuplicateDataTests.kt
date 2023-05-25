@@ -1,6 +1,7 @@
 package pt.isel.iot_data_server.repo.time_series
 
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.test.util.AssertionErrors.assertEquals
 import org.springframework.test.util.AssertionErrors.assertTrue
@@ -21,6 +22,7 @@ class TsdbRepoDuplicateTests {
         tsdbBuilder.getBucket()
     )
 
+    @BeforeAll
     @AfterEach
     fun deleteAll() {
         deleteAllSensorMeasurements(tsdbBuilder, "ph initial")

@@ -114,6 +114,7 @@ class UserService(
     fun deleteAllUsers() {
         transactionManager.run {
             it.userRepo.deleteAllTokens()
+            it.userRepo.deleteAllPasswords()
             it.userRepo.deleteAllUsers()
         }
     }
