@@ -200,7 +200,7 @@ class DeviceServiceTests {
 				res1 as Either.Right
 				assertTrue(res1.value.any { it.ownerEmail == "some_alert_email1@gmail.com" })
 
-				val res2 = deviceService.getCountOfDevicesFilteredById(res.value[it].toString(), userId)
+				val res2 = deviceService.getCountOfDevicesFilteredById(userId, res.value[it].toString())
 				assertTrue(res2 is Either.Right)
 				res2 as Either.Right
 				assertEquals(1, res2.value)

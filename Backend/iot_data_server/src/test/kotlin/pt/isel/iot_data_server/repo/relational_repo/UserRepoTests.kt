@@ -161,7 +161,7 @@ class UserRepoTests {
                 val user2 = createUser(usersRepo, email2)
                 assertNotNull(usersRepo.getUserByIdOrNull(user2.id))
 
-                usersRepo.deleteAllUsers(Role.USER)
+                usersRepo.deleteAllUsers()
                 val users3 = usersRepo.getAllUsers()
 
                 assertEquals(0, users3.size)

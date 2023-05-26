@@ -75,9 +75,9 @@ class DeviceService (
         }
     }
 
-    fun getCountOfDevicesFilteredById(userId:String,deviceId: String): DeviceCountResult {
+    fun getCountOfDevicesFilteredById(userId:String, deviceId: String): DeviceCountResult {
         return transactionManager.run {
-            val count = it.deviceRepo.getCountOfDevicesFilteredById(userId,deviceId).also {
+            val count = it.deviceRepo.getCountOfDevicesFilteredById(userId, deviceId).also {
                 logger.debug("Count of devices filtered by id returned")
             }
             return@run Either.Right(count)

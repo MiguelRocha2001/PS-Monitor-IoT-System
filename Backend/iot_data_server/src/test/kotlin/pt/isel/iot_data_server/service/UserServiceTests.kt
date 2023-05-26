@@ -187,6 +187,8 @@ class UserServiceTests {
 			val saltPasswordOperations = SaltPasswordOperations(transactionManager)
 			val service = UserService(transactionManager,saltPasswordOperations, EmailManager())
 
+			service.deleteAllUsers()
+
 			service.createUser("testSubject1@email.com", null, role)
 			service.createUser("testSubject2@email.com", null, role)
 			service.createUser("testSubject3@email.com", null, role)

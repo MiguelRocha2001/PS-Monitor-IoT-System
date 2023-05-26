@@ -76,13 +76,13 @@ class JdbiDeviceDataRepository(
             .list()
             .map { it.toDevice() }
     }
-    override fun getCountOfDevicesFilteredById(userId:String,deviceId: String): Int {
+    override fun getCountOfDevicesFilteredById(userId:String, deviceId: String): Int {
         return handle.createQuery(
-            """
-            select count(*) 
-            from device 
-            where user_id = :user_id
-            and id  LIKE '%' || :id || '%'
+               """
+                select count(*) 
+                from device 
+                where user_id = :user_id
+                and id  LIKE '%' || :id || '%'
             """
         )
             .bind("user_id", userId)
