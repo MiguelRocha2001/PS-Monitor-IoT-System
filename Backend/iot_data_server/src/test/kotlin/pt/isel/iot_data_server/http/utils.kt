@@ -9,3 +9,5 @@ fun buildJdbiTest() = Jdbi.create(
         setURL(System.getenv("DB_POSTGRES_IOT_SYSTEM_TEST"))
     }
 ).configure()
+
+internal fun generatePassword (index: Int) = "testPassword$index!"

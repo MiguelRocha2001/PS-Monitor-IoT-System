@@ -46,7 +46,7 @@ class DeviceHttpTests {
 
         val email = generateRandomEmail()
         // creates random user, and logs in (results in a valid token inside a cookie)
-        val userToken = createUserAndLogin(email, client)
+        val userToken = createUserAndLogin(email, generatePassword(1), client)
 
         create_device(generateRandomEmail(), client, userToken)
         create_device(generateRandomEmail(), client, userToken)

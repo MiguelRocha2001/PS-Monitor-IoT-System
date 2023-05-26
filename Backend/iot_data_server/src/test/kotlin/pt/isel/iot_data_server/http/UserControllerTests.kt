@@ -1,6 +1,20 @@
 package pt.isel.iot_data_server.http
 
-/*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Primary
+import org.springframework.http.HttpHeaders
+import org.springframework.test.web.reactive.server.WebTestClient
+import pt.isel.iot_data_server.http.controllers.Uris
+import pt.isel.iot_data_server.http.infra.SirenModel
+import pt.isel.iot_data_server.utils.generateRandomEmail
+
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class UserControllerTests{
 
@@ -27,16 +41,28 @@ class UserControllerTests{
     }
 
     @Test
-    fun `Can get all Users`() {
+    fun `Can create User`() {
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+        val email = "test_subject@gmail.com"
+        val password = "testPassword1!"
+        createUser(email, password, client)
+    }
+
+    @Test
+    fun `Can get all Users as Admin`() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
-        val userToken = createUserAndLogin(generateRandomEmail(), client)
-        createUserAndLogin(generateRandomEmail(), client)
-        createUserAndLogin(generateRandomEmail(), client)
-        createUserAndLogin(generateRandomEmail(), client)
+        val userEmail1 = "test_subject1@gmail.com"
+        val userEmail2 = "test_subject2@gmail.com"
+        val userEmail3 = "test_subject3@gmail.com"
+        createUser(userEmail1, generatePassword(1), client)
+        createUser(userEmail2, generatePassword(2), client)
+        createUser(userEmail3, generatePassword(3), client)
+
+        val adminToken = login("admin_email@gmail.com", "admin-password", client) // logs with admin
 
         val result = client.get().uri(Uris.Users.ALL)
-            .header(HttpHeaders.COOKIE, "token=$userToken")
+            .header(HttpHeaders.COOKIE, "token=$adminToken")
             .exchange()
             .expectStatus().isOk
             .expectBody(SirenModel::class.java)
@@ -44,14 +70,14 @@ class UserControllerTests{
             .responseBody!!
 
         val entities = result.entities
-        Assertions.assertEquals(0, entities.size)
+        assertEquals(0, entities.size)
 
         val properties = result.properties as LinkedHashMap<*, *>
         val users = properties["users"] as ArrayList<*>
-        Assertions.assertEquals(4, users.size)
+        assertEquals(4, users.size)
 
         val links = result.links
-        Assertions.assertEquals(0, links.size)
+        assertEquals(0, links.size)
     }
 
     //nao sei como testar isto
@@ -61,7 +87,7 @@ class UserControllerTests{
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         val email = generateRandomEmail()
-        val userToken = createUserAndLogin(email, client)
+        val userToken = createUserAndLogin(email, "TODO", client)
 
         val result = client.get().uri(Uris.Users.ME)
             .header(HttpHeaders.COOKIE, "token=$userToken")
@@ -72,13 +98,12 @@ class UserControllerTests{
             .responseBody!!
 
         val properties = result.properties as LinkedHashMap<*, *>
-        Assertions.assertEquals(3, properties.size)
-        Assertions.assertEquals(email, properties["email"])
+        assertEquals(3, properties.size)
+        assertEquals(email, properties["email"])
 
         // TODO: maybe check the username and user id
 
         val links = result.links
-        Assertions.assertEquals(0, links.size)
+        assertEquals(0, links.size)
     }
 }
-*/

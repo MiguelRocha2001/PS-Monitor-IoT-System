@@ -52,5 +52,4 @@ fun getVerificationCodeAction(sirenBuilderScope: SirenBuilderScope<*>) =
         name = "generate-and-send-code",
         method = HttpMethod.POST,
         type = MediaType.APPLICATION_JSON
-    ){
-    }
+    ){}
