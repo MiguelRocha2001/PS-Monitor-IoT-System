@@ -68,7 +68,7 @@ class UserController(
     fun getAllUsers(
         user: User
     ): ResponseEntity<*> {
-        val users = service.getAllUsers()
+        val users = service.getAllUsers(Role.USER) // only standard users
         return if (users.isEmpty())
             ResponseEntity.status(204).build<Unit>()
         else
@@ -220,11 +220,13 @@ class UserController(
     }
 
     /**
-     * Used only for integration tests
+     * Used only for integration tests.
+     * It deletes all users, except the one with the ADMIN role.
      */
+    @Authorization(Role.ADMIN)
     @DeleteMapping(Uris.Users.ALL)
     fun deleteAllUsers() {
-        service.deleteAllUsers()
+        service.deleteAllUsers(Role.USER)
     }
 
 

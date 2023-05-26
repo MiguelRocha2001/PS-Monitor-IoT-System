@@ -8,8 +8,6 @@ import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.repository.jdbi.JdbiTransaction
 import pt.isel.iot_data_server.repository.jdbi.configure
 
-// TODO -> Change this to use environment variables
-
 private val url = System.getenv("DB_POSTGRES_IOT_SYSTEM_TEST")
 
 private val jdbi = Jdbi.create(

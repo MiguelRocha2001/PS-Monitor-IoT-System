@@ -34,7 +34,7 @@ fun createUser(email: String, password: String, client: WebTestClient): Pair<Str
 
     val userId = (result?.properties as java.util.LinkedHashMap<String, String>)["userId"] ?: Assertions.fail("No user Id")
     val token = (result.properties as java.util.LinkedHashMap<String, String>)["token"] ?: Assertions.fail("No token")
-    return Pair(token, userId)
+    return Pair(userId, token)
 }
 
 /**
@@ -57,6 +57,9 @@ fun login(email: String, password: String, client: WebTestClient): String {
     // extracts the token from response
     return (result?.properties as java.util.LinkedHashMap<String, String>)["token"] ?: Assertions.fail("No token")
 }
+
+fun loginWithAdmin(client: WebTestClient) =
+    login("admin_email@gmail.com", "admin-password", client) // logs with admin
 
 fun create_device(email: String, client: WebTestClient, userToken: String): String {
     val result = client.post().uri(Uris.Devices.ALL)

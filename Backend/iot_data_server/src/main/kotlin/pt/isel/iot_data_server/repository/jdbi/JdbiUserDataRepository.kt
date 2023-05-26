@@ -7,6 +7,7 @@ import pt.isel.iot_data_server.repository.UserDataRepository
 import pt.isel.iot_data_server.repository.jdbi.mappers.PasswordAndSaltMapper
 import pt.isel.iot_data_server.repository.jdbi.mappers.UserMapper
 import pt.isel.iot_data_server.repository.jdbi.mappers.toUser
+import pt.isel.iot_data_server.service.user.Role
 
 class JdbiUserDataRepository(
     private val handle: Handle
@@ -19,7 +20,7 @@ class JdbiUserDataRepository(
         )
             .bind("_id", user.id)
             .bind("email", user.userInfo.email)
-            .bind("role", user.userInfo.role)
+            .bind("role", user.userInfo.role.name.lowercase())
             .execute()
     }
 
@@ -28,6 +29,18 @@ class JdbiUserDataRepository(
             select _id, email, role 
             from _USER
         """)
+            .mapTo<UserMapper>()
+            .list()
+            .map { it.toUser() }
+    }
+
+    override fun getAllUsersWithRole(role: Role): List<User> {
+        return handle.createQuery("""
+            select _id, email, role 
+            from _USER
+            where role = :role
+        """)
+            .bind("role", role.name.lowercase())
             .mapTo<UserMapper>()
             .list()
             .map { it.toUser() }
@@ -73,7 +86,7 @@ class JdbiUserDataRepository(
             .execute()
     }
 
-    override fun deleteTokenByUserId(userId: String) {
+    override fun deleteUserToken(userId: String) {
         handle.createUpdate(
             """
             delete from TOKEN where user_id = :user_id
@@ -102,13 +115,18 @@ class JdbiUserDataRepository(
             .execute()
     }
 
+    // TODO: optimize this query
     override fun existsEmail(email: String): Boolean {
-        getAllUsers().forEach {
-            if (it.userInfo.email == email) {
-                return true
-            }
-        }
-        return false
+        return handle.createQuery(
+            """
+            select count(*) 
+            from _USER 
+            where email = :email
+            """
+        )
+            .bind("email", email)
+            .mapTo<Int>()
+            .single() > 0
     }
 
     override fun getUserByEmailOrNull(email: String): User? {
@@ -125,8 +143,23 @@ class JdbiUserDataRepository(
             ?.toUser()
     }
 
-    override fun deleteAllTokens() {
-        handle.createUpdate("delete from TOKEN").execute()
+    override fun deleteAllTokens(role: Role?) {
+        if (role == null) {
+            handle.createUpdate("delete from TOKEN").execute()
+        } else {
+            handle.createUpdate(
+                """
+                delete from TOKEN 
+                where user_id in (
+                    select _id 
+                    from _USER 
+                    where role = :role
+                )
+                """
+            )
+                .bind("role", role)
+                .execute()
+        }
     }
 
     override fun deleteUser(userId: String) {
@@ -138,8 +171,14 @@ class JdbiUserDataRepository(
     /**
      * Used only for integration tests
      */
-    override fun deleteAllUsers() {
-        handle.createUpdate("delete from _USER").execute()
+    override fun deleteAllUsers(role: Role?) {
+        if (role == null) {
+            handle.createUpdate("delete from _USER").execute()
+        } else {
+            handle.createUpdate("delete from _USER where role = :role")
+                .bind("role", role)
+                .execute()
+        }
     }
 
     override fun addVerificationCode(email: String, code: String) {
@@ -192,7 +231,28 @@ class JdbiUserDataRepository(
             .let { it.value to it.salt }
     }
 
-    override fun deleteAllPasswords() {
-        handle.createUpdate("delete from password").execute()
+    override fun deleteAllPasswords(role: Role?) {
+        if (role == null) {
+            handle.createUpdate("delete from password").execute()
+        } else {
+            handle.createUpdate(
+                """
+                delete from password 
+                where user_id in (
+                    select _id 
+                    from _USER 
+                    where role = :role
+                )
+                """
+            )
+                .bind("role", role)
+                .execute()
+        }
+    }
+
+    override fun deleteUserPassword(userId: String) {
+        handle.createUpdate("delete from password where user_id = :user_id")
+            .bind("user_id", userId)
+            .execute()
     }
 }

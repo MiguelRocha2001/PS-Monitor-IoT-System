@@ -35,6 +35,7 @@ object Uris {
     object Users {
         const val ALL = "/users"
         const val BY_ID1 = "$ALL/{id}"
+        const val BY_ID2 = "$ALL/:id"
         const val ME = "$ALL/me"
         const val MY_TOKEN = "$ME/token"
 

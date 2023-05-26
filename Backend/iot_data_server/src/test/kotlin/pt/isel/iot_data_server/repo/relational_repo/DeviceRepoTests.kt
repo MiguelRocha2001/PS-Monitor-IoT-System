@@ -3,14 +3,29 @@ package pt.isel.iot_data_server.repo.relational_repo
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import pt.isel.iot_data_server.domain.DeviceWakeUpLog
 import pt.isel.iot_data_server.service.user.Role
+import pt.isel.iot_data_server.utils.testWithTransactionManagerAndDontRollback
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 import java.time.Instant
 
 class DeviceRepoTests {
-    private val role = Role.USER
+    @BeforeEach
+    fun preparation() {
+        testWithTransactionManagerAndDontRollback { transactionManager ->
+            transactionManager.run { transaction ->
+                val usersRepo = transaction.userRepo
+                val devicesRepo = transaction.deviceRepo
+                // TODO: maybe delete all device logs
+                devicesRepo.deleteAllDevices()
+                usersRepo.deleteAllPasswords()
+                usersRepo.deleteAllTokens()
+                usersRepo.deleteAllUsers()
+            }
+        }
+    }
     @Test
     fun `Create Device`() {
         testWithTransactionManagerAndRollback { transactionManager ->

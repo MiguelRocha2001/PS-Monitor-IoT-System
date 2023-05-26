@@ -16,11 +16,18 @@ class UserService(
     private val saltPasswordOperations: SaltPasswordOperations,
     private val emailSenderService: EmailManager,
 ) {
+    init {
+        val users = getAllUsers(Role.ADMIN)
+        if (users.isEmpty()) { // enforces that there is always an admin user
+            assert(createUser("admin_email@gmail.com", "admin-password", Role.ADMIN) is Either.Right)
+        }
+    }
+
     /**
      * Creates a new user.
      * @param password is optional. If not provided, the user will be created without a password.
      */
-    fun createUser(email: String, password: String?, role: Role): UserCreationResult {
+    final fun createUser(email: String, password: String?, role: Role): UserCreationResult {
         return transactionManager.run {
             // generate random int
             val userId = UUID.randomUUID().toString()
@@ -52,9 +59,11 @@ class UserService(
         return emailRegexPattern.toRegex().matches(email)
     }
 
-    fun getAllUsers(): List<User> {
+    final fun getAllUsers(role: Role? = null): List<User> { // TODO: test this
         return transactionManager.run {
-            return@run it.userRepo.getAllUsers()
+            if (role === null)
+                return@run it.userRepo.getAllUsers()
+            return@run it.userRepo.getAllUsersWithRole(role)
         }
     }
 
@@ -95,7 +104,7 @@ class UserService(
             // saveEncryptedToken(aesCipher,token,user.id)
 
             // TODO: maybe use update token instead of delete and create
-            it.userRepo.deleteTokenByUserId(user.id)
+            it.userRepo.deleteUserToken(user.id)
             it.userRepo.createToken(user.id, token)
 
             return@run Either.Right(token)
@@ -113,18 +122,21 @@ class UserService(
 
     /**
      * Used only for integration tests.
-     * Deletes all users and tokens.
+     * Deletes all users with role USER and tokens.
+     * @param role is optional. If not provided, all users will be deleted.
      */
-    fun deleteAllUsers() {
+    fun deleteAllUsers(role: Role? = null) {
         transactionManager.run {
-            it.userRepo.deleteAllTokens()
-            it.userRepo.deleteAllPasswords()
-            it.userRepo.deleteAllUsers()
+            it.userRepo.deleteAllTokens(role)
+            it.userRepo.deleteAllPasswords(role)
+            it.userRepo.deleteAllUsers(role)
         }
     }
 
     fun deleteUser(userId: String) {
         transactionManager.run {
+            it.userRepo.deleteUserToken(userId)
+            it.userRepo.deleteUserPassword(userId)
             it.userRepo.deleteUser(userId)
         }
     }

@@ -2,6 +2,8 @@ package pt.isel.iot_data_server.http
 
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -23,16 +25,18 @@ class UserControllerTests{
     var port: Int = 0
 
     @TestConfiguration
-    class GameTestConfiguration {
+    class UserTestConfiguration {
         @Bean
         @Primary
         fun jdbiTest() = buildJdbiTest()
     }
 
-    @AfterEach
+    @BeforeEach
     fun cleanup() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
-        client.delete().uri(Uris.Data.ALL)
+        val adminToken = loginWithAdmin(client)
+        client.delete().uri(Uris.Users.ALL)
+            .header(HttpHeaders.COOKIE, "token=$adminToken")
             .exchange()
             .expectStatus().isOk
             .expectBody(SirenModel::class.java)
@@ -59,7 +63,7 @@ class UserControllerTests{
         createUser(userEmail2, generatePassword(2), client)
         createUser(userEmail3, generatePassword(3), client)
 
-        val adminToken = login("admin_email@gmail.com", "admin-password", client) // logs with admin
+        val adminToken = loginWithAdmin(client)
 
         val result = client.get().uri(Uris.Users.ALL)
             .header(HttpHeaders.COOKIE, "token=$adminToken")
@@ -69,15 +73,43 @@ class UserControllerTests{
             .returnResult()
             .responseBody!!
 
-        val entities = result.entities
-        assertEquals(0, entities.size)
-
         val properties = result.properties as LinkedHashMap<*, *>
         val users = properties["users"] as ArrayList<*>
         assertEquals(4, users.size)
 
         val links = result.links
         assertEquals(0, links.size)
+    }
+
+    @Test
+    fun `Is email already registered`() {
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+
+        val userEmail = "test_subject1@gmail.com"
+        createUser(userEmail, generatePassword(1), client)
+
+        val result1 = client.get().uri(Uris.Users.exists.BY_EMAIL_1.replace("{email}", userEmail))
+            .exchange()
+            .expectStatus().isOk
+            .expectBody(SirenModel::class.java)
+            .returnResult()
+            .responseBody!!
+
+        val properties1 = result1.properties as LinkedHashMap<*, *>
+        val exists1 = properties1["exists"] as Boolean
+        assertEquals(true, exists1)
+
+        val anotherEmail = "test_subject2@gmail.com"
+        val result2 = client.get().uri(Uris.Users.exists.BY_EMAIL_1.replace("{email}", anotherEmail))
+            .exchange()
+            .expectStatus().isOk
+            .expectBody(SirenModel::class.java)
+            .returnResult()
+            .responseBody!!
+
+        val properties2 = result2.properties as LinkedHashMap<*, *>
+        val exists2 = properties2["exists"] as Boolean
+        assertEquals(false, exists2)
     }
 
     //nao sei como testar isto
@@ -87,7 +119,7 @@ class UserControllerTests{
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         val email = generateRandomEmail()
-        val userToken = createUserAndLogin(email, "TODO", client)
+        val userToken = createUserAndLogin(email, generatePassword(1), client)
 
         val result = client.get().uri(Uris.Users.ME)
             .header(HttpHeaders.COOKIE, "token=$userToken")
@@ -105,5 +137,97 @@ class UserControllerTests{
 
         val links = result.links
         assertEquals(0, links.size)
+    }
+
+    @Test
+    fun `Is logged in after loggin`(){
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+
+        val email = generateRandomEmail()
+        val userToken = createUser(email, generatePassword(1), client)
+
+        val result = client.get().uri(Uris.NonSemantic.loggedIn)
+            .header(HttpHeaders.COOKIE, "token=$userToken")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody(SirenModel::class.java)
+            .returnResult()
+            .responseBody!!
+
+        val properties = result.properties as LinkedHashMap<*, *>
+        val exists = properties["isLoggedIn"] as Boolean
+        assertEquals(true, exists)
+    }
+
+    @Test
+    fun `Is logged in after logout`(){
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+
+        val email = generateRandomEmail()
+        val userToken = createUser(email, generatePassword(1), client)
+
+        client.delete().uri(Uris.NonSemantic.logout) // logs out
+            .header(HttpHeaders.COOKIE, "token=$userToken")
+            .exchange()
+            .expectStatus().isNoContent
+
+        val result2 = client.get().uri(Uris.NonSemantic.loggedIn)
+            .header(HttpHeaders.COOKIE, "token=$userToken")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody(SirenModel::class.java)
+            .returnResult()
+            .responseBody!!
+
+        val properties = result2.properties as LinkedHashMap<*, *>
+        val exists = properties["isLoggedIn"] as Boolean
+        assertEquals(false, exists)
+    }
+
+    @Test
+    fun `Can log-in`(){
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+        val email = generateRandomEmail()
+        createUserAndLogin(email, generatePassword(1), client)
+    }
+
+    @Test
+    fun `Can delete User as admin`(){
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+
+        val userId1 = createUser(generateRandomEmail(), generatePassword(1), client).first
+        val userId2 = createUser("some_email1234@gmail.com", generatePassword(1), client).first
+        val userId3 = createUser(generateRandomEmail(), generatePassword(1), client).first
+
+        val adminToken = loginWithAdmin(client)
+
+        client.delete().uri(Uris.Users.BY_ID2.replace(":id", userId1))
+            .header(HttpHeaders.COOKIE, "token=$adminToken")
+            .exchange()
+            .expectStatus().isNoContent
+
+        val allUsersResult = client.get().uri(Uris.Users.ALL)
+            .header(HttpHeaders.COOKIE, "token=$adminToken")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody(SirenModel::class.java)
+            .returnResult()
+            .responseBody!!
+
+        val properties = allUsersResult.properties as LinkedHashMap<*, *>
+        val users = properties["users"] as ArrayList<*>
+        assertEquals(2, users.size)
+    }
+
+    @Test
+    fun `Cannot delete User as standard user`(){
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+
+        val userToken = createUser(generateRandomEmail(), generatePassword(1), client).second
+        val userId2 = createUser(generateRandomEmail(), generatePassword(1), client).first
+
+        client.get().uri(Uris.Users.BY_ID2.replace(":id", userId2))
+            .header(HttpHeaders.COOKIE, "token=$userToken")
+            .exchange()
     }
 }

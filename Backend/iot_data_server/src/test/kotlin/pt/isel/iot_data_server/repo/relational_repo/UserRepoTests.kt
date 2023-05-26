@@ -1,18 +1,31 @@
 package pt.isel.iot_data_server.repo.relational_repo
 
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.domain.UserInfo
 import pt.isel.iot_data_server.service.user.Role
 import pt.isel.iot_data_server.utils.generateRandomEmail
+import pt.isel.iot_data_server.utils.testWithTransactionManagerAndDontRollback
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 import java.util.*
 
 
 class UserRepoTests {
+    @BeforeEach
+    fun preparation() {
+        testWithTransactionManagerAndDontRollback { transactionManager ->
+            transactionManager.run { transaction ->
+                val usersRepo = transaction.userRepo
+                usersRepo.deleteAllPasswords()
+                usersRepo.deleteAllTokens()
+                usersRepo.deleteAllUsers()
+            }
+        }
+    }
+
     @Test
     fun `Create user with role USER and get`() {
         testWithTransactionManagerAndRollback { transactionManager ->
@@ -24,10 +37,8 @@ class UserRepoTests {
 
                 val user = User(userId, userInfo)
                 usersRepo.createUser(user)
-                val users = usersRepo.getAllUsers()
 
-                assertEquals(1, users.size)
-                assertEquals(user, users[0])
+                assertEquals(user, usersRepo.getUserByIdOrNull(userId))
             }
         }
     }
@@ -43,10 +54,9 @@ class UserRepoTests {
 
                 val user = User(userId, userInfo)
                 usersRepo.createUser(user)
-                val users = usersRepo.getAllUsers()
+                val retrievedUser = usersRepo.getUserByIdOrNull(userId)
 
-                assertEquals(1, users.size)
-                assertEquals(user, users[0])
+                assertEquals(user, retrievedUser)
             }
         }
     }
@@ -58,18 +68,12 @@ class UserRepoTests {
                 val usersRepo = transaction.userRepo
 
                 val user1 = createUser(usersRepo, "some_email_1@gmail.com")
-                val users1 = usersRepo.getAllUsers()
-
-                assertEquals(1, users1.size)
-                assertEquals(user1, users1[0])
-
-
                 val user2 = createUser(usersRepo, "some_email_2@gmail.com")
+
                 val users2 = usersRepo.getAllUsers()
 
-                assertEquals(2, users2.size)
-                assertEquals(user1, users2[0])
-                assertEquals(user2, users2[1])
+                assertTrue(users2.contains(user1))
+                assertTrue(users2.contains(user2))
             }
         }
     }
@@ -81,10 +85,8 @@ class UserRepoTests {
                 val usersRepo = transaction.userRepo
 
                 val user = createUser(usersRepo,"some_email_1@gmail.com")
-                val users = usersRepo.getAllUsers()
 
-                assertEquals(1, users.size)
-                assertEquals(user, users[0])
+                assertNotNull(usersRepo.getUserByIdOrNull(user.id))
 
                 val token = UUID.randomUUID().toString()
                 usersRepo.createToken(user.id, token)
@@ -117,10 +119,7 @@ class UserRepoTests {
 
                 val email = "some_email_1@gmail.com"
                 val user = createUser(usersRepo, email)
-
-                val users = usersRepo.getAllUsers()
-                assertEquals(1, users.size)
-                assertEquals(user, users[0])
+                assertNotNull(usersRepo.getUserByIdOrNull(user.id))
 
                 assertEquals(true, usersRepo.existsEmail(email))
 
@@ -140,11 +139,7 @@ class UserRepoTests {
 
                 val email = "some_email_1@gmail.com"
                 val user = createUser(usersRepo, email)
-
-                val users = usersRepo.getAllUsers()
-
-                assertEquals(1, users.size)
-                assertEquals(user, users[0])
+                assertNotNull(usersRepo.getUserByIdOrNull(user.id))
 
                 assertEquals(user, usersRepo.getUserByEmailOrNull(email))
                 assertEquals(null, usersRepo.getUserByEmailOrNull("invalid_email"))
@@ -159,21 +154,14 @@ class UserRepoTests {
                 val usersRepo = transaction.userRepo
 
                 val email1 = "some_email_1@gmail.com"
-                val user = createUser(usersRepo, email1)
-                val users = usersRepo.getAllUsers()
-
-                assertEquals(1, users.size)
-                assertEquals(user, users[0])
+                val user1 = createUser(usersRepo, email1)
+                assertNotNull(usersRepo.getUserByIdOrNull(user1.id))
 
                 val email2 = "some_email_2@gmail.com"
                 val user2 = createUser(usersRepo, email2)
-                val users2 = usersRepo.getAllUsers()
+                assertNotNull(usersRepo.getUserByIdOrNull(user2.id))
 
-                assertEquals(2, users2.size)
-                assertEquals(user, users2[0])
-                assertEquals(user2, users2[1])
-
-                usersRepo.deleteAllUsers()
+                usersRepo.deleteAllUsers(Role.USER)
                 val users3 = usersRepo.getAllUsers()
 
                 assertEquals(0, users3.size)
@@ -189,15 +177,10 @@ class UserRepoTests {
 
                 val email1 = "some_email_1@gmail.com"
                 val user = createUser(usersRepo, email1)
-                val users = usersRepo.getAllUsers()
-
-                assertEquals(1, users.size)
-                assertEquals(user, users[0])
-
+                assertNotNull(usersRepo.getUserByIdOrNull(user.id))
                 usersRepo.deleteUser(user.id)
 
-                val users2 = usersRepo.getAllUsers()
-                assertEquals(0, users2.size)
+                assertNull(usersRepo.getUserByIdOrNull(user.id))
             }
         }
     }
