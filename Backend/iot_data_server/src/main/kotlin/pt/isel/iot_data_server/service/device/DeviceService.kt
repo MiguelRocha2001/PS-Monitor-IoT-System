@@ -131,12 +131,6 @@ class DeviceService (
         }
     }
 
-    fun removeAllDevices() {
-        return transactionManager.run {
-            return@run it.deviceRepo.deleteAllDevices()
-        }
-    }
-
     fun getDevicesByOwnerEmail(ownerEmail: String): List<Device> { //FIXME: WHAT IF THE EMAIL DOES NOT EXIST
         return transactionManager.run {
             return@run it.deviceRepo.getDevicesByAlertEmail(ownerEmail)

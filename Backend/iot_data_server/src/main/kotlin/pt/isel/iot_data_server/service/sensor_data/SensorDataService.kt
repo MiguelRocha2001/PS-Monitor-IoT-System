@@ -24,13 +24,6 @@ class SensorDataService(
         subscribeSensorTopic(client)
     }
 
-    fun saveSensorRecord(
-        deviceId: String,
-        sensorRecord: SensorRecord
-    ) {
-        sensorDataRepo.saveSensorRecord(deviceId, sensorRecord)
-    }
-
     fun getSensorRecords(deviceId: String, sensorName: String): SensorDataResult {
         return if (!deviceService.existsDevice(deviceId))
             Either.Left(SensorDataError.DeviceNotFound)
@@ -61,7 +54,7 @@ class SensorDataService(
                 val deviceResult = deviceService.getDeviceByIdOrNull(deviceId)
                 if (deviceResult != null) {
                     alertIfDangerous(deviceResult, sensorRecord)
-                    saveSensorRecord(deviceId, sensorRecord)
+                    sensorDataRepo.saveSensorRecord(deviceId, sensorRecord)
                     logger.info("Saved sensor record: $sensorRecord, from device: $deviceId")
                 } else {
                     logger.info("Received sensor record from unknown device: $deviceId")

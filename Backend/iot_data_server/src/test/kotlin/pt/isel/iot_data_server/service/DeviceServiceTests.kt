@@ -35,6 +35,8 @@ class DeviceServiceTests {
 			assertTrue(device != null)
 			assertTrue(device!!.deviceId == result.value)
 			assertTrue(device.ownerEmail == ownerEmail)
+
+			assertTrue(deviceService.belongsToUser(result.value, userID))
 		}
 	}
 
@@ -203,6 +205,36 @@ class DeviceServiceTests {
 				res2 as Either.Right
 				assertEquals(1, res2.value)
 			}
+		}
+	}
+
+	@Test
+	fun `Delete all devices `() {
+		testWithTransactionManagerAndRollback {
+			val (deviceService, userService) = getNewDeviceAndUserService(it)
+
+			val userId1 = createRandomUser(userService)
+			val userId2 = createRandomUser(userService)
+
+			deviceService.addDevice(userId1, "some_alert_email1@gmail.com")
+			deviceService.addDevice(userId2, "some_alert_email1@gmail.com")
+			deviceService.addDevice(userId1, "some_alert_email1@gmail.com")
+			deviceService.addDevice(userId2, "some_alert_email1@gmail.com")
+			deviceService.addDevice(userId1, "some_alert_email1@gmail.com")
+			deviceService.addDevice(userId2, "some_alert_email1@gmail.com")
+			deviceService.addDevice(userId1, "some_alert_email1@gmail.com")
+
+			val res = deviceService.getAllDevices()
+			assertTrue(res is Either.Right)
+			res as Either.Right
+			assertEquals(7, res.value.size)
+
+			deviceService.deleteAllDevices()
+
+			val res2 = deviceService.getAllDevices()
+			assertTrue(res2 is Either.Right)
+			res2 as Either.Right
+			assertEquals(0, res2.value.size)
 		}
 	}
 }

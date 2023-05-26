@@ -116,7 +116,7 @@ fun deleteAllDeviceRecords() {
     testWithTransactionManagerAndDontRollback {
         val userService = UserService(it, SaltPasswordOperations(it), EmailManager())
         val service = DeviceService(it, userService)
-        service.removeAllDevices()
+        service.deleteAllDevices()
     }
 }
 

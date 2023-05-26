@@ -4,6 +4,7 @@ import org.eclipse.paho.client.mqttv3.MqttClient
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito
 import pt.isel.iot_data_server.configuration.TSDBBuilder
 import pt.isel.iot_data_server.domain.SensorInfo
@@ -51,9 +52,115 @@ class SensorDataServiceTest {
     }
 
     @Test
+    fun `Get valid device sensor records` () {
+        testWithTransactionManagerAndRollback { tra: TransactionManager ->
+            val emailSenderService = EmailManager()
+            val (deviceService, userService) = getNewDeviceAndUserService(tra)
+            val userId = createRandomUser(userService)
+
+            val sensorInfo = MySensorInfo()
+            // Create service instance
+            val sensorDataService =
+                SensorDataService(emailSenderService, sensorDataRepo, deviceService, sensorInfo, mqttClient)
+
+            val email = generateRandomEmail()
+            val res = deviceService.addDevice(userId, email)
+            val deviceId = (res as Either.Right).value
+
+            val res2 = sensorDataService.getSensorRecords(deviceId, "temperature")
+            assert(res2 is Either.Right)
+            val records = (res2 as Either.Right).value
+            assert(records.isEmpty())
+        }
+    }
+
+    @Test
+    fun `Get invalid device sensor records` () {
+        testWithTransactionManagerAndRollback { tra: TransactionManager ->
+            val emailSenderService = EmailManager()
+            val (deviceService, userService) = getNewDeviceAndUserService(tra)
+            createRandomUser(userService)
+
+            val sensorInfo = MySensorInfo()
+            // Create service instance
+            val sensorDataService =
+                SensorDataService(emailSenderService, sensorDataRepo, deviceService, sensorInfo, mqttClient)
+
+            val res2 = sensorDataService.getSensorRecords("invalid", "temperature")
+            assert(res2 is Either.Left)
+        }
+    }
+
+    @Test
+    fun `Get valid device sensor records as owner` () {
+        testWithTransactionManagerAndRollback { tra: TransactionManager ->
+            val emailSenderService = EmailManager()
+            val (deviceService, userService) = getNewDeviceAndUserService(tra)
+            val userId = createRandomUser(userService)
+
+            val sensorInfo = MySensorInfo()
+            // Create service instance
+            val sensorDataService =
+                SensorDataService(emailSenderService, sensorDataRepo, deviceService, sensorInfo, mqttClient)
+
+            val email = generateRandomEmail()
+            val res = deviceService.addDevice(userId, email)
+            val deviceId = (res as Either.Right).value
+
+            val res2 = sensorDataService.getSensorRecordsIfIsOwner(deviceId, userId, "temperature")
+            assert(res2 is Either.Right)
+            val records = (res2 as Either.Right).value
+            assert(records.isEmpty())
+        }
+    }
+
+    @Test
+    fun `Get valid device sensor records not as owner` () {
+        testWithTransactionManagerAndRollback { tra: TransactionManager ->
+            val emailSenderService = EmailManager()
+            val (deviceService, userService) = getNewDeviceAndUserService(tra)
+            val userId = createRandomUser(userService)
+
+            val sensorInfo = MySensorInfo()
+            // Create service instance
+            val sensorDataService =
+                SensorDataService(emailSenderService, sensorDataRepo, deviceService, sensorInfo, mqttClient)
+
+            val email = generateRandomEmail()
+            val res = deviceService.addDevice(userId, email)
+            val deviceId = (res as Either.Right).value
+
+            val res2 = sensorDataService.getSensorRecordsIfIsOwner(deviceId, "invalid-user", "temperature")
+            assert(res2 is Either.Left)
+        }
+    }
+
+    @Test
+    fun `Get available sensors types` () {
+        testWithTransactionManagerAndRollback { tra: TransactionManager ->
+            val emailSenderService = EmailManager()
+            val (deviceService, userService) = getNewDeviceAndUserService(tra)
+            val userId = createRandomUser(userService)
+
+            val sensorInfo = MySensorInfo()
+            // Create service instance
+            val sensorDataService =
+                SensorDataService(emailSenderService, sensorDataRepo, deviceService, sensorInfo, mqttClient)
+
+            val email = generateRandomEmail()
+            val res = deviceService.addDevice(userId, email)
+            val deviceId = (res as Either.Right).value
+
+            val types = sensorDataService.getAvailableSensors(deviceId)
+            assertEquals(0, types.size)
+        }
+    }
+
+    // This tests doesnt make sense since the SensorDataService should not be responsible for inserting the records
+    /*
+    @Test
     fun testSaveASensorNamedPhRecordWithValidPhValue() {
         testWithTransactionManagerAndRollback { tra: TransactionManager ->
-
             val emailSenderService = EmailManager()
             val (deviceService, userService) = getNewDeviceAndUserService(tra)
             val userId = createRandomUser(userService)
@@ -101,23 +208,13 @@ class SensorDataServiceTest {
                 SensorDataService(emailSenderService, sensorDataRepo, deviceService, sensorInfo, mqttClient)
 
             // Invoke savePhRecord with invalid pH value
-            val email = generateRandomEmail()
-            deviceService.addDevice(userId, email)
             val deviceId = "invalid"
             val phRecord = SensorRecord("ph initial", generateRandomPh(), getRandomInstantWithinLastWeek())
 
-            try {
-                // Code that may throw an exception
-                sensorDataService.saveSensorRecord(deviceId, phRecord)
-            } catch (e: IllegalArgumentException) {
-                // Access the exception message
-                val errorMessage = e.message
-
-                // Assert that the exception message is as expected
-                assertEquals("Invalid device id", errorMessage)
-            }
+            assertThrows<IllegalArgumentException> { sensorDataService.saveSensorRecord(deviceId, phRecord) }
         }
     }
+     */
 
     //TODO ADICIONAR MAIS TESTES
 }
