@@ -13,7 +13,9 @@ class DataController(
      * Used only in integration tests
      */
     @DeleteMapping(Uris.Data.ALL)
-    fun reset() {
-        service.eraseAllData()
+    fun eraseAllData(
+        @RequestParam("leave-admin-user", required = true) leaveAdminUser: Boolean,
+    ) {
+        service.eraseAllData(leaveAdminUser)
     }
 }

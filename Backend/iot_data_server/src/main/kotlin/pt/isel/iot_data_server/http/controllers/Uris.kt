@@ -57,7 +57,7 @@ object Uris {
         const val FILTER = "$ALL/filter"
 
         const val BY_ID1 = ALL + "/{device_id}"
-        private const val BY_ID2 = ALL + "/:device_id"
+        const val BY_ID2 = ALL + "/:device_id"
         const val BY_EMAIL = ALL + "/email/{email}"
         const val BY_WORD = FILTER + "/{word}"
         const val BY_WORD_2 = FILTER + "/:word"

@@ -34,14 +34,7 @@ class UserControllerTests{
     @BeforeEach
     fun cleanup() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
-        val adminToken = loginWithAdmin(client)
-        client.delete().uri(Uris.Users.ALL)
-            .header(HttpHeaders.COOKIE, "token=$adminToken")
-            .exchange()
-            .expectStatus().isOk
-            .expectBody(SirenModel::class.java)
-            .returnResult()
-            .responseBody
+        eraseAllData(client)
     }
 
     @Test
@@ -75,7 +68,7 @@ class UserControllerTests{
 
         val properties = result.properties as LinkedHashMap<*, *>
         val users = properties["users"] as ArrayList<*>
-        assertEquals(4, users.size)
+        assertEquals(3, users.size)
 
         val links = result.links
         assertEquals(0, links.size)
@@ -114,8 +107,7 @@ class UserControllerTests{
 
     //nao sei como testar isto
     @Test
-    fun `Can get Me`(){
-
+    fun `Can get Me`() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         val email = generateRandomEmail()
@@ -140,11 +132,11 @@ class UserControllerTests{
     }
 
     @Test
-    fun `Is logged in after loggin`(){
+    fun `Is logged in after log-in`() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         val email = generateRandomEmail()
-        val userToken = createUser(email, generatePassword(1), client)
+        val userToken = createUser(email, generatePassword(1), client).second
 
         val result = client.get().uri(Uris.NonSemantic.loggedIn)
             .header(HttpHeaders.COOKIE, "token=$userToken")
@@ -160,7 +152,25 @@ class UserControllerTests{
     }
 
     @Test
-    fun `Is logged in after logout`(){
+    fun `Is logged in with invalid token`() {
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+
+        val fakeToken = "fakeToken"
+        val result = client.get().uri(Uris.NonSemantic.loggedIn)
+            .header(HttpHeaders.COOKIE, "token=$fakeToken")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody(SirenModel::class.java)
+            .returnResult()
+            .responseBody!!
+
+        val properties = result.properties as LinkedHashMap<*, *>
+        val exists = properties["isLoggedIn"] as Boolean
+        assertEquals(false, exists)
+    }
+
+    @Test
+    fun `Is logged in after logout`() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         val email = generateRandomEmail()
@@ -195,9 +205,9 @@ class UserControllerTests{
     fun `Can delete User as admin`(){
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
-        val userId1 = createUser(generateRandomEmail(), generatePassword(1), client).first
-        val userId2 = createUser("some_email1234@gmail.com", generatePassword(1), client).first
-        val userId3 = createUser(generateRandomEmail(), generatePassword(1), client).first
+        val userId1 = createUser("some_email_1@gmail.com", generatePassword(1), client).first
+        val userId2 = createUser("some_email_2@gmail.com", generatePassword(2), client).first
+        val userId3 = createUser("some_email_3@gmail.com", generatePassword(3), client).first
 
         val adminToken = loginWithAdmin(client)
 

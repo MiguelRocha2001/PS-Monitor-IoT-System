@@ -29,7 +29,7 @@ class DeviceController(
     @ApiResponse(responseCode = "201", description = "Device created", content = [Content(mediaType = "application/vnd.siren+json", schema = Schema(implementation = CreateDeviceOutputModel::class))])
     @ApiResponse(responseCode = "400", description = "Bad request - Invalid email", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
     @PostMapping(Uris.Devices.ALL)
-    fun addDevice(
+    fun createDevice(
         @RequestBody deviceModel: DeviceInputModel,
         user: User
     ): ResponseEntity<*> {

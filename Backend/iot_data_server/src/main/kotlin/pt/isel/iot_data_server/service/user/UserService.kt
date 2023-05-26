@@ -111,6 +111,12 @@ class UserService(
         }
     }
 
+    fun isTokenValid(token: String): Boolean {
+        return transactionManager.run {
+            return@run it.userRepo.getUserByToken(token) != null
+        }
+    }
+
     fun saveEncryptedToken(aesCipher: AESCipher, plainToken: String, userId: String) = transactionManager.run {
         val encryptedToken = aesCipher.encrypt(plainToken)
         return@run it.userRepo.createToken(userId, encryptedToken)

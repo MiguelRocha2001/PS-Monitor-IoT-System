@@ -143,8 +143,6 @@ class DeviceService (
         }
     }
 
-
-
     /*
     fun deleteDevice(deviceId: DeviceId): DeleteDeviceResult {
         return transactionManager.run {

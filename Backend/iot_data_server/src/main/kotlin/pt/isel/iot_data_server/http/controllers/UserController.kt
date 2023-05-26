@@ -69,16 +69,13 @@ class UserController(
         user: User
     ): ResponseEntity<*> {
         val users = service.getAllUsers(Role.USER) // only standard users
-        return if (users.isEmpty())
-            ResponseEntity.status(204).build<Unit>()
-        else
-            ResponseEntity.status(200)
-                .contentType(SirenMediaType)
-                .body(
-                    siren(UsersOutputModel.fromUsers(users)) {
-                        clazz("users")
-                    }
-                )
+        return ResponseEntity.status(200)
+            .contentType(SirenMediaType)
+            .body(
+                siren(UsersOutputModel.fromUsers(users)) {
+                    clazz("users")
+                }
+            )
     }
 
     @Operation(summary = "Get user", description = "Get the current user information")
@@ -88,7 +85,8 @@ class UserController(
     @ApiResponse(responseCode = "401", description = "Not authorized", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
     @GetMapping(Uris.Users.ME)
     fun getMe(
-        user: User
+        user: User,
+        request: HttpServletRequest
     ): ResponseEntity<*> {
         val userOutputModel = UserOutputModel(
             user.id,
@@ -112,7 +110,10 @@ class UserController(
     fun isLoggedIn(
         request: HttpServletRequest
     ): ResponseEntity<*> {
-        val isLogged = request.cookies?.any { it.name == "token" } ?: false
+        val token = request.cookies?.find { it.name == "token" }?.value
+        val isLogged =
+            if (token != null) service.isTokenValid(token)
+            else false
         return ResponseEntity.status(200)
             .contentType(SirenMediaType)
             .body(siren(IsLoggedInOutputModel(isLogged)) {

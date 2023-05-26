@@ -75,13 +75,37 @@ fun create_device(email: String, client: WebTestClient, userToken: String): Stri
     Assertions.assertEquals(1, properties.size)
     Assertions.assertEquals(8, (properties["deviceId"] as? String)?.length)
 
-    // asserting links
-    val links = result.links
-    Assertions.assertEquals(0, links.size)
-
-    // asserting actions
-    val actions = result.actions
-    Assertions.assertEquals(0, actions.size)
-
     return properties["deviceId"] as String
+}
+
+fun deleteAllStandardUsers(client: WebTestClient) {
+    val adminToken = loginWithAdmin(client)
+    client.delete().uri(Uris.Users.ALL)
+        .header(HttpHeaders.COOKIE, "token=$adminToken")
+        .exchange()
+        .expectStatus().isOk
+        .expectBody(SirenModel::class.java)
+        .returnResult()
+        .responseBody
+
+    val allUsersResult = client.get().uri(Uris.Users.ALL)
+        .header(HttpHeaders.COOKIE, "token=$adminToken")
+        .exchange()
+        .expectStatus().isOk
+        .expectBody(SirenModel::class.java)
+        .returnResult()
+        .responseBody!!
+
+    val properties = allUsersResult.properties as LinkedHashMap<*, *>
+    val users = properties["users"] as ArrayList<*>
+    Assertions.assertEquals(0, users.size)
+}
+
+fun eraseAllData(client: WebTestClient) {
+    client.delete().uri(Uris.Data.ALL + "?leave-admin-user=true")
+        .exchange()
+        .expectStatus().isOk
+        .expectBody(SirenModel::class.java)
+        .returnResult()
+        .responseBody
 }

@@ -2,6 +2,7 @@ package pt.isel.iot_data_server.http
 
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -29,15 +30,10 @@ class DeviceHttpTests {
         fun jdbiTest() = buildJdbiTest()
     }
 
-    @AfterEach
+    @BeforeEach
     fun cleanup() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
-        client.delete().uri(Uris.Data.ALL)
-            .exchange()
-            .expectStatus().isOk
-            .expectBody(SirenModel::class.java)
-            .returnResult()
-            .responseBody
+        eraseAllData(client)
     }
 
     @Test
@@ -71,16 +67,15 @@ class DeviceHttpTests {
         val actions = result.actions
         assertEquals(0, actions.size)
     }
-}
-/*
+
     @Test
-    fun `get device by id`() {
+    fun `Create and get device by id`() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         val email = generateRandomEmail()
-        val userToken = createUserAndLogin(email, client)
-
+        val userToken = createUserAndLogin(email, generatePassword(1), client)
         val deviceId = create_device(email, client, userToken)
+
         val result = client.get().uri(Uris.Devices.BY_ID1, deviceId)
             .header(HttpHeaders.COOKIE, "token=$userToken")
             .exchange()
@@ -100,7 +95,7 @@ class DeviceHttpTests {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         val email = generateRandomEmail()
-        val userToken = createUserAndLogin(email, client)
+        val userToken = createUserAndLogin(email, generatePassword(1), client)
 
         create_device(email, client, userToken)
 
@@ -116,7 +111,7 @@ class DeviceHttpTests {
 
         val email = generateRandomEmail()
         // creates random user, and logs in (results in a valid token inside a cookie)
-        val userToken = createUserAndLogin(email, client)
+        val userToken = createUserAndLogin(email, generatePassword(1), client)
 
         create_device(email, client, userToken)
         create_device(email, client, userToken)
@@ -132,16 +127,16 @@ class DeviceHttpTests {
 
         val properties = result.properties as LinkedHashMap<*, *>
         val devices = properties["devices"] as ArrayList<*>
-        assertEquals(3,devices.size)
+        assertEquals(3, devices.size)
     }
 
     @Test
-    fun `get all devices by email`(){
+    fun `get all devices by email`() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         val email = generateRandomEmail()
         // creates random user, and logs in (results in a valid token inside a cookie)
-        val userToken = createUserAndLogin(email, client)
+        val userToken = createUserAndLogin(email, generatePassword(1), client)
 
         create_device(email, client, userToken)
         create_device(email, client, userToken)
@@ -159,4 +154,4 @@ class DeviceHttpTests {
         val devices = properties["devices"] as ArrayList<*>
         assertEquals(3,devices.size)
     }
-}*/
+}

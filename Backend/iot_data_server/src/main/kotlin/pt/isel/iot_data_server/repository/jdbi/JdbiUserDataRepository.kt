@@ -157,7 +157,7 @@ class JdbiUserDataRepository(
                 )
                 """
             )
-                .bind("role", role)
+                .bind("role", role.name.lowercase())
                 .execute()
         }
     }
@@ -176,7 +176,7 @@ class JdbiUserDataRepository(
             handle.createUpdate("delete from _USER").execute()
         } else {
             handle.createUpdate("delete from _USER where role = :role")
-                .bind("role", role)
+                .bind("role", role.name.lowercase())
                 .execute()
         }
     }
@@ -245,7 +245,7 @@ class JdbiUserDataRepository(
                 )
                 """
             )
-                .bind("role", role)
+                .bind("role", role.name.lowercase())
                 .execute()
         }
     }
