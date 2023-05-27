@@ -19,6 +19,8 @@ import NotFound from "./views/testLayout/404";
 import {Devices} from "./views/testLayout/DevicesPage";
 import {DeviceInfo} from "./views/testLayout/DeviceInformation";
 import NewDevice from "./views/testLayout/AddNewDevice";
+import {Users} from "./views/testLayout/UsersPage";
+import {Home} from "./views/testLayout/Home";
 
 //import './App.css';
 
@@ -88,7 +90,9 @@ function Router() {
                             <Route path='/' element={<FrontPage />} />
                             <Route path='/auth/register' element={<SignUpForm />} />
                             <Route path='/auth/login' element={<SignInForm />} />
-                            <Route path='/devices' element={<RequireAuthn children={<Devices />} />} />
+                            <Route path='/home' element={<RequireAuthn children={<Home />} />} />
+                            <Route path='/users' element={<RequireAuthn children={<Users />} />} />
+                            <Route path='users/:userId/devices' element={<RequireAuthn children={<Devices />} />} />
                             <Route path='/devices/:deviceId' element={<RequireAuthn children={<DeviceInfo />} />} />
                             <Route path='/add-new-device' element={<RequireAuthn children={<NewDevice />} />} />
                             <Route path='/device-created/:deviceId' element={<RequireAuthn children={<DeviceCreated />} />} />
@@ -100,28 +104,3 @@ function Router() {
         </div>
     );
 }
-
-/*before
-    return (
-        <div>
-            <ErrorContainer>
-                <AuthnContainer>
-                    <NavBar/>
-                    <Container style={{width: '90%', margin: 'auto', marginTop: '30px'}}>
-                        <Routes>
-                            <Route path='/' element={<FrontPage />} />
-                            <Route path='/auth/:action' element={<Authentication />} />
-                            <Route path='/auth/user-created' element={<UserCreated />} />
-                            <Route path='/devices' element={<RequireAuthn children={<Devices />} />} />
-                            <Route path='/devices/:deviceId' element={<RequireAuthn children={<DeviceInfo />} />} />
-                            <Route path='/add-new-device' element={<RequireAuthn children={<NewDevice />} />} />
-                            <Route path='/device-data/:deviceId' element={<RequireAuthn children={<DeviceSensorialData />} />} />
-                            <Route path='/device-created/:deviceId' element={<RequireAuthn children={<DeviceCreated />} />} />
-                            <Route path='*' element={<p>404</p>} />
-                        </Routes>
-                    </Container>
-                </AuthnContainer>
-            </ErrorContainer>
-        </div>
-    );
- */

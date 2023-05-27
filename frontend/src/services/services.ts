@@ -14,8 +14,9 @@ export interface Services {
     isLoggedIn(): Promise<boolean>
     getMe(): Promise<User>
     createDevice(ownerEmail: string): Promise<string>
-    getDevices(page: number, limit: number): Promise<Device[]>
-    getDeviceCount(): Promise<number>
+    getMyDevices(page: number, limit: number): Promise<Device[]>
+    getDevices(userId: string, page: number, limit: number): Promise<Device[]>
+    getMyDeviceCount(): Promise<number>
     getDevice(deviceId: string): Promise<Device>
     getSensorData(deviceId: string, sensor: String): Promise<SensorData>
     logout(): Promise<void>
@@ -25,6 +26,11 @@ export interface Services {
     verifyCode(email:string, code: string): Promise<boolean>
     sendValidationCode(email:string): Promise<string>
     availableSensors(deviceId: string): Promise<string[]>
+
+    getUsers(page: number, limit: number): Promise<User[]>
+    getUserCount(): Promise<number>
+    getUsersByName(page: number, limit: number, name: string): Promise<User[]>
+    getUserCountByName(s: string): Promise<number>
 }
 
 export const services: Services = new FakeServices()

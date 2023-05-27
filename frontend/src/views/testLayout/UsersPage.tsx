@@ -1,6 +1,5 @@
-import {Device} from "../../services/domain";
+import {Device, User} from "../../services/domain";
 import React, {useEffect, useState} from "react";
-import { useParams } from 'react-router-dom';
 import {services} from "../../services/services";
 import {MyLink} from "../Commons";
 import {useSetError} from "../error/ErrorContainer";
@@ -13,11 +12,9 @@ import './DevicesPage.css'
 import Button from "react-bootstrap/Button";
 import {useSetIsLoggedIn} from "../auth/Authn";
 
-export function Devices() {
-    const { userId } = useParams();
-
+export function Users() {
     const setError = useSetError()
-    const [devices, setDevices] = useState<Device[]>([])
+    const [users, setUsers] = useState<User[]>([])
     const [searchQuery, setSearchQuery] = useState("");
 
 
@@ -25,8 +22,8 @@ export function Devices() {
     const [pageSize, setPageSize] = useState(() => {
         return window.innerWidth <= 767 ? 3 : 5; // Adjust the breakpoint as needed
     });
-    const [filteredDevices, setFilteredDevices] = useState(0)
-    const [totalDevices, setTotalDevices] = useState(0)
+    const [filteredDevices, setFilteredUsers] = useState(0)
+    const [totalUsers, setTotalUsers] = useState(0)
     const [loggedOut, setLoggedOut] = useState(false)
     const setIsLoggedIn = useSetIsLoggedIn()
 
@@ -60,39 +57,39 @@ export function Devices() {
         )
     */
     useEffect(() => {
-        async function fetchNumberOfDevices() {
+        async function fetchNumberOfUsers() {
             services.getMyDeviceCount()
-                .then((number) => setTotalDevices(number))
+                .then((number) => setTotalUsers(number))
                 .catch(error => setError(error.message))
         }
-        fetchNumberOfDevices()
+        fetchNumberOfUsers()
     }, [])
 
     useEffect(() => { //TODO IF I FETCH DEVICE I STORE THEME SO WHEN I CLICK IN THE PREVIOUS BUTTON A NEW REQUEST IS NOT MADE
-        async function fetchNumberOfDevices() {
-            services.getMyDeviceCount()
-                .then((number) => setFilteredDevices(number))
+        async function fetchNumberOfUsers() {
+            services.getUserCount()
+                .then((number) => setFilteredUsers(number))
                 .catch(error => setError(error.message))
         }
-        if(searchQuery === "") fetchNumberOfDevices()
+        if(searchQuery === "") fetchNumberOfUsers()
 
     }, [searchQuery])
 
     useEffect(() => {
-        async function updateDevices() {
-            services.getMyDevices(page, pageSize)
-                .then(devices => setDevices(devices))
+        async function updateUsers() {
+            services.getUsers(page, pageSize)
+                .then(users => setUsers(users))
                 .catch(error => setError(error.message))
         }
-        updateDevices()
-    }, [page, pageSize, searchQuery, totalDevices])
+        updateUsers()
+    }, [page, pageSize, searchQuery, totalUsers])
 
     const handleButtonPress = () => {
         if(searchQuery === "") return
-        services.getDevicesByName(page, pageSize, searchQuery.toUpperCase())
-            .then(devices => {setDevices(devices)})
-            .then(()=> services.getDeviceCountByName(searchQuery.toUpperCase()))
-            .then((devicesSize)=>setFilteredDevices(devicesSize))
+        services.getUsersByName(page, pageSize, searchQuery.toUpperCase())
+            .then(users => {setUsers(users)})
+            .then(()=> services.getUserCountByName(searchQuery.toUpperCase()))
+            .then((devicesSize)=>setFilteredUsers(devicesSize))
             .catch(error => setError(error.message))
     }
 
@@ -107,33 +104,33 @@ export function Devices() {
     }
 
     return (
-        <div className={"devices-sensor"}>
+        <div className={"Users"}>
             <ErrorController>
                 <LogoutButton handleButtonPressed={handleButtonPressed}/>
-                <DeviceList devices={devices} searchQuery={searchQuery} setSearchQuery={setSearchQuery} handleButtonPress={handleButtonPress} totalDevices={totalDevices}/>
+                <UserList users={users} searchQuery={searchQuery} setSearchQuery={setSearchQuery} handleButtonPress={handleButtonPress} totalUsers={totalUsers}/>
                 <Pagination currentPage={page} totalPages={Math.ceil(filteredDevices/pageSize)} onPageChange={(selectedPage: number) => setPage(selectedPage)} />
             </ErrorController>
         </div>
     )
 }
 
-function DeviceList({ devices, searchQuery, setSearchQuery, handleButtonPress, totalDevices }: { devices: Device[], searchQuery: string, setSearchQuery: (searchQuery: string) => void, handleButtonPress: () => void, totalDevices: number }) {
-    const lastLineText = devices.length === 0 ? "No devices found." : `Showing ${devices.length} of ${totalDevices} devices.`
+function UserList({ users, searchQuery, setSearchQuery, handleButtonPress, totalUsers }: { users: User[], searchQuery: string, setSearchQuery: (searchQuery: string) => void, handleButtonPress: () => void, totalUsers: number }) {
+    const lastLineText = users.length === 0 ? "No Users found." : `Showing ${users.length} of ${totalUsers} users.`
 
     return (
         <div className="card">
             <div className="card-header">
-                <h3 id={"logged-as"}> Showing devices associated with <u>{localStorage.getItem('email')}</u></h3>
+                <h3 id={"logged-as"}> Showing all users</h3>
             </div>
             <div className="card-body">
-                {devices.length > 0 ? (
+                {users.length > 0 ? (
                     <ul className="list-group">
-                        {devices.map((device) => (
-                            <li key={device.id} className="list-group-item">
+                        {users.map((user) => (
+                            <li key={user.email} className="list-group-item">
                                 <div className="list-item-info">
                                     <MyLink
-                                        to={`/devices/${device.id}`}
-                                        text={device.id}
+                                        to={`/devices/${user.id}`}
+                                        text={user.email}
                                         center={false}
                                     />
                                 </div>
@@ -143,20 +140,6 @@ function DeviceList({ devices, searchQuery, setSearchQuery, handleButtonPress, t
                 ) : (
                     <p></p>
                 )}
-                <div className="add-device">
-                    <MyLink
-                        to="/add-new-device"
-                        text="Add New Device"
-                        color="#fff"
-                        bold={true}
-                        center={false}
-                    />
-                </div>
-                <InputTextBox
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    onSearch={handleButtonPress}
-                />
                 <b id={"last-line"}>{lastLineText}</b>
             </div>
         </div>
@@ -188,7 +171,7 @@ function InputTextBox({ searchQuery, setSearchQuery, onSearch }: { searchQuery: 
             <input
                 type="text"
                 className="form-control"
-                placeholder="Search for device"
+                placeholder="Search for User"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleKeyPress}

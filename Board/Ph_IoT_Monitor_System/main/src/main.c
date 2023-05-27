@@ -47,11 +47,19 @@ void send_sensor_records(esp_mqtt_client_handle_t client, char* deviceID) {
     strcpy(action, "sending_sensor_records");
     ESP_LOGE(TAG, "Sending sensor records...");
     for (int i = 0; i < MAX_SENSOR_RECORDS; i++) {
-        mqtt_send_sensor_record(client, &sensor_records.start_ph_records[i], deviceID, "initial ph");
+        mqtt_send_sensor_record(client, &sensor_records.start_ph_records[i], deviceID, "initial-ph");
         vTaskDelay(1000 / portTICK_PERIOD_MS);
-        mqtt_send_sensor_record(client, &sensor_records.end_ph_records[i], deviceID, "final ph");
+        mqtt_send_sensor_record(client, &sensor_records.end_ph_records[i], deviceID, "final-ph");
         vTaskDelay(1000 / portTICK_PERIOD_MS);
         mqtt_send_sensor_record(client, &sensor_records.temperature_records[i], deviceID, "temperature");
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        mqtt_send_sensor_record(client, &sensor_records.humidity_records[i], deviceID, "humidity");
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        mqtt_send_sensor_record(client, &sensor_records.humidity_records[i], deviceID, "humidity");
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        mqtt_send_sensor_record(client, &sensor_records.water_flow_records[i], deviceID, "water-flow");
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        mqtt_send_sensor_record(client, &sensor_records.water_level_records[i], deviceID, "water-level");
         vTaskDelay(1000 / portTICK_PERIOD_MS);
         // TODO: send water level, water flow and humidity
     }
@@ -60,13 +68,20 @@ void send_sensor_records(esp_mqtt_client_handle_t client, char* deviceID) {
 void erase_sensor_records() {
     strcpy(action, "erasing_sensor_records");
     ESP_LOGE(TAG, "Erasing sensor records...");
-    for (int i = 0; i < MAX_SENSOR_RECORDS; i++) {
+    for (int i = 0; i < MAX_SENSOR_RECORDS; i++) 
+    {
         sensor_records.start_ph_records[i].value = 0;
         sensor_records.start_ph_records[i].timestamp = 0;
         sensor_records.end_ph_records[i].value = 0;
         sensor_records.end_ph_records[i].timestamp = 0;
         sensor_records.temperature_records[i].value = 0;
         sensor_records.temperature_records[i].timestamp = 0;
+        sensor_records.humidity_records[i].value = 0;
+        sensor_records.humidity_records[i].timestamp = 0;
+        sensor_records.water_flow_records[i].value = 0;
+        sensor_records.water_flow_records[i].timestamp = 0;
+        sensor_records.water_level_records[i].value = 0;
+        sensor_records.water_level_records[i].timestamp = 0;
     }
     sensor_records.index = 0; // resets the index
 }
@@ -113,7 +128,8 @@ void compute_sensors(char* deviceID, esp_mqtt_client_handle_t client) {
     }
 }
 
-void printDeepSleepWokeCause(esp_sleep_wakeup_cause_t wakeup_reason) {
+void printDeepSleepWokeCause(esp_sleep_wakeup_cause_t wakeup_reason) 
+{
     switch(wakeup_reason)
     {
         case ESP_SLEEP_WAKEUP_EXT0 : ESP_LOGE(TAG, "Wakeup caused by external signal using RTC_IO"); break;
@@ -134,46 +150,54 @@ void printDeepSleepWokeCause(esp_sleep_wakeup_cause_t wakeup_reason) {
  * - Brownout;
  * - Unknown.
 */
-int handle_wake_up_reason(char* deviceID, esp_mqtt_client_handle_t client) {
+int handle_wake_up_reason(char* deviceID, esp_mqtt_client_handle_t client) 
+{
     ESP_LOGE(TAG, "Checking wake up reason...");
 
     // Read the Reset Reason Register
     uint32_t reset_reason = esp_reset_reason();
 
     // Check the reset reason flags
-    if (reset_reason & ESP_RST_UNKNOWN) {
+    if (reset_reason & ESP_RST_UNKNOWN) 
+    {
         ESP_LOGE(TAG, "Reset reason: unknown");
         mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "unknown");
         return 1;
     }
-    if (reset_reason & ESP_RST_POWERON) {
+    if (reset_reason & ESP_RST_POWERON) 
+    {
         ESP_LOGE(TAG, "Reset reason: power-on");
         mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "power-on");
         return 1;
     }
-    if (reset_reason & ESP_RST_SW) {
+    if (reset_reason & ESP_RST_SW) 
+    {
         ESP_LOGE(TAG, "Reset reason: software");
         mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "software");
         return 1;
     }
-    if (reset_reason & ESP_RST_PANIC) {
+    if (reset_reason & ESP_RST_PANIC) 
+    {
         ESP_LOGE(TAG, "Reset reason: exception/panic");
         mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, action);
         return 1;
     }
     /*
-    if (reset_reason & ESP_RST_BROWNOUT) {
+    if (reset_reason & ESP_RST_BROWNOUT) 
+    {
         ESP_LOGE(TAG, "Reset reason: brownout");
         mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "brownout");
         return 1;
     }
     */
-    if (reset_reason & ESP_RST_DEEPSLEEP) {
+    if (reset_reason & ESP_RST_DEEPSLEEP) 
+    {
         esp_sleep_wakeup_cause_t cause = esp_sleep_get_wakeup_cause();
         printDeepSleepWokeCause(cause);
-        if (cause == ESP_SLEEP_WAKEUP_EXT0) { // water leak sensor
+        if (cause == ESP_SLEEP_WAKEUP_EXT0)  // water leak sensor
+        {
             mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "water-leak");
-            return 1;
+            esp_deep_sleep_start(); // goes to sleep
         }
         return 0;
     }
@@ -188,7 +212,8 @@ int handle_wake_up_reason(char* deviceID, esp_mqtt_client_handle_t client) {
  * After 5 readings, it will send the values to the MQTT broker and go to deep sleep for 3 seconds.
  * For some unknown reason, the MQTT broker does not receive all messages, the first reading round.
 */
-void app_main(void) {
+void app_main(void) 
+{
     ESP_LOGE(TAG, "Starting app_main...");
     ESP_ERROR_CHECK(nvs_flash_init());
 
@@ -201,19 +226,17 @@ void app_main(void) {
     int res = handle_wake_up_reason(deviceID, client);
     if (res == 0) // timer wake up
     {
-        ESP_LOGE(TAG, "Here1");
         compute_sensors(deviceID, client);
     }
     else // other wake up reason
     {
-        ESP_LOGE(TAG, "Here2");
         if (readings_started)
-            {
-                start_deep_sleep(SENSOR_MULTIPLE_READING_INTERVAL);
-            }
+        {
+            start_deep_sleep(SENSOR_MULTIPLE_READING_INTERVAL);
+        }
         else
-            {
-                continue_long_sleep(LONG_SLEEP_TIME);
-            }
+        {
+            continue_long_sleep(LONG_SLEEP_TIME);
+        }
     }
 }

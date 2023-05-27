@@ -1,35 +1,35 @@
 import {Device, SensorData, SensorRecord, User} from "./domain";
 import {Services} from "./services";
 
+
+class UserInternal {
+    constructor(
+        public user: User,
+        public password: string
+    ) {}
+}
+
 export class FakeServices implements Services {
-    private readonly users: User[] = [
-        new User('admin@gmail.com', 'admin'),
+    private readonly users: UserInternal[] = [
+        new UserInternal(new User("1", 'admin@gmail.com', 'admin'), 'admin'),
     ]
     private user: User | null = null
 
     private readonly email = 'some_email_1@gmail.com'
-    private readonly devices: Device[] = []
+    private readonly devices: Map<User, Device> = new Map()
     private readonly sensors: string[] = ['ph', 'temperature']
 
     constructor() {
-        this.devices.push(new Device(this.getNewDeviceId(), this.email))
-        this.devices.push(new Device(this.getNewDeviceId(), this.email))
-        this.devices.push(new Device(this.getNewDeviceId(), this.email))
-        this.devices.push(new Device(this.getNewDeviceId(), this.email))
-        this.devices.push(new Device(this.getNewDeviceId(), this.email))
-        this.devices.push(new Device(this.getNewDeviceId(), this.email))
-        this.devices.push(new Device(this.getNewDeviceId(), this.email))
-        this.devices.push(new Device(this.getNewDeviceId(), this.email))
-        this.devices.push(new Device(this.getNewDeviceId(), this.email))
-        this.devices.push(new Device(this.getNewDeviceId(), this.email))
-        this.devices.push(new Device(this.getNewDeviceId(), this.email))
-        this.devices.push(new Device(this.getNewDeviceId(), this.email))
-        this.devices.push(new Device(this.getNewDeviceId(), this.email))
-        this.devices.push(new Device(this.getNewDeviceId(), this.email))
-        this.devices.push(new Device(this.getNewDeviceId(), this.email))
-        this.devices.push(new Device(this.getNewDeviceId(), this.email))
-        this.devices.push(new Device(this.getNewDeviceId(), this.email))
-        this.devices.push(new Device(this.getNewDeviceId(), this.email))
+        this.devices.set(this.users[0].user, new Device(this.getNewDeviceId(), this.email))
+        this.devices.set(this.users[0].user, new Device(this.getNewDeviceId(), this.email))
+        this.devices.set(this.users[0].user, new Device(this.getNewDeviceId(), this.email))
+        this.devices.set(this.users[0].user, new Device(this.getNewDeviceId(), this.email))
+        this.devices.set(this.users[0].user, new Device(this.getNewDeviceId(), this.email))
+        this.devices.set(this.users[0].user, new Device(this.getNewDeviceId(), this.email))
+        this.devices.set(this.users[0].user, new Device(this.getNewDeviceId(), this.email))
+        this.devices.set(this.users[0].user, new Device(this.getNewDeviceId(), this.email))
+        this.devices.set(this.users[0].user, new Device(this.getNewDeviceId(), this.email))
+        this.devices.set(this.users[0].user, new Device(this.getNewDeviceId(), this.email))
     }
 
     async getBackendApiInfo() {
@@ -37,28 +37,28 @@ export class FakeServices implements Services {
     }
 
     async googleLogin(): Promise<void> {
-        this.user = this.users[0]
+        this.user = this.users[0].user
     }
 
     checkIfUserExists(email: string): Promise<boolean> {
         if(!email) return Promise.resolve(false)
-        return Promise.resolve(this.users.find(u => u.email === email) !== undefined)
+        return Promise.resolve(this.users.find(u => u.user.email === email) !== undefined)
     }
 
     async createUser(password: string, email: string): Promise<void> {
-        const existingUser = this.users.find(u => u.email === email)
+        const existingUser = this.users.find(u => u.user.email === email)
         if (existingUser) {
             throw new Error('Username already exists')
         }
-        const newUser = new User(email, password)
+        const newUser = new UserInternal(new User(this.getNewDeviceId(), email, email), password)
         this.users.push(newUser)
-        this.user = newUser
+        this.user = newUser.user
     }
 
     async authenticateUser(email: string, password: string): Promise<void> {
-        const user = this.users.find(u => u.email === email && u.password === password)
+        const user = this.users.find(u => u.user.email === email && u.password === password)
         if (user) {
-            this.user = user
+            this.user = user.user
         } else {
             throw new Error('Invalid username or password')
         }
@@ -99,95 +99,83 @@ export class FakeServices implements Services {
         }
 
         while (true) { // loops while there is a device with the same id
-            const deviceId = generateDeviceId()
-            if (!this.devices.find(d => d.id === deviceId)) {
-                return deviceId
+            const id = generateDeviceId()
+            if (!this.devices.values().next().value) {
+                return id
             }
         }
     }
 
     async createDevice(ownerEmail: string): Promise<string> {
-        const deviceId = this.getNewDeviceId()
-        const device = new Device(deviceId, ownerEmail)
-        this.devices.push(device)
-        return deviceId
+        if (this.user) {
+            const deviceId = this.getNewDeviceId()
+            const device = new Device(deviceId, ownerEmail)
+            this.devices.set(this.user, device)
+            return deviceId
+        }
+        throw new Error('Not logged in')
     }
 
-    async getDevices(page: number, limit: number): Promise<Device[]> {
+    async getMyDevices(page: number, limit: number): Promise<Device[]> {
+        if (this.user) {
+            const start = (page - 1) * limit
+            const end = start + limit
+            return Array.from(this.devices.values()).slice(start, end)
+        }
+        throw new Error('Not logged in')
+    }
+
+    getDevices(userId: string, page: number, limit: number): Promise<Device[]> {
         const start = (page - 1) * limit
         const end = start + limit
-        return this.devices.slice(start, end)
+        return Promise.resolve(Array.from(this.devices.values()).slice(start, end))
+    }
+
+    async getUsers(page: number, limit: number): Promise<User[]> {
+        const start = (page - 1) * limit
+        const end = start + limit
+        return this.users.map(u => u.user).slice(start, end)
     }
 
     async getDevicesByName(page: number, limit: number, name: string): Promise<Device[]> {
         const start = (page - 1) * limit
         const end = start + limit
-        return this.devices.filter(d => d.id.includes(name)).slice(start, end)
+        return Array.from(this.devices.values()).filter(d => d.email.includes(name)).slice(start, end)
+    }
+
+    async getUsersByName(page: number, limit: number, name: string): Promise<User[]> {
+        const start = (page - 1) * limit
+        const end = start + limit
+        return this.users.map(u => u.user).filter(u => u.email.includes(name)).slice(start, end)
     }
 
     getDeviceCountByName(s: string): Promise<number> {
         return this.getDevicesByName(1, 1000, s).then(devices => devices.length)
     }
 
-    async getDeviceCount(): Promise<number> {
-        return this.devices.length
+    getUserCountByName(s: string): Promise<number> {
+        return this.getUsersByName(1, 1000, s).then(users => users.length)
+    }
+
+    async getMyDeviceCount(): Promise<number> {
+        if (this.user) {
+            return this.devices.size
+        }
+        throw new Error('Not logged in')
+    }
+
+    async getUserCount(): Promise<number> {
+        return this.users.length
     }
 
     async getDevice(deviceId: string): Promise<Device> {
-        const device = this.devices.find(d => d.id === deviceId)
+        const device = this.devices.get(this.user)
         if (device) {
             return device
-        } else {
-            throw new Error(`Device ${deviceId} not found`)
         }
-    }
-/* one record per day every day for 5 years
-    async getTemperatureData(deviceId: string): Promise<TemperatureData> {
-        const records: TemperatureRecord[] = [];
-        const startDate = new Date('2018-01-01T00:00:00.000Z');
-        const endDate = new Date('2023-01-01T00:00:00.000Z');
-        const numDays = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
-        const recordsPerDay = 1;
-        const temperatureIncreasePerDay = 0.02; // Increase in temperature per day
-        let temperature = 20;
-
-        for (let i = 0; i < numDays; i++) {
-            const currentDate = new Date(startDate.getTime() + i * (1000 * 60 * 60 * 24));
-            for (let j = 0; j < recordsPerDay; j++) {
-                records.push(new TemperatureRecord(temperature, currentDate));
-            }
-            temperature += temperatureIncreasePerDay;
-        }
-
-        return new TemperatureData(records);
+        throw new Error('Device not found')
     }
 
-    async  getPhData(deviceId: string): Promise<PhData> {
-        const records: PhRecord[] = [];
-        const startDate = new Date('2018-01-01T00:00:00.000Z');
-        const endDate = new Date('2023-01-01T00:00:00.000Z');
-        const numDays = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
-        const recordsPerDay = 1;
-        const phIncreasePerDay = 0.002; // Increase in pH per day
-        let pH = 7;
-
-        for (let i = 0; i < numDays; i++) {
-            const currentDate = new Date(startDate.getTime() + i * (1000 * 60 * 60 * 24));
-            for (let j = 0; j < recordsPerDay; j++) {
-                records.push(new PhRecord(pH, currentDate));
-            }
-            if (i < numDays / 2) {
-                pH += phIncreasePerDay;
-            } else {
-                pH -= phIncreasePerDay;
-            }
-        }
-
-        return new PhData(records);
-    }
-
-*/
-//2023 occurences
     async getSensorData(deviceId: string, sensor: string): Promise<SensorData> {
         if (this.sensors.find(s => s === sensor) === undefined)
             throw new Error('Sensor not found')
@@ -212,5 +200,4 @@ export class FakeServices implements Services {
     async availableSensors(): Promise<string[]> {
         return this.sensors
     }
-
 }

@@ -32,7 +32,7 @@ function SignInForm() {
             .then(() => {
                 logger.info("Successfully logged in")
                 setIsLoggedIn(true)
-                setRedirect("/devices")
+                setRedirect("/home")
             }).catch(error => {
                 setErrorMessage(error.message)
             })

@@ -126,7 +126,7 @@ export class RealServices implements Services {
         }
         const response = await doFetch(request, ResponseType.Siren)
         const userFromResponse = response.properties
-        return new User(userFromResponse.username, userFromResponse.password)
+        return new User(userFromResponse.id, userFromResponse.email, userFromResponse.role)
     }
 
     async createDevice(ownerEmail: string): Promise<string> {
@@ -145,7 +145,7 @@ export class RealServices implements Services {
         else throw new Error(`Device added, but no device id found`)
     }
 
-    async getDevices(page: number, limit: number): Promise<Device[]> {
+    async getMyDevices(page: number, limit: number): Promise<Device[]> {
         const getDevicesLink = SirenModule.getGetDevicesLink().href
         const getDeviceLinkAfterParams = getDevicesLink + '?page=' + page + '&limit=' + limit
         if (!getDevicesLink) throw new Error('Get devices link not found')
@@ -216,7 +216,7 @@ export class RealServices implements Services {
         return response.properties.code
     }
 
-    async getDeviceCount(): Promise<number> {
+    async getMyDeviceCount(): Promise<number> {
         const getDeviceCountLink = SirenModule.getGetDeviceCountLink()
         if (!getDeviceCountLink) throw new Error('Get devices link not found')
         const request = {
@@ -274,5 +274,21 @@ export class RealServices implements Services {
         }
         const response = await doFetch(request, ResponseType.Siren)
         return response.properties.types//.map((type: string) => type.replace('_', ' ')) // FIXME: not working
+    }
+
+    getUserCount(): Promise<number> {
+        throw new Error("Method not implemented.");
+    }
+
+    getUserCountByName(s: string): Promise<number> {
+        throw new Error("Method not implemented.");
+    }
+
+    getUsers(page: number, limit: number): Promise<User[]> {
+        throw new Error("Method not implemented.");
+    }
+
+    getUsersByName(page: number, limit: number, name: string): Promise<User[]> {
+        throw new Error("Method not implemented.");
     }
 }
