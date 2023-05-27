@@ -112,29 +112,26 @@ data class Problem(
             "Email already exists",
             "Email already exists",
         )
+
+        val sensorNotFound = Problem(
+            URI("https://github.com/isel-leic-daw/2022-daw-leic52d-2-22-daw-leic52d-g11/docs/problem/sensor-not-found"),
+            "Sensor Not Found",
+            "There is still not any record found for this sensor",
+        )
     }
 }
 
 val problems = mapOf(
     "UserAlreadyExists" to Problem.response(409, Problem.userAlreadyExists),
-
     "InsecurePassword" to Problem.response(400, Problem.insecurePassword),
-
     "InvalidUsername" to Problem.response(400, Problem.invalidUsername),
-
     "UserOrPasswordAreInvalid" to Problem.response(403, Problem.userOrPasswordAreInvalid),
-
     "UserNotFound" to Problem.response(404, Problem.userNotFound),
-
     "DeviceAlreadyExists" to Problem.response(400, Problem.deviceAlreadyExists),
-
     "DeviceNotFound" to Problem.response(404, Problem.deviceNotFound),
-
     "InvalidOwnerEmail" to Problem.response(409, Problem.invalidOwnerEmail),
-
     "EmailAlreadyExists" to Problem.response(409, Problem.emailAlreadyExists),
-
     "UserOrPasswordAreInvalid" to Problem.response(403, Problem.userOrPasswordAreInvalid),
-
     "DeviceNotBelongsToUser" to Problem.response(403, Problem.actionNotPermitted),
+    "SensorNotFound" to Problem.response(404, Problem.sensorNotFound),
 )

@@ -25,13 +25,13 @@ data class DeviceWakeUpLogOutputModel(
     val reason: String
 )
 
-fun DeviceWakeUpLog.toDeviceErrorRecordOutputModel() = DeviceWakeUpLogOutputModel(
+fun DeviceWakeUpLog.toDeviceLogRecordOutputModel() = DeviceWakeUpLogOutputModel(
     deviceId = this.deviceId,
     timestamp = this.instant.toString(),
     reason = this.reason
 )
-data class DeviceWakeUpLogsOutputModel(val errors: List<DeviceWakeUpLogOutputModel>) {
+data class DeviceWakeUpLogsOutputModel(val logs: List<DeviceWakeUpLogOutputModel>) {
     companion object {
-        fun from(errors: List<DeviceWakeUpLog>) = DeviceWakeUpLogsOutputModel(errors.map { it.toDeviceErrorRecordOutputModel() })
+        fun from(errors: List<DeviceWakeUpLog>) = DeviceWakeUpLogsOutputModel(errors.map { it.toDeviceLogRecordOutputModel() })
     }
 }

@@ -7,6 +7,7 @@ import pt.isel.iot_data_server.service.Either
 sealed class SensorDataError: Error() {
     object DeviceNotFound: SensorDataError()
     data class DeviceNotBelongsToUser(val userId: String): SensorDataError()
+    data class SensorNotFound(val sensorName: String): SensorDataError()
 }
 typealias SensorDataResult = Either<SensorDataError, List<SensorRecord>>
 

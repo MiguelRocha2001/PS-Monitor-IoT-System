@@ -1,7 +1,7 @@
 package pt.isel.iot_data_server.http
 
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -58,14 +58,82 @@ class DeviceHttpTests {
 
         val properties = result.properties as LinkedHashMap<*, *>
         val devices = properties["devices"] as ArrayList<*>
-        assertEquals(3,devices.size)
+        assertEquals(3, devices.size)
+    }
 
-        val links = result.links
-        assertEquals(0, links.size)
+    @Test
+    fun `Can get Device Count`() {
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
-        // asserting actions
-        val actions = result.actions
-        assertEquals(0, actions.size)
+        val email = generateRandomEmail()
+        // creates random user, and logs in (results in a valid token inside a cookie)
+        val userToken = createUserAndLogin(email, generatePassword(1), client)
+
+        create_device(generateRandomEmail(), client, userToken)
+        create_device(generateRandomEmail(), client, userToken)
+        create_device(generateRandomEmail(), client, userToken)
+
+        val result = client.get().uri(Uris.Devices.My.COUNT)
+            .header(HttpHeaders.COOKIE, "token=$userToken")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody(SirenModel::class.java)
+            .returnResult()
+            .responseBody!!
+
+        val properties = result.properties as LinkedHashMap<*, *>
+        val deviceCount = properties["deviceCount"] as Int
+        assertEquals(3, deviceCount)
+    }
+
+    @Test
+    fun `Get devices filtered bi id`() {
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+
+        val email = generateRandomEmail()
+        // creates random user, and logs in (results in a valid token inside a cookie)
+        val userToken = createUserAndLogin(email, generatePassword(1), client)
+
+        val deviceId = create_device(generateRandomEmail(), client, userToken)
+        create_device(generateRandomEmail(), client, userToken)
+        create_device(generateRandomEmail(), client, userToken)
+
+        val result = client.get().uri(Uris.Devices.BY_WORD, deviceId[2]) // second char of the id
+            .header(HttpHeaders.COOKIE, "token=$userToken")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody(SirenModel::class.java)
+            .returnResult()
+            .responseBody!!
+
+        val properties = result.properties as LinkedHashMap<*, *>
+        val devices = properties["devices"] as ArrayList<*>
+        assertTrue(devices.any { (it as LinkedHashMap<*, *>)["id"] == deviceId })
+    }
+
+    @Test
+    fun `Count devices filtered bi id`() {
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+
+        val email = generateRandomEmail()
+        // creates random user, and logs in (results in a valid token inside a cookie)
+        val userToken = createUserAndLogin(email, generatePassword(1), client)
+
+        val deviceId = create_device(generateRandomEmail(), client, userToken)
+        create_device(generateRandomEmail(), client, userToken)
+        create_device(generateRandomEmail(), client, userToken)
+
+        val result = client.get().uri(Uris.Devices.COUNT_FILTERED, deviceId[2]) // second char of the id
+            .header(HttpHeaders.COOKIE, "token=$userToken")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody(SirenModel::class.java)
+            .returnResult()
+            .responseBody!!
+
+        val properties = result.properties as LinkedHashMap<*, *>
+        val devices = properties["deviceCount"] as Int
+        assertEquals(1, devices)
     }
 
     @Test
@@ -106,32 +174,7 @@ class DeviceHttpTests {
     }
 
     @Test
-    fun `get all devices`(){
-        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
-
-        val email = generateRandomEmail()
-        // creates random user, and logs in (results in a valid token inside a cookie)
-        val userToken = createUserAndLogin(email, generatePassword(1), client)
-
-        create_device(email, client, userToken)
-        create_device(email, client, userToken)
-        create_device(email, client, userToken)
-
-        val result = client.get().uri(Uris.Devices.ALL)
-            .header(HttpHeaders.COOKIE, "token=$userToken")
-            .exchange()
-            .expectStatus().isOk
-            .expectBody(SirenModel::class.java)
-            .returnResult()
-            .responseBody!!
-
-        val properties = result.properties as LinkedHashMap<*, *>
-        val devices = properties["devices"] as ArrayList<*>
-        assertEquals(3, devices.size)
-    }
-
-    @Test
-    fun `get all devices by email`() {
+    fun `Get all devices by email`() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         val email = generateRandomEmail()
@@ -152,6 +195,29 @@ class DeviceHttpTests {
 
         val properties = result.properties as LinkedHashMap<*, *>
         val devices = properties["devices"] as ArrayList<*>
-        assertEquals(3,devices.size)
+        assertEquals(3, devices.size)
+    }
+
+    @Test
+    fun `Get Device wake up logs`() {
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+
+        val email = generateRandomEmail()
+        // creates random user, and logs in (results in a valid token inside a cookie)
+        val userToken = createUserAndLogin(email, generatePassword(1), client)
+
+        val deviceId = create_device(email, client, userToken)
+
+        val result = client.get().uri(Uris.Devices.WakeUpLogs.ALL_1, deviceId)
+            .header(HttpHeaders.COOKIE, "token=$userToken")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody(SirenModel::class.java)
+            .returnResult()
+            .responseBody!!
+
+        val properties = result.properties as LinkedHashMap<*, *>
+        val logs = properties["logs"] as ArrayList<*>
+        assertEquals(0, logs.size)
     }
 }

@@ -37,7 +37,9 @@ class SensorDataService(
         else if (!deviceService.belongsToUser(deviceId, userId))
             Either.Left(SensorDataError.DeviceNotBelongsToUser(userId))
         else
-            Either.Right(sensorDataRepo.getSensorRecords(deviceId, sensorName))
+            getAvailableSensors(deviceId).firstOrNull { it == sensorName }?.let {
+                Either.Right(sensorDataRepo.getSensorRecords(deviceId, sensorName))
+            } ?: Either.Left(SensorDataError.SensorNotFound(sensorName))
     }
 
     private fun subscribeSensorTopic(client: MqttClient) {

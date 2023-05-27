@@ -1,8 +1,8 @@
 package pt.isel.iot_data_server.http
-/*
+
 import com.influxdb.client.domain.Bucket
 import com.influxdb.client.kotlin.InfluxDBClientKotlin
-import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -14,8 +14,8 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import pt.isel.iot_data_server.configuration.TSDBBuilder
 import pt.isel.iot_data_server.http.controllers.Uris
 import pt.isel.iot_data_server.http.infra.SirenModel
-import pt.isel.iot_data_server.repo.time_series.deleteAllPhMeasurements
-import pt.isel.iot_data_server.repo.time_series.deleteAllTemperatureMeasurements
+import pt.isel.iot_data_server.repo.time_series_repo.deleteAllPhMeasurements
+import pt.isel.iot_data_server.repo.time_series_repo.deleteAllTemperatureMeasurements
 import pt.isel.iot_data_server.utils.generateRandomEmail
 
 
@@ -42,7 +42,7 @@ class SensorDataTests {
         fun jdbiTest() = buildJdbiTest()
     }
 
-    @AfterEach
+    @BeforeEach
     fun delete_data() {
         deleteAllPhMeasurements(tsdbBuilder)
         deleteAllTemperatureMeasurements(tsdbBuilder)
@@ -57,19 +57,17 @@ class SensorDataTests {
     }
 
     @Test
-    fun `get ph`() {
+    fun `Cannot get pH sensor record`() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         val email = generateRandomEmail()
-        val userToken = createUserAndLogin(email, client)
+        val userToken = createUserAndLogin(email, generatePassword(1), client)
         val deviceId = create_device(email, client, userToken)
 
-        val result = client.get().uri(Uris.Devices.PH.ALL_1, deviceId)
+        client.get().uri(Uris.Devices.Sensor.ALL_1 + "?sensor-name=ph", deviceId)
             .header(HttpHeaders.COOKIE, "token=$userToken")
             .exchange()
-            .expectStatus().isOk
-
-        // CONTINUE HERE
+            .expectStatus().isNotFound
     }
 
     @Test
@@ -77,7 +75,7 @@ class SensorDataTests {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         val email = generateRandomEmail()
-        val userToken = createUserAndLogin(email, client)
+        val userToken = createUserAndLogin(email, generatePassword(1), client)
         val deviceId = create_device(email, client, userToken)
 
         val result = client.get().uri(Uris.Devices.Temperature.ALL_1, deviceId)
@@ -89,4 +87,3 @@ class SensorDataTests {
     }
 
 }
-*/
