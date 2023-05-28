@@ -15,7 +15,6 @@ export interface Services {
     getMe(): Promise<User>
     createDevice(ownerEmail: string): Promise<string>
     getMyDevices(page: number, limit: number): Promise<Device[]>
-    getDevices(userId: string, page: number, limit: number): Promise<Device[]>
     getMyDeviceCount(): Promise<number>
     getDevice(deviceId: string): Promise<Device>
     getSensorData(deviceId: string, sensor: String): Promise<SensorData>

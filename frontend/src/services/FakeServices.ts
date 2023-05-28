@@ -1,7 +1,6 @@
 import {Device, SensorData, SensorRecord, User} from "./domain";
 import {Services} from "./services";
 
-
 class UserInternal {
     constructor(
         public user: User,
@@ -125,12 +124,6 @@ export class FakeServices implements Services {
         throw new Error('Not logged in')
     }
 
-    getDevices(userId: string, page: number, limit: number): Promise<Device[]> {
-        const start = (page - 1) * limit
-        const end = start + limit
-        return Promise.resolve(Array.from(this.devices.values()).slice(start, end))
-    }
-
     async getUsers(page: number, limit: number): Promise<User[]> {
         const start = (page - 1) * limit
         const end = start + limit
@@ -169,10 +162,11 @@ export class FakeServices implements Services {
     }
 
     async getDevice(deviceId: string): Promise<Device> {
-        const device = this.devices.get(this.user)
-        if (device) {
-            return device
-        }
+        this.devices.forEach((value, key) => {
+            if (key === this.user && value.id === deviceId) {
+                return value
+            }
+        })
         throw new Error('Device not found')
     }
 
