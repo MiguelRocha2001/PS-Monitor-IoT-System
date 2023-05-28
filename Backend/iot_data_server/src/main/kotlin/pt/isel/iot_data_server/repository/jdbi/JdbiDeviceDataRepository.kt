@@ -39,16 +39,28 @@ class JdbiDeviceDataRepository(
             .map { it.toDevice() }
     }
 
-    override fun getAllDevicesByUserId(userId: String, page: Int?, limit: Int?): List<Device> {
+    override fun getAllDevicesByUserId(
+        userId: String,
+        page: Int?,
+        limit: Int?,
+        deviceAlertEmail: String?,
+        deviceIdChunk: String?,
+        ): List<Device> {
         val offset = ((page ?: 1) - 1) * (limit ?: 10)
-        return handle.createQuery("""
+        return handle.createQuery(
+            """
             select id, user_id, email 
             from device 
             where user_id = :user_id
+            and email LIKE '%' || :email || '%'
+            and id  LIKE '%' || :id || '%'
             limit :limit 
             offset :offset
-        """)
+        """
+        )
             .bind("user_id", userId)
+            .bind("email", deviceAlertEmail ?: "")
+            .bind("id", deviceIdChunk ?: "")
             .bind("limit", limit ?: 10)
             .bind("offset", offset)
             .mapTo<DeviceMapper>()

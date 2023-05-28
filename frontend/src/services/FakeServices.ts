@@ -124,50 +124,44 @@ export class FakeServices implements Services {
         throw new Error('Not logged in')
     }
 
-    async getUsers(page: number, limit: number): Promise<User[]> {
+    async getUsers(page: number, limit: number, emailChunk: string | undefined): Promise<User[]> {
         const start = (page - 1) * limit
         const end = start + limit
         return this.users.map(u => u.user).slice(start, end)
     }
 
-    async getDevicesByName(page: number, limit: number, name: string): Promise<Device[]> {
-        const start = (page - 1) * limit
-        const end = start + limit
-        return Array.from(this.devices.values()).filter(d => d.email.includes(name)).slice(start, end)
-    }
-
-    async getUsersByName(page: number, limit: number, name: string): Promise<User[]> {
-        const start = (page - 1) * limit
-        const end = start + limit
-        return this.users.map(u => u.user).filter(u => u.email.includes(name)).slice(start, end)
-    }
-
-    getDeviceCountByName(s: string): Promise<number> {
-        return this.getDevicesByName(1, 1000, s).then(devices => devices.length)
-    }
-
-    getUserCountByName(s: string): Promise<number> {
-        return this.getUsersByName(1, 1000, s).then(users => users.length)
-    }
-
-    async getDeviceCount(userId: string): Promise<number> {
+    async getUserDeviceCount(userId: string): Promise<number> {
         if (this.user) {
             return this.devices.size
         }
         throw new Error('Not logged in')
     }
 
-    async getUserCount(): Promise<number> {
+    async getUserCount(emailChunk: string | undefined): Promise<number> {
         return this.users.length
     }
 
     async getDeviceById(deviceId: string): Promise<Device> {
-        this.devices.forEach((value, key) => {
-            if (key === this.user && value.id === deviceId) {
-                return value
-            }
-        })
-        throw new Error('Device not found')
+        if (!this.user) throw new Error('Not logged in')
+
+        let device: Device | undefined
+        if (this.user.role === 'admin') {
+            this.devices.forEach((value, key) => {
+                if (value.id === deviceId) {
+                    device = value
+                }
+            })
+        } else {
+            this.devices.forEach((value, key) => {
+                if (key.id === this.user?.id && value.id === deviceId) {
+                    device = value
+                }
+            })
+        }
+        if (device)
+            return device
+        else
+            throw new Error('Device not found')
     }
 
     async getSensorData(deviceId: string, sensor: string): Promise<SensorData> {

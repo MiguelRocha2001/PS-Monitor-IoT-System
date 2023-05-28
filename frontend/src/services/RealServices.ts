@@ -145,39 +145,27 @@ export class RealServices implements Services {
         else throw new Error(`Device added, but no device id found`)
     }
 
-    async getDevices(userId: string, page: number, limit: number): Promise<Device[]> {
+    async getDevices(
+        userId: string,
+        page: number,
+        limit: number,
+        email: string | undefined,
+        deviceIdChunk: string | undefined
+    ): Promise<Device[]> {
         const getDevicesLink = SirenModule.getGetDevicesLink().href
-        const getDeviceLinkAfterParams = getDevicesLink.replace(':userId', userId) + '?page=' + page + '&limit=' + limit
+        let link = getDevicesLink.replace(':userId', userId) + '?page=' + page + '&limit=' + limit
+        if (email) {
+            link = link.concat('&email=' + email)
+        } else if (deviceIdChunk) {
+            link = link.concat('&deviceIdChunk=' + deviceIdChunk)
+        }
         if (!getDevicesLink) throw new Error('Get devices link not found')
         const request = {
-            url: getDeviceLinkAfterParams,
+            url: link,
             method: 'GET'
         }
         const response = await doFetch(request, ResponseType.Siren)
         return toDevices(response.properties)
-    }
-
-    async getDevicesByName(page: number, limit: number, name: string): Promise<Device[]> {
-        const getDevicesLink = SirenModule.getGetDevicesByIdFilteredLink().href
-        const getDeviceLinkAfterParams = getDevicesLink + '?page=' + page + '&limit=' + limit
-        if (!getDevicesLink) throw new Error('Get devices link not found')
-        const request = {
-            url: getDeviceLinkAfterParams.replace(':word', name),
-            method: 'GET'
-        }
-        const response = await doFetch(request, ResponseType.Siren)
-        return toDevices(response.properties)
-    }
-
-    async getDeviceCountByName(device_id: string): Promise<number> {
-        const getDeviceCountLink = SirenModule.getGetDevicesByIdFilteredCountLink()
-        if (!getDeviceCountLink) throw new Error('Get devices link not found')
-        const request = {
-            url: getDeviceCountLink.href.replace(':word', device_id),
-            method: 'GET'
-        }
-        const response = await doFetch(request, ResponseType.Siren)
-        return response.properties.deviceCount
     }
 
     async checkIfUserExists(email: string): Promise<boolean> {
@@ -216,7 +204,7 @@ export class RealServices implements Services {
         return response.properties.code
     }
 
-    async getDeviceCount(userId: string): Promise<number> {
+    async getUserDeviceCount(userId: string): Promise<number> {
         const getDeviceCountLink = SirenModule.getGetDeviceCountLink()
         if (!getDeviceCountLink) throw new Error('Get devices link not found')
         const afterReplace = getDeviceCountLink.href.replace(':userId', userId)

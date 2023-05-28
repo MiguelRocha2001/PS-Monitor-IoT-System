@@ -61,7 +61,7 @@ export function Devices() {
     useEffect(() => {
         async function fetchNumberOfDevices() {
             if (userId) {
-                services.getDeviceCount(userId)
+                services.getUserDeviceCount(userId, undefined, undefined)
                     .then((number) => setTotalDevices(number))
                     .catch(error => setError(error.message))
             }
@@ -72,7 +72,7 @@ export function Devices() {
     useEffect(() => { //TODO IF I FETCH DEVICE I STORE THEME SO WHEN I CLICK IN THE PREVIOUS BUTTON A NEW REQUEST IS NOT MADE
         async function fetchNumberOfDevices() {
             if (userId) {
-                services.getDeviceCount(userId)
+                services.getUserDeviceCount(userId, undefined, undefined)
                     .then((number) => setFilteredDevices(number))
                     .catch(error => setError(error.message))
             }
@@ -84,7 +84,7 @@ export function Devices() {
     useEffect(() => {
         async function updateDevices() {
             if (userId) {
-                services.getDevices(userId, page, pageSize)
+                services.getDevices(userId, page, pageSize, undefined, undefined)
                     .then(devices => setDevices(devices))
                     .catch(error => setError(error.message))
             }
@@ -94,11 +94,15 @@ export function Devices() {
 
     const handleButtonPress = () => {
         if(searchQuery === "") return
-        services.getDevicesByName(page, pageSize, searchQuery.toUpperCase())
-            .then(devices => {setDevices(devices)})
-            .then(()=> services.getDeviceCountByName(searchQuery.toUpperCase()))
-            .then((devicesSize)=>setFilteredDevices(devicesSize))
-            .catch(error => setError(error.message))
+        if (userId) {
+            services.getDevices(userId, page, pageSize, undefined, searchQuery.toUpperCase())
+                .then(devices => {
+                    setDevices(devices)
+                })
+                .then(() => services.getUserDeviceCount(userId, undefined, searchQuery.toUpperCase()))
+                .then((devicesSize) => setFilteredDevices(devicesSize))
+                .catch(error => setError(error.message))
+        }
     }
 
     const navigate = useNavigate();

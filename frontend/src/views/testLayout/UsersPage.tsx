@@ -58,7 +58,7 @@ export function Users() {
     */
     useEffect(() => {
         async function fetchNumberOfUsers() {
-            services.getMyDeviceCount()
+            services.getUserCount(undefined)
                 .then((number) => setTotalUsers(number))
                 .catch(error => setError(error.message))
         }
@@ -67,7 +67,7 @@ export function Users() {
 
     useEffect(() => { //TODO IF I FETCH DEVICE I STORE THEME SO WHEN I CLICK IN THE PREVIOUS BUTTON A NEW REQUEST IS NOT MADE
         async function fetchNumberOfUsers() {
-            services.getUserCount()
+            services.getUserCount(undefined)
                 .then((number) => setFilteredUsers(number))
                 .catch(error => setError(error.message))
         }
@@ -77,7 +77,7 @@ export function Users() {
 
     useEffect(() => {
         async function updateUsers() {
-            services.getUsers(page, pageSize)
+            services.getUsers(page, pageSize, undefined)
                 .then(users => setUsers(users))
                 .catch(error => setError(error.message))
         }
@@ -86,9 +86,9 @@ export function Users() {
 
     const handleButtonPress = () => {
         if(searchQuery === "") return
-        services.getUsersByName(page, pageSize, searchQuery.toUpperCase())
+        services.getUsers(page, pageSize, searchQuery.toUpperCase())
             .then(users => {setUsers(users)})
-            .then(()=> services.getUserCountByName(searchQuery.toUpperCase()))
+            .then(()=> services.getUserCount(searchQuery.toUpperCase()))
             .then((devicesSize)=>setFilteredUsers(devicesSize))
             .catch(error => setError(error.message))
     }
@@ -129,7 +129,7 @@ function UserList({ users, searchQuery, setSearchQuery, handleButtonPress, total
                             <li key={user.email} className="list-group-item">
                                 <div className="list-item-info">
                                     <MyLink
-                                        to={`/devices/${user.id}`}
+                                        to={`/users/${user.id}/devices`}
                                         text={user.email}
                                         center={false}
                                     />

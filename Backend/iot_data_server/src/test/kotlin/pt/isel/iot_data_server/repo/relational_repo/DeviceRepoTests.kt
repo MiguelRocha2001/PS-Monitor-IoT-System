@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import pt.isel.iot_data_server.domain.DeviceWakeUpLog
-import pt.isel.iot_data_server.service.user.Role
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndDontRollback
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 import java.time.Instant
@@ -160,7 +159,7 @@ class DeviceRepoTests {
                 val device7 = createDevice(devicesRepo, user2.id, "some_alert_email_7@gmail.com")
                 val device8 = createDevice(devicesRepo, user2.id, "some_alert_email_8@gmail.com")
 
-                val devices = devicesRepo.getAllDevicesByUserId(user2.id, 1, 3)
+                val devices = devicesRepo.getAllDevicesByUserId(user2.id, 1, 3, deviceAlertEmail, deviceIdChunk)
                 assertEquals(3, devices.size)
                 assertTrue(devices.contains(device4))
                 assertTrue(devices.contains(device5))

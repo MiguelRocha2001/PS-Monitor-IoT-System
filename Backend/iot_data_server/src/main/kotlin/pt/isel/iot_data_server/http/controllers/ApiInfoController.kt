@@ -13,7 +13,7 @@ import pt.isel.iot_data_server.http.infra.siren
 
 @Tag(name = "Siren Info", description = "The Siren Info API")
 @RestController
-class SirenInfoController {
+class ApiInfoController {
     @Operation(summary = "Siren Info", description = "Get the siren info")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved")
     @GetMapping(Uris.SirenInfo.SIREN_INFO)
@@ -28,8 +28,6 @@ class SirenInfoController {
 
                 getVerificationCodeAction(this)
                 getVerifyCodeLink(this)
-                getUserFilteredDevicesByIdCountLink(this)
-                getMyFilteredDevicesByIdLink(this)
                 createTokenSirenAction(this)
                 createLogoutSirenAction(this)
                 isLoggedInLink(this)
@@ -38,8 +36,6 @@ class SirenInfoController {
                 getUserDeviceCountLink(this)
                 getDeviceLinkById(this)
                 createDeviceAction(this)
-                // getPhLink(this) deprecated
-                // getTemperatureLink(this) deprecated
                 getSensorDataLink(this)
                 getMyAvailableDeviceSensorsLink(this)
             })

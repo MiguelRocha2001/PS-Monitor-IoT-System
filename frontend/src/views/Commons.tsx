@@ -64,34 +64,3 @@ export function MyCard({children, title, boldTitle, text, subtitle }:
         </Row>
     );
 }
-
-export function ChooseDevice({onDeviceSelected}: { onDeviceSelected: (deviceId: string) => void}) {
-    const [devices, setDevices] = React.useState<Device[]>([]);
-
-    useEffect(() => {
-        async function fetchDevices() {
-            try {
-                const devices = await services.getMyDevices(0, 5);
-                setDevices(devices);
-            } catch (e) {
-
-            }
-        }
-        fetchDevices();
-    }, []);
-
-    return (
-        <Card>
-            <Card.Body>
-                <Card.Title>Choose Device</Card.Title>
-                <Card.Text>
-                    <select onChange={(e) => onDeviceSelected(e.target.value)}>
-                        {devices.map(device => (
-                            <option key={device.id} value={device.id}>{device.id}</option>
-                        ))}
-                    </select>
-                </Card.Text>
-            </Card.Body>
-        </Card>
-    );
-}

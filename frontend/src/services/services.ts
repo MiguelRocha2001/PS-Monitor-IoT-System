@@ -14,23 +14,29 @@ export interface Services {
     getMe(): Promise<User>
 
     createDevice(ownerEmail: string): Promise<string>
-    getDevices(userId: string, page: number, limit: number): Promise<Device[]>
-    getDeviceCount(userId: string): Promise<number>
+    getDevices(
+        userId: string,
+        page: number,
+        limit: number,
+        alertEmail: string | undefined,
+        deviceIdChunk: string | undefined
+    ): Promise<Device[]>
+    getUserDeviceCount(
+        userId: string,
+        alertEmail: string | undefined,
+        deviceIdChunk: string | undefined
+    ): Promise<number>
     getDeviceById(deviceId: string): Promise<Device>
 
     getSensorData(deviceId: string, sensor: String): Promise<SensorData>
     logout(): Promise<void>
-    getDevicesByName(page: number, limit: number, name: string): Promise<Device[]>
-    getDeviceCountByName(s: string): Promise<number>
     checkIfUserExists(email: string): Promise<boolean>
     verifyCode(email:string, code: string): Promise<boolean>
     sendValidationCode(email:string): Promise<string>
     availableSensors(deviceId: string): Promise<string[]>
 
-    getUsers(page: number, limit: number): Promise<User[]>
-    getUserCount(): Promise<number>
-    getUsersByName(page: number, limit: number, name: string): Promise<User[]>
-    getUserCountByName(s: string): Promise<number>
+    getUsers(page: number, limit: number, emailChunk: string | undefined): Promise<User[]>
+    getUserCount(emailChunk: string | undefined): Promise<number>
 }
 
 export const services: Services = new FakeServices()

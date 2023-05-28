@@ -10,19 +10,21 @@ import "./DeviceInformation.css";
 export function DeviceInfo() {
     const setError = useSetError()
     const { deviceId } = useParams<string>()
+    console.log(deviceId)
     const [device, setDevice] = React.useState<Device | null>(null);
 
     useEffect(() => {
         async function fetchDevice() {
             if (deviceId) { // TODO: SHOULDN'T BE NEEDED !!! passar email e id como props
-                services.getDevice(deviceId)
+                services.getDeviceById(deviceId)
                     .then(device => setDevice(device))
                     .catch(error => setError(error.message))
             }
         }
         fetchDevice();
     }, [deviceId]);
-    
+
+    console.log(device)
 
     if (device == null)
         return <></>
