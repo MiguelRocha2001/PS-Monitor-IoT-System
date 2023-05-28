@@ -92,7 +92,7 @@ function Router() {
                             <Route path='/auth/login' element={<SignInForm />} />
                             <Route path='/home' element={<RequireAuthn children={<Home />} />} />
                             <Route path='/users' element={<RequireAuthn children={<Users />} />} />
-                            <Route path='users/:userId/devices' element={<RequireAuthn children={<Devices />} />} />
+                            <Route path='/users/:userId/devices' element={<RequireAuthn children={<Devices />} />} />
                             <Route path='/devices/:deviceId' element={<RequireAuthn children={<DeviceInfo />} />} />
                             <Route path='/add-new-device' element={<RequireAuthn children={<NewDevice />} />} />
                             <Route path='/device-created/:deviceId' element={<RequireAuthn children={<DeviceCreated />} />} />

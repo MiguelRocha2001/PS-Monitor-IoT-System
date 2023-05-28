@@ -39,7 +39,7 @@ fun createLogoutSirenAction(sirenBuilderScope: SirenBuilderScope<*>) =
 fun createDeviceAction(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.action(
         name = "create-device",
-        href = Uris.Users.Devices.My.all(),
+        href = Uris.Users.Devices.all(),
         method = HttpMethod.POST,
         type = MediaType.APPLICATION_JSON
     ) {

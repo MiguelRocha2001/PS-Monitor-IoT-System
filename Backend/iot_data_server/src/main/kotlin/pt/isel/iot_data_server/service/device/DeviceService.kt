@@ -56,7 +56,13 @@ class DeviceService (
         }
     }
 
-    fun getUserDevices(userId: String, page: Int? = null, limit: Int? = null): GetAllDevicesResult {
+    fun getUserDevices(
+        userId: String,
+        page: Int? = null,
+        limit: Int? = null,
+        deviceAlertEmail: String? = null,
+        deviceIdChunk: String? = null
+    ): GetAllDevicesResult {
         userService.getUserByIdOrNull(userId) ?: return Either.Left(GetAllDevicesError.UserNotFound)
         return transactionManager.run {
             val devices = it.deviceRepo.getAllDevicesByUserId(userId, page, limit).also {
@@ -66,7 +72,8 @@ class DeviceService (
         }
     }
 
-    fun getDevicesFilteredById(deviceId: String,userId: String, page: Int? = null, limit: Int? = null): GetAllDevicesResult {
+    @Deprecated("Use getUserDevices instead")
+    fun getDevicesFilteredById(deviceId: String, userId: String, page: Int? = null, limit: Int? = null): GetAllDevicesResult {
         return transactionManager.run {
             val devices = it.deviceRepo.getDevicesFilteredById(deviceId,userId, page, limit).also {
                 logger.debug("All devices filtered by id returned")
@@ -84,7 +91,30 @@ class DeviceService (
         }
     }
 
+    @Deprecated("Use getDeviceById instead")
     fun getUserDeviceById(userId: String, deviceId: String): GetDeviceResult {
+        return transactionManager.run {
+            val device = getUserDeviceByIdOrNull(userId, deviceId)
+            if (device == null) {
+                logger.debug("Device with id $deviceId not found")
+                return@run Either.Left(GetDeviceError.DeviceNotFound)
+            }
+            logger.debug("Device with id $deviceId found")
+            return@run Either.Right(device)
+        }
+    }
+    fun getDeviceById(deviceId: String): GetDeviceResult {
+        return transactionManager.run {
+            val device = getDeviceByIdOrNull(deviceId)
+            if (device == null) {
+                logger.debug("Device with id $deviceId not found")
+                return@run Either.Left(GetDeviceError.DeviceNotFound)
+            }
+            logger.debug("Device with id $deviceId found")
+            return@run Either.Right(device)
+        }
+    }
+    fun getDeviceByIdIfOwner(userId: String, deviceId: String): GetDeviceResult {
         return transactionManager.run {
             val device = getUserDeviceByIdOrNull(userId, deviceId)
             if (device == null) {
@@ -131,7 +161,7 @@ class DeviceService (
         }
     }
 
-    fun getDevicesByOwnerEmail(ownerEmail: String): List<Device> { //FIXME: WHAT IF THE EMAIL DOES NOT EXIST
+    fun getDevicesByOwnerEmail(userId: String, ownerEmail: String): List<Device> { //FIXME: WHAT IF THE EMAIL DOES NOT EXIST
         return transactionManager.run {
             return@run it.deviceRepo.getDevicesByAlertEmail(ownerEmail)
         }

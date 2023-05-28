@@ -23,7 +23,7 @@ class SensorDataController(
     val sensorDataService: SensorDataService,
     val sensorErrorService: SensorErrorService
 ) {
-    @GetMapping(Uris.Users.Devices.My.Sensor.TYPES_1)
+    @GetMapping(Uris.Users.Devices.Sensor.TYPES_1)
     @Authorization(Role.USER)
     fun getMySensorsAvailable(
         @PathVariable device_id: String
@@ -33,7 +33,7 @@ class SensorDataController(
             .contentType(SirenMediaType)
             .header(
                 "Location",
-                Uris.Users.Devices.My.Sensor.all().toASCIIString()
+                Uris.Users.Devices.Sensor.all().toASCIIString()
             )
             .body(
                 siren(SensorNamesOutputModel(result)) {
@@ -51,7 +51,7 @@ class SensorDataController(
         mediaType = "application/problem+json",
         schema = Schema(implementation = Problem::class)
     )])
-    @GetMapping(Uris.Users.Devices.My.Sensor.ALL_1)
+    @GetMapping(Uris.Users.Devices.Sensor.ALL_1)
     @Authorization(Role.USER)
     fun getMYSensorRecords(
         user: User,
@@ -67,7 +67,7 @@ class SensorDataController(
                 .contentType(SirenMediaType)
                 .header(
                     "Location",
-                    Uris.Users.Devices.My.Sensor.all().toASCIIString()
+                    Uris.Users.Devices.Sensor.all().toASCIIString()
                 )
                 .body(
                     siren(SensorRecordsOutputModel.from(it)) {

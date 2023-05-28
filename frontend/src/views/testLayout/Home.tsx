@@ -18,7 +18,7 @@ export function Home() {
             if (me.role === "admin") {
                 setRedirect("/users")
             } else {
-                setRedirect("/devices")
+                setRedirect("/users/my/devices") // user id is 'my'
             }
         }
         getMe()

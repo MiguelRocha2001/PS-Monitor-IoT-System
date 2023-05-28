@@ -12,10 +12,12 @@ export interface Services {
     authenticateUser(username: string, password: string): Promise<void>
     isLoggedIn(): Promise<boolean>
     getMe(): Promise<User>
+
     createDevice(ownerEmail: string): Promise<string>
-    getMyDevices(page: number, limit: number): Promise<Device[]>
-    getMyDeviceCount(): Promise<number>
-    getDevice(deviceId: string): Promise<Device>
+    getDevices(userId: string, page: number, limit: number): Promise<Device[]>
+    getDeviceCount(userId: string): Promise<number>
+    getDeviceById(deviceId: string): Promise<Device>
+
     getSensorData(deviceId: string, sensor: String): Promise<SensorData>
     logout(): Promise<void>
     getDevicesByName(page: number, limit: number, name: string): Promise<Device[]>

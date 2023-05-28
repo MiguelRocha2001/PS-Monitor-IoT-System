@@ -23,21 +23,21 @@ fun getMeLink(sirenBuilderScope: SirenBuilderScope<*>) =
         rel = Rels.ME
     )
 
-fun getMyDevicesLink(sirenBuilderScope: SirenBuilderScope<*>) =
+fun getDevicesByUserLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
-        href = Uris.Users.Devices.My.all(),
+        href = Uris.Users.Devices.allByUser(),
         rel = Rels.DEVICES
     )
 
-fun getMyDeviceCountLink(sirenBuilderScope: SirenBuilderScope<*>) =
+fun getUserDeviceCountLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
-        href = URI(Uris.Users.Devices.My.COUNT),
+        href = URI(Uris.Users.Devices.COUNT_2),
         rel = Rels.DEVICE_COUNT
     )
 
 fun getDeviceLinkById(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
-        href = Uris.Users.Devices.My.byId(),
+        href = Uris.Users.Devices.byId(),
         rel = Rels.DEVICE_BY_ID
     )
 
@@ -55,9 +55,9 @@ fun getTemperatureLink(sirenBuilderScope: SirenBuilderScope<*>) =
         rel = Rels.TEMPERATURE_DATA
     )
 
-fun getMySensorDataLink(sirenBuilderScope: SirenBuilderScope<*>) =
+fun getSensorDataLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
-        href = URI(Uris.Users.Devices.My.Sensor.ALL_2),
+        href = URI(Uris.Users.Devices.Sensor.ALL_2),
         rel = Rels.SENSOR_DATA
     )
 
@@ -75,18 +75,18 @@ fun getVerifyCodeLink(sirenBuilderScope: SirenBuilderScope<*>) =
 
 fun getMyFilteredDevicesByIdLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
-        href = URI(Uris.Users.Devices.My.BY_WORD_2),
+        href = URI(Uris.Users.Devices.BY_WORD_2),
         rel = Rels.FILTERED_DEVICES
     )
 
-fun getMyFilteredDevicesByIdCountLink(sirenBuilderScope: SirenBuilderScope<*>) =
+fun getUserFilteredDevicesByIdCountLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
-        href = URI(Uris.Users.Devices.My.COUNT_FILTERED_2),
+        href = URI(Uris.Users.Devices.COUNT_FILTERED_2),
         rel = Rels.FILTERED_DEVICES_COUNT
     )
 
 fun getMyAvailableDeviceSensorsLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
-        href = URI(Uris.Users.Devices.My.Sensor.TYPES_2),
+        href = URI(Uris.Users.Devices.Sensor.TYPES_2),
         rel = Rels.AVAILABLE_DEVICE_SENSORS
     )

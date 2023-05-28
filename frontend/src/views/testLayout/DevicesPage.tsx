@@ -13,7 +13,7 @@ import Button from "react-bootstrap/Button";
 import {useSetIsLoggedIn} from "../auth/Authn";
 
 export function Devices() {
-    const { userId } = useParams();
+    const { userId } = useParams<string>() // if 'my' it should show the devices of the logged in user
 
     const setError = useSetError()
     const [devices, setDevices] = useState<Device[]>([])
@@ -60,18 +60,22 @@ export function Devices() {
     */
     useEffect(() => {
         async function fetchNumberOfDevices() {
-            services.getMyDeviceCount()
-                .then((number) => setTotalDevices(number))
-                .catch(error => setError(error.message))
+            if (userId) {
+                services.getDeviceCount(userId)
+                    .then((number) => setTotalDevices(number))
+                    .catch(error => setError(error.message))
+            }
         }
         fetchNumberOfDevices()
     }, [])
 
     useEffect(() => { //TODO IF I FETCH DEVICE I STORE THEME SO WHEN I CLICK IN THE PREVIOUS BUTTON A NEW REQUEST IS NOT MADE
         async function fetchNumberOfDevices() {
-            services.getMyDeviceCount()
-                .then((number) => setFilteredDevices(number))
-                .catch(error => setError(error.message))
+            if (userId) {
+                services.getDeviceCount(userId)
+                    .then((number) => setFilteredDevices(number))
+                    .catch(error => setError(error.message))
+            }
         }
         if(searchQuery === "") fetchNumberOfDevices()
 
@@ -79,9 +83,11 @@ export function Devices() {
 
     useEffect(() => {
         async function updateDevices() {
-            services.getMyDevices(page, pageSize)
-                .then(devices => setDevices(devices))
-                .catch(error => setError(error.message))
+            if (userId) {
+                services.getDevices(userId, page, pageSize)
+                    .then(devices => setDevices(devices))
+                    .catch(error => setError(error.message))
+            }
         }
         updateDevices()
     }, [page, pageSize, searchQuery, totalDevices])

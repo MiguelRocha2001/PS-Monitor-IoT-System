@@ -115,7 +115,7 @@ export class FakeServices implements Services {
         throw new Error('Not logged in')
     }
 
-    async getMyDevices(page: number, limit: number): Promise<Device[]> {
+    async getDevices(userId: string, page: number, limit: number): Promise<Device[]> {
         if (this.user) {
             const start = (page - 1) * limit
             const end = start + limit
@@ -150,7 +150,7 @@ export class FakeServices implements Services {
         return this.getUsersByName(1, 1000, s).then(users => users.length)
     }
 
-    async getMyDeviceCount(): Promise<number> {
+    async getDeviceCount(userId: string): Promise<number> {
         if (this.user) {
             return this.devices.size
         }
@@ -161,7 +161,7 @@ export class FakeServices implements Services {
         return this.users.length
     }
 
-    async getDevice(deviceId: string): Promise<Device> {
+    async getDeviceById(deviceId: string): Promise<Device> {
         this.devices.forEach((value, key) => {
             if (key === this.user && value.id === deviceId) {
                 return value

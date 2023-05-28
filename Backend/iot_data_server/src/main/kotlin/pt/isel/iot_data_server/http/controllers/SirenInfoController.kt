@@ -28,19 +28,19 @@ class SirenInfoController {
 
                 getVerificationCodeAction(this)
                 getVerifyCodeLink(this)
-                getMyFilteredDevicesByIdCountLink(this)
+                getUserFilteredDevicesByIdCountLink(this)
                 getMyFilteredDevicesByIdLink(this)
                 createTokenSirenAction(this)
                 createLogoutSirenAction(this)
                 isLoggedInLink(this)
                 getMeLink(this)
-                getMyDevicesLink(this)
-                getMyDeviceCountLink(this)
+                getDevicesByUserLink(this)
+                getUserDeviceCountLink(this)
                 getDeviceLinkById(this)
                 createDeviceAction(this)
                 // getPhLink(this) deprecated
                 // getTemperatureLink(this) deprecated
-                getMySensorDataLink(this)
+                getSensorDataLink(this)
                 getMyAvailableDeviceSensorsLink(this)
             })
     }

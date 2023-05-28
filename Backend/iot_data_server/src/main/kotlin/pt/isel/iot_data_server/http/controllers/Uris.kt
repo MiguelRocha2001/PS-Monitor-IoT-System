@@ -51,52 +51,24 @@ object Uris {
         }
 
         object Devices {
+            const val ALL = "/devices"
             const val ALL_1 = "${Users.BY_ID1}/devices"
             const val ALL_2 = "${Users.BY_ID2}/devices"
-            const val COUNT = "$ALL/count"
-            const val FILTER = "$ALL/filter"
+            const val COUNT_1 = "$ALL_1/count"
+            const val COUNT_2 = "$ALL_2/count"
+            const val FILTER_1 = "$ALL_1/filter"
+            const val FILTER_2 = "$ALL_2/filter"
 
-            const val BY_ID1 = ALL + "/{device_id}"
-            const val BY_ID2 = ALL + "/:device_id"
-            const val BY_EMAIL = ALL + "/email/{email}"
-            const val BY_WORD = FILTER + "/{word}"
-            const val BY_WORD_2 = FILTER + "/:word"
-            const val COUNT_FILTERED = BY_WORD + "/count"
+            const val BY_ID1 = "/devices/{device_id}"
+            const val BY_ID2 = "/devices/:device_id"
+            const val BY_EMAIL_1 = ALL_1 + "/email/{email}"
+            const val BY_EMAIL_2 = ALL_2 + "/email/:email"
+            const val BY_WORD_1 = FILTER_1 + "/{word}"
+            const val BY_WORD_2 = FILTER_2 + "/:word"
+            const val COUNT_FILTERED_1 = BY_WORD_1 + "/count"
             const val COUNT_FILTERED_2 = BY_WORD_2 + "/count"
 
-            object My {
-                const val ALL = "/devices"
-                const val COUNT = "$ALL/count"
-                const val FILTER = "$ALL/filter"
-
-                const val BY_ID1 = ALL + "/{device_id}"
-                const val BY_ID2 = ALL + "/:device_id"
-                const val BY_EMAIL = ALL + "/email/{email}"
-                const val BY_WORD = FILTER + "/{word}"
-                const val BY_WORD_2 = FILTER + "/:word"
-                const val COUNT_FILTERED = BY_WORD + "/count"
-                const val COUNT_FILTERED_2 = BY_WORD_2 + "/count"
-
-                fun all(): URI = URI(ALL)
-                fun byId(id: String): URI = UriTemplate(BY_ID1).expand(id)
-                fun byId(): URI = URI(BY_ID2)
-
-                object WakeUpLogs {
-                    const val ALL_1 = "${BY_ID1}/wake-up-logs"
-                    private const val ALL_2 = "${BY_ID2}/wake-up-logs"
-
-                    fun all(): URI = URI(ALL_2)
-                }
-
-                object Sensor {
-                    const val ALL_1 = "${BY_ID1}/sensors"
-                    const val ALL_2 = "${BY_ID2}/sensors"
-                    const val TYPES_1 = "${ALL_1}/types"
-                    const val TYPES_2 = "${ALL_2}/types"
-                    fun all(): URI = URI(ALL_2)
-                }
-            }
-
+            fun allByUser() = URI(ALL_2)
             fun all(): URI = URI(ALL)
             fun byId(): URI = URI(BY_ID2)
             fun byId(id: String): URI = UriTemplate(BY_ID1).expand(id)
