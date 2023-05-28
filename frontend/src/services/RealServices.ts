@@ -25,8 +25,6 @@ export class RealServices implements Services {
             SirenModule.extractGetIsEmailAlreadyRegisteredLink(response.links)
             SirenModule.extractGetVerificationCodeAction(response.actions)
             SirenModule.extractGetVerifyCodeLink(response.links)
-            SirenModule.extractGetDevicesByIDLink(response.links)
-            SirenModule.extractCountDevicesByIDLink(response.links)
             SirenModule.extractAvailableDeviceSensorsLink(response.links)
         }
 

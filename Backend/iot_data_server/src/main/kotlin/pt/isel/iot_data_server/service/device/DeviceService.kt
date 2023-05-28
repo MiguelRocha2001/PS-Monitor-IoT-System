@@ -63,8 +63,8 @@ class DeviceService (
         deviceAlertEmail: String? = null,
         deviceIdChunk: String? = null
     ): GetAllDevicesResult {
-        userService.getUserByIdOrNull(userId) ?: return Either.Left(GetAllDevicesError.UserNotFound)
         return transactionManager.run {
+            userService.getUserByIdOrNull(userId) ?: return@run Either.Left(GetAllDevicesError.UserNotFound)
             val devices = it.deviceRepo.getAllDevicesByUserId(userId, page, limit, deviceAlertEmail, deviceIdChunk).also {
                 logger.debug("All devices returned")
             }

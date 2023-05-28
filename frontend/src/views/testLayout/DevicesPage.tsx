@@ -12,8 +12,9 @@ import './DevicesPage.css'
 import Button from "react-bootstrap/Button";
 import {useSetIsLoggedIn} from "../auth/Authn";
 
-export function Devices() {
-    const { userId } = useParams<string>() // if 'my' it should show the devices of the logged in user
+export function Devices({userIdParam}: { userIdParam?: string}) {
+    const { userId } = useParams<string>()
+    const userId_ = userIdParam ? userIdParam : userId // if 'my' it should show the devices of the logged in user
 
     const setError = useSetError()
     const [devices, setDevices] = useState<Device[]>([])
@@ -60,8 +61,8 @@ export function Devices() {
     */
     useEffect(() => {
         async function fetchNumberOfDevices() {
-            if (userId) {
-                services.getUserDeviceCount(userId, undefined, undefined)
+            if (userId_) {
+                services.getUserDeviceCount(userId_, undefined, undefined)
                     .then((number) => setTotalDevices(number))
                     .catch(error => setError(error.message))
             }
@@ -71,8 +72,8 @@ export function Devices() {
 
     useEffect(() => { //TODO IF I FETCH DEVICE I STORE THEME SO WHEN I CLICK IN THE PREVIOUS BUTTON A NEW REQUEST IS NOT MADE
         async function fetchNumberOfDevices() {
-            if (userId) {
-                services.getUserDeviceCount(userId, undefined, undefined)
+            if (userId_) {
+                services.getUserDeviceCount(userId_, undefined, undefined)
                     .then((number) => setFilteredDevices(number))
                     .catch(error => setError(error.message))
             }
@@ -83,8 +84,8 @@ export function Devices() {
 
     useEffect(() => {
         async function updateDevices() {
-            if (userId) {
-                services.getDevices(userId, page, pageSize, undefined, undefined)
+            if (userId_) {
+                services.getDevices(userId_, page, pageSize, undefined, undefined)
                     .then(devices => setDevices(devices))
                     .catch(error => setError(error.message))
             }
@@ -94,12 +95,12 @@ export function Devices() {
 
     const handleButtonPress = () => {
         if(searchQuery === "") return
-        if (userId) {
-            services.getDevices(userId, page, pageSize, undefined, searchQuery.toUpperCase())
+        if (userId_) {
+            services.getDevices(userId_, page, pageSize, undefined, searchQuery.toUpperCase())
                 .then(devices => {
                     setDevices(devices)
                 })
-                .then(() => services.getUserDeviceCount(userId, undefined, searchQuery.toUpperCase()))
+                .then(() => services.getUserDeviceCount(userId_, undefined, searchQuery.toUpperCase()))
                 .then((devicesSize) => setFilteredDevices(devicesSize))
                 .catch(error => setError(error.message))
         }
@@ -115,18 +116,32 @@ export function Devices() {
         })
     }
 
-    return (
-        <div className={"devices-sensor"}>
-            <ErrorController>
-                <LogoutButton handleButtonPressed={handleButtonPressed}/>
-                <DeviceList devices={devices} searchQuery={searchQuery} setSearchQuery={setSearchQuery} handleButtonPress={handleButtonPress} totalDevices={totalDevices}/>
-                <Pagination currentPage={page} totalPages={Math.ceil(filteredDevices/pageSize)} onPageChange={(selectedPage: number) => setPage(selectedPage)} />
-            </ErrorController>
-        </div>
-    )
+    if (userId_) {
+        return (
+            <div className={"devices-sensor"}>
+                <ErrorController>
+                    <LogoutButton handleButtonPressed={handleButtonPressed}/>
+                    <DeviceList devices={devices} searchQuery={searchQuery} setSearchQuery={setSearchQuery}
+                                handleButtonPress={handleButtonPress} totalDevices={totalDevices} userId={userId_}/>
+                    <Pagination currentPage={page} totalPages={Math.ceil(filteredDevices / pageSize)}
+                                onPageChange={(selectedPage: number) => setPage(selectedPage)}/>
+                </ErrorController>
+            </div>
+        )
+    } else {
+        throw new Error("User id should be defined")
+    }
 }
 
-function DeviceList({ devices, searchQuery, setSearchQuery, handleButtonPress, totalDevices }: { devices: Device[], searchQuery: string, setSearchQuery: (searchQuery: string) => void, handleButtonPress: () => void, totalDevices: number }) {
+function DeviceList({ devices, searchQuery, setSearchQuery, handleButtonPress, totalDevices, userId }:
+                        {
+                            devices: Device[],
+                            searchQuery: string,
+                            setSearchQuery: (searchQuery: string) => void,
+                            handleButtonPress: () => void,
+                            totalDevices: number,
+                            userId: string
+                        }) {
     const lastLineText = devices.length === 0 ? "No devices found." : `Showing ${devices.length} of ${totalDevices} devices.`
 
     return (
@@ -141,7 +156,7 @@ function DeviceList({ devices, searchQuery, setSearchQuery, handleButtonPress, t
                             <li key={device.id} className="list-group-item">
                                 <div className="list-item-info">
                                     <MyLink
-                                        to={`/devices/${device.id}`}
+                                        to={`/users/${userId}/devices/${device.id}`}
                                         text={device.id}
                                         center={false}
                                     />

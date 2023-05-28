@@ -59,7 +59,7 @@ class DeviceController(
         val result = if (user.userInfo.role === Role.ADMIN) {
             service.getUserDevices(userId, page, limit, email, id)
         } else {
-            service.getUserDevices(user.id, page, limit, email, id)
+            service.getUserDevices(user.id, page, limit, email, id) // TODO: check if is device owner
         }
         return result.map {
             ResponseEntity.status(200)

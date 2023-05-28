@@ -8,9 +8,9 @@ import {Devices} from "./DevicesPage";
 import "./DeviceInformation.css";
 
 export function DeviceInfo() {
+    const { userId } = useParams<string>() // if 'my' it should show the devices of the logged in user
     const setError = useSetError()
     const { deviceId } = useParams<string>()
-    console.log(deviceId)
     const [device, setDevice] = React.useState<Device | null>(null);
 
     useEffect(() => {
@@ -24,15 +24,13 @@ export function DeviceInfo() {
         fetchDevice();
     }, [deviceId]);
 
-    console.log(device)
-
     if (device == null)
         return <></>
     else
         return (
             <div className="app-container">
                 <div className="devices-container">
-                    <Devices />
+                    <Devices userIdParam={userId}/>
                 </div>
                 <div className="chart-container">
                     <ChartWithPeriodSelection  deviceId={device.id} deviceEmail={device.email}/>

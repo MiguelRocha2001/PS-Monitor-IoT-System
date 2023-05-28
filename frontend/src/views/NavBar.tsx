@@ -10,6 +10,7 @@ import {useSetError} from "./error/ErrorContainer";
 import '../style/NavBarStyle.css'
 
 
+/*
 function NavBar() {
     const setError = useSetError()
     const setIsLoggedIn = useSetIsLoggedIn()
@@ -58,5 +59,4 @@ function NavBar() {
         </Navbar>
     );
 }
-
-export default NavBar;
+ */

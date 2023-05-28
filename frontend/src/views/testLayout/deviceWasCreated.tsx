@@ -32,7 +32,7 @@ export function DeviceCreated() {
                 <Button onClick={copyToClipboard}>
                     {copied ? "Copied!" : "Copy Id to Clipboard"}
                 </Button>
-                <Link to="/devices" className="ml-3">
+                <Link to="/home" className="ml-3">
                     <Button variant="secondary">Go to Devices</Button>
                 </Link>
             </div>

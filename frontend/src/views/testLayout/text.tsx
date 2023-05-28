@@ -18,6 +18,10 @@ export function ChartWithPeriodSelection({deviceId, deviceEmail}: { deviceId: st
             const availableSensors = await services.availableSensors(deviceId);
             setAvailableSensors(availableSensors);
         }
+        fetchAvailableSensors()
+    }, []);
+
+    useEffect(() => {
         async function fetchSensorData(sensor: string) {
             if (deviceId !== undefined) {
                 const sensorData = await services.getSensorData(deviceId, sensor);
@@ -25,9 +29,7 @@ export function ChartWithPeriodSelection({deviceId, deviceEmail}: { deviceId: st
             }
         }
         try {
-            if (availableSensors.length === 0) {
-                fetchAvailableSensors();
-            } else {
+            if (availableSensors.length !== 0) {
                 availableSensors.forEach((sensor) => fetchSensorData(sensor));
             }
         } catch (e: any) {

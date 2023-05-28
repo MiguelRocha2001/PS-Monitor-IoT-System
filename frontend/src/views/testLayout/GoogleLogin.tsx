@@ -48,7 +48,7 @@ export const GoogleLoginButton = ({text}: GoogleLoginButtonProps) => {
         services.googleLogin().then((res) => {
             console.log('google login success')
             setIsLoggedIn(true)
-            setRedirect("/devices")
+            setRedirect("/home")
         })
     }
 
