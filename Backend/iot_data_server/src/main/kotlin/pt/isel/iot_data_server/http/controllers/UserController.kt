@@ -181,7 +181,7 @@ class UserController(
             response.addCookie(cookie)
         }
 
-        response.sendRedirect("http://localhost:8080/devices") // FIXME
+        response.sendRedirect("http://localhost:8080/home") // FIXME
     }
 
     @Operation(summary = "Delete user", description = "Delete the user")
@@ -190,9 +190,9 @@ class UserController(
     @DeleteMapping(Uris.Users.BY_ID1)
     @Authorization(Role.ADMIN)
     fun deleteUser(
-        @PathVariable("id") id: String
+        @PathVariable("userId") userId: String
     ): ResponseEntity<Unit> {
-        service.deleteUser(id)
+        service.deleteUser(userId)
         return ResponseEntity.status(204).build()
     }
 

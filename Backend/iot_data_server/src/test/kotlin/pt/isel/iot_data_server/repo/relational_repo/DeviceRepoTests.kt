@@ -159,7 +159,7 @@ class DeviceRepoTests {
                 val device7 = createDevice(devicesRepo, user2.id, "some_alert_email_7@gmail.com")
                 val device8 = createDevice(devicesRepo, user2.id, "some_alert_email_8@gmail.com")
 
-                val devices = devicesRepo.getAllDevicesByUserId(user2.id, 1, 3, deviceAlertEmail, deviceIdChunk)
+                val devices = devicesRepo.getAllDevicesByUserId(user2.id, 1, 3, null, null)
                 assertEquals(3, devices.size)
                 assertTrue(devices.contains(device4))
                 assertTrue(devices.contains(device5))
@@ -209,7 +209,7 @@ class DeviceRepoTests {
     }
 
     @Test
-    fun `Get devices by alert email`() {
+    fun `Get devices filtered by alert email`() {
         testWithTransactionManagerAndRollback { transactionManager ->
             transactionManager.run { transaction ->
                 val devicesRepo = transaction.deviceRepo
@@ -225,7 +225,7 @@ class DeviceRepoTests {
                 createDevice(devicesRepo, user.id, "some_alert_email_3@gmail.com")
                 assertEquals(5, devicesRepo.getAllDevices().size)
 
-                val devices = devicesRepo.getDevicesByAlertEmail("some_alert_email_2@gmail.com")
+                val devices = devicesRepo.getAllDevicesByUserId(user.id, deviceAlertEmail = "some_alert_email_2@gmail.com")
                 assertEquals(3, devices.size)
                 assertTrue(devices.contains(device1))
                 assertTrue(devices.contains(device2))
@@ -271,14 +271,14 @@ class DeviceRepoTests {
                 val device2 = createDevice(devicesRepo, user.id, "some_alert_email_2@gmail.com")
 
                 val log1 = DeviceWakeUpLog(device1.deviceId, Instant.now(), "some_log_record1")
-                val log2 = DeviceWakeUpLog(device1.deviceId, Instant.now(), "some_log_record2")
-                val log3 = DeviceWakeUpLog(device1.deviceId, Instant.now(), "some_log_record3")
+                val log2 = DeviceWakeUpLog(device1.deviceId, Instant.now().plusMillis(1000), "some_log_record2")
+                val log3 = DeviceWakeUpLog(device1.deviceId, Instant.now().plusMillis(2000), "some_log_record3")
                 devicesRepo.createDeviceLogRecord(device1.deviceId, log1)
                 devicesRepo.createDeviceLogRecord(device1.deviceId, log2)
                 devicesRepo.createDeviceLogRecord(device1.deviceId, log3)
 
-                val log4 = DeviceWakeUpLog(device2.deviceId, Instant.now(), "some_log_record2")
-                val log5 = DeviceWakeUpLog(device2.deviceId, Instant.now(), "some_log_record6")
+                val log4 = DeviceWakeUpLog(device2.deviceId, Instant.now().plusMillis(3000), "some_log_record2")
+                val log5 = DeviceWakeUpLog(device2.deviceId, Instant.now().plusMillis(4000), "some_log_record6")
                 devicesRepo.createDeviceLogRecord(device2.deviceId, log4)
                 devicesRepo.createDeviceLogRecord(device2.deviceId, log5)
 

@@ -76,11 +76,13 @@ class DeviceController(
     fun getDeviceCount(
         user: User,
         @PathVariable userId: String,
+        @RequestParam(required = false) id: String?, // id chunk
+        @RequestParam(required = false) email: String?
     ): ResponseEntity<*> {
         val result = if (user.userInfo.role === Role.ADMIN)
-            service.getDeviceCount(userId)
+            service.getDeviceCount(userId, email, id)
         else {
-            service.getDeviceCount(user.id)
+            service.getDeviceCount(user.id, email, id)
         }
         return result.map { deviceCount ->
             ResponseEntity.status(200)
@@ -91,78 +93,6 @@ class DeviceController(
                     clazz("device-count")
                 })
         }
-    }
-
-    @Deprecated("Use getDevices instead")
-    @Operation(summary = "Device by id", description = "Get a device associated with part of an id ")
-    @ApiResponse(responseCode = "200", description = "Device found", content = [Content(mediaType = "application/vnd.siren+json", schema = Schema(implementation = DeviceOutputModel::class))])
-    @ApiResponse(responseCode = "400", description = "Bad request - The request was not valid, check the given id", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
-    @GetMapping(Uris.Users.Devices.BY_WORD_1)
-    fun searchDevicesByWords(
-        user: User,
-        @PathVariable userId: String,
-        @PathVariable word: String,
-        @RequestParam(required = false) page: Int?,
-        @RequestParam(required = false) limit: Int?
-    ): ResponseEntity<*> {
-        val result = if (user.userInfo.role === Role.ADMIN)
-            service.getDevicesFilteredById(word, userId, page, limit)
-        else {
-            service.getDevicesFilteredById(word, user.id, page, limit)
-        }
-        return result.map {
-            ResponseEntity.status(200)
-                .contentType(SirenMediaType)
-                .body(siren(
-                    DevicesOutputModel.from(it)
-                ) {
-                    clazz("devices")
-                })
-        }
-    }
-
-    @Deprecated("Use countDevices instead")
-    @GetMapping(Uris.Users.Devices.COUNT_FILTERED_1)
-    fun countFilteredDevices(
-        user: User,
-        @PathVariable userId: String,
-        @PathVariable word: String
-    ): ResponseEntity<*> {
-
-        val result = service.getCountOfDevicesFilteredById(user.id, word)
-        return result.map { deviceCount ->
-            ResponseEntity.status(200)
-                .contentType(SirenMediaType)
-                .body(siren(
-                    DeviceCountOutputModel(deviceCount)
-                ) {
-                    clazz("device-count")
-                })
-        }
-    }
-
-    @Deprecated("Use getDevices instead")
-    @Operation(summary = "Device by email", description = "Get a device associated with  email")
-    @ApiResponse(responseCode = "200", description = "Device found", content = [Content(mediaType = "application/vnd.siren+json", schema = Schema(implementation = DeviceOutputModel::class))])
-    @ApiResponse(responseCode = "400", description = "Bad request - The request was not valid, check the given email", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
-    @GetMapping(Uris.Users.Devices.BY_EMAIL_1)
-    fun getDevicesByEmail(
-        user: User,
-        @PathVariable userId: String,
-        @PathVariable email: String
-    ): ResponseEntity<*> {
-        val result = if (user.userInfo.role === Role.ADMIN)
-            service.getDevicesByOwnerEmail(userId, email)
-        else {
-            service.getDevicesByOwnerEmail(user.id, email)
-        }
-        return ResponseEntity.status(200)
-            .contentType(SirenMediaType)
-            .body(siren(
-                DevicesOutputModel.from(result)
-            ) {
-                clazz("devices")
-            })
     }
 
     @Operation(summary = "Device by id", description = "Get a device associated with  id")
@@ -197,7 +127,7 @@ class DeviceController(
         val result = if (user.userInfo.role === Role.ADMIN)
             deviceLogService.getDeviceLogRecords(device_id)
         else {
-            deviceLogService.getDeviceLogRecordsIfIsOwner(user.id, device_id)
+            deviceLogService.getDeviceLogRecordsIfIsOwner(device_id, user.id)
         }
         return result.map {
             ResponseEntity.status(200)

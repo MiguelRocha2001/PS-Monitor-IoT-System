@@ -41,20 +41,6 @@ fun getDeviceLinkById(sirenBuilderScope: SirenBuilderScope<*>) =
         rel = Rels.DEVICE_BY_ID
     )
 
-@Deprecated("Deprecated in favor of getSensorDataLink")
-fun getPhLink(sirenBuilderScope: SirenBuilderScope<*>) =
-    sirenBuilderScope.link(
-        href = URI("deprecated"),
-        rel = Rels.PH_DATA
-    )
-
-@Deprecated("Deprecated in favor of getSensorDataLink")
-fun getTemperatureLink(sirenBuilderScope: SirenBuilderScope<*>) =
-    sirenBuilderScope.link(
-        href = URI("deprecated"),
-        rel = Rels.TEMPERATURE_DATA
-    )
-
 fun getSensorDataLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
         href = URI(Uris.Users.Devices.Sensor.ALL_2),
@@ -71,18 +57,6 @@ fun getVerifyCodeLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
         href = URI(Uris.Verification.CODE),
         rel = Rels.VERIFY_CODE
-    )
-
-fun getMyFilteredDevicesByIdLink(sirenBuilderScope: SirenBuilderScope<*>) =
-    sirenBuilderScope.link(
-        href = URI(Uris.Users.Devices.BY_WORD_2),
-        rel = Rels.FILTERED_DEVICES
-    )
-
-fun getUserFilteredDevicesByIdCountLink(sirenBuilderScope: SirenBuilderScope<*>) =
-    sirenBuilderScope.link(
-        href = URI(Uris.Users.Devices.COUNT_FILTERED_2),
-        rel = Rels.FILTERED_DEVICES_COUNT
     )
 
 fun getMyAvailableDeviceSensorsLink(sirenBuilderScope: SirenBuilderScope<*>) =

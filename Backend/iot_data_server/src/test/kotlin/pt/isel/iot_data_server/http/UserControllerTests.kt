@@ -1,8 +1,6 @@
 package pt.isel.iot_data_server.http
 
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -211,7 +209,7 @@ class UserControllerTests{
 
         val adminToken = loginWithAdmin(client)
 
-        client.delete().uri(Uris.Users.BY_ID2.replace(":id", userId1))
+        client.delete().uri(Uris.Users.BY_ID1, userId1)
             .header(HttpHeaders.COOKIE, "token=$adminToken")
             .exchange()
             .expectStatus().isNoContent

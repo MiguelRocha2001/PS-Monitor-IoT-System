@@ -38,10 +38,14 @@ class DeviceService (
         }
     }
 
-    fun getDeviceCount(userId: String): DeviceCountResult {
-        userService.getUserByIdOrNull(userId) ?: return Either.Left(DeviceCountError.UserNotFound)
+    fun getDeviceCount(
+        userId: String,
+        deviceAlertEmail: String? = null,
+        deviceIdChunk: String? = null
+    ): DeviceCountResult {
         return transactionManager.run {
-            val count = it.deviceRepo.deviceCount(userId)
+            userService.getUserByIdOrNull(userId) ?: return@run Either.Left(DeviceCountError.UserNotFound)
+            val count = it.deviceRepo.deviceCount(userId, deviceAlertEmail, deviceIdChunk)
             logger.debug("Device count returned")
             return@run Either.Right(count)
         }
@@ -82,6 +86,7 @@ class DeviceService (
         }
     }
 
+    @Deprecated("Use getUserDevices instead")
     fun getCountOfDevicesFilteredById(userId:String, deviceId: String): DeviceCountResult {
         return transactionManager.run {
             val count = it.deviceRepo.getCountOfDevicesFilteredById(userId, deviceId).also {
@@ -162,6 +167,7 @@ class DeviceService (
         }
     }
 
+    @Deprecated("Use getUserDevices instead")
     fun getDevicesByOwnerEmail(userId: String, ownerEmail: String): List<Device> { //FIXME: WHAT IF THE EMAIL DOES NOT EXIST
         return transactionManager.run {
             return@run it.deviceRepo.getDevicesByAlertEmail(ownerEmail)

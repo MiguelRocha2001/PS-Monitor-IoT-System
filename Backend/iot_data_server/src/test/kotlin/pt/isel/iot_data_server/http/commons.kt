@@ -9,6 +9,7 @@ import pt.isel.iot_data_server.http.infra.SirenModel
 /**
  * Creates a user and returns the token
  */
+@Deprecated("Use createUser instead")
 fun createUserAndLogin(email: String, password: String, client: WebTestClient): String {
     createUser(email, password, client)
     return login(email, password, client)
@@ -62,7 +63,7 @@ fun loginWithAdmin(client: WebTestClient) =
     login("admin_email@gmail.com", "admin-password", client) // logs with admin
 
 fun create_device(email: String, client: WebTestClient, userToken: String): String {
-    val result = client.post().uri(Uris.Devices.ALL)
+    val result = client.post().uri(Uris.Users.Devices.ALL)
         .header(HttpHeaders.COOKIE, "token=$userToken")
         .bodyValue(mapOf("email" to email))
         .exchange()

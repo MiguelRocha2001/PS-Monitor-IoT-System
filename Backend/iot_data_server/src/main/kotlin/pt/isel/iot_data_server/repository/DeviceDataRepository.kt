@@ -11,15 +11,19 @@ interface DeviceDataRepository {
         userId: String,
         page: Int? = null,
         limit: Int? = null,
-        deviceAlertEmail: String?,
-        deviceIdChunk: String?
+        deviceAlertEmail: String? = null,
+        deviceIdChunk: String? = null
     ): List<Device> // TODO: test with params
+    fun deviceCount(
+        userId: String,
+        deviceAlertEmail: String? = null,
+        deviceIdChunk: String? = null
+    ): Int
     fun deleteDevice(deviceId: String)
     @Deprecated("Discontinued")
     fun getDevicesByAlertEmail(email: String): List<Device>
     fun getDeviceById(deviceId: String): Device?
     fun deleteAllDevices()
-    fun deviceCount(userId: String): Int
     @Deprecated("Discontinued")
     fun saveSensorErrorRecord(deviceId: String, sensorErrorRecord: SensorErrorRecord)
     @Deprecated("Discontinued")

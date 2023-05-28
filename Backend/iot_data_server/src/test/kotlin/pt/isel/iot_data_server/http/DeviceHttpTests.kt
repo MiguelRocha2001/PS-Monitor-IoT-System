@@ -42,13 +42,13 @@ class DeviceHttpTests {
 
         val email = generateRandomEmail()
         // creates random user, and logs in (results in a valid token inside a cookie)
-        val userToken = createUserAndLogin(email, generatePassword(1), client)
+        val (userId, userToken) = createUser(email, generatePassword(1), client)
 
         create_device(generateRandomEmail(), client, userToken)
         create_device(generateRandomEmail(), client, userToken)
         create_device(generateRandomEmail(), client, userToken)
 
-        val result = client.get().uri(Uris.Devices.ALL)
+        val result = client.get().uri(Uris.Users.Devices.ALL_1, userId)
             .header(HttpHeaders.COOKIE, "token=$userToken")
             .exchange()
             .expectStatus().isOk
@@ -67,13 +67,13 @@ class DeviceHttpTests {
 
         val email = generateRandomEmail()
         // creates random user, and logs in (results in a valid token inside a cookie)
-        val userToken = createUserAndLogin(email, generatePassword(1), client)
+        val (userId, userToken) = createUser(email, generatePassword(1), client)
 
         create_device(generateRandomEmail(), client, userToken)
         create_device(generateRandomEmail(), client, userToken)
         create_device(generateRandomEmail(), client, userToken)
 
-        val result = client.get().uri(Uris.Devices.My.COUNT)
+        val result = client.get().uri(Uris.Users.Devices.COUNT_1, userId)
             .header(HttpHeaders.COOKIE, "token=$userToken")
             .exchange()
             .expectStatus().isOk
@@ -92,13 +92,13 @@ class DeviceHttpTests {
 
         val email = generateRandomEmail()
         // creates random user, and logs in (results in a valid token inside a cookie)
-        val userToken = createUserAndLogin(email, generatePassword(1), client)
+        val (_, userToken) = createUser(email, generatePassword(1), client)
 
         val deviceId = create_device(generateRandomEmail(), client, userToken)
         create_device(generateRandomEmail(), client, userToken)
         create_device(generateRandomEmail(), client, userToken)
 
-        val result = client.get().uri(Uris.Devices.BY_WORD, deviceId[2]) // second char of the id
+        val result = client.get().uri(Uris.Users.Devices.ALL_2 + "?id=${deviceId[2]}") // second char of the id
             .header(HttpHeaders.COOKIE, "token=$userToken")
             .exchange()
             .expectStatus().isOk
@@ -117,13 +117,13 @@ class DeviceHttpTests {
 
         val email = generateRandomEmail()
         // creates random user, and logs in (results in a valid token inside a cookie)
-        val userToken = createUserAndLogin(email, generatePassword(1), client)
+        val (_, userToken) = createUser(email, generatePassword(1), client)
 
         val deviceId = create_device(generateRandomEmail(), client, userToken)
         create_device(generateRandomEmail(), client, userToken)
         create_device(generateRandomEmail(), client, userToken)
 
-        val result = client.get().uri(Uris.Devices.COUNT_FILTERED, deviceId[2]) // second char of the id
+        val result = client.get().uri(Uris.Users.Devices.COUNT_2 + "?id=${deviceId[2]}") // second char of the id
             .header(HttpHeaders.COOKIE, "token=$userToken")
             .exchange()
             .expectStatus().isOk
@@ -141,10 +141,10 @@ class DeviceHttpTests {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         val email = generateRandomEmail()
-        val userToken = createUserAndLogin(email, generatePassword(1), client)
+        val (_, userToken) = createUser(email, generatePassword(1), client)
         val deviceId = create_device(email, client, userToken)
 
-        val result = client.get().uri(Uris.Devices.BY_ID1, deviceId)
+        val result = client.get().uri(Uris.Users.Devices.BY_ID1, deviceId)
             .header(HttpHeaders.COOKIE, "token=$userToken")
             .exchange()
             .expectStatus().isOk
@@ -163,11 +163,11 @@ class DeviceHttpTests {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         val email = generateRandomEmail()
-        val userToken = createUserAndLogin(email, generatePassword(1), client)
+        val (userId, userToken) = createUser(email, generatePassword(1), client)
 
         create_device(email, client, userToken)
 
-        client.get().uri(Uris.Devices.BY_ID1,"invalid_id")
+        client.get().uri(Uris.Users.Devices.BY_ID1,"invalid_id")
             .header(HttpHeaders.COOKIE, "token=$userToken")
             .exchange()
             .expectStatus().isNotFound
@@ -179,13 +179,14 @@ class DeviceHttpTests {
 
         val email = generateRandomEmail()
         // creates random user, and logs in (results in a valid token inside a cookie)
-        val userToken = createUserAndLogin(email, generatePassword(1), client)
+        val (userId, userToken) = createUser(email, generatePassword(1), client)
 
         create_device(email, client, userToken)
         create_device(email, client, userToken)
         create_device(email, client, userToken)
 
-        val result = client.get().uri(Uris.Devices.BY_EMAIL, email)
+
+        val result = client.get().uri(Uris.Users.Devices.ALL_1 + "?email=$email", userId)
             .header(HttpHeaders.COOKIE, "token=$userToken")
             .exchange()
             .expectStatus().isOk
@@ -204,11 +205,10 @@ class DeviceHttpTests {
 
         val email = generateRandomEmail()
         // creates random user, and logs in (results in a valid token inside a cookie)
-        val userToken = createUserAndLogin(email, generatePassword(1), client)
-
+        val (_, userToken) = createUser(email, generatePassword(1), client)
         val deviceId = create_device(email, client, userToken)
 
-        val result = client.get().uri(Uris.Devices.WakeUpLogs.ALL_1, deviceId)
+        val result = client.get().uri(Uris.Users.Devices.WakeUpLogs.ALL_1, deviceId)
             .header(HttpHeaders.COOKIE, "token=$userToken")
             .exchange()
             .expectStatus().isOk

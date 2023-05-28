@@ -138,15 +138,19 @@ class JdbiDeviceDataRepository(
         handle.createUpdate("delete from device").execute()
     }
 
-    override fun deviceCount(userId: String): Int {
+    override fun deviceCount(userId: String, deviceAlertEmail: String?, deviceIdChunk: String?): Int {
         return handle.createQuery(
             """
             select count(*) 
             from device 
             where user_id = :user_id
+            and email LIKE '%' || :email || '%'
+            and id  LIKE '%' || :id || '%'
             """
         )
             .bind("user_id", userId)
+            .bind("email", deviceAlertEmail ?: "")
+            .bind("id", deviceIdChunk ?: "")
             .mapTo<Int>()
             .single()
     }
@@ -208,6 +212,4 @@ class JdbiDeviceDataRepository(
     override fun getAllDeviceLogRecords(): List<DeviceWakeUpLog> {
         TODO("Not yet implemented")
     }
-
-
 }

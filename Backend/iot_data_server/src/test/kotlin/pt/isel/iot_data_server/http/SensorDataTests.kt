@@ -64,26 +64,9 @@ class SensorDataTests {
         val userToken = createUserAndLogin(email, generatePassword(1), client)
         val deviceId = create_device(email, client, userToken)
 
-        client.get().uri(Uris.Devices.Sensor.ALL_1 + "?sensor-name=ph", deviceId)
+        client.get().uri(Uris.Users.Devices.Sensor.ALL_1 + "?sensor-name=ph", deviceId)
             .header(HttpHeaders.COOKIE, "token=$userToken")
             .exchange()
             .expectStatus().isNotFound
     }
-
-    @Test
-    fun `get temperature`() {
-        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
-
-        val email = generateRandomEmail()
-        val userToken = createUserAndLogin(email, generatePassword(1), client)
-        val deviceId = create_device(email, client, userToken)
-
-        val result = client.get().uri(Uris.Devices.Temperature.ALL_1, deviceId)
-            .header(HttpHeaders.COOKIE, "token=$userToken")
-            .exchange()
-            .expectStatus().isOk
-
-        // CONTINUE HERE
-    }
-
 }
