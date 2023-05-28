@@ -1,14 +1,13 @@
 import {Device, SensorData, User} from "./domain";
 import {FakeServices} from "./FakeServices";
-import {RealServices} from "./RealServices";
 
 /**
  * All functions can return a rejected promise if something goes wrong.
  * The promise will be rejected with a string describing the error.
  */
 export interface Services {
-    googleLogin(): Promise<void>
     getBackendApiInfo(): Promise<void>
+    googleLogin(): Promise<void>
     createUser(password: string, email: string): Promise<void>
     authenticateUser(username: string, password: string): Promise<void>
     isLoggedIn(): Promise<boolean>

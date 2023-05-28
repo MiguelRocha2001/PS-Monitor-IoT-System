@@ -1,13 +1,12 @@
 import {Device} from "../../services/domain";
 import React, {useEffect, useState} from "react";
-import { useParams } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import {services} from "../../services/services";
 import {MyLink} from "../Commons";
 import {useSetError} from "../error/ErrorContainer";
 import {ErrorController} from "../error/ErrorController";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faChevronLeft, faChevronRight, faSignOutAlt} from '@fortawesome/free-solid-svg-icons';
-import {useNavigate} from "react-router-dom";
 
 import './DevicesPage.css'
 import Button from "react-bootstrap/Button";

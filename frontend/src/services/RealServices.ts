@@ -1,4 +1,4 @@
-import {doFetch, fetchRequest, ResponseType, toBody} from "./fetch";
+import {doFetch, ResponseType, toBody} from "./fetch";
 import {Device, SensorData, toDevice, toDevices, toSensorData, User} from "./domain";
 import {Services} from "./services";
 import {Siren, SirenModule} from "./sirenModule";

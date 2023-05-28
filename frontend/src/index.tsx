@@ -11,6 +11,8 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
+console.log("Starting app");
+
 root.render(
     <React.StrictMode>
         <BrowserRouter >

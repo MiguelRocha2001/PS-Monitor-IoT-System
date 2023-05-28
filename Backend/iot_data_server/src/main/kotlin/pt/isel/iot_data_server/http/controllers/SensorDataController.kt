@@ -23,8 +23,9 @@ class SensorDataController(
     val sensorDataService: SensorDataService,
     val sensorErrorService: SensorErrorService
 ) {
-    @GetMapping(Uris.Devices.Sensor.TYPES_1)
-    fun getSensorsAvailable(
+    @GetMapping(Uris.Users.Devices.My.Sensor.TYPES_1)
+    @Authorization(Role.USER)
+    fun getMySensorsAvailable(
         @PathVariable device_id: String
     ): ResponseEntity<*> {
         val result = sensorDataService.getAvailableSensors(device_id)
@@ -32,7 +33,7 @@ class SensorDataController(
             .contentType(SirenMediaType)
             .header(
                 "Location",
-                Uris.Devices.Sensor.all().toASCIIString()
+                Uris.Users.Devices.My.Sensor.all().toASCIIString()
             )
             .body(
                 siren(SensorNamesOutputModel(result)) {
@@ -50,8 +51,9 @@ class SensorDataController(
         mediaType = "application/problem+json",
         schema = Schema(implementation = Problem::class)
     )])
-    @GetMapping(Uris.Devices.Sensor.ALL_1)
-    fun getSensorRecords(
+    @GetMapping(Uris.Users.Devices.My.Sensor.ALL_1)
+    @Authorization(Role.USER)
+    fun getMYSensorRecords(
         user: User,
         @PathVariable device_id: String,
         @RequestParam("sensor-name", required = true) sensorName: String,
@@ -65,7 +67,7 @@ class SensorDataController(
                 .contentType(SirenMediaType)
                 .header(
                     "Location",
-                    Uris.Devices.Sensor.all().toASCIIString()
+                    Uris.Users.Devices.My.Sensor.all().toASCIIString()
                 )
                 .body(
                     siren(SensorRecordsOutputModel.from(it)) {
@@ -76,7 +78,7 @@ class SensorDataController(
     }
 
     @Deprecated("Ask for device wake up logs")
-    @GetMapping(Uris.Devices.SensorError.ALL_1)
+    @GetMapping(Uris.Users.Devices.SensorError.ALL_1)
         fun getSensorErrors(
             user: User,
             @PathVariable device_id: String
@@ -91,7 +93,7 @@ class SensorDataController(
                     .contentType(SirenMediaType)
                     .header(
                         "Location",
-                        Uris.Devices.SensorError.all().toASCIIString()
+                        Uris.Users.Devices.SensorError.all().toASCIIString()
                     )
                     .body(
                         siren(SensorErrorsOutputModel.from(it)) {

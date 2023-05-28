@@ -23,41 +23,41 @@ fun getMeLink(sirenBuilderScope: SirenBuilderScope<*>) =
         rel = Rels.ME
     )
 
-fun getDevicesLink(sirenBuilderScope: SirenBuilderScope<*>) =
+fun getMyDevicesLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
-        href = Uris.Devices.all(),
+        href = Uris.Users.Devices.My.all(),
         rel = Rels.DEVICES
     )
 
-fun getDeviceCountLink(sirenBuilderScope: SirenBuilderScope<*>) =
+fun getMyDeviceCountLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
-        href = URI(Uris.Devices.My.COUNT),
+        href = URI(Uris.Users.Devices.My.COUNT),
         rel = Rels.DEVICE_COUNT
     )
 
-fun getDeviceLink(sirenBuilderScope: SirenBuilderScope<*>) =
+fun getDeviceLinkById(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
-        href = Uris.Devices.byId(),
+        href = Uris.Users.Devices.My.byId(),
         rel = Rels.DEVICE_BY_ID
     )
 
 @Deprecated("Deprecated in favor of getSensorDataLink")
 fun getPhLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
-        href = Uris.Devices.PH.all(),
+        href = URI("deprecated"),
         rel = Rels.PH_DATA
     )
 
 @Deprecated("Deprecated in favor of getSensorDataLink")
 fun getTemperatureLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
-        href = Uris.Devices.Temperature.all(),
+        href = URI("deprecated"),
         rel = Rels.TEMPERATURE_DATA
     )
 
-fun getSensorDataLink(sirenBuilderScope: SirenBuilderScope<*>) =
+fun getMySensorDataLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
-        href = URI(Uris.Devices.Sensor.ALL_2),
+        href = URI(Uris.Users.Devices.My.Sensor.ALL_2),
         rel = Rels.SENSOR_DATA
     )
 
@@ -67,28 +67,26 @@ fun getIsEmailAlreadyRegisteredLink(sirenBuilderScope: SirenBuilderScope<*>) =
         rel = Rels.IS_EMAIL_ALREADY_REGISTERED
     )
 
-
-
 fun getVerifyCodeLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
         href = URI(Uris.Verification.CODE),
         rel = Rels.VERIFY_CODE
     )
 
-fun getFilteredDevicesByIdLink(sirenBuilderScope: SirenBuilderScope<*>) =
+fun getMyFilteredDevicesByIdLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
-        href = URI(Uris.Devices.BY_WORD_2),
+        href = URI(Uris.Users.Devices.My.BY_WORD_2),
         rel = Rels.FILTERED_DEVICES
     )
 
-fun getFilteredDevicesByIdCountLink(sirenBuilderScope: SirenBuilderScope<*>) =
+fun getMyFilteredDevicesByIdCountLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
-        href = URI(Uris.Devices.COUNT_FILTERED_2),
+        href = URI(Uris.Users.Devices.My.COUNT_FILTERED_2),
         rel = Rels.FILTERED_DEVICES_COUNT
     )
 
-fun getAvailableDeviceSensorsLink(sirenBuilderScope: SirenBuilderScope<*>) =
+fun getMyAvailableDeviceSensorsLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
-        href = URI(Uris.Devices.Sensor.TYPES_2),
+        href = URI(Uris.Users.Devices.My.Sensor.TYPES_2),
         rel = Rels.AVAILABLE_DEVICE_SENSORS
     )

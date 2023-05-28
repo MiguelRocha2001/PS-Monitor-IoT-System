@@ -1,7 +1,5 @@
-import {Row} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
-import {MyCard} from "../Commons";
-import {Link, Navigate} from 'react-router-dom';
+import {Navigate} from 'react-router-dom';
 import {services} from "../../services/services";
 import {Loading} from "../Loading";
 

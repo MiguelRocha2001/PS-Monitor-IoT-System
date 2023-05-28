@@ -28,7 +28,8 @@ class DeviceController(
     @Operation(summary = "Add device", description = "Add a device associated with  email")
     @ApiResponse(responseCode = "201", description = "Device created", content = [Content(mediaType = "application/vnd.siren+json", schema = Schema(implementation = CreateDeviceOutputModel::class))])
     @ApiResponse(responseCode = "400", description = "Bad request - Invalid email", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
-    @PostMapping(Uris.Devices.ALL)
+    @PostMapping(Uris.Users.Devices.My.ALL)
+    @Authorization(Role.USER)
     fun createDevice(
         @RequestBody deviceModel: DeviceInputModel,
         user: User
@@ -37,7 +38,7 @@ class DeviceController(
         return result.map { deviceId ->
             ResponseEntity.status(201)
                 .contentType(SirenMediaType)
-                .header("Location", Uris.Devices.byId(deviceId).toASCIIString())
+                .header("Location", Uris.Users.Devices.byId(deviceId).toASCIIString())
                 .body(siren(
                     CreateDeviceOutputModel(deviceId)
                 ) {
@@ -46,16 +47,14 @@ class DeviceController(
         }
     }
 
-    @GetMapping(Uris.Devices.ALL)
-    fun getDevices(
+    @GetMapping(Uris.Users.Devices.My.ALL) // TODO: test this
+    @Authorization(Role.USER)
+    fun getMyDevices(
         user: User,
         @RequestParam(required = false) page: Int?,
         @RequestParam(required = false) limit: Int?
     ): ResponseEntity<*> {
-        val result = if (user.userInfo.role === Role.ADMIN)
-            service.getAllDevices(page, limit)
-        else
-            service.getUserDevices(user.id, page, limit)
+        val result = service.getUserDevices(user.id, page, limit)
         return result.map {
             ResponseEntity.status(200)
                 .contentType(SirenMediaType)
@@ -67,8 +66,28 @@ class DeviceController(
         }
     }
 
-    @GetMapping(Uris.Devices.My.COUNT)
-    fun getDeviceCount(
+    @GetMapping(Uris.Users.Devices.ALL_1)
+    @Authorization(Role.ADMIN)
+    fun getUserDevices(
+        @PathVariable userId: String,
+        @RequestParam(required = false) page: Int?,
+        @RequestParam(required = false) limit: Int?
+    ): ResponseEntity<*> {
+        val result = service.getUserDevices(userId, page, limit)
+        return result.map {
+            ResponseEntity.status(200)
+                .contentType(SirenMediaType)
+                .body(siren(
+                    DevicesOutputModel.from(it)
+                ) {
+                    clazz("devices")
+                })
+        }
+    }
+
+    @GetMapping(Uris.Users.Devices.My.COUNT)
+    @Authorization(Role.USER)
+    fun getMyDeviceCount(
         user: User
     ): ResponseEntity<*> {
         val result = service.getDeviceCount(user.id)
@@ -83,12 +102,12 @@ class DeviceController(
         }
     }
 
-
     @Operation(summary = "Device by id", description = "Get a device associated with part of an id ")
     @ApiResponse(responseCode = "200", description = "Device found", content = [Content(mediaType = "application/vnd.siren+json", schema = Schema(implementation = DeviceOutputModel::class))])
     @ApiResponse(responseCode = "400", description = "Bad request - The request was not valid, check the given id", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
-    @GetMapping(Uris.Devices.BY_WORD)
-    fun searchDevicesByWords(
+    @GetMapping(Uris.Users.Devices.My.BY_WORD)
+    @Authorization(Role.USER)
+    fun searchMyDevicesByWords(
         user: User,
         @PathVariable word: String,
         @RequestParam(required = false) page: Int?,
@@ -107,9 +126,9 @@ class DeviceController(
         }
     }
 
-
-    @GetMapping(Uris.Devices.COUNT_FILTERED)
-    fun countFilteredDevices(
+    @GetMapping(Uris.Users.Devices.My.COUNT_FILTERED)
+    @Authorization(Role.USER)
+    fun countMyFilteredDevices(
         user: User,
         @PathVariable word: String
     ): ResponseEntity<*> {
@@ -128,8 +147,9 @@ class DeviceController(
     @Operation(summary = "Device by email", description = "Get a device associated with  email")
     @ApiResponse(responseCode = "200", description = "Device found", content = [Content(mediaType = "application/vnd.siren+json", schema = Schema(implementation = DeviceOutputModel::class))])
     @ApiResponse(responseCode = "400", description = "Bad request - The request was not valid, check the given email", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
-    @GetMapping(Uris.Devices.BY_EMAIL)
-    fun getDevicesByEmail(
+    @GetMapping(Uris.Users.Devices.My.BY_EMAIL)
+    @Authorization(Role.USER)
+    fun getMyDevicesByEmail(
         user: User,
         @PathVariable email: String
     ): ResponseEntity<*> {
@@ -146,8 +166,9 @@ class DeviceController(
     @Operation(summary = "Device by id", description = "Get a device associated with  id")
     @ApiResponse(responseCode = "200", description = "Device found", content = [Content(mediaType = "application/vnd.siren+json", schema = Schema(implementation = DeviceOutputModel::class))])
     @ApiResponse(responseCode = "400", description = "Device not found", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
-    @GetMapping(Uris.Devices.BY_ID1)
-    fun getDeviceById(
+    @GetMapping(Uris.Users.Devices.My.BY_ID1)
+    @Authorization(Role.USER)
+    fun getMyDeviceById(
         user: User,
         @PathVariable device_id: String
     ): ResponseEntity<*> {
@@ -161,8 +182,9 @@ class DeviceController(
         }
     }
 
-    @GetMapping(Uris.Devices.WakeUpLogs.ALL_1)
-    fun getDeviceWakeUpLogs(
+    @GetMapping(Uris.Users.Devices.My.WakeUpLogs.ALL_1)
+    @Authorization(Role.USER)
+    fun getMyDeviceWakeUpLogs(
         user: User,
         @PathVariable device_id: String
     ): ResponseEntity<*> {

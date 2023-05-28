@@ -99,7 +99,7 @@ export class FakeServices implements Services {
 
         while (true) { // loops while there is a device with the same id
             const id = generateDeviceId()
-            if (!this.devices.values().next().value) {
+            if (!Array.from(this.devices.values()).find(d => d.id === id)) {
                 return id
             }
         }

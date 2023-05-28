@@ -1,4 +1,4 @@
-import {Device, User} from "../../services/domain";
+import {User} from "../../services/domain";
 import React, {useEffect, useState} from "react";
 import {services} from "../../services/services";
 import {MyLink} from "../Commons";
