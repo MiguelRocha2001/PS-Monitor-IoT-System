@@ -62,7 +62,7 @@ fun login(email: String, password: String, client: WebTestClient): String {
 fun loginWithAdmin(client: WebTestClient) =
     login("admin_email@gmail.com", "admin-password", client) // logs with admin
 
-fun create_device(email: String, client: WebTestClient, userToken: String): String {
+internal fun create_device(email: String, client: WebTestClient, userToken: String): String {
     val result = client.post().uri(Uris.Users.Devices.ALL)
         .header(HttpHeaders.COOKIE, "token=$userToken")
         .bodyValue(mapOf("email" to email))

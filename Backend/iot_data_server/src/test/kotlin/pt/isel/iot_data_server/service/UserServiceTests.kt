@@ -1,14 +1,12 @@
 package pt.isel.iot_data_server.service
 
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import pt.isel.iot_data_server.service.email.EmailManager
 import pt.isel.iot_data_server.service.user.Role
 import pt.isel.iot_data_server.service.user.SaltPasswordOperations
 import pt.isel.iot_data_server.service.user.UserService
-import pt.isel.iot_data_server.utils.testWithTransactionManagerAndDontRollback
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 
 @SpringBootTest
@@ -136,12 +134,10 @@ class UserServiceTests {
 	}
 
 	@Test
-	fun `Create token for invalid user`() {
+	fun `Cannot create token for invalid user`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
 			val saltPasswordOperations = SaltPasswordOperations(transactionManager)
 			val service = UserService(transactionManager,saltPasswordOperations, EmailManager())
-
-			assertEquals(0, service.getAllUsers().size)
 
 			val email = "invalidEmail"
 			val res = service.createAndGetToken(email, null)

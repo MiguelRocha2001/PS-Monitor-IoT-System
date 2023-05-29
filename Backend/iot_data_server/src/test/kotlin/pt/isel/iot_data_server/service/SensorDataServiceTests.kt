@@ -4,20 +4,19 @@ import org.eclipse.paho.client.mqttv3.MqttClient
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito
 import pt.isel.iot_data_server.configuration.TSDBBuilder
 import pt.isel.iot_data_server.domain.SensorInfo
-import pt.isel.iot_data_server.domain.SensorRecord
 import pt.isel.iot_data_server.repo.time_series_repo.deleteAllSensorMeasurements
+import pt.isel.iot_data_server.repo.time_series_repo.insertDataInInfluxDB
 import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.repository.tsdb.SensorDataRepo
 import pt.isel.iot_data_server.service.email.EmailManager
 import pt.isel.iot_data_server.service.sensor_data.SensorDataService
 import pt.isel.iot_data_server.utils.generateRandomEmail
 import pt.isel.iot_data_server.utils.generateRandomPh
-import pt.isel.iot_data_server.utils.getRandomInstantWithinLastWeek
 import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
+import java.time.Instant
 
 private const val BUCKET_FOR_TESTS = "test" //Its is mandatory to have a bucket named "test" registered in InfluxDB
 class SensorDataServiceTest {
@@ -46,7 +45,9 @@ class SensorDataServiceTest {
     fun setup() {
         // Mock Mqtt3Client instance
         mqttClient = Mockito.mock(MqttClient::class.java)
-        deleteAllSensorMeasurements(tsdbBuilder, "initial Ph")
+        deleteAllSensorMeasurements(tsdbBuilder, "ph")
+        deleteAllSensorMeasurements(tsdbBuilder, "humidity")
+        deleteAllSensorMeasurements(tsdbBuilder, "temperature")
 
         //  deleteAllTemperatureMeasurements(tsdbBuilder)
     }
@@ -63,14 +64,16 @@ class SensorDataServiceTest {
             val sensorDataService =
                 SensorDataService(emailSenderService, sensorDataRepo, deviceService, sensorInfo, mqttClient)
 
-            val email = generateRandomEmail()
-            val res = deviceService.addDevice(userId, email)
-            val deviceId = (res as Either.Right).value
+            val deviceId = (deviceService.addDevice(userId, generateRandomEmail()) as Either.Right).value
 
-            val res2 = sensorDataService.getSensorRecords(deviceId, "temperature")
+            val value = generateRandomPh()
+            val instant = Instant.now()
+            insertDataInInfluxDB(tsdbBuilder.getClient(), deviceId, "ph", value, instant)
+
+            val res2 = sensorDataService.getSensorRecords(deviceId, "ph")
             assert(res2 is Either.Right)
             val records = (res2 as Either.Right).value
-            assert(records.isEmpty())
+            assertEquals(1, records.size)
         }
     }
 
@@ -107,10 +110,12 @@ class SensorDataServiceTest {
             val res = deviceService.addDevice(userId, email)
             val deviceId = (res as Either.Right).value
 
+            insertDataInInfluxDB(tsdbBuilder.getClient(), deviceId, "temperature", 20.0, Instant.now())
+
             val res2 = sensorDataService.getSensorRecordsIfIsOwner(deviceId, userId, "temperature")
             assert(res2 is Either.Right)
             val records = (res2 as Either.Right).value
-            assert(records.isEmpty())
+            assert(records.isNotEmpty())
         }
     }
 

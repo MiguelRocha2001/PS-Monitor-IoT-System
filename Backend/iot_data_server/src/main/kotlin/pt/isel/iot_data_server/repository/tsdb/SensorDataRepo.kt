@@ -15,6 +15,8 @@ import pt.isel.iot_data_server.domain.SensorRecord
 import pt.isel.iot_data_server.repository.SensorDataRepository
 import java.time.Instant
 
+val MEASUREMENT_PREFIX = "my_sensor " // Modify this line
+
 /*
 TODO: check server status
     @see: https://github.com/influxdata/influxdb-client-java/tree/master/client-kotlin#advanced-usage
@@ -27,8 +29,7 @@ class SensorDataRepo(
     bucket : Bucket
 ) : SensorDataRepository {
     private val bucketName = bucket.name
-    val mutex = Mutex() // Use Mutex for synchronization
-    private val MEASUREMENT_PREFIX = "my_sensor " // Modify this line
+    private val mutex = Mutex() // Use Mutex for synchronization
 
     override fun saveSensorRecord(deviceId: String, sensorRecord: SensorRecord) = runBlocking {
         runBlocking {
@@ -79,7 +80,6 @@ class SensorDataRepo(
             measurement.removePrefix(MEASUREMENT_PREFIX)
         }.toList()
     }
-
 }
 
 

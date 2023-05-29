@@ -172,7 +172,7 @@ class UserControllerTests{
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         val email = generateRandomEmail()
-        val userToken = createUser(email, generatePassword(1), client)
+        val (userId, userToken) = createUser(email, generatePassword(1), client)
 
         client.delete().uri(Uris.NonSemantic.logout) // logs out
             .header(HttpHeaders.COOKIE, "token=$userToken")
@@ -196,7 +196,9 @@ class UserControllerTests{
     fun `Can log-in`(){
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
         val email = generateRandomEmail()
-        createUserAndLogin(email, generatePassword(1), client)
+        val password = generatePassword(1)
+        createUser(email, password, client)
+        login(email, password, client)
     }
 
     @Test
