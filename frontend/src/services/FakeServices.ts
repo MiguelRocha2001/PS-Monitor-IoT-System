@@ -11,6 +11,7 @@ class UserInternal {
 export class FakeServices implements Services {
     private readonly users: UserInternal[] = [
         new UserInternal(new User("1", 'admin@gmail.com', 'admin'), 'admin'),
+        new UserInternal(new User("2", 'my_user@gmail.com', 'user'), 'user'),
     ]
     private user: User | null = null
 

@@ -7,11 +7,11 @@ const logger = new Logger({ name: "ErrorController" });
 
 export function ErrorController({ children }: { children: React.ReactNode }): React.ReactElement {
     const error = useError()
-    // const location = useLocation()
 
     if (error === undefined) {
         return <>{children}</>
     } else {
+        console.log("Error: " + error)
         logger.error("Error: " + error.message)
         return (<SomethingWentWrong details={error.message} />);
     }

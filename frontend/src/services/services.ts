@@ -40,4 +40,4 @@ export interface Services {
     getUserCount(emailChunk: string | undefined): Promise<number>
 }
 
-export const services: Services = new RealServices()
+export const services: Services = new FakeServices()
