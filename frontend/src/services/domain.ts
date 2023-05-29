@@ -7,7 +7,7 @@ export class User {
 }
 
 export class Device {
-    constructor(public id: string, public email: string) {}
+    constructor(public id: string, public alertEmail: string) {}
 }
 
 export function toDevices(json: any): Device[] {

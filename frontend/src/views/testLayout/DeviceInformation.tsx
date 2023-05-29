@@ -33,7 +33,7 @@ export function DeviceInfo() {
                     <Devices userIdParam={userId}/>
                 </div>
                 <div className="chart-container">
-                    <ChartWithPeriodSelection  deviceId={device.id} deviceEmail={device.email}/>
+                    <ChartWithPeriodSelection  deviceId={device.id} deviceEmail={device.alertEmail}/>
                 </div>
             </div>
         );

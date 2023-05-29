@@ -86,6 +86,7 @@ export function Users() {
 
     const handleButtonPress = () => {
         if(searchQuery === "") return
+        console.log(searchQuery)
         services.getUsers(page, pageSize, searchQuery.toUpperCase())
             .then(users => {setUsers(users)})
             .then(()=> services.getUserCount(searchQuery.toUpperCase()))
@@ -142,6 +143,11 @@ function UserList({ users, searchQuery, setSearchQuery, handleButtonPress, total
                 )}
                 <b id={"last-line"}>{lastLineText}</b>
             </div>
+            <InputTextBox
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                onSearch={handleButtonPress}
+            />
         </div>
     );
 }

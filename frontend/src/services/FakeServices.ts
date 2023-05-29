@@ -21,15 +21,6 @@ export class FakeServices implements Services {
 
     constructor() {
         this.devices.set(this.users[0].user, new Device(this.getNewDeviceId(), this.email))
-        this.devices.set(this.users[0].user, new Device(this.getNewDeviceId(), this.email))
-        this.devices.set(this.users[0].user, new Device(this.getNewDeviceId(), this.email))
-        this.devices.set(this.users[0].user, new Device(this.getNewDeviceId(), this.email))
-        this.devices.set(this.users[0].user, new Device(this.getNewDeviceId(), this.email))
-        this.devices.set(this.users[0].user, new Device(this.getNewDeviceId(), this.email))
-        this.devices.set(this.users[0].user, new Device(this.getNewDeviceId(), this.email))
-        this.devices.set(this.users[0].user, new Device(this.getNewDeviceId(), this.email))
-        this.devices.set(this.users[0].user, new Device(this.getNewDeviceId(), this.email))
-        this.devices.set(this.users[0].user, new Device(this.getNewDeviceId(), this.email))
     }
 
     async getBackendApiInfo() {
@@ -116,11 +107,28 @@ export class FakeServices implements Services {
         throw new Error('Not logged in')
     }
 
-    async getDevices(userId: string, page: number, limit: number): Promise<Device[]> {
+    async getDevices(
+        userId: string,
+        page: number,
+        limit: number,
+        alertEmail: string | undefined,
+        deviceIdChunk: string | undefined
+    ): Promise<Device[]> {
         if (this.user) {
             const start = (page - 1) * limit
             const end = start + limit
-            return Array.from(this.devices.values()).slice(start, end)
+            userId = userId === 'my' ? this.user.id : userId
+            let devices = Array.from(this.devices)
+                .filter(([user, device]) => user.id === userId)
+                .map(([user, device]) => device)
+                .slice(start, end)
+            if (alertEmail) {
+                devices = devices.filter(d => d.alertEmail.toLowerCase() === alertEmail.toLowerCase())
+            }
+            if (deviceIdChunk) {
+                devices = devices.filter(d => d.id.toLowerCase().includes(deviceIdChunk.toLowerCase()))
+            }
+            return devices
         }
         throw new Error('Not logged in')
     }
@@ -128,12 +136,31 @@ export class FakeServices implements Services {
     async getUsers(page: number, limit: number, emailChunk: string | undefined): Promise<User[]> {
         const start = (page - 1) * limit
         const end = start + limit
-        return this.users.map(u => u.user).slice(start, end)
+        let users= this.users.map(u => u.user).slice(start, end)
+        console.log(emailChunk)
+        if (emailChunk) {
+            users = users.filter(u => u.email.toLowerCase().includes(emailChunk.toLowerCase()))
+        }
+        return users
     }
 
-    async getUserDeviceCount(userId: string): Promise<number> {
+    async getUserDeviceCount(
+        userId: string,
+        alertEmail: string | undefined,
+        deviceIdChunk: string | undefined
+    ): Promise<number> {
         if (this.user) {
-            return this.devices.size
+            userId = userId === 'my' ? this.user.id : userId
+            let devices = Array.from(this.devices)
+                .filter(([user, device]) => user.id === userId)
+                .map(([user, device]) => device)
+            if (alertEmail) {
+                devices = devices.filter(d => d.alertEmail === alertEmail)
+            }
+            if (deviceIdChunk) {
+                devices = devices.filter(d => d.id.toLowerCase().includes(deviceIdChunk.toLowerCase()))
+            }
+            return devices.length
         }
         throw new Error('Not logged in')
     }
