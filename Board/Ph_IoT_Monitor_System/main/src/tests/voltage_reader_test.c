@@ -14,6 +14,9 @@
 #include "esp_adc/adc_cali.h"
 #include "esp_adc/adc_cali_scheme.h"
 
+#include "time_util.h"
+#include <sys/time.h>
+
 const static char *TAG = "EXAMPLE";
 
 /*---------------------------------------------------------------
@@ -63,22 +66,32 @@ void app_main(void)
     adc_cali_handle_t adc1_cali_handle = NULL;
     bool do_calibration1 = example_adc_calibration_init(ADC_UNIT_1, ADC_ATTEN_DB_11, &adc1_cali_handle);
 
-    while (1) {
+    long last = 0;
+    float i = 0;
+    while (i < 600) {
         ESP_ERROR_CHECK(adc_oneshot_read(adc1_handle, EXAMPLE_ADC1_CHAN0, &adc_raw[0][0]));
-        ESP_LOGI(TAG, "ADC%d Channel[%d] Raw Data: %d", ADC_UNIT_1 + 1, EXAMPLE_ADC1_CHAN0, adc_raw[0][0]);
+        // ESP_LOGI(TAG, "ADC%d Channel[%d] Raw Data: %d", ADC_UNIT_1 + 1, EXAMPLE_ADC1_CHAN0, adc_raw[0][0]);
         if (do_calibration1) {
             ESP_ERROR_CHECK(adc_cali_raw_to_voltage(adc1_cali_handle, adc_raw[0][0], &voltage[0][0]));
-            ESP_LOGI(TAG, "ADC%d Channel[%d] Cali Voltage: %d mV", ADC_UNIT_1 + 1, EXAMPLE_ADC1_CHAN0, voltage[0][0]);
+            // ESP_LOGI(TAG, "ADC%d Channel[%d] Cali Voltage: %d mV", ADC_UNIT_1 + 1, EXAMPLE_ADC1_CHAN0, voltage[0][0]);
         }
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        printf("%d,%d,%f\n", adc_raw[0][0], voltage[0][0], i);
 
-        ESP_ERROR_CHECK(adc_oneshot_read(adc1_handle, EXAMPLE_ADC1_CHAN1, &adc_raw[0][1]));
-        ESP_LOGI(TAG, "ADC%d Channel[%d] Raw Data: %d", ADC_UNIT_1 + 1, EXAMPLE_ADC1_CHAN1, adc_raw[0][1]);
-        if (do_calibration1) {
-            ESP_ERROR_CHECK(adc_cali_raw_to_voltage(adc1_cali_handle, adc_raw[0][1], &voltage[0][1]));
-            ESP_LOGI(TAG, "ADC%d Channel[%d] Cali Voltage: %d mV", ADC_UNIT_1 + 1, EXAMPLE_ADC1_CHAN1, voltage[0][1]);
-        }
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        vTaskDelay(pdMS_TO_TICKS(6000));
+
+        /*
+        struct timeval tv;        
+        gettimeofday(&tv, NULL);
+
+        // Read the microsecond part of the timestamp
+        long microseconds = tv.tv_usec;
+        int milisecondsPassed = (microseconds - last) / 1000;
+        last = microseconds;
+
+        printf("Miliseconds passed: %d\n", milisecondsPassed);
+        */
+        
+        i = i + 6;
     }
 
     //Tear Down
