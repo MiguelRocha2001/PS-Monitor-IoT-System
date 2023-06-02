@@ -5,25 +5,25 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
-import pt.isel.iot_data_server.http.pipeline.AuthenticationInterceptor
+import pt.isel.iot_data_server.http.pipeline.AuthInterceptor
 import pt.isel.iot_data_server.http.pipeline.LoggerInterceptor
 import pt.isel.iot_data_server.http.pipeline.UserArgumentResolver
 
 @Configuration
 class PipelineConfigurer(
-    val authenticationInterceptor: AuthenticationInterceptor,
+    val authInterceptor: AuthInterceptor,
     val userArgumentResolver: UserArgumentResolver,
     val loggerInterceptor: LoggerInterceptor,
 ) : WebMvcConfigurer {
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/**")
-            .allowedOrigins("http://localhost:8080")
+            .allowedOrigins("http://localhost:8080") // TODO: review this
             .allowedMethods("GET", "POST", "PUT", "DELETE")
             .allowCredentials(true)
     }
 
     override fun addInterceptors(registry: InterceptorRegistry) {
-        registry.addInterceptor(authenticationInterceptor)
+        registry.addInterceptor(authInterceptor)
         registry.addInterceptor(loggerInterceptor)
     }
 
