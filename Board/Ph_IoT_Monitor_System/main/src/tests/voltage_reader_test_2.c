@@ -14,7 +14,7 @@
 #include "driver/adc.h"
 #include "esp_adc_cal.h"
 
-#define DEFAULT_VREF    1100        //Use adc2_vref_to_gpio() to obtain a better estimate
+#define DEFAULT_VREF    3300        //Use adc2_vref_to_gpio() to obtain a better estimate
 #define NO_OF_SAMPLES   64          //Multisampling
 
 static esp_adc_cal_characteristics_t *adc_chars;
@@ -25,7 +25,7 @@ static const adc_bits_width_t width = ADC_WIDTH_BIT_12;
 static const adc_channel_t channel = ADC_CHANNEL_0;     // GPIO7 if ADC1, GPIO17 if ADC2
 static const adc_bits_width_t width = ADC_WIDTH_BIT_13;
 #endif
-static const adc_atten_t atten = ADC_ATTEN_DB_0;
+static const adc_atten_t atten = ADC_ATTEN_DB_11;
 static const adc_unit_t unit = ADC_UNIT_1;
 
 
@@ -87,6 +87,7 @@ void app_main(void)
 
     print_char_val_type(val_type);
 
+    int i = 0;
     //Continuously sample ADC1
     while (1) {
         uint32_t adc_reading = 0;
@@ -102,8 +103,15 @@ void app_main(void)
         }
         adc_reading /= NO_OF_SAMPLES;
         //Convert adc_reading to voltage in mV
-        uint32_t voltage = esp_adc_cal_raw_to_voltage(adc_reading, adc_chars);
-        printf("Raw: %d\tVoltage: %dmV\n", adc_reading, voltage);
+        // uint32_t voltage = esp_adc_cal_raw_to_voltage(adc_reading, adc_chars);
+
+        // printf("Raw: %d\n", adc_reading);
+
+        int Vout = adc_reading * 2500 / 8191;
+
+        printf("%d,%d,%d\n", i++, adc_reading, Vout); 
+
+        // printf("Raw: %d\tVoltage: %dmV\n", adc_reading, voltage);
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }

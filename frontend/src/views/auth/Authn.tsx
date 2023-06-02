@@ -1,8 +1,9 @@
 import * as React from 'react'
 import {createContext, useContext, useEffect, useState} from 'react'
 import {services} from "../../services/services";
+import {Logger} from "tslog";
 
-
+const logger = new Logger({ name: "Authn" });
 type ContextType = {
     logged: boolean | undefined
     setLogged: (logged: boolean) => void
@@ -19,10 +20,10 @@ export function AuthnContainer({ children }: { children: React.ReactNode }) {
         async function fetchUser () {
             const isLogged = await services.isLoggedIn()
             if (isLogged) {
-                console.log("User is logged in")
+                logger.debug("User is logged in")
                 setLogged(true)
             } else {
-                console.log("User is not logged in")
+                logger.debug("User is not logged in")
                 setLogged(false)
             }
         }

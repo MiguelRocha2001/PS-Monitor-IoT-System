@@ -18,9 +18,7 @@ class TSDBProductionConfig {
     }
 }
 
-class TSDBBuilder(
-    val bucketName: String
-) {
+class TSDBBuilder(val bucketName: String) {
     val token: String = System.getenv()["INFLUX_TOKEN"]?:"" // same organization, same token
     val org: String = "isel"
     val path: String = "http://localhost:8086"

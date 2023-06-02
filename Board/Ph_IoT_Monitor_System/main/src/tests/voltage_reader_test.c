@@ -17,6 +17,8 @@
 #include "time_util.h"
 #include <sys/time.h>
 
+#include "dht11.h"
+
 const static char *TAG = "EXAMPLE";
 
 /*---------------------------------------------------------------
@@ -66,18 +68,44 @@ void app_main(void)
     adc_cali_handle_t adc1_cali_handle = NULL;
     bool do_calibration1 = example_adc_calibration_init(ADC_UNIT_1, ADC_ATTEN_DB_11, &adc1_cali_handle);
 
+    DHT11_init(GPIO_NUM_0);
+    ESP_LOGI("DHT11", "DHT11 initialized!");
+
     long last = 0;
-    float i = 0;
-    while (i < 600) {
+    int i = 0;
+    while (i <= 600) {
         ESP_ERROR_CHECK(adc_oneshot_read(adc1_handle, EXAMPLE_ADC1_CHAN0, &adc_raw[0][0]));
-        // ESP_LOGI(TAG, "ADC%d Channel[%d] Raw Data: %d", ADC_UNIT_1 + 1, EXAMPLE_ADC1_CHAN0, adc_raw[0][0]);
+        ESP_LOGI(TAG, "ADC%d Channel[%d] Raw Data: %d", ADC_UNIT_1 + 1, EXAMPLE_ADC1_CHAN0, adc_raw[0][0]);
         if (do_calibration1) {
             ESP_ERROR_CHECK(adc_cali_raw_to_voltage(adc1_cali_handle, adc_raw[0][0], &voltage[0][0]));
-            // ESP_LOGI(TAG, "ADC%d Channel[%d] Cali Voltage: %d mV", ADC_UNIT_1 + 1, EXAMPLE_ADC1_CHAN0, voltage[0][0]);
+            ESP_LOGI(TAG, "ADC%d Channel[%d] Cali Voltage: %d mV", ADC_UNIT_1 + 1, EXAMPLE_ADC1_CHAN0, voltage[0][0]);
         }
-        printf("%d,%d,%f\n", adc_raw[0][0], voltage[0][0], i);
 
-        vTaskDelay(pdMS_TO_TICKS(6000));
+        /*
+        int Vout = adc_raw[0][0] * Vmax / Dmax
+        printf("Vout: %d\n", Vout);
+        */
+
+        // printf("%d,%d,%f\n", DHT11_read().temperature, DHT11_read().humidity, i);
+
+        // printf("%d,%d,%d\n", adc_raw[0][0], voltage[0][0], i);
+
+        // m = (ph7 - ph4) / (Vph7 - Vph4)
+        // m = (7 - 4.01) / (... - ...)
+        // m = ...
+
+        // pH = pH7 - (Vph7 - Po) * m
+        /*
+        float ph7 = 7.0;
+        float vph7 = ...;
+        float po = &voltage[0][0];
+        float m = ...;
+
+        float phValue = ph7 - (vph7 - po) * m;
+
+        */
+
+        vTaskDelay(pdMS_TO_TICKS(1000));
 
         /*
         struct timeval tv;        
@@ -91,7 +119,7 @@ void app_main(void)
         printf("Miliseconds passed: %d\n", milisecondsPassed);
         */
         
-        i = i + 6;
+        i = i + 1;
     }
 
     //Tear Down

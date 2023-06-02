@@ -1,6 +1,6 @@
 idf_component_register(
         SRCS
-            "src/tests/voltage_reader_test.c"
+            "src/tests/voltage_reader_test_2.c"
             "src/utils/nvs_util.c"
             "src/utils/pushingbox_util.c"
             "src/utils/esp_touch_util.c"
