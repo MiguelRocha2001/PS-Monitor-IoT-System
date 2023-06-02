@@ -67,6 +67,11 @@ dependencies {
 
 
 }
+//ver porque isto é necessario
+bootJar {
+	duplicatesStrategy = 'exclude'
+	// Other task configuration
+}
 
 tasks.withType(KotlinCompile) {
 	kotlinOptions {

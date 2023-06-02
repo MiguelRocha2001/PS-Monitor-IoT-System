@@ -33,8 +33,10 @@ function NewIoTDeviceForm() {
     if (deviceId)
         return <Navigate to={`/device-created/${deviceId}`} replace={true}/>
 
-    async function submitForm() {
+    async function submitForm(ev: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
 
+      //prevent default behavior of form
+         ev.preventDefault();
         if (!email) {
             setIsEmailWrong(true)
             console.log("email is empty")
