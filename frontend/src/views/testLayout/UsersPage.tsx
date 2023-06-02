@@ -7,10 +7,11 @@ import {ErrorController} from "../error/ErrorController";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faChevronLeft, faChevronRight, faSignOutAlt} from '@fortawesome/free-solid-svg-icons';
 import {useNavigate} from "react-router-dom";
+import {Navigate} from 'react-router-dom';
 
 import './DevicesPage.css'
 import Button from "react-bootstrap/Button";
-import {useSetIsLoggedIn} from "../auth/Authn";
+import {useRole, useSetIsLoggedIn} from "../auth/Authn";
 
 export function Users() {
     const setError = useSetError()
@@ -26,6 +27,15 @@ export function Users() {
     const [totalUsers, setTotalUsers] = useState(0)
     const [loggedOut, setLoggedOut] = useState(false)
     const setIsLoggedIn = useSetIsLoggedIn()
+
+    const role = useRole()
+    const [redirect, setRedirect] = useState<string | undefined>(undefined)
+
+    if (role !== "admin") {
+        setRedirect("/devices")
+    }
+    if(redirect)
+        return <Navigate to={redirect} replace={true}/>
 
 
     useEffect(() => {

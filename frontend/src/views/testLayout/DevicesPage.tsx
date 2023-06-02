@@ -10,7 +10,7 @@ import {faChevronLeft, faChevronRight, faSignOutAlt} from '@fortawesome/free-sol
 
 import './DevicesPage.css'
 import Button from "react-bootstrap/Button";
-import {useSetIsLoggedIn} from "../auth/Authn";
+import {useRole, useSetIsLoggedIn} from "../auth/Authn";
 
 export function Devices({userIdParam}: { userIdParam?: string}) {
     const { userId } = useParams<string>()
@@ -29,6 +29,8 @@ export function Devices({userIdParam}: { userIdParam?: string}) {
     const [totalDevices, setTotalDevices] = useState(0)
     const [loggedOut, setLoggedOut] = useState(false)
     const setIsLoggedIn = useSetIsLoggedIn()
+
+    const role = useRole()
 
 
     useEffect(() => {
@@ -122,7 +124,8 @@ export function Devices({userIdParam}: { userIdParam?: string}) {
                 <ErrorController>
                     <LogoutButton handleButtonPressed={handleButtonPressed}/>
                     <DeviceList devices={devices} searchQuery={searchQuery} setSearchQuery={setSearchQuery}
-                                handleButtonPress={handleButtonPress} totalDevices={totalDevices} userId={userId_}/>
+                                handleButtonPress={handleButtonPress} totalDevices={totalDevices} userId={userId_}
+                                role={role}/>
                     <Pagination currentPage={page} totalPages={Math.ceil(filteredDevices / pageSize)}
                                 onPageChange={(selectedPage: number) => setPage(selectedPage)}/>
                 </ErrorController>
@@ -133,16 +136,29 @@ export function Devices({userIdParam}: { userIdParam?: string}) {
     }
 }
 
-function DeviceList({ devices, searchQuery, setSearchQuery, handleButtonPress, totalDevices, userId }:
+function DeviceList({ devices, searchQuery, setSearchQuery, handleButtonPress, totalDevices, userId, role }:
                         {
                             devices: Device[],
                             searchQuery: string,
                             setSearchQuery: (searchQuery: string) => void,
                             handleButtonPress: () => void,
                             totalDevices: number,
-                            userId: string
+                            userId: string,
+                            role: string | undefined
                         }) {
     const lastLineText = devices.length === 0 ? "No devices found." : `Showing ${devices.length} of ${totalDevices} devices.`
+
+    const addDeviceButton = role === "user" ? (
+        <div className="add-device">
+            <MyLink
+                to="/add-new-device"
+                text="Add New Device"
+                color="#fff"
+                bold={true}
+                center={false}
+            />
+        </div>
+    ) : (<></>)
 
     return (
         <div className="card">
@@ -167,15 +183,7 @@ function DeviceList({ devices, searchQuery, setSearchQuery, handleButtonPress, t
                 ) : (
                     <p></p>
                 )}
-                <div className="add-device">
-                    <MyLink
-                        to="/add-new-device"
-                        text="Add New Device"
-                        color="#fff"
-                        bold={true}
-                        center={false}
-                    />
-                </div>
+                {addDeviceButton}
                 <InputTextBox
                     searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}

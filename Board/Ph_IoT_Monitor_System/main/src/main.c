@@ -61,7 +61,6 @@ void send_sensor_records(esp_mqtt_client_handle_t client, char* deviceID) {
         vTaskDelay(1000 / portTICK_PERIOD_MS);
         mqtt_send_sensor_record(client, &sensor_records.water_level_records[i], deviceID, "water-level");
         vTaskDelay(1000 / portTICK_PERIOD_MS);
-        // TODO: send water level, water flow and humidity
     }
 }
 
