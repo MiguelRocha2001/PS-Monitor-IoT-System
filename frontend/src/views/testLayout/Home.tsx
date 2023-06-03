@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Navigate} from 'react-router-dom';
 import {services} from "../../services/services";
 import {Loading} from "../Loading";
+import {useRole} from "../auth/Authn";
 
 /**
  * Checks if user is admin.
@@ -11,18 +12,17 @@ import {Loading} from "../Loading";
  */
 export function Home() {
     const [redirect, setRedirect] = useState<string | undefined>(undefined)
+    const role = useRole()
+
+    console.log("Home role: " + role)
 
     useEffect(() => {
-        async function getMe() {
-            const me = await services.getMe()
-            if (me.role === "admin") {
-                setRedirect("/users")
-            } else {
-                setRedirect("/users/my/devices") // user id is 'my'
-            }
+        if (role === "admin") {
+            setRedirect("/users")
+        } else if (role === "user") {
+            setRedirect("/users/my/devices") // user id is 'my'
         }
-        getMe()
-    }, [])
+    }, [role])
 
     if(redirect)
         return <Navigate to={redirect} replace={true}/>

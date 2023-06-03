@@ -7,14 +7,17 @@ const logger = new Logger({ name: "Authn" });
 type ContextType = {
     logged: boolean | undefined
     setLogged: (logged: boolean) => void
+    role: string | undefined
 }
 const LoggedInContext = createContext<ContextType>({
     logged: false,
-    setLogged: (logged: boolean ) => { }
+    setLogged: (logged: boolean ) => { },
+    role: undefined
 })
 
 export function AuthnContainer({ children }: { children: React.ReactNode }) {
     const [logged, setLogged] = useState<boolean | undefined>(undefined)
+    const [role, setRole] = useState<string | undefined>(undefined)
 
     useEffect( () => {
         async function fetchUser () {
@@ -30,8 +33,23 @@ export function AuthnContainer({ children }: { children: React.ReactNode }) {
         fetchUser()
     }, [])
 
+    useEffect( () => {
+        async function fetchRole () {
+            const me = await services.getMe()
+            if (me) {
+                logger.debug("User has role: " + me.role)
+                setRole(me.role)
+            } else {
+                logger.debug("User has no role")
+                setRole(undefined)
+            }
+        }
+        if (logged)
+            fetchRole()
+    }, [logged])
+
     return (
-        <LoggedInContext.Provider value={{ logged: logged, setLogged: setLogged }}>
+        <LoggedInContext.Provider value={{ logged: logged, setLogged: setLogged, role: role }}>
             {children}
         </LoggedInContext.Provider>
     )
@@ -43,6 +61,10 @@ export function useIsLoggedIn() {
 
 export function useSetIsLoggedIn() {
     return useContext(LoggedInContext).setLogged
+}
+
+export function useRole() {
+    return useContext(LoggedInContext).role
 }
 
 /* usando local storage

@@ -41,7 +41,7 @@ export class FakeServices implements Services {
         if (existingUser) {
             throw new Error('Username already exists')
         }
-        const newUser = new UserInternal(new User(this.getNewDeviceId(), email, email), password)
+        const newUser = new UserInternal(new User(this.getNewDeviceId(), email, 'user'), password)
         this.users.push(newUser)
         this.user = newUser.user
     }
