@@ -5,4 +5,4 @@
 cmake_minimum_required(VERSION 3.16)
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
-project(Ph_IoT_Monitor_System)
+project(IoT_System_MCU)
