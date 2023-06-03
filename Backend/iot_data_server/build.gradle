@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.*
 
 plugins {
 	id 'org.springframework.boot' version '3.0.4'
@@ -82,4 +82,12 @@ tasks.withType(KotlinCompile) {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.named<Jar>("jar") {//create a fat jar with all dependencies included in it (for deployment)
+	dependsOn("copyRuntimeDependencies")
+	manifest {
+		attributes["Main-Class"] = "pt.isel.daw.dawbattleshipgame.BattleshipApplicationKt"
+		attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(" ") { it.name }
+	}
 }
