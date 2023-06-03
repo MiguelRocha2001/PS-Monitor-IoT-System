@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "iot-system-web-app",
   "version": "0.1.0",
   "private": true,
   "main": "index.tsx",
