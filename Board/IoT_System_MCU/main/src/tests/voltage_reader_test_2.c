@@ -28,6 +28,22 @@ static const adc_bits_width_t width = ADC_WIDTH_BIT_13;
 static const adc_atten_t atten = ADC_ATTEN_DB_11;
 static const adc_unit_t unit = ADC_UNIT_1;
 
+/*
+7955 - 4.0
+7184 - 8.8
+
+m = (8.8 - 4.0) / (7184 - 7955)
+4.0 = 7955 * -(0.00622) + b
+b = 4.0 - 7955 * -(0.00622) = +- 53.4801
+
+ph = ADC * m + b
+
+8.8 = 7184 * -0.00622 + 53.4801
+*/
+
+const double m = (8.8 - 4.0) / (7184 - 7955);
+const double b = 4.0 - 7955 * m;
+
 
 static void check_efuse(void)
 {
@@ -108,8 +124,9 @@ void app_main(void)
         // printf("Raw: %d\n", adc_reading);
 
         int Vout = adc_reading * 2500 / 8191;
+        float ph = adc_reading * m + b;
 
-        printf("%d,%d,%d\n", i++, adc_reading, Vout); 
+        printf("%d,%d,%d,%f\n", i++, adc_reading, Vout); 
 
         // printf("Raw: %d\tVoltage: %dmV\n", adc_reading, voltage);
         vTaskDelay(pdMS_TO_TICKS(1000));

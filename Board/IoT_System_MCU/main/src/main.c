@@ -204,7 +204,7 @@ int handle_wake_up_reason(char* deviceID, esp_mqtt_client_handle_t client)
     return 0;
 }
 
-// IMPORTANT -> run with $idf.py monitor
+// IMPORTANT -> run with $ idf.py monitor or $ idf.py -p COM5 flash monitor 
 
 /**
  * Program entry point.

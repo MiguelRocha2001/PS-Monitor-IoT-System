@@ -1,6 +1,6 @@
 idf_component_register(
         SRCS
-            "src/tests/voltage_reader_test_2.c"
+            "src/main.c"
             "src/utils/nvs_util.c"
             "src/utils/pushingbox_util.c"
             "src/utils/esp_touch_util.c"
@@ -17,7 +17,7 @@ idf_component_register(
             "src/utils/utils.c"
             "src/utils/entropy_poll.c"
             "src/utils/sensor/sensor_readings.c"
-            "src/utils/ph/ph_reader_fake.c"
+            "src/utils/ph/ph_reader_real.c"
             "src/utils/temperature/temperature_reader_fake.c"
             "src/utils/humidity/humidity_reader_fake.c"
             "src/utils/water_level/water_level_reader_fake.c"
