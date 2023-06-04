@@ -1,6 +1,6 @@
 idf_component_register(
         SRCS
-            "src/main.c"
+            "src/tests/water_sensor_as_wake_up_stub_test.c"
             "src/utils/nvs_util.c"
             "src/utils/pushingbox_util.c"
             "src/utils/esp_touch_util.c"
