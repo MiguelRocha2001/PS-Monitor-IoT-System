@@ -5,7 +5,9 @@ x = []
 y1 = []
 y2 = []
 
-with open("ph4_power_up.csv", 'r') as csvfile:
+title = "ph4_power_up"
+
+with open(title+".csv", 'r') as csvfile:
     plots = csv.reader(csvfile, delimiter=',')
 
     for row in plots:
@@ -18,7 +20,7 @@ plt.plot(x, y2, color='b', linestyle='dotted', marker='s', label="Voltage")
 plt.xticks(rotation=25)
 plt.xlabel('Time (s)')
 plt.ylabel('ADC / Voltage')
-plt.title('ADC readings', fontsize=20)
+plt.title(title, fontsize=20)
 plt.grid()
 plt.legend()
 plt.show()
