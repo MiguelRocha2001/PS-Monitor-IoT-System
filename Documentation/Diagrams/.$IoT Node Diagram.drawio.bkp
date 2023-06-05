@@ -1,6 +1,6 @@
-<mxfile host="Electron" modified="2023-05-21T13:58:27.372Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.2.8 Chrome/112.0.5615.165 Electron/24.2.0 Safari/537.36" etag="lzHqfgrx72nVO9EiNLhq" version="21.2.8" type="device">
+<mxfile host="Electron" modified="2023-06-05T16:52:00.490Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.2.8 Chrome/112.0.5615.165 Electron/24.2.0 Safari/537.36" etag="FcOwkMHUtRy-4zORpYnp" version="21.2.8" type="device">
   <diagram name="Página-1" id="hPsSL6qZW7xpYR3QuTbb">
-    <mxGraphModel dx="1702" dy="518" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1877" dy="621" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -23,8 +23,8 @@
         <mxCell id="d_SXLutLmjOx1EQiBmjM-50" value="ACCESS POINT" style="whiteSpace=wrap;html=1;aspect=fixed;fontStyle=1;fontSize=15;" parent="1" vertex="1">
           <mxGeometry x="240" y="190" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="dxivSuH3IM0CT77Aezv6-2" value="FACTORY" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=22;" parent="1" vertex="1">
-          <mxGeometry x="-90" y="90" width="130" height="40" as="geometry" />
+        <mxCell id="dxivSuH3IM0CT77Aezv6-2" value="IoT Node" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=22;" parent="1" vertex="1">
+          <mxGeometry x="-85" y="90" width="120" height="40" as="geometry" />
         </mxCell>
         <mxCell id="UxGGxqC0vyLlW2N5m067-21" value="MCU" style="whiteSpace=wrap;html=1;aspect=fixed;fontSize=15;fontStyle=1" parent="1" vertex="1">
           <mxGeometry x="100" y="190" width="80" height="80" as="geometry" />
