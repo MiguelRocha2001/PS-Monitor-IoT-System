@@ -6,12 +6,12 @@
 #include "utils.h"
 #include "dht11.h"
 
-const static char* TAG = "TEMP_READER_FAKE";
+const static char* TAG = "TEMP_READER_REAL";
 
-int read_humidity_record(struct sensor_record2 *temp_record)
+int read_humidity_record(struct sensor_record *temp_record)
 {
-    ESP_LOGE(TAG, "Reading temperature...");
-    DHT11_init(GPIO_NUM_1);
+    DHT11_init(GPIO_NUM_9);
+    // sensor_record -> sensor_name = "humidity";
     temp_record -> value = DHT11_read().humidity;
     temp_record -> timestamp = getNowTimestamp();
     return 0;

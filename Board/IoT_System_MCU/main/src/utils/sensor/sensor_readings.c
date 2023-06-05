@@ -6,14 +6,20 @@
 #include "sensor/humidity_reader.h"
 #include "sensor/sensor_record.h"
 #include <esp_log.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 const static char* TAG = "sensor_readings";
+
+#define stability_time 1000 * 60 // 1 minute
 
 /**
  * Read sensor records and store them in the sensor_records_struct.
  * Return 0 if success, 1 if the sensor_records_struct is full, -1 if there is an error with some sensor reading.
 */
 int read_sensor_records(sensor_records_struct *sensor_records) {
+    vTaskDelay(pdMS_TO_TICKS(stability_time));
+
     int index = sensor_records->index;
     if (index < MAX_SENSOR_RECORDS) {
         ESP_LOGE(TAG, "Reading sensor records");

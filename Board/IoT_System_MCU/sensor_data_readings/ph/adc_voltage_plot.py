@@ -12,8 +12,8 @@ with open(title+".csv", 'r') as csvfile:
 
     for row in plots:
         x.append(float(row[0]))
-        y1.append(float(row[2]))
-        y2.append(float(row[1]))
+        y1.append(float(row[1]))
+        y2.append(float(row[2]))
 
 plt.plot(x, y1, color='g', linestyle='dashed', marker='o', label="ADC")
 plt.plot(x, y2, color='b', linestyle='dotted', marker='s', label="Voltage")

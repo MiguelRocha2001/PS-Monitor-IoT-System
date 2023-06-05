@@ -10,7 +10,7 @@
 #define WATER_FLOW_SENSOR_ERROR -1
 #define HUMIDITY_SENSOR_ERROR -1
 
-#define MAX_SENSOR_RECORDS 2
+#define MAX_SENSOR_RECORDS 10
 
 typedef struct sensor_records_struct {
     struct sensor_record start_ph_records[MAX_SENSOR_RECORDS];

@@ -5,12 +5,12 @@ x = []
 y1 = []
 y2 = []
 
-with open("dht11/dht11_values_2.csv", 'r') as csvfile:
+with open("dht11_values_2.csv", 'r') as csvfile:
     plots = csv.reader(csvfile, delimiter=',')
 
     for row in plots:
-        x.append(float(row[0]))
-        y1.append(float(row[2]))
+        x.append(float(row[2]))
+        y1.append(float(row[0]))
         y2.append(float(row[1]))
 
 plt.plot(x, y1, color='g', linestyle='dashed', marker='o', label="Temperature")

@@ -28,6 +28,8 @@ static const adc_bits_width_t width = ADC_WIDTH_BIT_13;
 static const adc_atten_t atten = ADC_ATTEN_DB_11;
 static const adc_unit_t unit = ADC_UNIT_1;
 
+#define SENSOR_POWER_PIN GPIO_NUM_15
+
 /*
 7955 - 4.0
 7184 - 8.8
@@ -87,7 +89,7 @@ static void print_char_val_type(esp_adc_cal_value_t val_type)
 void app_main(void)
 {
     //Check if Two Point or Vref are burned into eFuse
-    check_efuse();
+    // check_efuse();
 
     //Configure ADC
     if (unit == ADC_UNIT_1) {
@@ -101,7 +103,12 @@ void app_main(void)
     adc_chars = calloc(1, sizeof(esp_adc_cal_characteristics_t));
     esp_adc_cal_value_t val_type = esp_adc_cal_characterize(unit, atten, width, DEFAULT_VREF, adc_chars);
 
-    print_char_val_type(val_type);
+    // print_char_val_type(val_type);
+
+    // Configure the GPIO pin as output
+    gpio_set_direction(SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
+    // Set the GPIO pin to HIGH
+    gpio_set_level(SENSOR_POWER_PIN, 1);
 
     int i = 0;
     //Continuously sample ADC1

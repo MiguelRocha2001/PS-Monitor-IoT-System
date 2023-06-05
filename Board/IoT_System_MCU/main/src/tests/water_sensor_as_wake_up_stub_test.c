@@ -15,7 +15,7 @@
 #include <esp_sleep.h>
 #include <esp_log.h>
 
-#define SENSOR_POWER_PIN GPIO_NUM_4
+#define SENSOR_POWER_PIN GPIO_NUM_14
 
 
 void app_main()

@@ -24,27 +24,11 @@ static esp_adc_cal_characteristics_t *adc_chars;
 static const adc_channel_t channel = ADC_CHANNEL_6;     //GPIO34 if ADC1, GPIO14 if ADC2
 static const adc_bits_width_t width = ADC_WIDTH_BIT_12;
 #elif CONFIG_IDF_TARGET_ESP32S2
-static const adc_channel_t channel = ADC_CHANNEL_0;     // GPIO7 if ADC1, GPIO17 if ADC2
+static const adc_channel_t channel = ADC_CHANNEL_1;     // GPIO7 if ADC1, GPIO17 if ADC2
 static const adc_bits_width_t width = ADC_WIDTH_BIT_13;
 #endif
 static const adc_atten_t atten = ADC_ATTEN_DB_11;
 static const adc_unit_t unit = ADC_UNIT_1;
-
-/*
-7955 - 4.0
-7184 - 8.8
-
-m = (8.8 - 4.0) / (7184 - 7955)
-4.0 = 7955 * -(0.00622) + b
-b = 4.0 - 7955 * -(0.00622) = +- 53.4801
-
-ph = ADC * m + b
-
-8.8 = 7184 * -0.00622 + 53.4801
-*/
-
-const double m = (8.8 - 4.0) / (7184 - 7955);
-const double b = 4.0 - 7955 * m;
 
 
 static void check_efuse(void)
@@ -86,7 +70,7 @@ static void print_char_val_type(esp_adc_cal_value_t val_type)
 }
 
 
-int read_start_ph_record(struct sensor_record *sensor_record)
+int read_water_level_record(struct sensor_record *sensor_record)
 {
     //Check if Two Point or Vref are burned into eFuse
     // check_efuse();
@@ -118,19 +102,9 @@ int read_start_ph_record(struct sensor_record *sensor_record)
     }
     adc_reading /= NO_OF_SAMPLES;
 
-    float ph = adc_reading * m + b;
+    // sensor_record -> sensor_name = "water_level";
+    sensor_record -> value = adc_reading; // TODO: convert to water level
+    sensor_record -> timestamp = getNowTimestamp();
 
-    int timestamp = getNowTimestamp();
-
-    // sensor_record -> sensor_name = "ph";
-    sensor_record -> value = ph;
-    sensor_record -> timestamp = timestamp;
-
-    return 0;
-}
-
-int read_end_ph_record(struct sensor_record *sensor_record)
-{
-    read_start_ph_record(sensor_record);
     return 0;
 }

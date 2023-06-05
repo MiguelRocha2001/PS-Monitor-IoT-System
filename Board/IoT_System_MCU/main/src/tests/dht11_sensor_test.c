@@ -11,21 +11,32 @@
 #include "driver/gpio.h"
 #include "sdkconfig.h"
 #include "esp_log.h"
+#include <esp_sleep.h>
 #include <nvs_flash.h>
 
 #include "dht11.h"
+
+#define SENSOR_POWER_PIN GPIO_NUM_15
 
 void app_main()
 {
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_LOGI("DHT11", "DHT11 test!");
 
-    DHT11_init(GPIO_NUM_0);
+    // Configure the GPIO pin as output
+    gpio_set_direction(SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
+    // Set the GPIO pin to HIGH
+    gpio_set_level(SENSOR_POWER_PIN, 1);
+
+    DHT11_init(GPIO_NUM_9);
     ESP_LOGI("DHT11", "DHT11 initialized!");
 
-    float i = 0;
+    // ESP_LOGI("main", "Going to sleep now");
+    // esp_deep_sleep_start();
+
+    int i = 0;
     while(i < 100) {
-        printf("%d,%d,%f\n", DHT11_read().temperature, DHT11_read().humidity, i);
+        printf("%d,%d,%d\n", i, DHT11_read().temperature, DHT11_read().humidity);
         /*
         printf("Temperature is %d \n", DHT11_read().temperature);
         printf("Humidity is %d\n", DHT11_read().humidity);
@@ -33,7 +44,7 @@ void app_main()
         */
         
         // sleep for 1 second
-        vTaskDelay(100 / portTICK_PERIOD_MS);
-        i = i + 0.1;
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        i = i + 1;
     }
 }
