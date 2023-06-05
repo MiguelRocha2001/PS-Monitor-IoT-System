@@ -28,12 +28,6 @@ create table device(
     foreign key (user_id) references _user(_id)
 );
 
-create table sensor(
-    type varchar,
-    alert_threshold int,
-    primary key (type)
-);
-
 create table sensor_error(
     device_id varchar,
     sensor varchar,

@@ -13,6 +13,7 @@
 #include "driver/gpio.h"
 #include "driver/adc.h"
 #include "esp_adc_cal.h"
+#include <esp_log.h>
 #include "time_util.h"
 #include "sensor/sensor_record.h"
 
@@ -29,6 +30,8 @@ static const adc_bits_width_t width = ADC_WIDTH_BIT_13;
 #endif
 static const adc_atten_t atten = ADC_ATTEN_DB_11;
 static const adc_unit_t unit = ADC_UNIT_1;
+
+const static char* TAG = "WATER_LEAK_READER_REAL";
 
 
 static void check_efuse(void)
@@ -70,8 +73,9 @@ static void print_char_val_type(esp_adc_cal_value_t val_type)
 }
 
 
-int read_water_level_record(struct sensor_record *sensor_record)
+int read_water_leak_record()
 {
+    ESP_LOGE(TAG, "Reading water leak...");
     //Check if Two Point or Vref are burned into eFuse
     // check_efuse();
 
@@ -102,9 +106,7 @@ int read_water_level_record(struct sensor_record *sensor_record)
     }
     adc_reading /= NO_OF_SAMPLES;
 
-    // sensor_record -> sensor_name = "water_level";
-    sensor_record -> value = adc_reading; // TODO: convert to water level
-    sensor_record -> timestamp = getNowTimestamp();
+    int Vout = adc_reading * 2500 / 8191;
 
-    return 0;
+    return Vout > 500;
 }

@@ -1,47 +1,47 @@
 #include "sensor/sensor_reader.h"
 #include "sensor/ph_reader.h"
 #include "sensor/temp_reader.h"
-#include "sensor/water_level_reader.h"
 #include "sensor/water_flow_reader.h"
 #include "sensor/humidity_reader.h"
 #include "sensor/sensor_record.h"
 #include <esp_log.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "driver/gpio.h"
+#include "sdkconfig.h"
 
 const static char* TAG = "sensor_readings";
 
-#define stability_time 1000 * 60 // 1 minute
+#define between_readings 2000 // 2 seconds
 
 /**
  * Read sensor records and store them in the sensor_records_struct.
  * Return 0 if success, 1 if the sensor_records_struct is full, -1 if there is an error with some sensor reading.
 */
-int read_sensor_records(sensor_records_struct *sensor_records) {
-    vTaskDelay(pdMS_TO_TICKS(stability_time));
+int read_sensor_records(sensor_records_struct *sensor_records) 
+{
+    ESP_LOGE(TAG, "Reading sensor records");
+    for(int i = 0; i < MAX_SENSOR_RECORDS; i++) 
+    {
+        read_start_ph_record(&sensor_records->start_ph_records[i]);
+        read_end_ph_record(&sensor_records->end_ph_records[i]);
+        read_temperature_record(&sensor_records->temperature_records[i]);
+        read_water_flow_record(&sensor_records->water_flow_records[i]);
+        read_humidity_record(&sensor_records->humidity_records[i]);
+        sensor_records->index = i + 1; // increment index
 
-    int index = sensor_records->index;
-    if (index < MAX_SENSOR_RECORDS) {
-        ESP_LOGE(TAG, "Reading sensor records");
-
-        read_start_ph_record(&sensor_records->start_ph_records[index]);
-        read_end_ph_record(&sensor_records->end_ph_records[index]);
-        read_temperature_record(&sensor_records->temperature_records[index]);
-        read_water_level_record(&sensor_records->water_level_records[index]);
-        read_water_flow_record(&sensor_records->water_flow_records[index]);
-        read_humidity_record(&sensor_records->humidity_records[index]);
-        sensor_records->index = index + 1; // increment index
-        return 0;
+        vTaskDelay(pdMS_TO_TICKS(between_readings));
     }
-    ESP_LOGE(TAG, "Sensor records full! Cannot read more records");
-    return -1;
+    return 0;
 }
+
 
 /**
  * Check if all the sensors are working.
  * @param stores the sensors that are not working in the int array.
  * @returns 0 if all the sensors are working, -1 otherwise.
 */
+/*
 int check_if_sensors_are_working(int *sensors_not_working) {
     struct sensor_record record1;
     struct sensor_record record2;
@@ -87,6 +87,7 @@ int check_if_sensors_are_working(int *sensors_not_working) {
     
     return 0;
 }
+*/
 
 int sensors_reading_is_complete(sensor_records_struct *sensor_records) {
     return sensor_records->index == MAX_SENSOR_RECORDS;

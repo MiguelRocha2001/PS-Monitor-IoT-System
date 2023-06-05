@@ -64,6 +64,8 @@
         "tuple": "c",
         "type_traits": "c",
         "utility": "c",
-        "dht11.h": "c"
+        "dht11.h": "c",
+        "esp_log.h": "c",
+        "task.h": "c"
     }
 }

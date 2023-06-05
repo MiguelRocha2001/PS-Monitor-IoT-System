@@ -26,7 +26,7 @@
 
 static const char *TAG = "MQTT_MODULE";
 
-static const char *CONFIG_BROKER_URL = "mqtt://192.168.1.8:1883/";
+static const char *CONFIG_BROKER_URL = "mqtt://192.168.1.3:1883/";
 
 static void log_error_if_nonzero(const char *message, int error_code)
 {

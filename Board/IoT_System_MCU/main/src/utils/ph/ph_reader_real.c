@@ -15,6 +15,7 @@
 #include "esp_adc_cal.h"
 #include "time_util.h"
 #include "sensor/sensor_record.h"
+#include <esp_log.h>
 
 #define DEFAULT_VREF    3300        //Use adc2_vref_to_gpio() to obtain a better estimate
 #define NO_OF_SAMPLES   64          //Multisampling
@@ -29,6 +30,8 @@ static const adc_bits_width_t width = ADC_WIDTH_BIT_13;
 #endif
 static const adc_atten_t atten = ADC_ATTEN_DB_11;
 static const adc_unit_t unit = ADC_UNIT_1;
+
+const static char* TAG = "PH_READER_REAL";
 
 /*
 7955 - 4.0
@@ -88,6 +91,7 @@ static void print_char_val_type(esp_adc_cal_value_t val_type)
 
 int read_start_ph_record(struct sensor_record *sensor_record)
 {
+    ESP_LOGE(TAG, "Reading PH");
     //Check if Two Point or Vref are burned into eFuse
     // check_efuse();
 

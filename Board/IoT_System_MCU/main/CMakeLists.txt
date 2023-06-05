@@ -1,6 +1,6 @@
 idf_component_register(
         SRCS
-            "src/tests/water_sensor_reader_test.c"
+            "src/main.c"
             "src/utils/nvs_util.c"
             "src/utils/pushingbox_util.c"
             "src/utils/esp_touch_util.c"
@@ -20,7 +20,7 @@ idf_component_register(
             "src/utils/ph/ph_reader_real.c"
             "src/utils/temperature/temperature_reader_real.c"
             "src/utils/humidity/humidity_reader_real.c"
-            "src/utils/water_level/water_level_reader_real.c"
+            "src/utils/water_leak/water_leak_reader_real.c"
             "src/utils/water_flow/water_flow_reader_fake.c"
         INCLUDE_DIRS "include"
 )

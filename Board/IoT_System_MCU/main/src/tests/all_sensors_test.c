@@ -13,15 +13,12 @@
 #include <esp_sleep.h>
 
 #define SENSOR_POWER_PIN GPIO_NUM_15
-#define stability_time 1000 * 3 // 1 minute
 
 /**
  * Read sensor records and store them in the sensor_records_struct.
  * Return 0 if success, 1 if the sensor_records_struct is full, -1 if there is an error with some sensor reading.
 */
 int read_sensor_records(sensor_records_struct *sensor_records) {
-    vTaskDelay(pdMS_TO_TICKS(stability_time));
-
     int index = sensor_records->index;
     if (index < MAX_SENSOR_RECORDS) {
         read_start_ph_record(&sensor_records->start_ph_records[index]);

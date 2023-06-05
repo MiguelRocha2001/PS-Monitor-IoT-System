@@ -16,13 +16,15 @@
 #include "esp_system.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "sensor/water_leak_reader.h"
 
 const static char* TAG = "MAIN";
 
 #define GPIO_RESET_PIN (CONFIG_GPIO_RESET_PIN)
+#define SENSOR_POWER_PIN GPIO_NUM_15
+#define sensor_stabilization_time 1000 * 5 // 1 minute
 
-const static long SENSOR_MULTIPLE_READING_INTERVAL = 2; // 3 seconds
-const static long LONG_SLEEP_TIME = 5; // 3 seconds
+const static long LONG_SLEEP_TIME = 6; // 5 seconds
 
 RTC_DATA_ATTR struct sensor_records_struct sensor_records;
 RTC_DATA_ATTR int readings_started;
@@ -59,9 +61,7 @@ void send_sensor_records(esp_mqtt_client_handle_t client, char* deviceID) {
         vTaskDelay(1000 / portTICK_PERIOD_MS);
         mqtt_send_sensor_record(client, &sensor_records.water_flow_records[i], deviceID, "water-flow");
         vTaskDelay(1000 / portTICK_PERIOD_MS);
-        mqtt_send_sensor_record(client, &sensor_records.water_level_records[i], deviceID, "water-level");
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-        // TODO: send water level, water flow and humidity
+        // TODO: send water flow and humidity
     }
 }
 
@@ -80,8 +80,6 @@ void erase_sensor_records() {
         sensor_records.humidity_records[i].timestamp = 0;
         sensor_records.water_flow_records[i].value = 0;
         sensor_records.water_flow_records[i].timestamp = 0;
-        sensor_records.water_level_records[i].value = 0;
-        sensor_records.water_level_records[i].timestamp = 0;
     }
     sensor_records.index = 0; // resets the index
 }
@@ -104,28 +102,39 @@ void setup_wifi(void) {
     ESP_LOGE(TAG, "Finished setting up WiFi");
 }
 
-void compute_sensors(char* deviceID, esp_mqtt_client_handle_t client) {
-    readings_started = 1;
+void compute_sensors(char* deviceID, esp_mqtt_client_handle_t client) 
+{
+    ESP_LOGE(TAG, "Waiting for sensor stability...");
+    vTaskDelay(pdMS_TO_TICKS(sensor_stabilization_time));
 
-    strcpy(action, "reading_sensors");
-    read_sensor_records(&sensor_records);
-    if (sensors_reading_is_complete(&sensor_records)) 
+    ESP_LOGE(TAG, "Powering sensors...");
+    // power sensors
+    gpio_set_direction(SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
+    gpio_set_level(SENSOR_POWER_PIN, 1);
+
+    int leakage = read_water_leak_record();
+    if(leakage == 1) 
     {
-        ESP_LOGE(TAG, "Sensors reading is complete. Sending records...");
-        readings_started = 0;
-        send_sensor_records(client, deviceID);
-        erase_sensor_records();
-
-        int new_time_to_wake_up = getNowTimestamp() + LONG_SLEEP_TIME;
-        ESP_LOGE(TAG, "Setting new time to wake up: %d", new_time_to_wake_up);
-        time_to_wake_up = new_time_to_wake_up; // sets new time to wake up
-        continue_long_sleep();
-    } 
+        ESP_LOGE(TAG, "Water leakage detected. Sending message...");
+        mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "water-leak");       
+    }
     else 
     {
-        ESP_LOGE(TAG, "Sensors reading is not complete. Going to sleep...");
-        start_deep_sleep(SENSOR_MULTIPLE_READING_INTERVAL);
+        ESP_LOGE(TAG, "No water leakage detected.");
     }
+    
+    read_sensor_records(&sensor_records);
+
+    gpio_set_level(SENSOR_POWER_PIN, 0);
+
+    ESP_LOGE(TAG, "Sensors reading is complete. Sending records...");
+    send_sensor_records(client, deviceID);
+    erase_sensor_records();
+    
+    int new_time_to_wake_up = getNowTimestamp() + LONG_SLEEP_TIME;
+    ESP_LOGE(TAG, "Setting new time to wake up: %d", new_time_to_wake_up);
+    time_to_wake_up = new_time_to_wake_up; // sets new time to wake up
+    continue_long_sleep();
 }
 
 void printDeepSleepWokeCause(esp_sleep_wakeup_cause_t wakeup_reason) 
@@ -168,7 +177,7 @@ int handle_wake_up_reason(char* deviceID, esp_mqtt_client_handle_t client)
     {
         ESP_LOGE(TAG, "Reset reason: power-on");
         mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "power-on");
-        return 1;
+        return 0;
     }
     if (reset_reason & ESP_RST_SW) 
     {
@@ -190,17 +199,6 @@ int handle_wake_up_reason(char* deviceID, esp_mqtt_client_handle_t client)
         return 1;
     }
     */
-    if (reset_reason & ESP_RST_DEEPSLEEP) 
-    {
-        esp_sleep_wakeup_cause_t cause = esp_sleep_get_wakeup_cause();
-        printDeepSleepWokeCause(cause);
-        if (cause == ESP_SLEEP_WAKEUP_EXT0)  // water leak sensor
-        {
-            mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "water-leak");
-            esp_deep_sleep_start(); // goes to sleep
-        }
-        return 0;
-    }
     return 0;
 }
 
@@ -230,13 +228,6 @@ void app_main(void)
     }
     else // other wake up reason
     {
-        if (readings_started)
-        {
-            start_deep_sleep(SENSOR_MULTIPLE_READING_INTERVAL);
-        }
-        else
-        {
-            continue_long_sleep(LONG_SLEEP_TIME);
-        }
+        continue_long_sleep(LONG_SLEEP_TIME);
     }
 }
