@@ -1,7 +1,7 @@
 import React from "react";
 import {Link, useParams} from "react-router-dom";
 import {MyCard} from "../Commons";
-import "./deviceWasCreated.css";
+import "./devicewascreated.css";
 import {Button} from "react-bootstrap";
 
 export function DeviceCreated() {
