@@ -89,7 +89,7 @@ static void print_char_val_type(esp_adc_cal_value_t val_type)
 }
 
 
-int read_start_ph_record(struct sensor_record *sensor_record)
+int read_initial_ph_record(struct sensor_record *sensor_record)
 {
     ESP_LOGE(TAG, "Reading PH");
     //Check if Two Point or Vref are burned into eFuse

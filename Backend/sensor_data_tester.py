@@ -27,7 +27,6 @@ def get_message_with_sensors_error(sensor):
 
 def get_message_with_device_log(reason):
     timestamp = str(round(time.time()))
-    reason = "something went wrong"
     return "\"device_id\": " + sorround_with_quotes(device_id) + ", \"timestamp\": " + sorround_with_quotes(timestamp) + ", \"reason\": " + sorround_with_quotes(reason) + ""
 
 # The callback for when the client receives a CONNACK response from the server.

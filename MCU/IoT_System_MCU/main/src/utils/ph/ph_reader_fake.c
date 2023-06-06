@@ -7,7 +7,7 @@
 
 const static char* TAG = "PH_READER_FAKE";
 
-int read_start_ph_record(struct sensor_record *sensor_record)
+int read_initial_ph_record(struct sensor_record *sensor_record)
 {
     ESP_LOGE(TAG, "Reading start pH...");
     float ph_value = generate_random_float();

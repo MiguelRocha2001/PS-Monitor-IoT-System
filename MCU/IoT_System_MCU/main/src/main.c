@@ -153,7 +153,7 @@ void printDeepSleepWokeCause(esp_sleep_wakeup_cause_t wakeup_reason)
 
 int was_reading_from_sensor(char* action, char* sensor) 
 {
-    if (strcmp(action, "reading_start_ph") == 0) 
+    if (strcmp(action, "reading_initial_ph") == 0) 
     {
         strcpy(sensor, "ph");
         return 1;

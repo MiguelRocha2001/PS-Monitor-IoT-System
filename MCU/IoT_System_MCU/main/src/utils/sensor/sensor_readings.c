@@ -24,7 +24,7 @@ int read_sensor_records(sensor_records_struct *sensor_records, char* action)
     ESP_LOGE(TAG, "Reading sensor records");
     for(int i = 0; i < MAX_SENSOR_RECORDS; i++) 
     {
-        strcpy(action, "reading_start_ph");
+        strcpy(action, "reading_initial_ph");
         read_start_ph_record(&sensor_records->start_ph_records[i]);
         strcpy(action, "reading_final_ph");
         read_final_ph_record(&sensor_records->end_ph_records[i]);

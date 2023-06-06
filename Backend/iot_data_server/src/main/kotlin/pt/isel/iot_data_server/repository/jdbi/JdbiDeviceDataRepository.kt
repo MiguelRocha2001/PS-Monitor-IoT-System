@@ -7,7 +7,9 @@ import pt.isel.iot_data_server.domain.DeviceWakeUpLog
 import pt.isel.iot_data_server.domain.SensorErrorRecord
 import pt.isel.iot_data_server.repository.DeviceDataRepository
 import pt.isel.iot_data_server.repository.jdbi.mappers.DeviceMapper
+import pt.isel.iot_data_server.repository.jdbi.mappers.DeviceWakeUpLogMapper
 import pt.isel.iot_data_server.repository.jdbi.mappers.toDevice
+import pt.isel.iot_data_server.repository.jdbi.mappers.toDeviceWakeUpLog
 
 class JdbiDeviceDataRepository(
     private val handle: Handle
@@ -192,7 +194,7 @@ class JdbiDeviceDataRepository(
             .list()
     }
 
-    override fun createDeviceLogRecord(deviceId: String, deviceWakeUpLog: DeviceWakeUpLog) {
+    override fun createDeviceWakeUpLogs(deviceId: String, deviceWakeUpLog: DeviceWakeUpLog) {
         handle.createUpdate(
             """
             insert into device_wake_up_log (device_id, timestamp, reason)
@@ -205,7 +207,7 @@ class JdbiDeviceDataRepository(
             .execute()
     }
 
-    override fun getDeviceLogRecords(deviceId: String): List<DeviceWakeUpLog> {
+    override fun getDeviceWakeUpLogs(deviceId: String): List<DeviceWakeUpLog> {
         return handle.createQuery(
             """
             select device_id, timestamp, reason
@@ -214,7 +216,8 @@ class JdbiDeviceDataRepository(
             """
         )
             .bind("device_id", deviceId)
-            .mapTo<DeviceWakeUpLog>()
+            .mapTo<DeviceWakeUpLogMapper>()
             .list()
+            .map { it.toDeviceWakeUpLog() }
     }
 }

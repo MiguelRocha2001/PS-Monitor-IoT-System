@@ -30,8 +30,8 @@ interface DeviceDataRepository {
     fun getSensorErrorRecords(deviceId: String): List<SensorErrorRecord>
     @Deprecated("Discontinued")
     fun getAllSensorErrorRecords(): List<SensorErrorRecord>
-    fun createDeviceLogRecord(deviceId: String, deviceWakeUpLog: DeviceWakeUpLog)
-    fun getDeviceLogRecords(deviceId: String): List<DeviceWakeUpLog>
+    fun createDeviceWakeUpLogs(deviceId: String, deviceWakeUpLog: DeviceWakeUpLog)
+    fun getDeviceWakeUpLogs(deviceId: String): List<DeviceWakeUpLog>
     @Deprecated("Discontinued")
     fun getDevicesFilteredById(id:String, userId: String, page: Int?, limit: Int?): List<Device>
     fun getCountOfDevicesFilteredById(userId:String,deviceId: String): Int

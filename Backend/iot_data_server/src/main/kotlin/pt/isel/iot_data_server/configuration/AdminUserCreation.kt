@@ -12,11 +12,11 @@ import java.util.logging.Logger
  * and device (id=device_manual_tests) if they don't exist.
  */
 @Component
-class AdminInfoCreation(
+class AdminUserCreation(
     userService: UserService,
     private val deviceService: DeviceService
 ) {
-    private val logger = Logger.getLogger(AdminInfoCreation::class.java.name)
+    private val logger = Logger.getLogger(AdminUserCreation::class.java.name)
     init {
         val users = userService.getAllUsers(Role.ADMIN)
         if (users.isEmpty()) { // enforces that there is always an admin user

@@ -4,8 +4,6 @@ import org.eclipse.paho.client.mqttv3.MqttClient
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import pt.isel.iot_data_server.domain.DeviceWakeUpLog
-import pt.isel.iot_data_server.domain.fromMqttMsgStringToDeviceId
-import pt.isel.iot_data_server.domain.fromMqttMsgStringToDeviceLogRecord
 import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.service.Either
 import pt.isel.iot_data_server.service.email.EmailManager
@@ -25,7 +23,7 @@ class DeviceLogService(
         deviceWakeUpLog: DeviceWakeUpLog,
     ) {
         transactionManager.run {
-            it.deviceRepo.createDeviceLogRecord(deviceId, deviceWakeUpLog)
+            it.deviceRepo.createDeviceWakeUpLogs(deviceId, deviceWakeUpLog)
         }
     }
 
@@ -34,7 +32,7 @@ class DeviceLogService(
             if (!deviceService.existsDevice(deviceId))
                 Either.Left(DeviceErrorRecordsError.DeviceNotFound)
             else
-                Either.Right(it.deviceRepo.getDeviceLogRecords(deviceId))
+                Either.Right(it.deviceRepo.getDeviceWakeUpLogs(deviceId))
         }
     }
 
@@ -45,7 +43,7 @@ class DeviceLogService(
             else if (!deviceService.belongsToUser(deviceId, userId))
                 Either.Left(DeviceErrorRecordsError.DeviceNotBelongsToUser(userId))
             else
-                Either.Right(it.deviceRepo.getDeviceLogRecords(deviceId))
+                Either.Right(it.deviceRepo.getDeviceWakeUpLogs(deviceId))
         }
     }
 }

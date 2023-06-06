@@ -72,6 +72,12 @@ data class Problem(
            "Invalid name or password"
         )
 
+        val invalidPassword = Problem(
+            URI("https://github.com/isel-leic-daw/2022-daw-leic52d-2-22-daw-leic52d-g11/docs/problem/user-or-password-are-invalid"),
+            "Invalid Password",
+            "Password cannot be empty"
+        )
+
         val actionNotPermitted = Problem(
             URI("https://github.com/isel-leic-daw/2022-daw-leic52d-2-22-daw-leic52d-g11/docs/problem/action-not-permitted"),
             "Action not permitted",
@@ -82,12 +88,6 @@ data class Problem(
             URI("https://github.com/isel-leic-daw/2022-daw-leic52d-2-22-daw-leic52d-g11/docs/problem/user-not-found"),
             "Invalid User",
             "User not found"
-        )
-
-        val invalidInputBody = Problem(
-            URI("https://github.com/isel-leic-daw/2022-daw-leic52d-2-22-daw-leic52d-g11/docs/problem/user-not-found"),
-            "Invalid input body",
-            "Body is not of the expected format"
         )
 
         val deviceAlreadyExists = Problem(
@@ -131,7 +131,7 @@ val problems = mapOf(
     "DeviceNotFound" to Problem.response(404, Problem.deviceNotFound),
     "InvalidOwnerEmail" to Problem.response(409, Problem.invalidOwnerEmail),
     "EmailAlreadyExists" to Problem.response(409, Problem.emailAlreadyExists),
-    "UserOrPasswordAreInvalid" to Problem.response(403, Problem.userOrPasswordAreInvalid),
+    "InvalidPassword" to Problem.response(400, Problem.invalidPassword),
     "DeviceNotBelongsToUser" to Problem.response(403, Problem.actionNotPermitted),
     "SensorNotFound" to Problem.response(404, Problem.sensorNotFound),
 )
