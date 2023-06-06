@@ -112,6 +112,7 @@ void compute_sensors(char* deviceID, esp_mqtt_client_handle_t client)
     gpio_set_direction(SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
     gpio_set_level(SENSOR_POWER_PIN, 1);
 
+    strcpy(action, "checking_water_leak");
     int leakage = read_water_leak_record();
     if(leakage == 1) 
     {
@@ -123,7 +124,7 @@ void compute_sensors(char* deviceID, esp_mqtt_client_handle_t client)
         ESP_LOGE(TAG, "No water leakage detected.");
     }
     
-    read_sensor_records(&sensor_records);
+    read_sensor_records(&sensor_records, &action);
 
     gpio_set_level(SENSOR_POWER_PIN, 0);
 
@@ -148,6 +149,41 @@ void printDeepSleepWokeCause(esp_sleep_wakeup_cause_t wakeup_reason)
         case ESP_SLEEP_WAKEUP_ULP : ESP_LOGE(TAG, "Wakeup caused by ULP program"); break;
         default : ESP_LOGE(TAG, "Wakeup was not caused by deep sleep: %d", wakeup_reason); break;
     }
+}
+
+int was_reading_from_sensor(char* action, char* sensor) 
+{
+    if (strcmp(action, "reading_start_ph") == 0) 
+    {
+        strcpy(sensor, "ph");
+        return 1;
+    }
+    if (strcmp(action, "reading_final_ph") == 0) 
+    {
+        strcpy(sensor, "tds");
+        return 1;
+    }
+    if (strcmp(action, "reading_temperature") == 0) 
+    {
+        strcpy(sensor, "temperature");
+        return 1;
+    }
+    if (strcmp(action, "reading_water_flow") == 0) 
+    {
+        strcpy(sensor, "water-flow");
+        return 1;
+    }
+    if (strcmp(action, "reading_humidity") == 0) 
+    {
+        strcpy(sensor, "humidity");
+        return 1;
+    }
+    if (strcmp(action, "checking_water_leak") == 0) 
+    {
+        strcpy(sensor, "water-leak");
+        return 1;
+    }
+    return 0;
 }
 
 /**
@@ -188,7 +224,11 @@ int handle_wake_up_reason(char* deviceID, esp_mqtt_client_handle_t client)
     if (reset_reason & ESP_RST_PANIC) 
     {
         ESP_LOGE(TAG, "Reset reason: exception/panic");
-        mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, action);
+        char sensor[50];
+        if (was_reading_from_sensor(action, sensor))
+        {
+            mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, sensor);
+        }
         return 1;
     }
     /*

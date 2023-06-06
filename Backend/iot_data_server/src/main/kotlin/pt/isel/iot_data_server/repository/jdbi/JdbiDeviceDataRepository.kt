@@ -163,7 +163,7 @@ class JdbiDeviceDataRepository(
             """
         )
             .bind("device_id", deviceId)
-            .bind("sensor", sensorErrorRecord.sensorName)
+            .bind("sensor", sensorErrorRecord.sensorType)
             .bind("timestamp", sensorErrorRecord.instant)
             .execute()
     }
@@ -206,10 +206,15 @@ class JdbiDeviceDataRepository(
     }
 
     override fun getDeviceLogRecords(deviceId: String): List<DeviceWakeUpLog> {
-        TODO("Not yet implemented")
-    }
-
-    override fun getAllDeviceLogRecords(): List<DeviceWakeUpLog> {
-        TODO("Not yet implemented")
+        return handle.createQuery(
+            """
+            select device_id, timestamp, reason
+            from device_wake_up_log
+            where device_id = :device_id
+            """
+        )
+            .bind("device_id", deviceId)
+            .mapTo<DeviceWakeUpLog>()
+            .list()
     }
 }

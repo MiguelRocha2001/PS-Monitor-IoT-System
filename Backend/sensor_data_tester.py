@@ -7,7 +7,7 @@ import threading
 
 # see: https://pypi.org/project/paho-mqtt/
 
-device_id = "DCQZKFYY"
+device_id = "device_manual_tests"
 
 def sorround_with_quotes(value):
     return "\"" + value + "\""
@@ -21,10 +21,9 @@ def get_message_without_value():
     timestamp = str(round(time.time()))
     return "\"device_id\": " + sorround_with_quotes(device_id) + ", \"timestamp\": " + sorround_with_quotes(timestamp) + ""
 
-def get_message_with_sensors_error():
+def get_message_with_sensors_error(sensor):
     timestamp = str(round(time.time()))
-    sensors = "ph, humidity, temperature, water_flow, water_level, flood"
-    return "\"device_id\": " + sorround_with_quotes(device_id) + ", \"timestamp\": " + sorround_with_quotes(timestamp) + ", \"sensors\": " + sensors + ""
+    return "\"device_id\": " + sorround_with_quotes(device_id) + ", \"timestamp\": " + sorround_with_quotes(timestamp) + ", \"sensor_type\": " + sorround_with_quotes(sensor) + ""
 
 def get_message_with_device_log(reason):
     timestamp = str(round(time.time()))
@@ -71,8 +70,9 @@ class thread2(threading.Thread):
     # helper function to execute the threads
     def run(self):
         while True:
-            # client.publish("sensor_error", get_message_with_sensors_error())
-            # time.sleep(5)
+            client.publish("error_reading_sensor", get_message_with_sensors_error("humidity"))
+            time.sleep(5)
+            """
             client.publish("device_wake_up_log", get_message_with_device_log("water-leak"))
             time.sleep(5)
             client.publish("device_wake_up_log", get_message_with_device_log("unknown"))
@@ -85,6 +85,7 @@ class thread2(threading.Thread):
             time.sleep(5)
             client.publish("device_wake_up_log", get_message_with_device_log("brownout"))
             time.sleep(5)
+            """
 
 client = mqtt.Client()
 client.on_connect = on_connect
@@ -92,10 +93,10 @@ client.on_message = on_message
 
 client.connect("localhost", 1883, 60)
 
-thread1 = thread1(client)
+# thread1 = thread1(client)
 thread2 = thread2(client)
  
-thread1.start()
+# thread1.start()
 thread2.start()
 
 

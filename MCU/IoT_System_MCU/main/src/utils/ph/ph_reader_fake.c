@@ -17,9 +17,9 @@ int read_start_ph_record(struct sensor_record *sensor_record)
     return 0;
 }
 
-int read_end_ph_record(struct sensor_record *sensor_record)
+int read_final_ph_record(struct sensor_record *sensor_record)
 {
-    ESP_LOGE(TAG, "Reading end pH...");
+    ESP_LOGE(TAG, "Reading final pH...");
     float ph_value = generate_random_float();
     int timestamp = getNowTimestamp();
     sensor_record -> value = ph_value;

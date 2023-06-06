@@ -9,14 +9,14 @@ interface SensorInfo {
 }
 
 data class SensorRecord(val type: String, val value: Double, val instant: Instant)
-data class SensorErrorRecord(val sensorName: String, val instant: Instant)
+data class SensorErrorRecord(val sensorType: String, val instant: Instant)
 
 // TODO: use built in json parser
 
 fun fromMqttMsgStringToSensorRecord(str: String): SensorRecord {
     val split = str.removeJsonBrackets().split(",")
 
-    val name = getName(split)
+    val name = getSensorType(split)
     val instant = getInstant(split)
 
     val value = split
@@ -37,26 +37,26 @@ fun getInstant(split: List<String>): Instant {
         ?.substringAfter(":")
         ?.trim()
         ?.trim('"')
-        ?.toLong() ?: throw IllegalArgumentException("Invalid string")
+        ?.toLong() ?: throw IllegalArgumentException("Invalid json string (timestamp)")
 
     // String to Timestamp
     val timestamp = Timestamp(timestampInSeconds * 1000).time
     return Instant.ofEpochMilli(timestamp)
 }
 
-private fun getName(split: List<String>): String {
+private fun getSensorType(split: List<String>): String {
     return split
         .find { it.contains("\"sensor_type\"") }
         ?.split(":")
         ?.get(1)
         ?.trim()
         ?.trim('"')
-        ?: throw IllegalArgumentException("Invalid json string")
+        ?: throw IllegalArgumentException("Invalid json string (name)")
 }
 
 fun fromMqttMsgStringToSensorErrorRecord(str: String): SensorErrorRecord {
     val split = str.split(",")
-    val name = getName(split)
+    val sensorType = getSensorType(split)
     val instant = getInstant(split)
-    return SensorErrorRecord(name, instant)
+    return SensorErrorRecord(sensorType, instant)
 }

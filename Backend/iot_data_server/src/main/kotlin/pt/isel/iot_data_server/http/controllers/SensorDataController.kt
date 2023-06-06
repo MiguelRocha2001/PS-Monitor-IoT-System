@@ -53,15 +53,15 @@ class SensorDataController(
     )])
     @GetMapping(Uris.Users.Devices.Sensor.ALL_1)
     @Authorization(Role.USER)
-    fun getMYSensorRecords(
+    fun getMySensorRecords(
         user: User,
         @PathVariable device_id: String,
-        @RequestParam("sensor-name", required = true) sensorName: String,
+        @RequestParam("sensorType", required = true) sensorType: String,
     ): ResponseEntity<*> {
         val result = if (user.userInfo.role === Role.ADMIN)
-            sensorDataService.getSensorRecords(device_id, sensorName)
+            sensorDataService.getSensorRecords(device_id, sensorType)
         else
-            sensorDataService.getSensorRecordsIfIsOwner(device_id, user.id, sensorName)
+            sensorDataService.getSensorRecordsIfIsOwner(device_id, user.id, sensorType)
         return result.map {
             ResponseEntity.status(200)
                 .contentType(SirenMediaType)

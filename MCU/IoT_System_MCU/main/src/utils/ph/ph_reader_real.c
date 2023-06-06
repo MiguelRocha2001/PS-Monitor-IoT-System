@@ -133,7 +133,7 @@ int read_start_ph_record(struct sensor_record *sensor_record)
     return 0;
 }
 
-int read_end_ph_record(struct sensor_record *sensor_record)
+int read_final_ph_record(struct sensor_record *sensor_record)
 {
     read_start_ph_record(sensor_record);
     return 0;

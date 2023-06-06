@@ -165,3 +165,13 @@ void mqtt_send_device_wake_up_reason_alert(esp_mqtt_client_handle_t client, int 
 
     ESP_LOGI(TAG, "Message: %s published on topic /device_wake_up_log", buf);
 }
+
+void mqtt_send_error_reading_sensor(esp_mqtt_client_handle_t client, int timestamp, char* deviceID, char* sensor_type)
+{
+    char buf[200];
+    sprintf(buf, "{\"device_id\": \"%s\", \"timestamp\": \"%d\", \"sensor_type\": \"%s\"}", deviceID, timestamp, sensor_type);
+
+    esp_mqtt_client_publish(client, "error_reading_sensor", buf, 0, 1, 0);
+
+    ESP_LOGI(TAG, "Message: %s published on topic /error_reading_sensor", buf);
+}

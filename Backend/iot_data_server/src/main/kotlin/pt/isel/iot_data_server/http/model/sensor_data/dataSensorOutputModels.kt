@@ -43,6 +43,6 @@ data class SensorErrorRecordOutputModel(
 )
 
 fun SensorErrorRecord.toSensorErrorRecordOutputModel() = SensorErrorRecordOutputModel(
-    sensorName = this.sensorName,
+    sensorName = this.sensorType,
     timestamp = this.instant.epochSecond
 )

@@ -1,3 +1,4 @@
+#include <string.h>
 #include "sensor/sensor_reader.h"
 #include "sensor/ph_reader.h"
 #include "sensor/temp_reader.h"
@@ -18,15 +19,20 @@ const static char* TAG = "sensor_readings";
  * Read sensor records and store them in the sensor_records_struct.
  * Return 0 if success, 1 if the sensor_records_struct is full, -1 if there is an error with some sensor reading.
 */
-int read_sensor_records(sensor_records_struct *sensor_records) 
+int read_sensor_records(sensor_records_struct *sensor_records, char* action) 
 {
     ESP_LOGE(TAG, "Reading sensor records");
     for(int i = 0; i < MAX_SENSOR_RECORDS; i++) 
     {
+        strcpy(action, "reading_start_ph");
         read_start_ph_record(&sensor_records->start_ph_records[i]);
-        read_end_ph_record(&sensor_records->end_ph_records[i]);
+        strcpy(action, "reading_final_ph");
+        read_final_ph_record(&sensor_records->end_ph_records[i]);
+        strcpy(action, "reading_temperature");
         read_temperature_record(&sensor_records->temperature_records[i]);
+        strcpy(action, "reading_water_flow");
         read_water_flow_record(&sensor_records->water_flow_records[i]);
+        strcpy(action, "reading_humidity");
         read_humidity_record(&sensor_records->humidity_records[i]);
         sensor_records->index = i + 1; // increment index
 

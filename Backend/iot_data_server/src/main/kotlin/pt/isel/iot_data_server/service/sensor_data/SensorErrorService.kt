@@ -54,14 +54,8 @@ class SensorErrorService(
         }
     }
 
-    fun getAllSensorErrorRecords(): List<SensorErrorRecord> {
-        return transactionManager.run {
-            it.deviceRepo.getAllSensorErrorRecords()
-        }
-    }
-
     private fun subscribeSensorErrorTopic(client: MqttClient) {
-        client.subscribe("sensor_error") { topic, message ->
+        client.subscribe("error_reading_sensor") { topic, message ->
             try {
                 logger.info("Received message from topic: $topic")
 
