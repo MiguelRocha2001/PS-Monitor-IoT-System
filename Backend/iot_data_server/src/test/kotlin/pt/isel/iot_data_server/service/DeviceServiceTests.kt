@@ -24,7 +24,7 @@ class DeviceServiceTests {
 			val userID = createRandomUser(userService)
 			val ownerEmail = generateRandomEmail()
 
-			val result = deviceService.addDevice(userID, ownerEmail)
+			val result = deviceService.createDevice(userID, ownerEmail)
 			assertTrue(result is Either.Right)
 			result as Either.Right
 
@@ -47,7 +47,7 @@ class DeviceServiceTests {
 			val userID = createRandomUser(userService)
 			val ownerEmail = generateRandomEmail()
 
-			val result = deviceService.addDevice(userID, ownerEmail)
+			val result = deviceService.createDevice(userID, ownerEmail)
 			assertTrue(result is Either.Right)
 			result as Either.Right
 
@@ -80,7 +80,7 @@ class DeviceServiceTests {
 			val userId = createRandomUser(userService)
 
 			val invalidEmail = "invalidEmail"
-			val result = deviceService.addDevice(userId, invalidEmail)
+			val result = deviceService.createDevice(userId, invalidEmail)
 			assertTrue(result is Either.Left)
 		}
 	}
@@ -94,11 +94,11 @@ class DeviceServiceTests {
 
 			val deviceAlertEmail1 = "some_alert_email1@gmail.com"
 			val deviceAlertEmail2 = "some_alert_email2@gmail.com"
-			deviceService.addDevice(userId, deviceAlertEmail1)
-			deviceService.addDevice(userId, deviceAlertEmail1)
-			deviceService.addDevice(userId, deviceAlertEmail2)
-			deviceService.addDevice(userId, deviceAlertEmail1)
-			deviceService.addDevice(userId, deviceAlertEmail2)
+			deviceService.createDevice(userId, deviceAlertEmail1)
+			deviceService.createDevice(userId, deviceAlertEmail1)
+			deviceService.createDevice(userId, deviceAlertEmail2)
+			deviceService.createDevice(userId, deviceAlertEmail1)
+			deviceService.createDevice(userId, deviceAlertEmail2)
 
 			val devicesFound1 = deviceService.getUserDevices(userId, deviceAlertEmail = deviceAlertEmail1)
 			assertTrue { devicesFound1 is Either.Right }
@@ -120,7 +120,7 @@ class DeviceServiceTests {
 			val userId = createRandomUser(userService)
 
 			val deviceAlertEmail = generateRandomEmail()
-			deviceService.addDevice(userId, deviceAlertEmail)
+			deviceService.createDevice(userId, deviceAlertEmail)
 
 			val alertEmail = generateRandomEmail() + "incorrect"
 			val deviceFound = deviceService.getUserDevices(userId, deviceAlertEmail = alertEmail) as Either.Right
@@ -137,7 +137,7 @@ class DeviceServiceTests {
 			repeat(30) {
 				// creates a device
 				val ownerEmail = generateRandomEmail()
-				val result = deviceService.addDevice(userId, ownerEmail)
+				val result = deviceService.createDevice(userId, ownerEmail)
 				assertTrue(result is Either.Right)
 
 				// tries to generate a new device id, and asserts that it is unique
@@ -163,7 +163,7 @@ class DeviceServiceTests {
 			val userId = createRandomUser(userService)
 
 			val deviceAlertEmail = generateRandomEmail()
-			val res = deviceService.addDevice(userId, deviceAlertEmail)
+			val res = deviceService.createDevice(userId, deviceAlertEmail)
 			assertTrue(res is Either.Right)
 			res as Either.Right
 
@@ -180,13 +180,13 @@ class DeviceServiceTests {
 			val userId1 = createRandomUser(userService)
 			val userId2 = createRandomUser(userService)
 
-			deviceService.addDevice(userId1, "some_alert_email1@gmail.com")
-			deviceService.addDevice(userId2, "some_alert_email2@gmail.com")
-			deviceService.addDevice(userId2, "some_alert_email3@gmail.com")
-			deviceService.addDevice(userId2, "some_alert_email4@gmail.com")
-			deviceService.addDevice(userId1, "some_alert_email5@gmail.com")
-			deviceService.addDevice(userId2, "some_alert_email6@gmail.com")
-			deviceService.addDevice(userId2, "some_alert_email7@gmail.com")
+			deviceService.createDevice(userId1, "some_alert_email1@gmail.com")
+			deviceService.createDevice(userId2, "some_alert_email2@gmail.com")
+			deviceService.createDevice(userId2, "some_alert_email3@gmail.com")
+			deviceService.createDevice(userId2, "some_alert_email4@gmail.com")
+			deviceService.createDevice(userId1, "some_alert_email5@gmail.com")
+			deviceService.createDevice(userId2, "some_alert_email6@gmail.com")
+			deviceService.createDevice(userId2, "some_alert_email7@gmail.com")
 
 			val res = deviceService.getAllDevices()
 			assertTrue(res is Either.Right)
@@ -218,9 +218,9 @@ class DeviceServiceTests {
 			val (deviceService, userService) = getNewDeviceAndUserService(it)
 
 			val userId = createRandomUser(userService)
-			val res1 = deviceService.addDevice(userId, "some_alert_email1@gmail.com") as Either.Right
-			deviceService.addDevice(userId, "some_alert_email1@gmail.com") as Either.Right
-			deviceService.addDevice(userId, "some_alert_email1@gmail.com") as Either.Right
+			val res1 = deviceService.createDevice(userId, "some_alert_email1@gmail.com") as Either.Right
+			deviceService.createDevice(userId, "some_alert_email1@gmail.com") as Either.Right
+			deviceService.createDevice(userId, "some_alert_email1@gmail.com") as Either.Right
 
 			repeat(4) {
 				val res2 = deviceService.getUserDevices(userId, deviceIdChunk = res1.value[it].toString())
@@ -242,9 +242,9 @@ class DeviceServiceTests {
 			val (deviceService, userService) = getNewDeviceAndUserService(it)
 
 			val userId = createRandomUser(userService)
-			val res1 = deviceService.addDevice(userId, "some_alert_email1@gmail.com") as Either.Right
-			deviceService.addDevice(userId, "some_alert_email1@gmail.com") as Either.Right
-			deviceService.addDevice(userId, "some_alert_email1@gmail.com") as Either.Right
+			val res1 = deviceService.createDevice(userId, "some_alert_email1@gmail.com") as Either.Right
+			deviceService.createDevice(userId, "some_alert_email1@gmail.com") as Either.Right
+			deviceService.createDevice(userId, "some_alert_email1@gmail.com") as Either.Right
 
 			val res2 = deviceService.getUserDevices(userId, deviceIdChunk = "invalid")
 			assertTrue(res2 is Either.Right)
@@ -266,13 +266,13 @@ class DeviceServiceTests {
 			val userId1 = createRandomUser(userService)
 			val userId2 = createRandomUser(userService)
 
-			deviceService.addDevice(userId1, "some_alert_email1@gmail.com")
-			deviceService.addDevice(userId2, "some_alert_email1@gmail.com")
-			deviceService.addDevice(userId1, "some_alert_email1@gmail.com")
-			deviceService.addDevice(userId2, "some_alert_email1@gmail.com")
-			deviceService.addDevice(userId1, "some_alert_email1@gmail.com")
-			deviceService.addDevice(userId2, "some_alert_email1@gmail.com")
-			deviceService.addDevice(userId1, "some_alert_email1@gmail.com")
+			deviceService.createDevice(userId1, "some_alert_email1@gmail.com")
+			deviceService.createDevice(userId2, "some_alert_email1@gmail.com")
+			deviceService.createDevice(userId1, "some_alert_email1@gmail.com")
+			deviceService.createDevice(userId2, "some_alert_email1@gmail.com")
+			deviceService.createDevice(userId1, "some_alert_email1@gmail.com")
+			deviceService.createDevice(userId2, "some_alert_email1@gmail.com")
+			deviceService.createDevice(userId1, "some_alert_email1@gmail.com")
 
 			val res = deviceService.getAllDevices()
 			assertTrue(res is Either.Right)

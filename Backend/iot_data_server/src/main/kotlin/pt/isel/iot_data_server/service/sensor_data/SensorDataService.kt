@@ -12,17 +12,10 @@ import pt.isel.iot_data_server.service.email.EmailManager
 
 @Service
 class SensorDataService(
-    private val emailSenderService: EmailManager,
     private val sensorDataRepo: SensorDataRepo,
-    private val deviceService: DeviceService,
-    private val sensorInfo: SensorInfo,
-    client: MqttClient
+    private val deviceService: DeviceService
 ) {
     private val logger = LoggerFactory.getLogger(SensorDataService::class.java)
-
-    init {
-        subscribeSensorTopic(client)
-    }
 
     fun getSensorRecords(deviceId: String, sensorName: String): SensorDataResult {
         return if (!deviceService.existsDevice(deviceId))
@@ -42,49 +35,7 @@ class SensorDataService(
             } ?: Either.Left(SensorDataError.SensorNotFound(sensorName))
     }
 
-    private fun subscribeSensorTopic(client: MqttClient) {
-        client.subscribe("sensor_record") { topic, message ->
-            try {
-                logger.info("Received message from topic: $topic")
-
-                val byteArray = message.payload
-                val string = String(byteArray)
-
-                val sensorRecord = fromMqttMsgStringToSensorRecord(string)
-                val deviceId = fromMqttMsgStringToDeviceId(string)
-
-                val deviceResult = deviceService.getDeviceByIdOrNull(deviceId)
-                if (deviceResult != null) {
-                    alertIfDangerous(deviceResult, sensorRecord)
-                    sensorDataRepo.saveSensorRecord(deviceId, sensorRecord)
-                    logger.info("Saved sensor record: $sensorRecord, from device: $deviceId")
-                } else {
-                    logger.info("Received sensor record from unknown device: $deviceId")
-                }
-            } catch (e: Exception) {
-                logger.error("Error while processing sensor record: ${e.message}")
-            }
-        }
-    }
-
-    private fun alertIfDangerous(device: Device, sensorRecord: SensorRecord) {
-        val threshold = sensorInfo.getSensorThreshold(sensorRecord.type)
-        if (threshold != null && sensorRecord.value > threshold) {
-            sendEmailAlert(sensorRecord, device, threshold)
-        }
-    }
-
     fun getAvailableSensors(deviceId: String): List<String> {
         return sensorDataRepo.getAvailableSensorTypes(deviceId)
-    }
-
-    private fun sendEmailAlert(sensorRecord: SensorRecord, device: Device, limit: Double) {
-        val bodyMessage = mapOf(
-            "device_id" to device.deviceId,
-            "ph_level" to sensorRecord.value.toString(),
-            "ph_limit" to limit.toString()
-        )
-        val subject = emptyMap<String, String>()
-        emailSenderService.sendEmail(device.ownerEmail, subject, bodyMessage,"phProblem")
     }
 }

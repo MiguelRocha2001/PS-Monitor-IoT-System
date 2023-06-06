@@ -57,9 +57,9 @@ class thread1(threading.Thread):
             time.sleep(1)
             client.publish("sensor_record", get_sensor_record_mqtt_message("temperature"))
             time.sleep(1)
-            client.publish("sensor_record", get_sensor_record_mqtt_message("water_flow"))
+            client.publish("sensor_record", get_sensor_record_mqtt_message("water-flow"))
             time.sleep(1)
-            client.publish("sensor_record", get_sensor_record_mqtt_message("water_level"))
+            client.publish("sensor_record", get_sensor_record_mqtt_message("water-level"))
 
 
 class thread2(threading.Thread):
@@ -70,9 +70,6 @@ class thread2(threading.Thread):
     # helper function to execute the threads
     def run(self):
         while True:
-            client.publish("error_reading_sensor", get_message_with_sensors_error("humidity"))
-            time.sleep(5)
-            """
             client.publish("device_wake_up_log", get_message_with_device_log("water-leak"))
             time.sleep(5)
             client.publish("device_wake_up_log", get_message_with_device_log("unknown"))
@@ -85,7 +82,25 @@ class thread2(threading.Thread):
             time.sleep(5)
             client.publish("device_wake_up_log", get_message_with_device_log("brownout"))
             time.sleep(5)
-            """
+
+class thread3(threading.Thread):
+    def __init__(self, client):
+        threading.Thread.__init__(self)
+        self.client = client
+        
+    # helper function to execute the threads
+    def run(self):
+        while True:
+            client.publish("error_reading_sensor", get_message_with_sensors_error("initial-ph"))
+            time.sleep(5)
+            client.publish("error_reading_sensor", get_message_with_sensors_error("final-ph"))
+            time.sleep(5)
+            client.publish("error_reading_sensor", get_message_with_sensors_error("humidity"))
+            time.sleep(5)
+            client.publish("error_reading_sensor", get_message_with_sensors_error("temperature"))
+            time.sleep(5)
+            client.publish("error_reading_sensor", get_message_with_sensors_error("water-flow"))
+            
 
 client = mqtt.Client()
 client.on_connect = on_connect
@@ -93,11 +108,13 @@ client.on_message = on_message
 
 client.connect("localhost", 1883, 60)
 
-# thread1 = thread1(client)
+thread1 = thread1(client)
 thread2 = thread2(client)
+thread3 = thread3(client)
  
-# thread1.start()
+thread1.start()
 thread2.start()
+thread3.start()
 
 
 # Blocking call that processes network traffic, dispatches callbacks and

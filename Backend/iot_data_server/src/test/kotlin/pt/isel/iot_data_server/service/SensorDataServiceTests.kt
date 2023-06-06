@@ -64,7 +64,7 @@ class SensorDataServiceTest {
             val sensorDataService =
                 SensorDataService(emailSenderService, sensorDataRepo, deviceService, sensorInfo, mqttClient)
 
-            val deviceId = (deviceService.addDevice(userId, generateRandomEmail()) as Either.Right).value
+            val deviceId = (deviceService.createDevice(userId, generateRandomEmail()) as Either.Right).value
 
             val value = generateRandomPh()
             val instant = Instant.now()
@@ -107,7 +107,7 @@ class SensorDataServiceTest {
                 SensorDataService(emailSenderService, sensorDataRepo, deviceService, sensorInfo, mqttClient)
 
             val email = generateRandomEmail()
-            val res = deviceService.addDevice(userId, email)
+            val res = deviceService.createDevice(userId, email)
             val deviceId = (res as Either.Right).value
 
             insertDataInInfluxDB(tsdbBuilder.getClient(), deviceId, "temperature", 20.0, Instant.now())
@@ -132,7 +132,7 @@ class SensorDataServiceTest {
                 SensorDataService(emailSenderService, sensorDataRepo, deviceService, sensorInfo, mqttClient)
 
             val email = generateRandomEmail()
-            val res = deviceService.addDevice(userId, email)
+            val res = deviceService.createDevice(userId, email)
             val deviceId = (res as Either.Right).value
 
             val res2 = sensorDataService.getSensorRecordsIfIsOwner(deviceId, "invalid-user", "temperature")
@@ -153,7 +153,7 @@ class SensorDataServiceTest {
                 SensorDataService(emailSenderService, sensorDataRepo, deviceService, sensorInfo, mqttClient)
 
             val email = generateRandomEmail()
-            val res = deviceService.addDevice(userId, email)
+            val res = deviceService.createDevice(userId, email)
             val deviceId = (res as Either.Right).value
 
             val types = sensorDataService.getAvailableSensors(deviceId)

@@ -16,13 +16,6 @@ class UserService(
     private val saltPasswordOperations: SaltPasswordOperations,
     private val emailSenderService: EmailManager,
 ) {
-    init {
-        val users = getAllUsers(Role.ADMIN)
-        if (users.isEmpty()) { // enforces that there is always an admin user
-            assert(createUser("admin_email@gmail.com", "admin-password", Role.ADMIN) is Either.Right)
-        }
-    }
-
     /**
      * Creates a new user.
      * @param password is optional. If not provided, the user will be created without a password.

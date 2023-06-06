@@ -17,13 +17,32 @@ class DeviceService (
 ) {
     private val logger = LoggerFactory.getLogger(DeviceService::class.java)
 
-    fun addDevice(userId: String, alertEmail: String): CreateDeviceResult {
+    fun createDevice(userId: String, alertEmail: String): CreateDeviceResult {
         if (!emailVerifier(alertEmail) ) {
             logger.debug("Invalid owner email")
             return Either.Left(CreateDeviceError.InvalidOwnerEmail)
         }
         return transactionManager.run {
             return@run generateDeviceId().let { deviceId ->
+                val device = Device(deviceId, alertEmail)
+                it.deviceRepo.createDevice(userId, device)
+                logger.debug("Device with id ${device.deviceId} added")
+                Either.Right(deviceId)
+            }
+        }
+    }
+
+    // TODO: test this
+    fun createDeviceWithId(userId: String, deviceId: String, alertEmail: String): CreateDeviceResult {
+        if (!emailVerifier(alertEmail) ) {
+            logger.debug("Invalid owner email")
+            return Either.Left(CreateDeviceError.InvalidOwnerEmail)
+        }
+        return transactionManager.run {
+            return@run if (existsDevice(deviceId)) {
+                logger.debug("Device with id $deviceId already exists")
+                Either.Left(CreateDeviceError.DeviceAlreadyExists)
+            } else {
                 val device = Device(deviceId, alertEmail)
                 it.deviceRepo.createDevice(userId, device)
                 logger.debug("Device with id ${device.deviceId} added")

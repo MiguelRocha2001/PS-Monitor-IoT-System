@@ -20,10 +20,6 @@ class DeviceLogService(
 ) {
     private val logger = LoggerFactory.getLogger(DeviceLogService::class.java)
 
-    init {
-        subscribeDeviceWakeUpLogTopic(client)
-    }
-
     fun saveDeviceLogRecord(
         deviceId: String,
         deviceWakeUpLog: DeviceWakeUpLog,
@@ -50,30 +46,6 @@ class DeviceLogService(
                 Either.Left(DeviceErrorRecordsError.DeviceNotBelongsToUser(userId))
             else
                 Either.Right(it.deviceRepo.getDeviceLogRecords(deviceId))
-        }
-    }
-    private fun subscribeDeviceWakeUpLogTopic(client: MqttClient) {
-        client.subscribe("device_wake_up_log") { topic, message ->
-            try {
-                logger.info("Received message from topic: $topic")
-
-                val byteArray = message.payload
-                val string = String(byteArray)
-
-                val deviceErrorRecord = fromMqttMsgStringToDeviceLogRecord(string)
-                val deviceId = fromMqttMsgStringToDeviceId(string)
-
-                val deviceResult = deviceService.getDeviceByIdOrNull(deviceId)
-                if (deviceResult != null) {
-                    // TODO: alert user immediately
-                    saveDeviceLogRecord(deviceId, deviceErrorRecord)
-                    logger.info("Saved device log: $deviceErrorRecord")
-                } else {
-                    logger.info("Received device log record from unknown device: $deviceId")
-                }
-            } catch (e: Exception) {
-                logger.error("Error while processing device log record", e)
-            }
         }
     }
 }

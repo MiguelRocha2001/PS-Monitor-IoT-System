@@ -21,10 +21,6 @@ class SensorErrorService(
 ) {
     private val logger = LoggerFactory.getLogger(SensorErrorService::class.java)
 
-    init {
-        subscribeSensorErrorTopic(client)
-    }
-
     fun saveSensorErrorRecord(
         deviceId: String,
         sensorErrorRecord: SensorErrorRecord,
@@ -51,31 +47,6 @@ class SensorErrorService(
                 Either.Left(SensorErrorDataError.DeviceNotBelongsToUser(userId))
             else
                 Either.Right(it.deviceRepo.getSensorErrorRecords(deviceId))
-        }
-    }
-
-    private fun subscribeSensorErrorTopic(client: MqttClient) {
-        client.subscribe("error_reading_sensor") { topic, message ->
-            try {
-                logger.info("Received message from topic: $topic")
-
-                val byteArray = message.payload
-                val string = String(byteArray)
-
-                val sensorErrorRecord = fromMqttMsgStringToSensorErrorRecord(string)
-                val deviceId = fromMqttMsgStringToDeviceId(string)
-
-                val deviceResult = deviceService.getDeviceByIdOrNull(deviceId)
-                if (deviceResult != null) {
-                    // TODO: alert user immediately
-                    saveSensorErrorRecord(deviceId, sensorErrorRecord)
-                    logger.info("Saved sensor error record: $sensorErrorRecord, from device: $deviceId")
-                } else {
-                    logger.info("Received sensor error record from unknown device: $deviceId")
-                }
-            } catch (e: Exception) {
-                logger.error("Error while processing sensor error record: ${e.message}")
-            }
         }
     }
 }

@@ -34,7 +34,7 @@ class DeviceController(
         @RequestBody deviceModel: DeviceInputModel,
         user: User
     ): ResponseEntity<*> {
-        val result = service.addDevice(user.id, deviceModel.email)
+        val result = service.createDevice(user.id, deviceModel.email)
         return result.map { deviceId ->
             ResponseEntity.status(201)
                 .contentType(SirenMediaType)
