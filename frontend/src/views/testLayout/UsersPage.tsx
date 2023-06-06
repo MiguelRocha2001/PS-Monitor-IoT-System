@@ -6,8 +6,7 @@ import {useSetError} from "../error/ErrorContainer";
 import {ErrorController} from "../error/ErrorController";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faChevronLeft, faChevronRight, faSignOutAlt} from '@fortawesome/free-solid-svg-icons';
-import {useNavigate} from "react-router-dom";
-import {Navigate} from 'react-router-dom';
+import {Navigate, useNavigate} from "react-router-dom";
 
 import './DevicesPage.css'
 import Button from "react-bootstrap/Button";
@@ -31,12 +30,11 @@ export function Users() {
     const role = useRole()
     const [redirect, setRedirect] = useState<string | undefined>(undefined)
 
-    if (role !== "admin") {
+    if (role?.toLowerCase() !== "admin") {
         setRedirect("/devices")
     }
     if(redirect)
         return <Navigate to={redirect} replace={true}/>
-
 
     useEffect(() => {
         const handleResize = () => {
@@ -103,8 +101,6 @@ export function Users() {
             .then((devicesSize)=>setFilteredUsers(devicesSize))
             .catch(error => setError(error.message))
     }
-
-    const navigate = useNavigate();
 
     async function handleButtonPressed() {
         await services.logout().then(()=> {

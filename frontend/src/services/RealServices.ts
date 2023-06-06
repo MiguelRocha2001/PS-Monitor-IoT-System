@@ -267,15 +267,7 @@ export class RealServices implements Services {
         throw new Error("Method not implemented.");
     }
 
-    getUserCountByName(s: string): Promise<number> {
-        throw new Error("Method not implemented.");
-    }
-
     getUsers(page: number, limit: number): Promise<User[]> {
-        throw new Error("Method not implemented.");
-    }
-
-    getUsersByName(page: number, limit: number, name: string): Promise<User[]> {
         throw new Error("Method not implemented.");
     }
 }

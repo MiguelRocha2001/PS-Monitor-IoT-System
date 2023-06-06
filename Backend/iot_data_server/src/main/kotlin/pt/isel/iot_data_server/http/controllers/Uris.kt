@@ -38,6 +38,7 @@ object Uris {
         const val BY_ID2 = "$ALL/:userId"
         const val ME = "$ALL/me"
         const val MY_TOKEN = "$ME/token"
+        const val COUNT = "$ALL/count"
 
         fun all(): URI = URI(ALL)
         fun create() = URI(ALL)

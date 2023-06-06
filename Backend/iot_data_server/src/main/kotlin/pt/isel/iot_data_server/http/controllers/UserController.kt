@@ -16,6 +16,7 @@ import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.http.SirenMediaType
 import pt.isel.iot_data_server.http.infra.siren
 import pt.isel.iot_data_server.http.model.Problem
+import pt.isel.iot_data_server.http.model.device.DeviceCountOutputModel
 import pt.isel.iot_data_server.http.model.map
 import pt.isel.iot_data_server.http.model.user.*
 import pt.isel.iot_data_server.service.Either
@@ -66,7 +67,9 @@ class UserController(
     @GetMapping(Uris.Users.ALL)
     @Authorization(Role.ADMIN)
     fun getAllUsers(
-        user: User
+        user: User,
+        @RequestParam(required = false) page: Int?, // TODO: test pagination
+        @RequestParam(required = false) limit: Int?,
     ): ResponseEntity<*> {
         val users = service.getAllUsers(Role.USER) // only standard users
         return ResponseEntity.status(200)
@@ -76,6 +79,22 @@ class UserController(
                     clazz("users")
                 }
             )
+    }
+
+    @GetMapping(Uris.Users.COUNT)
+    @Authorization(Role.ADMIN)
+    fun getUserCount(
+        user: User,
+        @RequestParam(required = false) emailChunk: String?, // id chunk
+    ): ResponseEntity<*> {
+        val userCount = service.getUserCount(emailChunk)
+        return ResponseEntity.status(200)
+            .contentType(SirenMediaType)
+            .body(siren(
+                DeviceCountOutputModel(userCount)
+            ) {
+                clazz("user-count")
+            })
     }
 
     @Operation(summary = "Get user", description = "Get the current user information")

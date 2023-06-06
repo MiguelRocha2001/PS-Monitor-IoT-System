@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import {Navigate} from 'react-router-dom';
-import {services} from "../../services/services";
 import {Loading} from "../Loading";
 import {useRole} from "../auth/Authn";
 
@@ -14,12 +13,10 @@ export function Home() {
     const [redirect, setRedirect] = useState<string | undefined>(undefined)
     const role = useRole()
 
-    console.log("Home role: " + role)
-
     useEffect(() => {
-        if (role === "admin") {
+        if (role?.toLowerCase() === "admin") {
             setRedirect("/users")
-        } else if (role === "user") {
+        } else if (role?.toLowerCase() === "user") {
             setRedirect("/users/my/devices") // user id is 'my'
         }
     }, [role])

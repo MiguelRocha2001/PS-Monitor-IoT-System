@@ -34,6 +34,15 @@ class JdbiUserDataRepository(
             .map { it.toUser() }
     }
 
+    override fun getUserCount(): Int {
+        return handle.createQuery("""
+            select count(_id) 
+            from _USER
+        """)
+            .mapTo<Int>()
+            .single()
+    }
+
     override fun getAllUsersWithRole(role: Role): List<User> {
         return handle.createQuery("""
             select _id, email, role 
@@ -141,6 +150,33 @@ class JdbiUserDataRepository(
             .mapTo<UserMapper>()
             .singleOrNull()
             ?.toUser()
+    }
+
+    override fun getUsersByEmailChunkOrNull(emailChunk: String): List<User> {
+        return handle.createQuery(
+            """
+            select _id, email, role
+            from _USER 
+            where email like :emailChunk
+            """
+        )
+            .bind("emailChunk", "%$emailChunk%")
+            .mapTo<UserMapper>()
+            .list()
+            .map { it.toUser() }
+    }
+
+    override fun getUserCountByEmailChunkOrNull(emailChunk: String): Int {
+        return handle.createQuery(
+            """
+            select count(*) 
+            from _USER 
+            where email like :emailChunk
+            """
+        )
+            .bind("emailChunk", "%$emailChunk%")
+            .mapTo<Int>()
+            .single()
     }
 
     override fun deleteAllTokens(role: Role?) {

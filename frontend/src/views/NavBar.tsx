@@ -1,12 +1,4 @@
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
 import React from "react";
-import {MyLink} from "./Commons";
-import {useIsLoggedIn, useSetIsLoggedIn} from "./auth/Authn";
-import {services} from "../services/services";
-import Button from "react-bootstrap/Button";
-import {useSetError} from "./error/ErrorContainer";
 import '../style/NavBarStyle.css'
 
 

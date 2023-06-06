@@ -6,6 +6,7 @@ import pt.isel.iot_data_server.service.user.Role
 interface UserDataRepository {
     fun createUser(user: User)
     fun getAllUsers(): List<User>
+    fun getUserCount(): Int
     fun getAllUsersWithRole(role: Role): List<User> // TODO: test this
     fun getUserByToken(token: String): User?
     fun getUserByIdOrNull(userId: String): User?
@@ -16,6 +17,8 @@ interface UserDataRepository {
     fun deleteToken(token: String)
     fun existsEmail(email: String): Boolean
     fun getUserByEmailOrNull(email: String): User?
+    fun getUsersByEmailChunkOrNull(emailChunk: String): List<User>
+    fun getUserCountByEmailChunkOrNull(emailChunk: String): Int
     fun deleteAllUsers(role: Role? = null)
     fun deleteAllTokens(role: Role? = null)
     fun deleteUser(userId: String)

@@ -60,6 +60,22 @@ class UserService(
         }
     }
 
+    final fun getAllUsers(role: Role? = null, emailChunk: String): List<User> { // TODO: test this
+        return transactionManager.run {
+            if (role === null)
+                return@run it.userRepo.getUsersByEmailChunkOrNull(emailChunk)
+            return@run it.userRepo.getAllUsersWithRole(role)
+        }
+    }
+
+    final fun getUserCount(emailChunk: String?): Int {
+        return transactionManager.run {
+            if (emailChunk === null)
+                return@run it.userRepo.getAllUsers().size
+            return@run it.userRepo.getUserCountByEmailChunkOrNull(emailChunk)
+        }
+    }
+
     fun getUserByIdOrNull(userId: String): User? {
         return transactionManager.run {
             return@run it.userRepo.getUserByIdOrNull(userId)

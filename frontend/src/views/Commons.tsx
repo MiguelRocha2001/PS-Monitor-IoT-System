@@ -1,9 +1,7 @@
 import {Link} from 'react-router-dom'
-import React, {useEffect} from "react";
+import React from "react";
 import {Row} from "react-bootstrap";
 import Card from "react-bootstrap/Card";
-import {Device} from "../services/domain";
-import {services} from "../services/services";
 
 export function MyLink({text, to, width, color, bold, center, margin}:
                            {
