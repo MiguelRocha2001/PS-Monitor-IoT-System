@@ -7,19 +7,14 @@ import threading
 
 # see: https://pypi.org/project/paho-mqtt/
 
-device_id = "device_manual_tests"
+device_id = "user-2-device-id"
 
 def sorround_with_quotes(value):
     return "\"" + value + "\""
 
-def get_sensor_record_mqtt_message(sensor_type):
+def get_sensor_record_mqtt_message(sensor_type, timestamp):
     value = str(random.uniform(1.0, 12.0))
-    timestamp = str(round(time.time()))
-    return "\"device_id\": " + sorround_with_quotes(device_id) + ", \"value\": " + sorround_with_quotes(value) + ", \"timestamp\": " + sorround_with_quotes(timestamp) + ", \"sensor_type\": " + sorround_with_quotes(sensor_type) + ""
-
-def get_message_without_value():
-    timestamp = str(round(time.time()))
-    return "\"device_id\": " + sorround_with_quotes(device_id) + ", \"timestamp\": " + sorround_with_quotes(timestamp) + ""
+    return "\"device_id\": " + sorround_with_quotes(device_id) + ", \"value\": " + sorround_with_quotes(value) + ", \"timestamp\": " + sorround_with_quotes(str(timestamp)) + ", \"sensor_type\": " + sorround_with_quotes(sensor_type) + ""
 
 def get_message_with_sensors_error(sensor):
     timestamp = str(round(time.time()))
@@ -46,19 +41,24 @@ class thread1(threading.Thread):
     def __init__(self, client):
         threading.Thread.__init__(self)
         self.client = client
+        self.timestamp = round(time.time())
         
     # helper function to execute the threads
     def run(self):
+        hour = 0
         while True:
-            client.publish("sensor_record", get_sensor_record_mqtt_message("ph"))
+            timestamp = self.timestamp - hour * 3600
+            client.publish("sensor_record", get_sensor_record_mqtt_message("ph", timestamp))
             time.sleep(1)
-            client.publish("sensor_record", get_sensor_record_mqtt_message("humidity"))
+            client.publish("sensor_record", get_sensor_record_mqtt_message("humidity", timestamp))
             time.sleep(1)
-            client.publish("sensor_record", get_sensor_record_mqtt_message("temperature"))
+            client.publish("sensor_record", get_sensor_record_mqtt_message("temperature", timestamp))
             time.sleep(1)
-            client.publish("sensor_record", get_sensor_record_mqtt_message("water-flow"))
+            client.publish("sensor_record", get_sensor_record_mqtt_message("water-flow", timestamp))
             time.sleep(1)
-            client.publish("sensor_record", get_sensor_record_mqtt_message("water-level"))
+            client.publish("sensor_record", get_sensor_record_mqtt_message("water-level", timestamp))
+            time.sleep(1)
+            hour = hour + 1
 
 
 class thread2(threading.Thread):
@@ -112,8 +112,8 @@ thread2 = thread2(client)
 thread3 = thread3(client)
  
 thread1.start()
-thread2.start()
-thread3.start()
+# thread2.start()
+# thread3.start()
 
 
 # Blocking call that processes network traffic, dispatches callbacks and

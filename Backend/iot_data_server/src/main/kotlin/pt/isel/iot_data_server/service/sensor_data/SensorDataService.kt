@@ -29,13 +29,27 @@ class SensorDataService(
             Either.Left(SensorDataError.DeviceNotFound)
         else if (!deviceService.belongsToUser(deviceId, userId))
             Either.Left(SensorDataError.DeviceNotBelongsToUser(userId))
-        else
-            getAvailableSensors(deviceId).firstOrNull { it == sensorName }?.let {
+        else {
+            val availableSensors = sensorDataRepo.getAvailableSensorTypes(deviceId)
+            availableSensors.firstOrNull { it == sensorName }?.let {
                 Either.Right(sensorDataRepo.getSensorRecords(deviceId, sensorName))
             } ?: Either.Left(SensorDataError.SensorNotFound(sensorName))
+        }
     }
 
-    fun getAvailableSensors(deviceId: String): List<String> {
-        return sensorDataRepo.getAvailableSensorTypes(deviceId)
+    fun getAvailableSensors(deviceId: String): AvailableSensorsResult {
+        return if (!deviceService.existsDevice(deviceId))
+            Either.Left(AvailableSensorsError.DeviceNotFound)
+        else
+            Either.Right(sensorDataRepo.getAvailableSensorTypes(deviceId))
+    }
+
+    fun getAvailableSensorsIfIsOwner(deviceId: String, userId: String): AvailableSensorsResult {
+        return if (!deviceService.existsDevice(deviceId))
+            Either.Left(AvailableSensorsError.DeviceNotFound)
+        else if (!deviceService.belongsToUser(deviceId, userId))
+            Either.Left(AvailableSensorsError.DeviceNotBelongsToUser(userId))
+        else
+            Either.Right(sensorDataRepo.getAvailableSensorTypes(deviceId))
     }
 }

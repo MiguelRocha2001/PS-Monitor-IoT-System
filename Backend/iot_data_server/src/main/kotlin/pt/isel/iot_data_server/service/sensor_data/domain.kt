@@ -16,3 +16,9 @@ sealed class SensorErrorDataError: Error() {
     data class DeviceNotBelongsToUser(val userId: String): SensorErrorDataError()
 }
 typealias SensorErrorDataResult = Either<SensorErrorDataError, List<SensorErrorRecord>>
+
+sealed class AvailableSensorsError: Error() {
+    object DeviceNotFound: AvailableSensorsError()
+    data class DeviceNotBelongsToUser(val userId: String): AvailableSensorsError()
+}
+typealias AvailableSensorsResult = Either<AvailableSensorsError, List<String>>

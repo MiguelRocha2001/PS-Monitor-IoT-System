@@ -234,7 +234,7 @@ export class RealServices implements Services {
         if (!getSensorDataLink) throw new Error('Get sensor data link not found')
 
         const urlWithId = getSensorDataLink.href.replace(':device_id', deviceId)
-        const urlWithIdAndSensorName = urlWithId + '?sensor-name=' + sensor
+        const urlWithIdAndSensorName = urlWithId + '?sensor-type=' + sensor
         const request = {
             url: urlWithIdAndSensorName,
             method: 'GET'

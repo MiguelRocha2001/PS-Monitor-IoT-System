@@ -24,22 +24,28 @@ class SensorDataController(
     val sensorErrorService: SensorErrorService
 ) {
     @GetMapping(Uris.Users.Devices.Sensor.TYPES_1)
-    @Authorization(Role.USER)
     fun getMySensorsAvailable(
+        user: User,
         @PathVariable device_id: String
     ): ResponseEntity<*> {
-        val result = sensorDataService.getAvailableSensors(device_id)
-        return ResponseEntity.status(200)
-            .contentType(SirenMediaType)
-            .header(
-                "Location",
-                Uris.Users.Devices.Sensor.all().toASCIIString()
-            )
-            .body(
-                siren(SensorNamesOutputModel(result)) {
-                    clazz("sensor-names")
-                }
-            )
+        val result = if (user.userInfo.role === Role.ADMIN) {
+            sensorDataService.getAvailableSensors(device_id)
+        } else {
+            sensorDataService.getAvailableSensorsIfIsOwner(device_id, user.id)
+        }
+        return result.map {
+            ResponseEntity.status(200)
+                .contentType(SirenMediaType)
+                .header(
+                    "Location",
+                    Uris.Users.Devices.Sensor.all().toASCIIString()
+                )
+                .body(
+                    siren(SensorNamesOutputModel(it)) {
+                        clazz("sensor-names")
+                    }
+                )
+        }
     }
 
     @Operation(summary = "Get Ph records", description = "Get all ph records associated with a device")
@@ -52,11 +58,10 @@ class SensorDataController(
         schema = Schema(implementation = Problem::class)
     )])
     @GetMapping(Uris.Users.Devices.Sensor.ALL_1)
-    @Authorization(Role.USER)
     fun getMySensorRecords(
         user: User,
         @PathVariable device_id: String,
-        @RequestParam("sensorType", required = true) sensorType: String,
+        @RequestParam("sensor-type", required = true) sensorType: String,
     ): ResponseEntity<*> {
         val result = if (user.userInfo.role === Role.ADMIN)
             sensorDataService.getSensorRecords(device_id, sensorType)
