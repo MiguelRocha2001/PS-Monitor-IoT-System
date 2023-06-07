@@ -64,3 +64,15 @@ fun getMyAvailableDeviceSensorsLink(sirenBuilderScope: SirenBuilderScope<*>) =
         href = URI(Uris.Users.Devices.Sensor.TYPES_2),
         rel = Rels.AVAILABLE_DEVICE_SENSORS
     )
+
+fun getUserCountLink(sirenBuilderScope: SirenBuilderScope<*>) =
+    sirenBuilderScope.link(
+        href = URI(Uris.Users.COUNT),
+        rel = Rels.USER_COUNT
+    )
+
+fun getUsersLink(sirenBuilderScope: SirenBuilderScope<*>) =
+    sirenBuilderScope.link(
+        href = URI(Uris.Users.ALL),
+        rel = Rels.USERS
+    )

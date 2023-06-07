@@ -30,11 +30,11 @@ export function Users() {
     const role = useRole()
     const [redirect, setRedirect] = useState<string | undefined>(undefined)
 
-    if (role?.toLowerCase() !== "admin") {
-        setRedirect("/devices")
-    }
-    if(redirect)
-        return <Navigate to={redirect} replace={true}/>
+    useEffect(() => {
+        if (role?.toLowerCase() !== "admin") {
+            setRedirect("/devices")
+        }
+    }, [])
 
     useEffect(() => {
         const handleResize = () => {
@@ -79,7 +79,8 @@ export function Users() {
                 .then((number) => setFilteredUsers(number))
                 .catch(error => setError(error.message))
         }
-        if(searchQuery === "") fetchNumberOfUsers()
+        if(searchQuery === "")
+            fetchNumberOfUsers()
 
     }, [searchQuery])
 
@@ -110,15 +111,19 @@ export function Users() {
         })
     }
 
-    return (
-        <div className={"Users"}>
-            <ErrorController>
-                <LogoutButton handleButtonPressed={handleButtonPressed}/>
-                <UserList users={users} searchQuery={searchQuery} setSearchQuery={setSearchQuery} handleButtonPress={handleButtonPress} totalUsers={totalUsers}/>
-                <Pagination currentPage={page} totalPages={Math.ceil(filteredDevices/pageSize)} onPageChange={(selectedPage: number) => setPage(selectedPage)} />
-            </ErrorController>
-        </div>
-    )
+
+    if(redirect)
+        return <Navigate to={redirect} replace={true}/>
+    else
+        return (
+            <div className={"Users"}>
+                <ErrorController>
+                    <LogoutButton handleButtonPressed={handleButtonPressed}/>
+                    <UserList users={users} searchQuery={searchQuery} setSearchQuery={setSearchQuery} handleButtonPress={handleButtonPress} totalUsers={totalUsers}/>
+                    <Pagination currentPage={page} totalPages={Math.ceil(filteredDevices/pageSize)} onPageChange={(selectedPage: number) => setPage(selectedPage)} />
+                </ErrorController>
+            </div>
+        )
 }
 
 function UserList({ users, searchQuery, setSearchQuery, handleButtonPress, totalUsers }: { users: User[], searchQuery: string, setSearchQuery: (searchQuery: string) => void, handleButtonPress: () => void, totalUsers: number }) {

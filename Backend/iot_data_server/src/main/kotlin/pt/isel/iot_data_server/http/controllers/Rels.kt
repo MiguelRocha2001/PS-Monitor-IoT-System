@@ -13,6 +13,8 @@ object Rels {
     val IS_LOGGED_IN = LinkRelation("is-logged-in")
     val ME = LinkRelation("users-me")
     val IS_EMAIL_ALREADY_REGISTERED = LinkRelation("is-email-already-registered")
+    val USER_COUNT = LinkRelation("user-count")
+    val USERS = LinkRelation("users")
 
     //--------------------VERIFICATION ---------------
     val VERIFY_CODE = LinkRelation("verify-code")

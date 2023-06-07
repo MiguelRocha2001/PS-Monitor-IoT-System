@@ -25,7 +25,6 @@ class ApiInfoController {
                 createGoogleAuthLink(this)
                 createUserSirenAction(this)
                 getIsEmailAlreadyRegisteredLink(this)
-
                 getVerificationCodeAction(this)
                 getVerifyCodeLink(this)
                 createTokenSirenAction(this)
@@ -38,6 +37,8 @@ class ApiInfoController {
                 createDeviceAction(this)
                 getSensorDataLink(this)
                 getMyAvailableDeviceSensorsLink(this)
+                getUserCountLink(this)
+                getUsersLink(this)
             })
     }
 }

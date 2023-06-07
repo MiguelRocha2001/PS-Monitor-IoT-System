@@ -91,7 +91,7 @@ class UserController(
         return ResponseEntity.status(200)
             .contentType(SirenMediaType)
             .body(siren(
-                DeviceCountOutputModel(userCount)
+                UserCountOutputModel(userCount)
             ) {
                 clazz("user-count")
             })

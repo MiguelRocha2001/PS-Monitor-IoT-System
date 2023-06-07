@@ -15,7 +15,7 @@ data class UsersOutputModel(val users: List<UserOutputModel>) {
     }
 }
 
-data class UserCountOutputModel(val count: Int)
+data class UserCountOutputModel(val userCount: Int)
 
 data class UserOutputModel(val id: String, val email: String, val role: Role)
 

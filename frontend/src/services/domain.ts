@@ -6,6 +6,30 @@ export class User {
     ) {}
 }
 
+export function toUser(json: any): User {
+    const id = json.id
+    if (typeof id !== 'string') {
+        throw new Error(`Invalid id: ${id}`)
+    }
+    const email = json.email
+    if (typeof email !== 'string') {
+        throw new Error(`Invalid email: ${email}`)
+    }
+    const role = json.role
+    if (typeof role !== 'string') {
+        throw new Error(`Invalid role: ${role}`)
+    }
+    return new User(id, email, role)
+}
+
+export function toUsers(json: any): User[] {
+    const users = json.users
+    if (!Array.isArray(users)) {
+        throw new Error(`Invalid users: ${users}`)
+    }
+    return users.map(toUser)
+}
+
 export class Device {
     constructor(public id: string, public alertEmail: string) {}
 }

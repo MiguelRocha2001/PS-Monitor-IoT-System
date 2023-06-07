@@ -86,6 +86,8 @@ let VERIFY_CODE:Link
 let GET_DEVICES_FILTERED_BY_ID_LINK: Link
 let GET_DEVICES_FILTERED_BY_ID_COUNT_LINK: Link
 let AVAILABLE_DEVICE_SENSORS_LINK: Link
+let GET_USER_COUNT_LINK: Link
+let GET_USERS_LINK: Link
 
 
 
@@ -155,6 +157,14 @@ function getGetDevicesByIdFilteredCountLink(): Link {
 
 function availableDeviceSensorsLink(): Link {
     return AVAILABLE_DEVICE_SENSORS_LINK
+}
+
+function getUserCountLink(): Link {
+    return GET_USER_COUNT_LINK
+}
+
+function getUsersLink(): Link {
+    return GET_USERS_LINK
 }
 
 
@@ -228,6 +238,14 @@ function extractCountDevicesByIDLink(links: Link[]) {
 
 function extractAvailableDeviceSensorsLink(links: Link[]) {
     return AVAILABLE_DEVICE_SENSORS_LINK = extractLink(links, "available-device-sensors")
+}
+
+function extractGetUserCountLink(links: Link[]) {
+    return GET_USER_COUNT_LINK = extractLink(links, "user-count")
+}
+
+function extractGetUsersLink(links: Link[]) {
+    return GET_USERS_LINK = extractLink(links, "users")
 }
 
 
@@ -306,5 +324,9 @@ export const SirenModule = {
     extractGetDevicesByIDLink,
     getGetDevicesByIdFilteredLink,
     availableDeviceSensorsLink,
-    extractAvailableDeviceSensorsLink
+    extractAvailableDeviceSensorsLink,
+    extractGetUserCountLink,
+    getUserCountLink,
+    extractGetUsersLink,
+    getUsersLink
 }

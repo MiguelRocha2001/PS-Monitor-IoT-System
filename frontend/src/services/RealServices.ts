@@ -1,5 +1,5 @@
 import {doFetch, ResponseType, toBody} from "./fetch";
-import {Device, SensorData, toDevice, toDevices, toSensorData, User} from "./domain";
+import {Device, SensorData, toDevice, toDevices, toSensorData, toUsers, User} from "./domain";
 import {Services} from "./services";
 import {Siren, SirenModule} from "./sirenModule";
 import {Logger} from "tslog";
@@ -26,6 +26,8 @@ export class RealServices implements Services {
             SirenModule.extractGetVerificationCodeAction(response.actions)
             SirenModule.extractGetVerifyCodeLink(response.links)
             SirenModule.extractAvailableDeviceSensorsLink(response.links)
+            SirenModule.extractGetUserCountLink(response.links)
+            SirenModule.extractGetUsersLink(response.links)
         }
 
         const request = {
@@ -263,11 +265,25 @@ export class RealServices implements Services {
         return response.properties.types//.map((type: string) => type.replace('_', ' ')) // FIXME: not working
     }
 
-    getUserCount(): Promise<number> {
-        throw new Error("Method not implemented.");
+    getUserCount(emailChunk: string | undefined): Promise<number> {
+        const userCountLink = SirenModule.getUserCountLink()
+        const linkAfterParams = userCountLink.href + '?emailChunk=' + emailChunk
+        if (!userCountLink) throw new Error('Get user count link not found')
+        const request = {
+            url: linkAfterParams,
+            method: 'GET'
+        }
+        return doFetch(request, ResponseType.Siren).then(response => response.properties.userCount)
     }
 
     getUsers(page: number, limit: number): Promise<User[]> {
-        throw new Error("Method not implemented.");
+        const getUsersLink = SirenModule.getUsersLink()
+        const linkAfterParams = getUsersLink.href + '?page=' + page + '&limit=' + limit
+        if (!getUsersLink) throw new Error('Get users link not found')
+        const request = {
+            url: linkAfterParams,
+            method: 'GET'
+        }
+        return doFetch(request, ResponseType.Siren).then(response => toUsers(response.properties))
     }
 }

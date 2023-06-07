@@ -56,7 +56,7 @@ export async function doFetch(
     responseType: ResponseType
 ): Promise<Siren | any | null> {
     if (request && validateRequestMethod(request)) {
-        logger.info("sending request to: ", toFullUrl(request))
+        logger.info("Sending request to: ", toFullUrl(request))
         // console.log("body: ", request.body ? buildBody(request.body) : undefined)
         const resp = await fetchRequest(request)
 
@@ -84,6 +84,7 @@ export async function doFetch(
         } else if (responseType === ResponseType.Any && respData instanceof Siren) {
             throw new Error(`Expected any response, got Siren`)
         }
+        logger.info("Response successful")
         return respData
     }
     return Promise.reject('Invalid request')
