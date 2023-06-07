@@ -10,6 +10,7 @@ import pt.isel.iot_data_server.repository.jdbi.mappers.DeviceMapper
 import pt.isel.iot_data_server.repository.jdbi.mappers.DeviceWakeUpLogMapper
 import pt.isel.iot_data_server.repository.jdbi.mappers.toDevice
 import pt.isel.iot_data_server.repository.jdbi.mappers.toDeviceWakeUpLog
+import java.sql.Timestamp
 
 class JdbiDeviceDataRepository(
     private val handle: Handle
@@ -207,6 +208,22 @@ class JdbiDeviceDataRepository(
             .execute()
     }
 
+    override fun getDeviceWakeUpLogByDeviceId(deviceId: String, timestamp: Timestamp): DeviceWakeUpLog? {
+        return handle.createQuery(
+            """
+            select device_id, timestamp, reason
+            from device_wake_up_log
+            where device_id = :device_id
+            and timestamp = :timestamp
+            """
+        )
+            .bind("device_id", deviceId)
+            .bind("timestamp", timestamp)
+            .mapTo<DeviceWakeUpLogMapper>()
+            .singleOrNull()
+            ?.toDeviceWakeUpLog()
+    }
+
     override fun getDeviceWakeUpLogs(deviceId: String): List<DeviceWakeUpLog> {
         return handle.createQuery(
             """
@@ -219,5 +236,20 @@ class JdbiDeviceDataRepository(
             .mapTo<DeviceWakeUpLogMapper>()
             .list()
             .map { it.toDeviceWakeUpLog() }
+    }
+
+    override fun updateDeviceWakeUpLogs(deviceId: String, deviceWakeUpLog: DeviceWakeUpLog) {
+        handle.createUpdate(
+            """
+            update device_wake_up_log
+            set reason = :reason
+            where device_id = :device_id
+            and timestamp = :timestamp
+            """
+        )
+            .bind("device_id", deviceId)
+            .bind("timestamp", deviceWakeUpLog.instant)
+            .bind("reason", deviceWakeUpLog.reason)
+            .execute()
     }
 }

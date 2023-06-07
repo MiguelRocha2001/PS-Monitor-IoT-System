@@ -16,6 +16,7 @@ services:
     image: iot-service-1
     ports:
       - "9000:9000"
+      - "1883:1883"
     environment:
       - DB_POSTGRES_IOT_SYSTEM_TEST=jdbc:postgresql://dbtest:5432/iot_system_test?user=postgres&password=pass
       - DB_POSTGRES_IOT_SYSTEM=jdbc:postgresql://db:5432/iot_system?user=postgres&password=pass

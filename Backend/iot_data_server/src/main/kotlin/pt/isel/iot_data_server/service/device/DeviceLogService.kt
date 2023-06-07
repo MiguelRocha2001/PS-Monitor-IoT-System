@@ -7,6 +7,8 @@ import pt.isel.iot_data_server.domain.DeviceWakeUpLog
 import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.service.Either
 import pt.isel.iot_data_server.service.email.EmailManager
+import java.sql.Time
+import java.sql.Timestamp
 
 
 @Service
@@ -23,7 +25,10 @@ class DeviceLogService(
         deviceWakeUpLog: DeviceWakeUpLog,
     ) {
         transactionManager.run {
-            it.deviceRepo.createDeviceWakeUpLogs(deviceId, deviceWakeUpLog)
+            if (it.deviceRepo.getDeviceWakeUpLogByDeviceId(deviceId, Timestamp.from(deviceWakeUpLog.instant)) == null)
+                it.deviceRepo.createDeviceWakeUpLogs(deviceId, deviceWakeUpLog)
+            else
+                it.deviceRepo.updateDeviceWakeUpLogs(deviceId, deviceWakeUpLog)
         }
     }
 

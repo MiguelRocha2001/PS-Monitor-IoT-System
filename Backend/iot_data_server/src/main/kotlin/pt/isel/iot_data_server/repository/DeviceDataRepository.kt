@@ -3,6 +3,7 @@ package pt.isel.iot_data_server.repository
 import pt.isel.iot_data_server.domain.Device
 import pt.isel.iot_data_server.domain.DeviceWakeUpLog
 import pt.isel.iot_data_server.domain.SensorErrorRecord
+import java.sql.Timestamp
 
 interface DeviceDataRepository {
     fun createDevice(userId: String, device: Device)
@@ -31,7 +32,9 @@ interface DeviceDataRepository {
     @Deprecated("Discontinued")
     fun getAllSensorErrorRecords(): List<SensorErrorRecord>
     fun createDeviceWakeUpLogs(deviceId: String, deviceWakeUpLog: DeviceWakeUpLog)
+    fun getDeviceWakeUpLogByDeviceId(deviceId: String, timestamp: Timestamp): DeviceWakeUpLog?
     fun getDeviceWakeUpLogs(deviceId: String): List<DeviceWakeUpLog>
+    fun updateDeviceWakeUpLogs(deviceId: String, deviceWakeUpLog: DeviceWakeUpLog)
     @Deprecated("Discontinued")
     fun getDevicesFilteredById(id:String, userId: String, page: Int?, limit: Int?): List<Device>
     fun getCountOfDevicesFilteredById(userId:String,deviceId: String): Int

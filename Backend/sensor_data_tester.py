@@ -47,7 +47,7 @@ class thread1(threading.Thread):
     def run(self):
         hour = 0
         while True:
-            timestamp = self.timestamp - hour * 3600
+            timestamp = self.timestamp - hour * 3600 * 24
             client.publish("sensor_record", get_sensor_record_mqtt_message("ph", timestamp))
             time.sleep(1)
             client.publish("sensor_record", get_sensor_record_mqtt_message("humidity", timestamp))

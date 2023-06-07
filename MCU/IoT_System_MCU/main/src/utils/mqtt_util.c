@@ -26,7 +26,7 @@
 
 static const char *TAG = "MQTT_MODULE";
 
-static const char *CONFIG_BROKER_URL = "mqtt://192.168.1.3:1883/";
+static const char *CONFIG_BROKER_URL = "mqtt://192.168.1.4:1883/";
 
 static void log_error_if_nonzero(const char *message, int error_code)
 {
@@ -54,17 +54,12 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
     switch ((esp_mqtt_event_id_t)event_id) {
         case MQTT_EVENT_CONNECTED:
             ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
-            // msg_id = esp_mqtt_client_publish(client, "/ph", "data_10", 0, 1, 0);
-            // ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
             break;
         case MQTT_EVENT_DISCONNECTED:
             ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");
             break;
-
         case MQTT_EVENT_SUBSCRIBED:
             ESP_LOGI(TAG, "MQTT_EVENT_SUBSCRIBED, msg_id=%d", event->msg_id);
-            msg_id = esp_mqtt_client_publish(client, "/topic/qos0", "data", 0, 0, 0);
-            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
             break;
         case MQTT_EVENT_UNSUBSCRIBED:
             ESP_LOGI(TAG, "MQTT_EVENT_UNSUBSCRIBED, msg_id=%d", event->msg_id);
@@ -84,8 +79,8 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
                 log_error_if_nonzero("reported from tls stack", event->error_handle->esp_tls_stack_err);
                 log_error_if_nonzero("captured as transport's socket errno",  event->error_handle->esp_transport_sock_errno);
                 ESP_LOGI(TAG, "Last errno string (%s)", strerror(event->error_handle->esp_transport_sock_errno));
-
             }
+            abort();
             break;
         default:
             ESP_LOGI(TAG, "Other event id:%d", event->event_id);
@@ -102,7 +97,7 @@ esp_mqtt_client_handle_t mqtt_app_start(void)
     esp_mqtt_client_handle_t client = esp_mqtt_client_init(&mqtt_cfg);
     /* The last argument may be used to pass data to the event handler, in this example mqtt_event_handler */
     esp_mqtt_client_register_event(client, ESP_EVENT_ANY_ID, mqtt_event_handler, NULL);
-    esp_mqtt_client_start(client);
+    ESP_ERROR_CHECK(esp_mqtt_client_start(client));
 
     return client;
 }
@@ -150,7 +145,7 @@ void mqtt_send_sensor_record(esp_mqtt_client_handle_t client, struct sensor_reco
     sprintf(buf, "\"device_id\": \"%s\", \"value\": \"%f\", \"timestamp\": \"%d\", \"sensor_type\": \"%s\"", deviceID, sensor_record->value, sensor_record->timestamp, sensor_type);
 
     char topic[100] = "sensor_record";
-    esp_mqtt_client_publish(client, topic, buf, 0, 1, 0);
+    esp_mqtt_client_publish(client, topic, buf, 0, 0, 0);
     
     ESP_LOGI(TAG, "Message: %s published on topic /sensor_record", buf);
 }
@@ -161,7 +156,7 @@ void mqtt_send_device_wake_up_reason_alert(esp_mqtt_client_handle_t client, int 
     ESP_LOGI(TAG, "Wake up reason: %s", wake_up_reason);
     sprintf(buf, "{\"device_id\": \"%s\", \"timestamp\": \"%d\", \"reason\": \"%s\"}", deviceID, timestamp, wake_up_reason);
 
-    esp_mqtt_client_publish(client, "device_wake_up_log", buf, 0, 1, 0);
+    esp_mqtt_client_publish(client, "device_wake_up_log", buf, 0, 0, 0);
 
     ESP_LOGI(TAG, "Message: %s published on topic /device_wake_up_log", buf);
 }

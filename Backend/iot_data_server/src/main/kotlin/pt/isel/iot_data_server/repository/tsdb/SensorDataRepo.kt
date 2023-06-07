@@ -50,7 +50,7 @@ class SensorDataRepo(
         val measurement = MEASUREMENT_PREFIX + sensorName
         val query =
             """from(bucket: "$bucketName")
-                |> range(start: -7d)
+                |> range(start: -100000d)
                 |> filter(fn: (r) => r.device == "$deviceId")
                 |> filter(fn: (r) => r._measurement == "$measurement")
                  """

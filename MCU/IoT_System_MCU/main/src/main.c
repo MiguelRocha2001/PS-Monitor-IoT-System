@@ -91,7 +91,17 @@ void setup_wifi(void) {
     char* deviceID;
     wifi_config_t wifiConfig;
 
-    if (get_saved_wifi(&wifiConfig) == ESP_OK && get_device_id(&deviceID) == ESP_OK ) 
+    gpio_set_direction(GPIO_NUM_8, GPIO_MODE_INPUT);
+    int gpio_value = gpio_get_level(GPIO_NUM_8);
+    if (gpio_value == 1) // wifi and device id reset
+    {
+        ESP_LOGE(TAG, "Resetting WiFi and device ID...");
+        delete_saved_wifi();
+        delete_device_id();
+        ESP_LOGE(TAG, "Finished resetting WiFi and device ID");
+    }
+
+    if (get_saved_wifi(&wifiConfig) == ESP_OK && get_device_id(&deviceID) == ESP_OK) 
     {
         if(!connect_to_wifi(wifiConfig)) esp_touch_helper(&deviceID);
     } else 
@@ -227,7 +237,21 @@ int handle_wake_up_reason(char* deviceID, esp_mqtt_client_handle_t client)
         char sensor[50];
         if (was_reading_from_sensor(action, sensor))
         {
-            mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, sensor);
+            mqtt_send_error_reading_sensor(client, getNowTimestamp(), deviceID, sensor);
+        }
+        else 
+        {
+            if (strcmp(action, "seting_up_wifi") != 0 &&  strcmp(action, "seting_up_mqtt") != 0)
+            {
+                printf("Action: %s", action);
+                char msg[100];
+                sprintf(msg, "exception/panic: %s", action);
+                mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, action);
+            }
+            else
+            {
+                ESP_LOGE(TAG, "Error setting up wifi or mqtt. Not sending message to broker");
+            }
         }
         return 1;
     }
@@ -259,11 +283,14 @@ void app_main(void)
     get_device_id(&deviceID);
 
     setup_wifi();
+    
+    strcpy(action, "seting_up_mqtt");
     esp_mqtt_client_handle_t client = setup_mqtt();
 
     int res = handle_wake_up_reason(deviceID, client);
     if (res == 0) // timer wake up
     {
+        mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "Wake up by timer");
         compute_sensors(deviceID, client);
     }
     else // other wake up reason
