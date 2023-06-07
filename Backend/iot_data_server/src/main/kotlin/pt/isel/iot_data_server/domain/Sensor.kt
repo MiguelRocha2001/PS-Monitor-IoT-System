@@ -5,7 +5,8 @@ import java.sql.Timestamp
 import java.time.Instant
 
 interface SensorInfo {
-    fun getSensorThreshold(sensorName: String): Double?
+    fun getUpperSensorThreshold(sensorName: String): Double?
+    fun getSensorLowerThreshold(sensorName: String): Double?
 }
 
 data class SensorRecord(val type: String, val value: Double, val instant: Instant)

@@ -29,7 +29,7 @@ class SensorDataServiceTest {
     )
 
     class MySensorInfo : SensorInfo {
-        override fun getSensorThreshold(sensorName: String): Double? {
+        override fun getUpperSensorThreshold(sensorName: String): Double? {
             // Implement your logic here to retrieve the sensor threshold based on the sensor name
             // Return the threshold value as a Double or null if it is not found
             return when (sensorName) {

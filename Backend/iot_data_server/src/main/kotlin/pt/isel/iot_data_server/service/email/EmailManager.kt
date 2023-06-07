@@ -12,7 +12,7 @@ import javax.mail.internet.MimeMessage
 @Component
 class EmailManager {
 
-    fun sendEmail(to: String, subject: Map<String,String>, body: Map<String,String>,templateName: String) {
+    fun sendEmail(to: String, subject: Map<String, String>, body: Map<String, String>, templateName: String) {
 
         val sender = System.getenv("SENDER_EMAIL")
         val senderPassword = System.getenv("SENDER_PASS")
@@ -22,7 +22,7 @@ class EmailManager {
         val session = prepareSession(props, sender, senderPassword)
 
         // Create a MimeMessage object with the email content
-        val message = prepareMessage(session, to, subject, body,templateName,sender)
+        val message = prepareMessage(session, to, subject, body, templateName, sender)
         // Send the email message
         Transport.send(message)
     }

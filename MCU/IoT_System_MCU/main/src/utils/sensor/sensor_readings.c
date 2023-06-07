@@ -25,9 +25,9 @@ int read_sensor_records(sensor_records_struct *sensor_records, char* action)
     for(int i = 0; i < MAX_SENSOR_RECORDS; i++) 
     {
         strcpy(action, "reading_initial_ph");
-        read_initial_ph_record(&sensor_records->start_ph_records[i]);
+        read_initial_ph_record(&sensor_records->initial_ph_records[i]);
         strcpy(action, "reading_final_ph");
-        read_final_ph_record(&sensor_records->end_ph_records[i]);
+        read_final_ph_record(&sensor_records->final_ph_records[i]);
         strcpy(action, "reading_temperature");
         read_temperature_record(&sensor_records->temperature_records[i]);
         strcpy(action, "reading_water_flow");

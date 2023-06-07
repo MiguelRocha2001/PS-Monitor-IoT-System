@@ -49,9 +49,9 @@ void send_sensor_records(esp_mqtt_client_handle_t client, char* deviceID) {
     strcpy(action, "sending_sensor_records");
     ESP_LOGE(TAG, "Sending sensor records...");
     for (int i = 0; i < MAX_SENSOR_RECORDS; i++) {
-        mqtt_send_sensor_record(client, &sensor_records.start_ph_records[i], deviceID, "initial-ph");
+        mqtt_send_sensor_record(client, &sensor_records.initial_ph_records[i], deviceID, "initial-ph");
         vTaskDelay(1000 / portTICK_PERIOD_MS);
-        mqtt_send_sensor_record(client, &sensor_records.end_ph_records[i], deviceID, "final-ph");
+        mqtt_send_sensor_record(client, &sensor_records.final_ph_records[i], deviceID, "final-ph");
         vTaskDelay(1000 / portTICK_PERIOD_MS);
         mqtt_send_sensor_record(client, &sensor_records.temperature_records[i], deviceID, "temperature");
         vTaskDelay(1000 / portTICK_PERIOD_MS);
@@ -70,10 +70,10 @@ void erase_sensor_records() {
     ESP_LOGE(TAG, "Erasing sensor records...");
     for (int i = 0; i < MAX_SENSOR_RECORDS; i++) 
     {
-        sensor_records.start_ph_records[i].value = 0;
-        sensor_records.start_ph_records[i].timestamp = 0;
-        sensor_records.end_ph_records[i].value = 0;
-        sensor_records.end_ph_records[i].timestamp = 0;
+        sensor_records.initial_ph_records[i].value = 0;
+        sensor_records.initial_ph_records[i].timestamp = 0;
+        sensor_records.final_ph_records[i].value = 0;
+        sensor_records.final_ph_records[i].timestamp = 0;
         sensor_records.temperature_records[i].value = 0;
         sensor_records.temperature_records[i].timestamp = 0;
         sensor_records.humidity_records[i].value = 0;

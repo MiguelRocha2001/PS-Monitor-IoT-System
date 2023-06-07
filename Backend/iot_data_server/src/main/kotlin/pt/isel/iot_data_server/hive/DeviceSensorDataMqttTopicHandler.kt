@@ -52,17 +52,24 @@ class DeviceSensorDataMqttTopicHandler(
     }
 
     private fun alertIfDangerous(device: Device, sensorRecord: SensorRecord) {
-        val threshold = sensorInfo.getSensorThreshold(sensorRecord.type)
-        if (threshold != null && sensorRecord.value > threshold) {
-            sendEmailAlert(sensorRecord, device, threshold)
+        val upperThreshold = sensorInfo.getUpperSensorThreshold(sensorRecord.type)
+        val lowerThreshold = sensorInfo.getSensorLowerThreshold(sensorRecord.type)
+        if (
+            upperThreshold != null && sensorRecord.value > upperThreshold ||
+            lowerThreshold != null && sensorRecord.value < lowerThreshold
+        ) {
+            sendEmailAlert(sensorRecord, device, lowerThreshold, upperThreshold)
         }
     }
 
-    private fun sendEmailAlert(sensorRecord: SensorRecord, device: Device, limit: Double) {
+    private fun sendEmailAlert(sensorRecord: SensorRecord, device: Device, lowerLimit: Double?, upperLimit: Double? = null) {
+
         val bodyMessage = mapOf(
             "device_id" to device.deviceId,
-            "ph_level" to sensorRecord.value.toString(),
-            "ph_limit" to limit.toString()
+            "sensor_type" to sensorRecord.type,
+            "value_read" to sensorRecord.value.toString(),
+            "lower_limit" to (lowerLimit.toString()),
+            "upper_limit" to (upperLimit.toString())
         )
         val subject = emptyMap<String, String>()
         emailSenderService.sendEmail(device.ownerEmail, subject, bodyMessage,"phProblem")
