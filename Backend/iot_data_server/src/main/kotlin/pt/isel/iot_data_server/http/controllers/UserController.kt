@@ -26,6 +26,7 @@ import java.util.*
 
 @Tag(name = "User", description = "User API")
 @RestController
+@RequestMapping(Uris.API)
 class UserController(
     val service: UserService
 ) {

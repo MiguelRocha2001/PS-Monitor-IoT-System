@@ -19,6 +19,7 @@ import java.util.*
 
 @Tag(name = "Sensor data", description = "Sensor data API")
 @RestController
+@RequestMapping(Uris.API)
 class SensorDataController(
     val sensorDataService: SensorDataService,
     val sensorErrorService: SensorErrorService

@@ -21,7 +21,7 @@ class UsersInitialization(
         createUserAndDevice(
             userService,
             "admin_email@gmail.com",
-            "admin-password",
+                "admin-password",
             Role.ADMIN,
             "admin-device-id",
             "admin-alert-email@gmail.com"
