@@ -106,7 +106,6 @@ class UserController(
     @GetMapping(Uris.Users.ME)
     fun getMe(
         user: User,
-        request: HttpServletRequest
     ): ResponseEntity<*> {
         val userOutputModel = UserOutputModel(
             user.id,
@@ -201,7 +200,7 @@ class UserController(
             response.addCookie(cookie)
         }
 
-        response.sendRedirect("http://localhost:8080/home") // FIXME
+        response.sendRedirect("/home") // FIXME
     }
 
     @Operation(summary = "Delete user", description = "Delete the user")
