@@ -9,8 +9,9 @@ module.exports = {
         historyApiFallback: true,
         proxy: {
             '/api': {
-              target: process.env.API_PROXY_TARGET || 'http://localhost:9000/',
+              target: 'https://localhost:9000/',
               pathRewrite: { '^/api': '' },
+              secure: false,//TO USE SELF SIGNED CERTIFICATE
             },
           },
     },
