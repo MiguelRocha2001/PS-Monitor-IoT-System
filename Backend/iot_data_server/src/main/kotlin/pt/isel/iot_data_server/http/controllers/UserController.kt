@@ -16,7 +16,6 @@ import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.http.SirenMediaType
 import pt.isel.iot_data_server.http.infra.siren
 import pt.isel.iot_data_server.http.model.Problem
-import pt.isel.iot_data_server.http.model.device.DeviceCountOutputModel
 import pt.isel.iot_data_server.http.model.map
 import pt.isel.iot_data_server.http.model.user.*
 import pt.isel.iot_data_server.service.Either
@@ -200,7 +199,7 @@ class UserController(
             response.addCookie(cookie)
         }
 
-        response.sendRedirect("/home") // FIXME
+        response.sendRedirect("/home")
     }
 
     @Operation(summary = "Delete user", description = "Delete the user")

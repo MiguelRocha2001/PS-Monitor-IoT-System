@@ -3,7 +3,7 @@ import {Logger} from "tslog";
 import {fromJson, Siren} from "./sirenModule";
 
 // const host = 'http://localhost:8080/api'
-const host = 'http://localhost:9000/api'
+export const host = 'http://localhost:9000/api'
 const CONTENT_TYPE_JSON = 'application/json'
 
 const logger = new Logger({name: "Fetch Module"});

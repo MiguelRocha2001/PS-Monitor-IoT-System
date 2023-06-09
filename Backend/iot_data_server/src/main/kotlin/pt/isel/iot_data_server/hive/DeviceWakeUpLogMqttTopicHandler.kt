@@ -3,7 +3,8 @@ package pt.isel.iot_data_server.hive
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import pt.isel.iot_data_server.domain.*
+import pt.isel.iot_data_server.domain.fromMqttMsgStringToDeviceId
+import pt.isel.iot_data_server.domain.fromMqttMsgStringToDeviceLogRecord
 import pt.isel.iot_data_server.service.device.DeviceLogService
 import pt.isel.iot_data_server.service.device.DeviceService
 

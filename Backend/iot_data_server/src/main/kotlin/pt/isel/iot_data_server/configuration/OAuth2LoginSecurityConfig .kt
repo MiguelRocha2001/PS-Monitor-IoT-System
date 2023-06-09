@@ -36,7 +36,7 @@ class OAuth2LoginSecurityConfig {
 
         http.authorizeHttpRequests { authorizeRequests ->
             authorizeRequests
-                .requestMatchers(Uris.GoogleAuth.GOOGLE_AUTH).authenticated()
+                .requestMatchers(Uris.API + Uris.GoogleAuth.GOOGLE_AUTH).authenticated()
                 .and().oauth2ResourceServer().jwt()
             authorizeRequests.anyRequest().permitAll()
         }

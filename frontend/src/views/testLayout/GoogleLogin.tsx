@@ -44,17 +44,9 @@ export const GoogleLoginButton = ({text}: GoogleLoginButtonProps) => {
     }, [isAuthenticated]);
      */
 
-    const handleLoginClick = () => {
-        services.googleLogin().then((res) => {
-            console.log('google login success')
-            setIsLoggedIn(true)
-            setRedirect("/home")
-        })
-    }
-
-    function handleLoginClick2 (){
-        const navigate = useNavigate();
-        navigate("http://localhost:9000/oidc-principal")
+    const handleLoginClick = async () => {
+        await services.googleLogin()
+        console.log('Google Auth request made')
     }
 
     return (

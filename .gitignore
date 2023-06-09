@@ -127,3 +127,5 @@ code/jvm/daw-battleship-game/myvars.txt
 
 paho*-tcplocalhost*
 *.lck
+
+Backend/iot_data_server/src/main/resources/static/
