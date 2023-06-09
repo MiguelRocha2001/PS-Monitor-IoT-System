@@ -7,15 +7,12 @@ module.exports = {
     },
     devServer: {
         historyApiFallback: true,
-        /*
         proxy: {
             '/api': {
-              target: 'https://localhost:9000/',
-              pathRewrite: { '^/api': '' },
+              target: 'https://localhost:9000/api',
               secure: false,//TO USE SELF SIGNED CERTIFICATE
             },
           },
-         */
     },
     module: {
         rules: [

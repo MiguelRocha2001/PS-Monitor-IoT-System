@@ -3,7 +3,6 @@ gradlew build   #ou gradlew build -x test to skip tests
 
 cp -r build/ /home/miguel/Backend
 cp -r sql/ /home/miguel/Backend
-cp -r src/main/resources /home/miguel/Backend
 cp Dockerfile /home/miguel/Backend
 cp docker-compose.yml /home/miguel/Backend
 

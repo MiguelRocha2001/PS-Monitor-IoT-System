@@ -32,7 +32,7 @@ export function Users() {
 
     useEffect(() => {
         if (role?.toLowerCase() !== "admin") {
-            setRedirect("/devices")
+            setRedirect("/home")
         }
     }, [])
 
