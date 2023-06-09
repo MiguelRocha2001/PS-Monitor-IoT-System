@@ -7,6 +7,7 @@ module.exports = {
     },
     devServer: {
         historyApiFallback: true,
+        /*
         proxy: {
             '/api': {
               target: 'https://localhost:9000/',
@@ -14,6 +15,7 @@ module.exports = {
               secure: false,//TO USE SELF SIGNED CERTIFICATE
             },
           },
+         */
     },
     module: {
         rules: [

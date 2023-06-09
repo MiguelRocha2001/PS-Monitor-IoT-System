@@ -1,14 +1,5 @@
 version: '3.8'
 services:
-  app:
-    image: app:app
-    container_name: app
-    build:
-      context: ../../frontend
-    ports:
-      - "8080:8080"
-    environment:
-      - API_PROXY_TARGET=http://host.docker.internal:9000/
   iot-service:
     container_name: iot-service-1
     build:
@@ -61,7 +52,7 @@ services:
       retries: 5
     volumes:
       - db-data:/var/lib/postgresql/data
-      - ./src/sql/create.sql:/docker-entrypoint-initdb.d/create.sql
+      - ./sql/create.sql:/docker-entrypoint-initdb.d/create.sql
   dbtest:
     container_name: dbtest
     hostname: dbtest
@@ -80,7 +71,7 @@ services:
       retries: 5
     volumes:
       - db-data-test:/var/lib/postgresql/data
-      - ./src/sql/create.sql:/docker-entrypoint-initdb.d/create.sql
+      - ./sql/create.sql:/docker-entrypoint-initdb.d/create.sql
 volumes:
   db-data:
     driver: local

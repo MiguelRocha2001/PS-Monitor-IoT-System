@@ -6,6 +6,7 @@ import pt.isel.iot_data_server.service.DataEraserService
 import java.util.*
 
 @RestController
+@RequestMapping(Uris.API)
 class DataController(
     val service: DataEraserService
 ) {

@@ -21,6 +21,7 @@ import java.util.*
 
 @Tag(name = "Devices", description = "The Devices API")
 @RestController
+@RequestMapping(Uris.API)
 class DeviceController(
     val service: DeviceService,
     val deviceLogService: DeviceLogService,

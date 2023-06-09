@@ -8,7 +8,6 @@ import pt.isel.iot_data_server.service.user.Role
 import pt.isel.iot_data_server.service.user.SaltPasswordOperations
 import pt.isel.iot_data_server.service.user.UserService
 import pt.isel.iot_data_server.utils.generateRandomEmail
-import pt.isel.iot_data_server.utils.generateRandomPassword
 
 fun getNewDeviceAndUserService(transactionManager: TransactionManager): Pair<DeviceService, UserService> {
     val saltPasswordOperations = SaltPasswordOperations(transactionManager)

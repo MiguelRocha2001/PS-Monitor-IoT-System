@@ -1,4 +1,4 @@
-import {doFetch, ResponseType, toBody} from "./fetch";
+import {doFetch, host, ResponseType, toBody} from "./fetch";
 import {Device, SensorData, toDevice, toDevices, toSensorData, toUsers, User} from "./domain";
 import {Services} from "./services";
 import {Siren, SirenModule} from "./sirenModule";
@@ -39,7 +39,7 @@ export class RealServices implements Services {
     }
 
     async googleLogin(): Promise<void> {
-        window.location.href = "http://localhost:9000/oidc-principal"
+        window.location.href = `${host}/oidc-principal`
         /*
         const googleLoginLink = SirenModule.getGoogleLoginLink()
         if (!googleLoginLink) {

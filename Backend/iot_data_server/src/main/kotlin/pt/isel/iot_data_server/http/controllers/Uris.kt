@@ -4,6 +4,8 @@ import org.springframework.web.util.UriTemplate
 import java.net.URI
 
 object Uris {
+    const val API = "/api"
+
     /**
      * Uris that doesn't follow the semantic of the rest api (nouns that represent objects),
      * but rather the semantic of the application (verbs that represent actions).

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import pt.isel.iot_data_server.http.SirenMediaType
 import pt.isel.iot_data_server.http.hypermedia.*
@@ -13,6 +14,7 @@ import pt.isel.iot_data_server.http.infra.siren
 
 @Tag(name = "Siren Info", description = "The Siren Info API")
 @RestController
+@RequestMapping(Uris.API)
 class ApiInfoController {
     @Operation(summary = "Siren Info", description = "Get the siren info")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved")

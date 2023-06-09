@@ -106,7 +106,7 @@ void setup_wifi(void) {
         if(!connect_to_wifi(wifiConfig)) esp_touch_helper(&deviceID);
     } else 
     {
-        esp_touch_helper(&deviceID);
+        esp_touch_helper(&deviceID); // device id may be null
     }
 
     ESP_LOGE(TAG, "Finished setting up WiFi");

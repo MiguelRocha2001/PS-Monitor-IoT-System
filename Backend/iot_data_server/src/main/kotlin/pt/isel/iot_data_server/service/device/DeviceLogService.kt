@@ -7,7 +7,6 @@ import pt.isel.iot_data_server.domain.DeviceWakeUpLog
 import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.service.Either
 import pt.isel.iot_data_server.service.email.EmailManager
-import java.sql.Time
 import java.sql.Timestamp
 
 

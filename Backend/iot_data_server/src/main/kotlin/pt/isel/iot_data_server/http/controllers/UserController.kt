@@ -16,7 +16,6 @@ import pt.isel.iot_data_server.domain.User
 import pt.isel.iot_data_server.http.SirenMediaType
 import pt.isel.iot_data_server.http.infra.siren
 import pt.isel.iot_data_server.http.model.Problem
-import pt.isel.iot_data_server.http.model.device.DeviceCountOutputModel
 import pt.isel.iot_data_server.http.model.map
 import pt.isel.iot_data_server.http.model.user.*
 import pt.isel.iot_data_server.service.Either
@@ -26,6 +25,7 @@ import java.util.*
 
 @Tag(name = "User", description = "User API")
 @RestController
+@RequestMapping(Uris.API)
 class UserController(
     val service: UserService
 ) {
@@ -105,7 +105,6 @@ class UserController(
     @GetMapping(Uris.Users.ME)
     fun getMe(
         user: User,
-        request: HttpServletRequest
     ): ResponseEntity<*> {
         val userOutputModel = UserOutputModel(
             user.id,
@@ -200,7 +199,7 @@ class UserController(
             response.addCookie(cookie)
         }
 
-        response.sendRedirect("http://localhost:8080/home") // FIXME
+        response.sendRedirect("/home")
     }
 
     @Operation(summary = "Delete user", description = "Delete the user")
