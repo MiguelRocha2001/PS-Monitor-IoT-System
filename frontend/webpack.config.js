@@ -7,14 +7,11 @@ module.exports = {
     },
     devServer: {
         historyApiFallback: true,
-        /*
         proxy: {
             '/api': {
-              target: process.env.API_PROXY_TARGET || 'http://localhost:9000/',
-              pathRewrite: { '^/api': '' },
+              target: 'http://localhost:9000',
             },
           },
-         */
     },
     module: {
         rules: [

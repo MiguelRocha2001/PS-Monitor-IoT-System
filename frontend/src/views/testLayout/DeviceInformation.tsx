@@ -5,6 +5,7 @@ import {Device} from "../../services/domain";
 import {useSetError} from "../error/ErrorContainer";
 import {ChartWithPeriodSelection} from "./text";
 import {Devices} from "./DevicesPage";
+import {Navigate} from 'react-router-dom';
 import "./DeviceInformation.css";
 
 export function DeviceInfo() {
@@ -12,6 +13,7 @@ export function DeviceInfo() {
     const setError = useSetError()
     const { deviceId } = useParams<string>()
     const [device, setDevice] = React.useState<Device | null>(null);
+    const [seeLogs, setSeeLogs] = React.useState<boolean>(false);
 
     useEffect(() => {
         async function fetchDevice() {
@@ -26,6 +28,8 @@ export function DeviceInfo() {
 
     if (device == null)
         return <></>
+    else if (seeLogs)
+        return <Navigate to={`/users/${userId}/devices/${deviceId}/logs`} replace={true}/>
     else
         return (
             <div className="app-container">
@@ -34,6 +38,9 @@ export function DeviceInfo() {
                 </div>
                 <div className="chart-container">
                     <ChartWithPeriodSelection  deviceId={device.id} deviceEmail={device.alertEmail}/>
+                </div>
+                <div>
+                    <button onClick={() => setSeeLogs(true)}>See Logs</button>
                 </div>
             </div>
         );
