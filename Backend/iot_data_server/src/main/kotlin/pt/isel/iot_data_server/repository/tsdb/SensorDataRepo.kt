@@ -67,7 +67,7 @@ class SensorDataRepo(
     override fun getAvailableSensorTypes(deviceId: String): List<String> = runBlocking {
         val query =
             """from(bucket: "$bucketName")
-                |> range(start: -7d)
+                |> range(start: -100000d)
                 |> filter(fn: (r) => r.device == "$deviceId")
                 |> group(columns: ["_measurement"])
                 |> distinct(column: "_measurement")
