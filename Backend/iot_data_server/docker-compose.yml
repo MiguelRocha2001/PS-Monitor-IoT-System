@@ -14,26 +14,36 @@ services:
       - INFLUX_TOKEN=PdcXvj4L8hAq42SNFy5t3FGKi-bEX3UcVU4MjPUHnWcg_ZXUkJsC_-0EkyhvzAH59sdEap9LgpksRxw_3NplUA==
       - SENDER_EMAIL=testsubjectforiotproject@gmail.com
       - SENDER_PASS=hesazkbnzoiahyaw
+      - INFLUX_URL=http://influxdb:8086
     depends_on:
-      db:
+      influxdb:
         condition: service_healthy
-      dbtest:
+      db:
         condition: service_healthy
     links:
       - db
-      - dbtest
+      - influxdb
   influxdb:
-    image: influxdb:1.8-alpine
+    image: influxdb:2.7.1-alpine
     container_name: influxdb
     restart: always
     ports:
       - "8086:8086"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
-      - influxdb:/var/lib/influxdb
+      - $PWD/data:/var/lib/influxdb2
+      - $PWD/config:/etc/influxdb2
     environment:
-      - INFLUXDB_DB=influx
-      - INFLUXDB_ADMIN_USER=admin
-      - INFLUXDB_ADMIN_PASSWORD=admin
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=miguel
+      - DOCKER_INFLUXDB_INIT_PASSWORD=myRandomPassword12345
+      - DOCKER_INFLUXDB_INIT_ORG=isel
+      - DOCKER_INFLUXDB_INIT_BUCKET=production
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=PdcXvj4L8hAq42SNFy5t3FGKi-bEX3UcVU4MjPUHnWcg_ZXUkJsC_-0EkyhvzAH59sdEap9LgpksRxw_3NplUA==
   db:
     container_name: db
     hostname: db
@@ -53,30 +63,8 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
       - ./sql/create.sql:/docker-entrypoint-initdb.d/create.sql
-  dbtest:
-    container_name: dbtest
-    hostname: dbtest
-    image: postgres:14.1-alpine
-    restart: always
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=pass
-      - POSTGRES_DB=iot_system_test
-    ports:
-      - "5433:5432"
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    volumes:
-      - db-data-test:/var/lib/postgresql/data
-      - ./sql/create.sql:/docker-entrypoint-initdb.d/create.sql
 volumes:
   db-data:
     driver: local
-  db-data-test:
-    driver: local
   influxdb:
     driver: local
-
