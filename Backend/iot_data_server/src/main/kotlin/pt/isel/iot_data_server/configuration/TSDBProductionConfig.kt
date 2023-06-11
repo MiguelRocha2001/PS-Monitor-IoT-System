@@ -23,7 +23,7 @@ class TSDBBuilder(val bucketName: String) {
     private val logger = Logger.getLogger(TSDBProductionConfig::class.java.name)
     val token: String = System.getenv()["INFLUX_TOKEN"]?:"" // same organization, same token
     val org: String = "isel"
-    val path: String = "http://localhost:8086"
+    val path: String = System.getenv()["INFLUX_URL"]?:"http://localhost:8086" // same organization, same token
 
     private val clientThreadLocal = ThreadLocal<InfluxDBClientKotlin>()
 

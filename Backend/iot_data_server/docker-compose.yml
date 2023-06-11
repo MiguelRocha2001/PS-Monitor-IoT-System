@@ -11,19 +11,18 @@ services:
     environment:
       - DB_POSTGRES_IOT_SYSTEM_TEST=jdbc:postgresql://dbtest:5432/iot_system_test?user=postgres&password=pass
       - DB_POSTGRES_IOT_SYSTEM=jdbc:postgresql://db:5432/iot_system?user=postgres&password=pass
-      - INFLUX_TOKEN=lxrFWJY43EcuS2hEy7ncnFyHRgLmavixTdfq8GpSbVjBxLVJJTmpt4L5zx31yK8qWfA4xaG-mRGbgWAKjqF5WQ==
+      - INFLUX_TOKEN=PdcXvj4L8hAq42SNFy5t3FGKi-bEX3UcVU4MjPUHnWcg_ZXUkJsC_-0EkyhvzAH59sdEap9LgpksRxw_3NplUA==
       - SENDER_EMAIL=testsubjectforiotproject@gmail.com
       - SENDER_PASS=hesazkbnzoiahyaw
+      - INFLUX_URL=http://influxdb:8086
     depends_on:
       influxdb:
         condition: service_healthy
       db:
         condition: service_healthy
-      dbtest:
-        condition: service_healthy
     links:
       - db
-      - dbtest
+      - influxdb
   influxdb:
     image: influxdb:2.7.1-alpine
     container_name: influxdb
@@ -31,10 +30,10 @@ services:
     ports:
       - "8086:8086"
     healthcheck:
-        test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
-        interval: 10s
-        timeout: 5s
-        retries: 5
+      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - $PWD/data:/var/lib/influxdb2
       - $PWD/config:/etc/influxdb2
@@ -64,30 +63,8 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
       - ./sql/create.sql:/docker-entrypoint-initdb.d/create.sql
-  dbtest:
-    container_name: dbtest
-    hostname: dbtest
-    image: postgres:14.1-alpine
-    restart: always
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=pass
-      - POSTGRES_DB=iot_system_test
-    ports:
-      - "5433:5432"
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    volumes:
-      - db-data-test:/var/lib/postgresql/data
-      - ./sql/create.sql:/docker-entrypoint-initdb.d/create.sql
 volumes:
   db-data:
     driver: local
-  db-data-test:
-    driver: local
   influxdb:
     driver: local
-
