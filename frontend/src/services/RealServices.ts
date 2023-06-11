@@ -1,5 +1,15 @@
 import {doFetch, host, ResponseType, toBody} from "./fetch";
-import {Device, SensorData, toDevice, toDevices, toSensorData, toUsers, User} from "./domain";
+import {
+    Device,
+    DeviceWakeUpLogs,
+    SensorData,
+    toDevice,
+    toDevices,
+    toDeviceWakeUpLogs,
+    toSensorData,
+    toUsers,
+    User
+} from "./domain";
 import {Services} from "./services";
 import {Siren, SirenModule} from "./sirenModule";
 import {Logger} from "tslog";
@@ -28,6 +38,7 @@ export class RealServices implements Services {
             SirenModule.extractAvailableDeviceSensorsLink(response.links)
             SirenModule.extractGetUserCountLink(response.links)
             SirenModule.extractGetUsersLink(response.links)
+            SirenModule.extractGetDeviceWakeUpLogsLink(response.links)
         }
 
         const request = {
@@ -40,23 +51,6 @@ export class RealServices implements Services {
 
     async googleLogin(): Promise<void> {
         window.location.href = `${host}/oidc-principal`
-        /*
-        const googleLoginLink = SirenModule.getGoogleLoginLink()
-        if (!googleLoginLink) {
-            const msg = 'Google login link not found'
-            logger.error(msg)
-            throw new Error(msg)
-        }
-        const request = {
-            url: googleLoginLink.href,
-            method: 'GET'
-        }
-        try {
-            await fetchRequest(request)
-        } catch (e) {
-            logger.error(`Failed to login with google: ${e}`)
-        }
-         */
     }
 
      generateRandomString(length: number): string {
@@ -227,6 +221,19 @@ export class RealServices implements Services {
         }
         const response = await doFetch(request, ResponseType.Siren)
         return toDevice(response.properties)
+    }
+
+    async getDeviceWakeUpLogs(deviceId: string): Promise<DeviceWakeUpLogs> {
+        const getDeviceWakeUpLogsLink = SirenModule.getDeviceWakeUpLogsLink()
+        if (!getDeviceWakeUpLogsLink) throw new Error('Get device wake up logs link not found')
+        const urlWithId = getDeviceWakeUpLogsLink.href.replace(':device_id', deviceId)
+        const request = {
+            url: urlWithId,
+            method: 'GET'
+        }
+        const response = await doFetch(request, ResponseType.Siren)
+        console.log(response)
+        return toDeviceWakeUpLogs(response.properties)
     }
 
     async getSensorData(deviceId: string, sensor: string): Promise<SensorData> {

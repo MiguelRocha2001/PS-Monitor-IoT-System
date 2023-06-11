@@ -1,0 +1,17 @@
+
+sudo rm -r /home/miguel/Backend
+mkdir /home/miguel/Backend
+cp -r build/ /home/miguel/Backend
+cp -r sql/ /home/miguel/Backend
+cp Dockerfile /home/miguel/Backend
+cp docker-compose.yml /home/miguel/Backend
+
+Move necessary files to Ubuntu:
+cp -r build/ /home/miguel/Backend ; cp -r sql/ /home/miguel/Backend ; cp Dockerfile /home/miguel/Backend ; cp docker-compose.yml /home/miguel/Backend
+
+Initiate docker containers:
+windows:
+docker compose down -v && docker system prune -a --volumes && gradlew clean && gradlew build -x test && docker compose up -d
+
+linux:
+docker compose down -volumes ; docker system prune -a --volumes ; gradle clean ; gradle build -x test ; docker compose up -d

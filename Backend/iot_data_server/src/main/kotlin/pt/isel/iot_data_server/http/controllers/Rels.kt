@@ -25,6 +25,7 @@ object Rels {
     val DEVICE_BY_ID = LinkRelation("device-by-id")
     val FILTERED_DEVICES = LinkRelation("filtered-devices")
     val FILTERED_DEVICES_COUNT = LinkRelation("filtered-devices-count")
+    val DEVICE_WAKE_UP_LOGS = LinkRelation("device-wake-up-logs")
 
     // ------------------- Sensor Data -------------------
     val SENSOR_DATA = LinkRelation("sensor-data")

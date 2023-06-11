@@ -21,13 +21,13 @@ data class CreateDeviceOutputModel(val deviceId: String)
 
 data class DeviceWakeUpLogOutputModel(
     val deviceId: String,
-    val timestamp: String,
+    val timestamp: Long,
     val reason: String
 )
 
 fun DeviceWakeUpLog.toDeviceLogRecordOutputModel() = DeviceWakeUpLogOutputModel(
     deviceId = this.deviceId,
-    timestamp = this.instant.toString(),
+    timestamp = this.instant.epochSecond,
     reason = this.reason
 )
 data class DeviceWakeUpLogsOutputModel(val logs: List<DeviceWakeUpLogOutputModel>) {

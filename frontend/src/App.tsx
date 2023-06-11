@@ -21,6 +21,7 @@ import {DeviceInfo} from "./views/testLayout/DeviceInformation";
 import NewDevice from "./views/testLayout/AddNewDevice";
 import {Users} from "./views/testLayout/UsersPage";
 import {Home} from "./views/testLayout/Home";
+import {DeviceLogs} from "./views/testLayout/DeviceLogs";
 
 //import './App.css';
 
@@ -94,6 +95,7 @@ function Router() {
                             <Route path='/users' element={<RequireAuthn children={<Users />} />} />
                             <Route path='/users/:userId/devices' element={<RequireAuthn children={<Devices />} />} />
                             <Route path='/users/:userId/devices/:deviceId' element={<RequireAuthn children={<DeviceInfo />} />} />
+                            <Route path='/users/:userId/devices/:deviceId/logs' element={<RequireAuthn children={<DeviceLogs />} />} />
                             <Route path='/add-new-device' element={<RequireAuthn children={<NewDevice />} />} />
                             <Route path='/device-created/:deviceId' element={<RequireAuthn children={<DeviceCreated />} />} />
                             <Route path='*' element={<NotFound/>}/>

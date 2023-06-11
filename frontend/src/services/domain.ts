@@ -87,3 +87,45 @@ export function toSensorData(json: any): SensorData {
         records.map(toSensorRecord)
     )
 }
+
+export class DeviceWakeUpLogs {
+    constructor(
+        public logs: DeviceWakeUpLog[]
+    ) {}
+}
+
+export class DeviceWakeUpLog {
+    constructor(
+        public deviceId: string,
+        public date: Date,
+        public reason: string
+    ) {}
+}
+
+export function toDeviceWakeUpLogs(json: any): DeviceWakeUpLogs {
+    const logs = json.logs
+    if (!Array.isArray(logs)) {
+        throw new Error(`Invalid logs: ${logs}`)
+    }
+    return new DeviceWakeUpLogs(
+        logs.map(toDeviceWakeUpLog)
+    )
+}
+
+export function toDeviceWakeUpLog(json: any): DeviceWakeUpLog {
+    console.log(json)
+    const deviceId = json.deviceId
+    if (typeof deviceId !== 'string') {
+        throw new Error(`Invalid deviceId: ${deviceId}`)
+    }
+    const timestamp = json.timestamp
+    if (typeof timestamp !== 'number') {
+        throw new Error(`Invalid timestamp: ${timestamp}`)
+    }
+    const date = new Date(timestamp * 1000)
+    const reason = json.reason
+    if (typeof reason !== 'string') {
+        throw new Error(`Invalid reason: ${reason}`)
+    }
+    return new DeviceWakeUpLog(deviceId, date, reason)
+}

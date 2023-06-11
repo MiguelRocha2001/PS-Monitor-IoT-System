@@ -1,4 +1,4 @@
-import {Device, SensorData, SensorRecord, User} from "./domain";
+import {Device, DeviceWakeUpLog, DeviceWakeUpLogs, SensorData, SensorRecord, User} from "./domain";
 import {Services} from "./services";
 
 class UserInternal {
@@ -190,6 +190,19 @@ export class FakeServices implements Services {
             return device
         else
             throw new Error('Device not found')
+    }
+
+    getDeviceWakeUpLogs(deviceId: string): Promise<DeviceWakeUpLogs> {
+        return Promise.resolve(new DeviceWakeUpLogs([
+            new DeviceWakeUpLog(deviceId, new Date(), "Power Up"),
+            new DeviceWakeUpLog(deviceId, new Date(), "Wake up By Timer"),
+            new DeviceWakeUpLog(deviceId, new Date(), "unknown"),
+            new DeviceWakeUpLog(deviceId, new Date(), "software"),
+            new DeviceWakeUpLog(deviceId, new Date(), "exception/panic: Watchdog"),
+            new DeviceWakeUpLog(deviceId, new Date(), "exception/panic: Software"),
+            new DeviceWakeUpLog(deviceId, new Date(), "exception/panic: Hardware"),
+            new DeviceWakeUpLog(deviceId, new Date(), "exception/panic: External"),
+        ]))
     }
 
     async getSensorData(deviceId: string, sensor: string): Promise<SensorData> {

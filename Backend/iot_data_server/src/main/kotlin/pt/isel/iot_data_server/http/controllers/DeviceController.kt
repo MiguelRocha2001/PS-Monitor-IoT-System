@@ -135,7 +135,7 @@ class DeviceController(
                 .contentType(SirenMediaType)
                 .body(
                     siren(DeviceWakeUpLogsOutputModel.from(it)) {
-                        clazz("device-errors")
+                        clazz("device-wake-up-logs")
                     }
                 )
         }

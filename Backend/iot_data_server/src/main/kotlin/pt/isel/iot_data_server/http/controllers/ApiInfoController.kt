@@ -36,6 +36,7 @@ class ApiInfoController {
                 getDevicesByUserLink(this)
                 getUserDeviceCountLink(this)
                 getDeviceLinkById(this)
+                getDeviceWakeUpLogsLink(this)
                 createDeviceAction(this)
                 getSensorDataLink(this)
                 getMyAvailableDeviceSensorsLink(this)

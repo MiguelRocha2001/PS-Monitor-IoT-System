@@ -11,6 +11,7 @@ module.exports = {
             '/api': {
               target: 'https://localhost:9000/api',
               secure: false,//TO USE SELF SIGNED CERTIFICATE
+              target: 'http://localhost:9000',
             },
           },
     },

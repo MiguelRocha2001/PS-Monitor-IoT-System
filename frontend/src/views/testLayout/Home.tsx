@@ -13,6 +13,8 @@ export function Home() {
     const [redirect, setRedirect] = useState<string | undefined>(undefined)
     const role = useRole()
 
+    console.log("role is " + role)
+
     useEffect(() => {
         if (role?.toLowerCase() === "admin") {
             setRedirect("/users")

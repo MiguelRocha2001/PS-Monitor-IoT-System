@@ -41,6 +41,12 @@ fun getDeviceLinkById(sirenBuilderScope: SirenBuilderScope<*>) =
         rel = Rels.DEVICE_BY_ID
     )
 
+fun getDeviceWakeUpLogsLink(sirenBuilderScope: SirenBuilderScope<*>) =
+    sirenBuilderScope.link(
+        href = Uris.Users.Devices.WakeUpLogs.all(),
+        rel = Rels.DEVICE_WAKE_UP_LOGS
+    )
+
 fun getSensorDataLink(sirenBuilderScope: SirenBuilderScope<*>) =
     sirenBuilderScope.link(
         href = URI(Uris.Users.Devices.Sensor.ALL_2),

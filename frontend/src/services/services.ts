@@ -1,4 +1,4 @@
-import {Device, SensorData, User} from "./domain";
+import {Device, DeviceWakeUpLogs, SensorData, User} from "./domain";
 import {RealServices} from "./RealServices";
 
 /**
@@ -27,6 +27,7 @@ export interface Services {
         deviceIdChunk: string | undefined
     ): Promise<number>
     getDeviceById(deviceId: string): Promise<Device>
+    getDeviceWakeUpLogs(deviceId: string): Promise<DeviceWakeUpLogs>
 
     getSensorData(deviceId: string, sensor: String): Promise<SensorData>
     logout(): Promise<void>
