@@ -13,12 +13,12 @@ import pt.isel.iot_data_server.service.sensor_data.SensorErrorService
  * and device (id=device_manual_tests) if they don't exist.
  */
 @Component
-class SensorReadingErrorMqttTopicHandler(
+class DeviceSensorErrorMqttTopicHandler(
     private val deviceService: DeviceService,
     private val deviceSensorErrorService: SensorErrorService,
     client: MqttClient
 ) {
-    private val logger = LoggerFactory.getLogger(SensorReadingErrorMqttTopicHandler::class.java)
+    private val logger = LoggerFactory.getLogger(DeviceSensorErrorMqttTopicHandler::class.java)
 
     init {
         subscribeSensorErrorTopic(client)

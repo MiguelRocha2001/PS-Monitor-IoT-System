@@ -105,7 +105,7 @@ client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
 
-client.connect("localhost", 1883, 60)
+client.connect("192.168.1.6", 1883, 60)
 
 thread1 = thread1(client)
 thread2 = thread2(client)
