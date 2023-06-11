@@ -11,10 +11,12 @@ services:
     environment:
       - DB_POSTGRES_IOT_SYSTEM_TEST=jdbc:postgresql://dbtest:5432/iot_system_test?user=postgres&password=pass
       - DB_POSTGRES_IOT_SYSTEM=jdbc:postgresql://db:5432/iot_system?user=postgres&password=pass
-      - INFLUX_TOKEN=PdcXvj4L8hAq42SNFy5t3FGKi-bEX3UcVU4MjPUHnWcg_ZXUkJsC_-0EkyhvzAH59sdEap9LgpksRxw_3NplUA==
+      - INFLUX_TOKEN=lxrFWJY43EcuS2hEy7ncnFyHRgLmavixTdfq8GpSbVjBxLVJJTmpt4L5zx31yK8qWfA4xaG-mRGbgWAKjqF5WQ==
       - SENDER_EMAIL=testsubjectforiotproject@gmail.com
       - SENDER_PASS=hesazkbnzoiahyaw
     depends_on:
+      influxdb:
+        condition: service_healthy
       db:
         condition: service_healthy
       dbtest:
@@ -23,17 +25,26 @@ services:
       - db
       - dbtest
   influxdb:
-    image: influxdb:1.8-alpine
+    image: influxdb:2.7.1-alpine
     container_name: influxdb
     restart: always
     ports:
       - "8086:8086"
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
     volumes:
-      - influxdb:/var/lib/influxdb
+      - $PWD/data:/var/lib/influxdb2
+      - $PWD/config:/etc/influxdb2
     environment:
-      - INFLUXDB_DB=influx
-      - INFLUXDB_ADMIN_USER=admin
-      - INFLUXDB_ADMIN_PASSWORD=admin
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=miguel
+      - DOCKER_INFLUXDB_INIT_PASSWORD=myRandomPassword12345
+      - DOCKER_INFLUXDB_INIT_ORG=isel
+      - DOCKER_INFLUXDB_INIT_BUCKET=production
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=PdcXvj4L8hAq42SNFy5t3FGKi-bEX3UcVU4MjPUHnWcg_ZXUkJsC_-0EkyhvzAH59sdEap9LgpksRxw_3NplUA==
   db:
     container_name: db
     hostname: db

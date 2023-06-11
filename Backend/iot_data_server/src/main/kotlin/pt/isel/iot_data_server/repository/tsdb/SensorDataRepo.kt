@@ -22,7 +22,6 @@ TODO: check server status
     @see: https://github.com/influxdata/influxdb-client-java/tree/master/client-kotlin#advanced-usage
  */
 
-//TODO isto retorna os dados referentes a um nos ultimos 7 dias,se calhar devia ser possivel escolher o intervalo de tempo
 @Repository
 class SensorDataRepo(
     private val client: InfluxDBClientKotlin,

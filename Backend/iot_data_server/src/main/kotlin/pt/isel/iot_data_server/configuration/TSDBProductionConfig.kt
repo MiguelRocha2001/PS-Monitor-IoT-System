@@ -5,6 +5,7 @@ import com.influxdb.client.kotlin.InfluxDBClientKotlin
 import com.influxdb.client.kotlin.InfluxDBClientKotlinFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import java.util.logging.Logger
 
 @Configuration
 class TSDBProductionConfig {
@@ -19,6 +20,7 @@ class TSDBProductionConfig {
 }
 
 class TSDBBuilder(val bucketName: String) {
+    private val logger = Logger.getLogger(TSDBProductionConfig::class.java.name)
     val token: String = System.getenv()["INFLUX_TOKEN"]?:"" // same organization, same token
     val org: String = "isel"
     val path: String = "http://localhost:8086"
