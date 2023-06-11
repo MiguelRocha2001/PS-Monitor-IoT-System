@@ -50,7 +50,7 @@ export class RealServices implements Services {
     }
 
     async googleLogin(): Promise<void> {
-        window.location.href = `${host}/oidc-principal`
+        window.location.href = `http://localhost:9000/api/oidc-principal`
     }
 
      generateRandomString(length: number): string {
