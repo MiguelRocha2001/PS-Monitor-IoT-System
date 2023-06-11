@@ -29,7 +29,7 @@ All project source files are included in the this private Git Hub repository, of
     
 - The Backend composed by the Application Server, available in "/Backend". The Broker, described in the Proposal and final report, is currently lunched in from the Server application, and thus, there are no other resources dedicated to him. There is also the "sensor\_data\_tester" python script in order to simulate sensor data being sent to the Backend server;
     
-- The Frontend, which, for this project, is a Single Page Application, accessed from the root of the repository;
+- The Frontend, which, for this project, is a Single Page Application, accessed from the root of the repository, in the frontend folder.
 
 - Project documentation, including diagrams, MCU data-sheets, the ongoing report, etc;
 
@@ -53,10 +53,18 @@ All project source files are included in the this private Git Hub repository, of
     - Install Node Package Manager
 
 - Docker:
-    
+    - Linux and Windows:
+        - Install Docker: v24.0.2, build cb74dfc
+        - Install Docker Compose: v2.18.1
+    - Windows:
+        - Install Docker Desktop: v4.20.1 (110738)
 
 ## Instructions to lunch
-Currently, we are still dealing with the deployment. We plan on finishing the docker images to lunch the application locally, and then, deploy it on a cloud provider.
+Currently, we are still dealing with the deployment. At the momment, is possible to deploy the system locally, using docker technology, or without docker. The system should be also available in the cloud (GCP), but we are still dealing with some issues.
+
+The MCU firmware needs to be compiled and loaded into the MCU. After this, as soons as it receives power, the programm should start right up.
+After the MCU initializes, it will, eventually, try to connect to the Wi-Fi. Use the ESP Touch Android application to connect the ESP32-S2 to pass the Wi-Fi credentials, along with the Device ID. The latter can be obtained after logging in in the website and creating a new device. It should display the Device ID in the top of the page.
+
 There are two ways of launching the system:
 - Without Docker:
     - Go to each project and start the correspondent application:
@@ -66,19 +74,17 @@ There are two ways of launching the system:
         - Go to website project and lunch the website, using webpack;
         - Go to MCU project and load the firmware in the MCU;
 - Using Docker:
-    - Go to "/Backend/iot\_data\_server" folder and use dokcer-compose to lunch the 
+    - Go to "/Backend/iot\_data\_server" folder and use dokcer-compose to lunch the system. The docker-compose file is already configured to lunch the Postgres DB, InfluxDB and the Spring server. The website is served as static content, in Spring server.
 
 Instructions:
-- Without Docker:
-    - Load MCU firmware in device:
+- Load MCU firmware in device:
         - Go to "/MCU/IoT\_System\_MCU" folder
         - Connect ESP32-S2 to the computer, with the appropriate USB cable.
         - \$ idf.py build
         - \$ idf.py -p PORT flash monitor (for example using COM5)
         - Last two steps can be automated by using the VS Code Expressive IDF plugin.
-        - After the MCU initializes, it will, eventually, try to connect to the Wi-Fi...
-        - Use the ESP Touch Android application to connect the ESP32-S2 to pass the Wi-Fi credentials, along with the Device ID.
 
+- Without Docker:
     - Database lunch:
         - Make sure there is a Postgres DB running on port 5432;
         - Make sure there is a InfluxDB running on port 8086;
@@ -92,9 +98,24 @@ Instructions:
 
 - Using Docker:
     - Go to "/Backend/iot\_data\_server" folder
+    - If the static folder in the resources is emty, it is necessary to execute npm build inside the website project, and copy the content of the build folder to the static folder in the resources.
     - Windows:
         - \$ docker compose down -v && docker system prune -a --volumes && gradlew clean && gradlew build -x test && docker compose up -d
     - Linux:
         - \$ docker compose down -volumes ; docker system prune -a --volumes ; gradle clean ; gradle build -x test ; docker compose up -d
 
+## Credentials
 
+During the Spring Application Server initialization, the database is populated with some default users. This include the admin user, and some other default users, with the following credentials:
+
+- Email: admin_email@gmail.com
+- Password: admin-password
+
+- Email: user_1_email@gmail.com
+- Password: user-1-password
+
+- Email: user_2_email@gmail.com
+- Password: user-2-password
+
+- Email: user_3_email@gmail.com
+- Password: user-3-password

@@ -39,6 +39,7 @@ class UserController(
     @ApiResponse(responseCode = "409", description = "Conflict - The user already exists", content = [Content(
         mediaType = "application/problem+json",
         schema = Schema(implementation = Problem::class))])
+    @Authorization(Role.USER)
     @PostMapping(Uris.Users.ALL)
     fun create(
         @RequestBody input: UserCreateInputModel

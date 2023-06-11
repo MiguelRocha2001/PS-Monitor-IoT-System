@@ -23,8 +23,8 @@ class UsersInitialization(
             "admin_email@gmail.com",
                 "admin-password",
             Role.ADMIN,
-            "admin-device-id",
-            "admin-alert-email@gmail.com"
+            null,
+            null
         )
         createUserAndDevice(
             userService,
@@ -57,8 +57,8 @@ class UsersInitialization(
         userEmail: String,
         password: String,
         role: Role,
-        deviceId: String,
-        alertEmail: String
+        deviceId: String?,
+        alertEmail: String?
     ) {
         val retrievedUser = userService.getUserByEmail(userEmail)
         if (retrievedUser == null) { // enforces that there is always an admin user
@@ -71,6 +71,9 @@ class UsersInitialization(
                 logger.info("$userEmail user created")
 
             val userId = result1.value.first
+
+            if (deviceId == null || alertEmail == null) return
+
             createUserDeviceIfNonexistent(
                 userId,
                 deviceId,
@@ -80,6 +83,9 @@ class UsersInitialization(
         } else {
             logger.info("$userEmail user already exists. Skipping creation")
             val userId = retrievedUser.id
+
+            if (deviceId == null || alertEmail == null) return
+
             createUserDeviceIfNonexistent(
                 userId,
                 deviceId,
