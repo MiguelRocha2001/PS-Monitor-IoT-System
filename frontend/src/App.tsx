@@ -22,6 +22,7 @@ import NewDevice from "./views/testLayout/AddNewDevice";
 import {Users} from "./views/testLayout/UsersPage";
 import {Home} from "./views/testLayout/Home";
 import {DeviceLogs} from "./views/testLayout/DeviceLogs";
+import {ErrorController} from "./views/error/ErrorController";
 
 //import './App.css';
 
@@ -80,7 +81,6 @@ export function App() {
     }
 }
 
-// TODO: some component should be able to set the error
 function Router() {
     return (
         <div>
@@ -88,16 +88,67 @@ function Router() {
                 <AuthnContainer>
                     <Container>
                         <Routes>
-                            <Route path='/' element={<FrontPage />} />
-                            <Route path='/auth/register' element={<SignUpForm />} />
-                            <Route path='/auth/login' element={<SignInForm />} />
-                            <Route path='/home' element={<RequireAuthn children={<Home />} />} />
-                            <Route path='/users' element={<RequireAuthn children={<Users />} />} />
-                            <Route path='/users/:userId/devices' element={<RequireAuthn children={<Devices />} />} />
-                            <Route path='/users/:userId/devices/:deviceId' element={<RequireAuthn children={<DeviceInfo />} />} />
-                            <Route path='/users/:userId/devices/:deviceId/logs' element={<RequireAuthn children={<DeviceLogs />} />} />
-                            <Route path='/add-new-device' element={<RequireAuthn children={<NewDevice />} />} />
-                            <Route path='/device-created/:deviceId' element={<RequireAuthn children={<DeviceCreated />} />} />
+                            <Route path='/' element={
+                                <ErrorController>
+                                    <FrontPage />
+                                </ErrorController>}
+                            />
+                            <Route path='/auth/register' element={
+                                <ErrorController>
+                                    <SignUpForm />
+                                </ErrorController>}
+                            />
+                            <Route path='/auth/login' element={
+                                <ErrorController>
+                                    <SignInForm />
+                                </ErrorController>}
+                            />
+                            <Route path='/home' element={
+                                <RequireAuthn
+                                    children={
+                                    <ErrorController>
+                                        <Home />
+                                    </ErrorController>}
+                                />}
+                            />
+                            <Route path='/users' element={
+                                <ErrorController>
+                                    <RequireAuthn children={
+                                        <Users />
+                                    }/>
+                                </ErrorController>}
+                            />
+                            <Route path='/users/:userId/devices' element={
+                                <ErrorController>
+                                    <RequireAuthn children={
+                                        <Devices />
+                                    } />
+                                </ErrorController>}
+                            />
+                            <Route path='/users/:userId/devices/:deviceId' element={
+                                <ErrorController>
+                                    <RequireAuthn children={
+                                        <DeviceInfo />} />
+                                </ErrorController>}
+                            />
+                            <Route path='/users/:userId/devices/:deviceId/logs' element={
+                                <ErrorController>
+                                    <RequireAuthn children={
+                                        <DeviceLogs />} />
+                                </ErrorController>}
+                            />
+                            <Route path='/add-new-device' element={
+                                <ErrorController>
+                                    <RequireAuthn children={
+                                        <NewDevice />} />
+                                </ErrorController>}
+                            />
+                            <Route path='/device-created/:deviceId' element={
+                                <ErrorController>
+                                    <RequireAuthn
+                                        children={<DeviceCreated />} />
+                                </ErrorController>}
+                            />
                             <Route path='*' element={<NotFound/>}/>
                         </Routes>
                     </Container>

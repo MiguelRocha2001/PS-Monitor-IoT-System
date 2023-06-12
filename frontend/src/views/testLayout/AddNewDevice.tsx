@@ -5,19 +5,16 @@ import {Navigate} from "react-router-dom"
 import React from "react";
 import {services} from "../../services/services";
 import {useSetError} from "../error/ErrorContainer";
-import {ErrorController} from "../error/ErrorController";
 import './AddNewDevice.css'
 
 function NewDevice() {
     return (
-        <ErrorController>
-            <Card>
-                <Card.Body>
-                    <Card.Title>Add a new Device</Card.Title>
-                    <NewIoTDeviceForm />
-                </Card.Body>
-            </Card>
-        </ErrorController>
+        <Card>
+            <Card.Body>
+                <Card.Title>Add a new Device</Card.Title>
+                <NewIoTDeviceForm />
+            </Card.Body>
+        </Card>
     );
 }
 
@@ -33,10 +30,11 @@ function NewIoTDeviceForm() {
     if (deviceId)
         return <Navigate to={`/device-created/${deviceId}`} replace={true}/>
 
+    // TODO: enter is still reloading the page
     async function submitForm(ev: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
 
       //prevent default behavior of form
-         ev.preventDefault();
+        ev.preventDefault();
         if (!email) {
             setIsEmailWrong(true)
             console.log("email is empty")

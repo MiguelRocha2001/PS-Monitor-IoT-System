@@ -11,15 +11,16 @@ import {faChevronLeft, faChevronRight, faSignOutAlt} from '@fortawesome/free-sol
 import './DevicesPage.css'
 import Button from "react-bootstrap/Button";
 import {useRole, useSetIsLoggedIn} from "../auth/Authn";
+import {Loading} from "../Loading";
+
 
 export function Devices({userIdParam}: { userIdParam?: string}) {
     const { userId } = useParams<string>()
-    const userId_ = userIdParam ? userIdParam : userId // if 'my' it should show the devices of the logged in user
+    const userId_ = userIdParam ? userIdParam : userId // if 'me' it should show the devices of the logged in user
 
     const setError = useSetError()
     const [devices, setDevices] = useState<Device[]>([])
     const [searchQuery, setSearchQuery] = useState("");
-
 
     const [page, setPage] = useState(1)
     const [pageSize, setPageSize] = useState(() => {
@@ -27,11 +28,18 @@ export function Devices({userIdParam}: { userIdParam?: string}) {
     });
     const [filteredDevices, setFilteredDevices] = useState(0)
     const [totalDevices, setTotalDevices] = useState(0)
-    const [loggedOut, setLoggedOut] = useState(false)
     const setIsLoggedIn = useSetIsLoggedIn()
 
     const role = useRole()
 
+    const canMakeRequest = role && !(role === "admin" && userId_ === "me")
+
+    useEffect(() => {
+        if (role === "admin" && userId_ === "me") {
+            console.log("Admins dont have devices")
+            setError(new Error("Admins dont have devices"))
+        }
+    }, [role])
 
     useEffect(() => {
         const handleResize = () => {
@@ -50,17 +58,6 @@ export function Devices({userIdParam}: { userIdParam?: string}) {
         };
     }, []);
 
-    /*
-        useEffect(
-            () => {
-                if (loggedOut) {
-                    const navigate = useNavigate()
-                    console.log("logged out")
-                    return navigate("/")
-                }
-            }, [loggedOut]
-        )
-    */
     useEffect(() => {
         async function fetchNumberOfDevices() {
             if (userId_) {
@@ -69,7 +66,8 @@ export function Devices({userIdParam}: { userIdParam?: string}) {
                     .catch(error => setError(error.message))
             }
         }
-        fetchNumberOfDevices()
+        if (canMakeRequest)
+            fetchNumberOfDevices()
     }, [])
 
     useEffect(() => { //TODO IF I FETCH DEVICE I STORE THEME SO WHEN I CLICK IN THE PREVIOUS BUTTON A NEW REQUEST IS NOT MADE
@@ -80,7 +78,7 @@ export function Devices({userIdParam}: { userIdParam?: string}) {
                     .catch(error => setError(error.message))
             }
         }
-        if(searchQuery === "") fetchNumberOfDevices()
+        if(searchQuery === "" && canMakeRequest) fetchNumberOfDevices()
 
     }, [searchQuery])
 
@@ -92,7 +90,8 @@ export function Devices({userIdParam}: { userIdParam?: string}) {
                     .catch(error => setError(error.message))
             }
         }
-        updateDevices()
+        if (canMakeRequest)
+            updateDevices()
     }, [page, pageSize, searchQuery, totalDevices])
 
     const handleButtonPress = () => {
@@ -108,27 +107,24 @@ export function Devices({userIdParam}: { userIdParam?: string}) {
         }
     }
 
-    const navigate = useNavigate();
-
     async function handleButtonPressed() {
         await services.logout().then(()=> {
-            localStorage.removeItem('email')//FIXME use context instead
-            setLoggedOut(true)
+            localStorage.removeItem('email') // FIXME: use context instead
             setIsLoggedIn(false)
         })
     }
 
-    if (userId_) {
+    if (role === undefined)
+        return <Loading />
+    else if (userId_) {
         return (
             <div className={"devices-sensor"}>
-                <ErrorController>
-                    <LogoutButton handleButtonPressed={handleButtonPressed}/>
-                    <DeviceList devices={devices} searchQuery={searchQuery} setSearchQuery={setSearchQuery}
-                                handleButtonPress={handleButtonPress} totalDevices={totalDevices} userId={userId_}
-                                role={role}/>
-                    <Pagination currentPage={page} totalPages={Math.ceil(filteredDevices / pageSize)}
-                                onPageChange={(selectedPage: number) => setPage(selectedPage)}/>
-                </ErrorController>
+                <LogoutButton handleButtonPressed={handleButtonPressed}/>
+                <DeviceList devices={devices} searchQuery={searchQuery} setSearchQuery={setSearchQuery}
+                            handleButtonPress={handleButtonPress} totalDevices={totalDevices} userId={userId_}
+                            role={role}/>
+                <Pagination currentPage={page} totalPages={Math.ceil(filteredDevices / pageSize)}
+                            onPageChange={(selectedPage: number) => setPage(selectedPage)}/>
             </div>
         )
     } else {
@@ -148,7 +144,7 @@ function DeviceList({ devices, searchQuery, setSearchQuery, handleButtonPress, t
                         }) {
     const lastLineText = devices.length === 0 ? "No devices found." : `Showing ${devices.length} of ${totalDevices} devices.`
 
-    const addDeviceButton = role === "user" ? (
+    const addDeviceButton = role?.toLowerCase() === "user" ? (
         <div className="add-device">
             <MyLink
                 to="/add-new-device"
@@ -239,4 +235,3 @@ function LogoutButton({handleButtonPressed}: {handleButtonPressed: () => void}) 
         </div>
     </div>
 }
-

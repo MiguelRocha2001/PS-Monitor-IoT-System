@@ -11,7 +11,6 @@ export function ErrorController({ children }: { children: React.ReactNode }): Re
     if (error === undefined) {
         return <>{children}</>
     } else {
-        console.log("Error: " + error)
         logger.error("Error: " + error.message)
         return (<SomethingWentWrong details={error.message} />);
     }

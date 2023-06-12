@@ -37,15 +37,16 @@ export function AuthnContainer({ children }: { children: React.ReactNode }) {
         async function fetchRole () {
             const me = await services.getMe()
             if (me) {
-                logger.debug("User has role: " + me.role)
-                setRole(me.role)
+                setRole(me.role.toLowerCase())
             } else {
-                logger.debug("User has no role")
                 setRole(undefined)
             }
         }
         if (logged)
             fetchRole()
+        else {
+            setRole(undefined)
+        }
     }, [logged])
 
     return (

@@ -54,7 +54,7 @@ All project source files are included in the this private Git Hub repository, of
 
 - Docker:
     - Linux and Windows:
-        - Install Docker: v24.0.2, build cb74dfc
+        - Install Docker Engine: v24.0.2, build cb74dfc
         - Install Docker Compose: v2.18.1
     - Windows:
         - Install Docker Desktop: v4.20.1 (110738)

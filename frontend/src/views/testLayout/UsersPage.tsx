@@ -31,6 +31,7 @@ export function Users() {
     const [redirect, setRedirect] = useState<string | undefined>(undefined)
 
     useEffect(() => {
+        console.log("Users page role: " + role)
         if (role?.toLowerCase() !== "admin") {
             setRedirect("/home")
         }
@@ -117,11 +118,9 @@ export function Users() {
     else
         return (
             <div className={"Users"}>
-                <ErrorController>
-                    <LogoutButton handleButtonPressed={handleButtonPressed}/>
-                    <UserList users={users} searchQuery={searchQuery} setSearchQuery={setSearchQuery} handleButtonPress={handleButtonPress} totalUsers={totalUsers}/>
-                    <Pagination currentPage={page} totalPages={Math.ceil(filteredDevices/pageSize)} onPageChange={(selectedPage: number) => setPage(selectedPage)} />
-                </ErrorController>
+                <LogoutButton handleButtonPressed={handleButtonPressed}/>
+                <UserList users={users} searchQuery={searchQuery} setSearchQuery={setSearchQuery} handleButtonPress={handleButtonPress} totalUsers={totalUsers}/>
+                <Pagination currentPage={page} totalPages={Math.ceil(filteredDevices/pageSize)} onPageChange={(selectedPage: number) => setPage(selectedPage)} />
             </div>
         )
 }

@@ -27,7 +27,7 @@ int read_water_leak_record()
     ESP_LOGE(TAG, "Reading water leak...");
 
     int adc_reading = read_adc(channel);
-    int Vout = adc_reading * 2500 / 8191;
-
-    return Vout > 500;
+    int Vout = adc_reading * 2500 / 8191; // it's not necessary to check Voltage
+    
+    return Vout > 500; // just check if adc is greater than 1638
 }

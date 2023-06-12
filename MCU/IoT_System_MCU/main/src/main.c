@@ -104,20 +104,19 @@ void setup_wifi(void) {
 
 void compute_sensors(char* deviceID, esp_mqtt_client_handle_t client) 
 {
+    ESP_LOGE(TAG, "Powering sensors...");
+    gpio_set_direction(SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
+    gpio_set_level(SENSOR_POWER_PIN, 1); // power on sensors
+
     ESP_LOGE(TAG, "Waiting for sensor stability...");
     vTaskDelay(pdMS_TO_TICKS(sensor_stabilization_time));
 
-    ESP_LOGE(TAG, "Powering sensors...");
-    // power sensors
-    gpio_set_direction(SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
-    gpio_set_level(SENSOR_POWER_PIN, 1);
-
     strcpy(action, "checking_water_leak");
-    int leakage = read_water_leak_record();
+    int leakage = read_water_leak_record(); // TODO: chenge name
     if(leakage == 1) 
     {
         ESP_LOGE(TAG, "Water leakage detected. Sending message...");
-        mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "water-leak");       
+        mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "water-leak"); // send to water leak topic (create one)
     }
     else 
     {
@@ -126,7 +125,7 @@ void compute_sensors(char* deviceID, esp_mqtt_client_handle_t client)
     
     read_sensor_records(&sensor_records, &action);
 
-    gpio_set_level(SENSOR_POWER_PIN, 0);
+    gpio_set_level(SENSOR_POWER_PIN, 0); // power off sensors
 
     ESP_LOGE(TAG, "Sensors reading is complete. Sending records...");
     send_sensor_records(client, deviceID);
