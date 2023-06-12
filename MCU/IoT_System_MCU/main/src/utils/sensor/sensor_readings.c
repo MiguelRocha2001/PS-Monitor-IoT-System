@@ -13,12 +13,21 @@
 
 const static char* TAG = "sensor_readings";
 
-#define between_readings 2000 // 2 seconds
+#define BETWEEN_READINGS 2000 // 2 seconds
+
+#define PH_SENSOR_STABILIZATION_TIME 1000 * 5 // 1 minute
+#define DHT11_STABILIZATION_TIME 1000 * 5 // 1 minute
+#define WATER_FLOW_STABILIZATION_TIME 0 * 5 // 1 minute
+
+#define DHT11_SENSOR_POWER_PIN GPIO_NUM_15
+#define PH_SENSOR_POWER_PIN GPIO_NUM_13
+#define WATER_FLOW_SENSOR_POWER_PIN GPIO_NUM_12
 
 /**
  * Read sensor records and store them in the sensor_records_struct.
  * Return 0 if success, 1 if the sensor_records_struct is full, -1 if there is an error with some sensor reading.
 */
+/*
 int read_sensor_records(sensor_records_struct *sensor_records, char* action) 
 {
     ESP_LOGE(TAG, "Reading sensor records");
@@ -36,64 +45,78 @@ int read_sensor_records(sensor_records_struct *sensor_records, char* action)
         read_humidity_record(&sensor_records->humidity_records[i]);
         sensor_records->index = i + 1; // increment index
 
-        vTaskDelay(pdMS_TO_TICKS(between_readings));
+        vTaskDelay(pdMS_TO_TICKS(BETWEEN_READINGS));
     }
     return 0;
 }
-
+*/
 
 /**
- * Check if all the sensors are working.
- * @param stores the sensors that are not working in the int array.
- * @returns 0 if all the sensors are working, -1 otherwise.
+ * Read sensor records and store them in the sensor_records_struct.
+ * Return 0 if success, 1 if the sensor_records_struct is full, -1 if there is an error with some sensor reading.
 */
-/*
-int check_if_sensors_are_working(int *sensors_not_working) {
-    struct sensor_record record1;
-    struct sensor_record record2;
-    if (read_start_ph_record(&record1) == -1) {
-        sensors_not_working[0] = START_PH_SENSOR_ERROR;
-        ESP_LOGE(TAG, "Start PH sensor error");
-    }
-    if (read_end_ph_record(&record1) == -1) {
-        sensors_not_working[1] = END_PH_SENSOR_ERROR;
-        ESP_LOGE(TAG, "End PH sensor error");
-    }
-    if (read_water_level_record(&record2) == -1) {
-        sensors_not_working[2] = WATER_LEVEL_SENSOR_ERROR;
-        ESP_LOGE(TAG, "Water level sensor error");
-    }
-    if (read_water_flow_record(&record2) == -1) {
-        sensors_not_working[3] = WATER_FLOW_SENSOR_ERROR;
-        ESP_LOGE(TAG, "Water flow sensor error");
-    }
-    if (read_humidity_record(&record1) == -1) {
-        sensors_not_working[4] = HUMIDITY_SENSOR_ERROR;
-        ESP_LOGE(TAG, "Humidity sensor error");
-    }
-    if (read_temperature_record(&record2) == -1) {
-        sensors_not_working[5] = TEMP_SENSOR_ERROR;
-        ESP_LOGE(TAG, "Temperature sensor error");
-    }
-    if (
-        sensors_not_working[0] == -1 || 
-        sensors_not_working[1] == -1 || 
-        sensors_not_working[2] == -1 || 
-        sensors_not_working[3] == -1 || 
-        sensors_not_working[4] == -1 || 
-        sensors_not_working[5] == -1
-    )
+int read_sensor_records(sensor_records_struct *sensor_records, char* action) 
+{
+    ESP_LOGE(TAG, "Reading sensor records");
+
+    gpio_set_direction(PH_SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
+    gpio_set_level(PH_SENSOR_POWER_PIN, 1); // power on sensors
+    vTaskDelay(pdMS_TO_TICKS(PH_SENSOR_STABILIZATION_TIME));
+
+    for(int i = 0; i < MAX_SENSOR_RECORDS; i++) 
     {
-        return -1;
+        strcpy(action, "reading_initial_ph");
+        read_initial_ph_record(&sensor_records->initial_ph_records[i]);
+
+        strcpy(action, "reading_final_ph");
+        read_initial_ph_record(&sensor_records->final_ph_records[i]);
+
+        sensor_records->index = i + 1; // increment index
+        vTaskDelay(pdMS_TO_TICKS(BETWEEN_READINGS));
     }
-    else
+
+    gpio_set_level(PH_SENSOR_POWER_PIN, 0); // power off sensors
+    ESP_LOGE(TAG, "Powering off ph sensor...");
+
+    ESP_LOGE(TAG, "Powering on dht11 sensor...");
+    gpio_set_direction(DHT11_SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
+    gpio_set_level(DHT11_SENSOR_POWER_PIN, 1); // power on sensors
+    vTaskDelay(pdMS_TO_TICKS(DHT11_STABILIZATION_TIME));
+
+    for(int i = 0; i < MAX_SENSOR_RECORDS; i++) 
     {
-        return 0;
+        strcpy(action, "reading_temperature");
+        read_initial_ph_record(&sensor_records->temperature_records[i]);
+
+        strcpy(action, "reading_humidity");
+        read_humidity_record(&sensor_records->humidity_records[i]);
+
+        sensor_records->index = i + 1; // increment index
+        vTaskDelay(pdMS_TO_TICKS(BETWEEN_READINGS));
     }
-    
+
+    gpio_set_level(DHT11_SENSOR_POWER_PIN, 0); // power off sensors
+    ESP_LOGE(TAG, "Powering off dht11 sensor...");
+
+    ESP_LOGE(TAG, "Powering on water flow sensor...");
+    gpio_set_direction(WATER_FLOW_SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
+    gpio_set_level(WATER_FLOW_SENSOR_POWER_PIN, 1); // power on sensors
+    vTaskDelay(pdMS_TO_TICKS(DHT11_STABILIZATION_TIME));
+
+    for(int i = 0; i < MAX_SENSOR_RECORDS; i++) 
+    {
+        strcpy(action, "reading_water_flow");
+        read_initial_ph_record(&sensor_records->water_flow_records[i]);
+
+        sensor_records->index = i + 1; // increment index
+        vTaskDelay(pdMS_TO_TICKS(BETWEEN_READINGS));
+    }
+
+    gpio_set_level(WATER_FLOW_SENSOR_POWER_PIN, 0); // power off sensors
+    ESP_LOGE(TAG, "Powering off water flow sensor...");
+
     return 0;
 }
-*/
 
 int sensors_reading_is_complete(sensor_records_struct *sensor_records) {
     return sensor_records->index == MAX_SENSOR_RECORDS;

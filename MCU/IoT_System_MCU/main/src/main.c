@@ -21,8 +21,6 @@
 const static char* TAG = "MAIN";
 
 #define GPIO_RESET_PIN (CONFIG_GPIO_RESET_PIN)
-#define SENSOR_POWER_PIN GPIO_NUM_15
-#define sensor_stabilization_time 1000 * 5 // 1 minute
 
 const static long LONG_SLEEP_TIME = 6; // 6 seconds
 
@@ -65,25 +63,6 @@ void send_sensor_records(esp_mqtt_client_handle_t client, char* deviceID) {
     }
 }
 
-void erase_sensor_records() {
-    strcpy(action, "erasing_sensor_records");
-    ESP_LOGE(TAG, "Erasing sensor records...");
-    for (int i = 0; i < MAX_SENSOR_RECORDS; i++) 
-    {
-        sensor_records.initial_ph_records[i].value = 0;
-        sensor_records.initial_ph_records[i].timestamp = 0;
-        sensor_records.final_ph_records[i].value = 0;
-        sensor_records.final_ph_records[i].timestamp = 0;
-        sensor_records.temperature_records[i].value = 0;
-        sensor_records.temperature_records[i].timestamp = 0;
-        sensor_records.humidity_records[i].value = 0;
-        sensor_records.humidity_records[i].timestamp = 0;
-        sensor_records.water_flow_records[i].value = 0;
-        sensor_records.water_flow_records[i].timestamp = 0;
-    }
-    sensor_records.index = 0; // resets the index
-}
-
 void setup_wifi(void) {
     strcpy(action, "seting_up_wifi");
     ESP_LOGE(TAG, "Setting up WiFi...");
@@ -104,13 +83,6 @@ void setup_wifi(void) {
 
 void compute_sensors(char* deviceID, esp_mqtt_client_handle_t client) 
 {
-    ESP_LOGE(TAG, "Powering sensors...");
-    gpio_set_direction(SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
-    gpio_set_level(SENSOR_POWER_PIN, 1); // power on sensors
-
-    ESP_LOGE(TAG, "Waiting for sensor stability...");
-    vTaskDelay(pdMS_TO_TICKS(sensor_stabilization_time));
-
     strcpy(action, "checking_water_leak");
     int leakage = read_water_leak_record(); // TODO: chenge name
     if(leakage == 1) 
@@ -125,29 +97,13 @@ void compute_sensors(char* deviceID, esp_mqtt_client_handle_t client)
     
     read_sensor_records(&sensor_records, &action);
 
-    gpio_set_level(SENSOR_POWER_PIN, 0); // power off sensors
-
     ESP_LOGE(TAG, "Sensors reading is complete. Sending records...");
     send_sensor_records(client, deviceID);
-    erase_sensor_records();
     
     int new_time_to_wake_up = getNowTimestamp() + LONG_SLEEP_TIME;
     ESP_LOGE(TAG, "Setting new time to wake up: %d", new_time_to_wake_up);
     time_to_wake_up = new_time_to_wake_up; // sets new time to wake up
     continue_long_sleep();
-}
-
-void printDeepSleepWokeCause(esp_sleep_wakeup_cause_t wakeup_reason) 
-{
-    switch(wakeup_reason)
-    {
-        case ESP_SLEEP_WAKEUP_EXT0 : ESP_LOGE(TAG, "Wakeup caused by external signal using RTC_IO"); break;
-        case ESP_SLEEP_WAKEUP_EXT1 : ESP_LOGE(TAG, "Wakeup caused by external signal using RTC_CNTL"); break;
-        case ESP_SLEEP_WAKEUP_TIMER : ESP_LOGE(TAG, "Wakeup caused by timer"); break;
-        case ESP_SLEEP_WAKEUP_TOUCHPAD : ESP_LOGE(TAG, "Wakeup caused by touchpad"); break;
-        case ESP_SLEEP_WAKEUP_ULP : ESP_LOGE(TAG, "Wakeup caused by ULP program"); break;
-        default : ESP_LOGE(TAG, "Wakeup was not caused by deep sleep: %d", wakeup_reason); break;
-    }
 }
 
 int was_reading_from_sensor(char* action, char* sensor) 
