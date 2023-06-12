@@ -24,7 +24,7 @@ const static char* TAG = "MAIN";
 #define SENSOR_POWER_PIN GPIO_NUM_15
 #define sensor_stabilization_time 1000 * 5 // 1 minute
 
-const static long LONG_SLEEP_TIME = 6; // 5 seconds
+const static long LONG_SLEEP_TIME = 6; // 6 seconds
 
 RTC_DATA_ATTR struct sensor_records_struct sensor_records;
 RTC_DATA_ATTR int readings_started;
@@ -90,16 +90,6 @@ void setup_wifi(void) {
 
     char* deviceID;
     wifi_config_t wifiConfig;
-
-    gpio_set_direction(GPIO_NUM_8, GPIO_MODE_INPUT);
-    int gpio_value = gpio_get_level(GPIO_NUM_8);
-    if (gpio_value == 1) // wifi and device id reset
-    {
-        ESP_LOGE(TAG, "Resetting WiFi and device ID...");
-        delete_saved_wifi();
-        delete_device_id();
-        ESP_LOGE(TAG, "Finished resetting WiFi and device ID");
-    }
 
     if (get_saved_wifi(&wifiConfig) == ESP_OK && get_device_id(&deviceID) == ESP_OK) 
     {
@@ -211,6 +201,7 @@ int handle_wake_up_reason(char* deviceID, esp_mqtt_client_handle_t client)
 
     // Read the Reset Reason Register
     uint32_t reset_reason = esp_reset_reason();
+    esp_sleep_wakeup_cause_t sleep_wakeup_reason = esp_sleep_get_wakeup_cause();
 
     // Check the reset reason flags
     if (reset_reason & ESP_RST_UNKNOWN) 
@@ -253,7 +244,11 @@ int handle_wake_up_reason(char* deviceID, esp_mqtt_client_handle_t client)
                 ESP_LOGE(TAG, "Error setting up wifi or mqtt. Not sending message to broker");
             }
         }
-        return 1;
+    }
+    if (sleep_wakeup_reason == ESP_SLEEP_WAKEUP_TIMER)
+    {
+        ESP_LOGE(TAG, "JHASBDBA");
+        return 0;
     }
     /*
     if (reset_reason & ESP_RST_BROWNOUT) 
@@ -263,7 +258,32 @@ int handle_wake_up_reason(char* deviceID, esp_mqtt_client_handle_t client)
         return 1;
     }
     */
-    return 0;
+    return 1; // Should not reach here
+}
+
+/**
+ * Checks if the cause of wake up was an external signal using RTC_IO.
+ * If so, resets wifi and device ID.
+*/
+void check_if_woke_up_to_reset() 
+{
+    ESP_LOGE(TAG, "Checking if woke up to reset...");
+    // Read the Reset Reason Register
+    esp_sleep_wakeup_cause_t sleep_wakeup_reason = esp_sleep_get_wakeup_cause();
+
+    // Check the reset reason flags
+    if (sleep_wakeup_reason == ESP_SLEEP_WAKEUP_EXT0) 
+    {
+        ESP_LOGE(TAG, "Reset reason: external signal using RTC_IO");
+        ESP_LOGE(TAG, "Resetting WiFi and device ID...");
+        delete_saved_wifi();
+        delete_device_id();
+        ESP_LOGE(TAG, "Finished resetting WiFi and device ID");
+        // mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "external-signal-using-rtc-io");
+        return;
+    }
+    ESP_LOGE(TAG, "No external signal using RTC_IO");
+    return;
 }
 
 // IMPORTANT -> run with $ idf.py monitor or $ idf.py -p COM5 flash monitor 
@@ -279,13 +299,14 @@ void app_main(void)
     ESP_LOGE(TAG, "Starting app_main...");
     ESP_ERROR_CHECK(nvs_flash_init());
 
-    char* deviceID;
-    get_device_id(&deviceID);
+    check_if_woke_up_to_reset();
 
     setup_wifi();
-    
     strcpy(action, "seting_up_mqtt");
     esp_mqtt_client_handle_t client = setup_mqtt();
+
+    char* deviceID;
+    get_device_id(&deviceID);
 
     int res = handle_wake_up_reason(deviceID, client);
     if (res == 0) // timer wake up
