@@ -22,6 +22,7 @@ idf_component_register(
             "src/utils/humidity/humidity_reader_real.c"
             "src/utils/water_leak/water_leak_reader_real.c"
             "src/utils/water_flow/water_flow_reader_fake.c"
+            "src/utils/adc_reader.c"
         INCLUDE_DIRS "include"
 )
 target_compile_options(${COMPONENT_LIB} PRIVATE  -Wno-format)

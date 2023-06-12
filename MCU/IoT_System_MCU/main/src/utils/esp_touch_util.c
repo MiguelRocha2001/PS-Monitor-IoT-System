@@ -66,7 +66,7 @@ static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_
         ESP_LOGI(TAG, "SSID: %s", ssid);
         ESP_LOGI(TAG, "PASSWORD: %s", password);
 
-        if (evt->type == SC_TYPE_ESPTOUCH_V2) {
+        if (evt->type == SC_TYPE_ESPTOUCH_V2) { // alows for data to be sent from the app to the device
             ESP_ERROR_CHECK( esp_smartconfig_get_rvd_data(rvd_data, sizeof(rvd_data)) );
             ESP_LOGI(TAG, "RVD_DATA: %s", (char*)rvd_data);
             *device_id = malloc(strlen((char*)rvd_data));
@@ -84,6 +84,70 @@ static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_
         xEventGroupSetBits(s_wifi_event_group, ESPTOUCH_DONE_BIT);
     }
 }
+
+/*
+static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data) {
+    ESP_LOGI(TAG, "Got SSID and password");
+
+    // smartconfig_event_got_ssid_pswd_t *evt = (smartconfig_event_got_ssid_pswd_t *)event_data;
+    wifi_config_t wifi_config;
+    uint8_t ssid[33] = { 0 };
+    uint8_t password[65] = { 0 };
+    uint8_t rvd_data[65] = { 0 };
+
+    // -----------------------------TO DELETE -------------------------------- //
+    char my_ssid[33] = "Redmi Note 8 Pro";
+    char my_password[65] = "abcdefgh";
+    uint8_t ssid_array[33];
+    uint8_t password_array[65];
+    
+    // Convert my_ssid to uint8_t array
+    for (size_t i = 0; i < strlen(my_ssid); i++) {
+        ssid_array[i] = (uint8_t)my_ssid[i];
+    }
+    
+    // Convert my_password to uint8_t array
+    for (size_t i = 0; i < strlen(my_password); i++) {
+        password_array[i] = (uint8_t)my_password[i];
+    }
+    // -----------------------------END -------------------------------- //
+
+    bzero(&wifi_config, sizeof(wifi_config_t));
+    memcpy(wifi_config.sta.ssid, ssid_array, sizeof(wifi_config.sta.ssid));
+    memcpy(wifi_config.sta.password, password_array, sizeof(wifi_config.sta.password));
+    // wifi_config.sta.bssid_set = evt->bssid_set;
+
+    //if (wifi_config.sta.bssid_set == true) {
+    //    memcpy(wifi_config.sta.bssid, evt->bssid, sizeof(wifi_config.sta.bssid));
+    //}
+
+    memcpy(ssid, my_ssid, sizeof(ssid_array));
+    memcpy(password, my_password, sizeof(password_array));
+    ESP_LOGI(TAG, "SSID: %s", ssid);
+    ESP_LOGI(TAG, "PASSWORD: %s", password);
+
+    
+    //if (evt->type == SC_TYPE_ESPTOUCH_V2) { // alows for data to be sent from the app to the device
+    //    ESP_ERROR_CHECK( esp_smartconfig_get_rvd_data(rvd_data, sizeof(rvd_data)) );
+    //    ESP_LOGI(TAG, "RVD_DATA: %s", (char*)rvd_data);
+    //    *device_id = malloc(strlen((char*)rvd_data));
+    //    strcpy(*device_id, (char*)rvd_data);
+    //}
+
+    char my_rvd_data[65] = "my-device-id-1";
+    ESP_LOGI(TAG, "RVD_DATA: %s", (char*)my_rvd_data);
+    *device_id = malloc(strlen((char*)rvd_data));
+    strcpy(*device_id, (char*)rvd_data);
+    
+
+    set_saved_wifi(&wifi_config);
+    set_device_id((char*)rvd_data);
+
+    ESP_ERROR_CHECK( esp_wifi_disconnect() );
+    ESP_ERROR_CHECK( esp_wifi_set_config(WIFI_IF_STA, &wifi_config) );
+    esp_wifi_connect();
+}
+*/
 
 
 static void initialise_wifi_esp_touch(void) {

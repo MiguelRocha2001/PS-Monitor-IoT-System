@@ -43,7 +43,7 @@ All project source files are included in the this private Git Hub repository, of
     - Install ESP IDF: v5.0.1. We recommend using the VS Code Expressive IDF plugin, which already brings the most used commands.
 
 - Database lunch:
-    - Install Postgres DB: <TODO: insert version>
+    - Install PostgresSql: v15
     - Install InfluxDB: v2.7.1: https://portal.influxdata.com/downloads/
 
 - Application Server lunch:
@@ -98,7 +98,10 @@ Instructions:
 
 - Using Docker:
     - Go to "/Backend/iot\_data\_server" folder
-    - If the static folder in the resources is emty, it is necessary to execute npm build inside the website project, and copy the content of the build folder to the static folder in the resources.
+    - If the static folder in the resources is emty:
+        - Inside the website project:
+            - $ npm run build;
+            - copy the content of the dist folder to the static folder in the Server resources.
     - Windows:
         - \$ docker compose down -v && docker system prune -a --volumes && gradlew clean && gradlew build -x test && docker compose up -d
     - Linux:
