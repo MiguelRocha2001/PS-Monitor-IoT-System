@@ -23,7 +23,7 @@ of filtration system inspection.
 - Rui Duarte, rui.duarte@isel.pt
 
 ## Report Link
-[Report:](https://github.com/MiguelRocha2001/PS-Monitor-IoT-System/blob/28923a7e613863f42d6bdd0ddda71b1fbc411487/IoT_System_for_pH_Monitoring_in_Industrial_Facilities_NEW_TEMPLATE-11.pdf)
+[Report File](https://github.com/MiguelRocha2001/PS-Monitor-IoT-System/blob/28923a7e613863f42d6bdd0ddda71b1fbc411487/IoT_System_for_pH_Monitoring_in_Industrial_Facilities_NEW_TEMPLATE-11.pdf)
 
 ## Organization
 All project source files are included in the this private Git Hub repository, of which we can highlight:
