@@ -9,7 +9,7 @@ import {Navigate} from 'react-router-dom';
 import "./DeviceInformation.css";
 
 export function DeviceInfo() {
-    const { userId } = useParams<string>() // if 'my' it should show the devices of the logged in user
+    const { userId } = useParams<string>() // if 'self' it should show the devices of the logged in user
     const setError = useSetError()
     const { deviceId } = useParams<string>()
     const [device, setDevice] = React.useState<Device | null>(null);

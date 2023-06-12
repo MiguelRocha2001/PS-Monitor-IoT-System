@@ -23,6 +23,7 @@ import {Users} from "./views/testLayout/UsersPage";
 import {Home} from "./views/testLayout/Home";
 import {DeviceLogs} from "./views/testLayout/DeviceLogs";
 import {ErrorController} from "./views/error/ErrorController";
+import {RequireAdminAndNotSelf} from "./views/auth/RequireAdminAndNotSelf";
 
 //import './App.css';
 
@@ -121,21 +122,26 @@ function Router() {
                             <Route path='/users/:userId/devices' element={
                                 <ErrorController>
                                     <RequireAuthn children={
-                                        <Devices />
-                                    } />
+                                        <RequireAdminAndNotSelf children={
+                                            <Devices />
+                                        }/>
+                                    }/>
                                 </ErrorController>}
                             />
                             <Route path='/users/:userId/devices/:deviceId' element={
                                 <ErrorController>
                                     <RequireAuthn children={
-                                        <DeviceInfo />} />
+                                        <DeviceInfo />
+                                    }/>
                                 </ErrorController>}
                             />
                             <Route path='/users/:userId/devices/:deviceId/logs' element={
                                 <ErrorController>
                                     <RequireAuthn children={
-                                        <DeviceLogs />} />
-                                </ErrorController>}
+                                        <DeviceLogs />
+                                    }/>
+                                </ErrorController>
+                            }
                             />
                             <Route path='/add-new-device' element={
                                 <ErrorController>

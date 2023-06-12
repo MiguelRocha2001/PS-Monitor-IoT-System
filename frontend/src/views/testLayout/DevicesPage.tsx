@@ -32,15 +32,6 @@ export function Devices({userIdParam}: { userIdParam?: string}) {
 
     const role = useRole()
 
-    const canMakeRequest = role && !(role === "admin" && userId_ === "me")
-
-    useEffect(() => {
-        if (role === "admin" && userId_ === "me") {
-            console.log("Admins dont have devices")
-            setError(new Error("Admins dont have devices"))
-        }
-    }, [role])
-
     useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth <= 767) { // Adjust the breakpoint as needed
@@ -66,8 +57,7 @@ export function Devices({userIdParam}: { userIdParam?: string}) {
                     .catch(error => setError(error.message))
             }
         }
-        if (canMakeRequest)
-            fetchNumberOfDevices()
+        fetchNumberOfDevices()
     }, [])
 
     useEffect(() => { //TODO IF I FETCH DEVICE I STORE THEME SO WHEN I CLICK IN THE PREVIOUS BUTTON A NEW REQUEST IS NOT MADE
@@ -78,7 +68,7 @@ export function Devices({userIdParam}: { userIdParam?: string}) {
                     .catch(error => setError(error.message))
             }
         }
-        if(searchQuery === "" && canMakeRequest) fetchNumberOfDevices()
+        if(searchQuery === "") fetchNumberOfDevices()
 
     }, [searchQuery])
 
@@ -90,8 +80,7 @@ export function Devices({userIdParam}: { userIdParam?: string}) {
                     .catch(error => setError(error.message))
             }
         }
-        if (canMakeRequest)
-            updateDevices()
+        updateDevices()
     }, [page, pageSize, searchQuery, totalDevices])
 
     const handleButtonPress = () => {

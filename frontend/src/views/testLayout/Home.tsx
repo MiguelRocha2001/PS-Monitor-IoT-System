@@ -19,7 +19,7 @@ export function Home() {
         if (role?.toLowerCase() === "admin") {
             setRedirect("/users")
         } else if (role?.toLowerCase() === "user") {
-            setRedirect("/users/my/devices") // user id is 'my'
+            setRedirect("/users/self/devices") // user id is 'self'
         }
     }, [role])
 

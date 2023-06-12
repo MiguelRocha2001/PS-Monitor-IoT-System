@@ -11,7 +11,7 @@ import {ListGroup} from "react-bootstrap";
 import {Loading} from "../Loading";
 
 export function DeviceLogs() {
-    const { userId } = useParams<string>() // if 'my' it should show the devices of the logged in user
+    const { userId } = useParams<string>() // if 'self' it should show the devices of the logged in user
     const setError = useSetError()
     const { deviceId } = useParams<string>()
     const [logs, setLogs] = React.useState<DeviceWakeUpLogs | undefined>(undefined);

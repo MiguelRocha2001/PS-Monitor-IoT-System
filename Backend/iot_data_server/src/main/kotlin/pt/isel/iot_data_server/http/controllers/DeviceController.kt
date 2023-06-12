@@ -126,7 +126,7 @@ class DeviceController(
         @PathVariable device_id: String
     ): ResponseEntity<*> {
         val result = if (user.userInfo.role === Role.ADMIN)
-            deviceLogService.getDeviceLogRecords(device_id)
+            deviceLogService.getDeviceLogRecords(device_id) // TODO: check if does not belong to admin. He should have no devices
         else {
             deviceLogService.getDeviceLogRecordsIfIsOwner(device_id, user.id)
         }

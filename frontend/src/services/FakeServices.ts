@@ -117,7 +117,7 @@ export class FakeServices implements Services {
         if (this.user) {
             const start = (page - 1) * limit
             const end = start + limit
-            userId = userId === 'my' ? this.user.id : userId
+            userId = userId === 'self' ? this.user.id : userId
             let devices = Array.from(this.devices)
                 .filter(([user, device]) => user.id === userId)
                 .map(([user, device]) => device)
@@ -150,7 +150,7 @@ export class FakeServices implements Services {
         deviceIdChunk: string | undefined
     ): Promise<number> {
         if (this.user) {
-            userId = userId === 'my' ? this.user.id : userId
+            userId = userId === 'self' ? this.user.id : userId
             let devices = Array.from(this.devices)
                 .filter(([user, device]) => user.id === userId)
                 .map(([user, device]) => device)
