@@ -38,7 +38,7 @@ fun fromMqttMsgStringToDeviceLogRecord(str: String): DeviceWakeUpLog {
  * The size of the ID is 8 characters.
  * 2^32 = 4,294,967,296 possible combinations.
  * This means that we need 8 characters to represent all possible 2^32 combinations.
- * 23^7 < 4,294,967,296 < 23^8
+ TH
  */
 fun generateRandomDeviceId(): String {
     // Use the current timestamp as the seed for your random number generator
@@ -47,7 +47,7 @@ fun generateRandomDeviceId(): String {
 
     // Generate a random string of characters for the device ID
     val sb = StringBuilder()
-    val characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    val characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" // TODO: use also lower case and reduce the size of the ID
 
     val length = 8
     for (i in 0 until length) {

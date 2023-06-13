@@ -1,4 +1,4 @@
-package pt.isel.iot_data_server.hive
+package pt.isel.iot_data_server.mqtt
 
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.slf4j.LoggerFactory
