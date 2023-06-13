@@ -16,6 +16,7 @@ typealias UserCreationResult = Either<CreateUserError, Pair<String, String>>
 
 sealed class TokenCreationError: Error() {
     object UserNotFound: TokenCreationError()
+    object CreatedWithGoogleAuth: TokenCreationError()
     object InvalidPassword: TokenCreationError()
 }
 typealias TokenCreationResult = Either<TokenCreationError, String>

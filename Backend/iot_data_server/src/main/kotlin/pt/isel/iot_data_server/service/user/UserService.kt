@@ -105,6 +105,9 @@ class UserService(
                 ?: return@run Either.Left(TokenCreationError.UserNotFound)
 
             // Only check the password if it was provided
+            if(password != null && !it.userRepo.hasPassword(user.id)) // created with google auth
+                return@run Either.Left(TokenCreationError.CreatedWithGoogleAuth)
+
             if (password !== null && !saltPasswordOperations.verifyPassword(email, password))
                 return@run Either.Left(TokenCreationError.InvalidPassword)
 

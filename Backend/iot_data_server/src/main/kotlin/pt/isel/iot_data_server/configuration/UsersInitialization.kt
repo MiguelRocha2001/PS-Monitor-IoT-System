@@ -50,6 +50,14 @@ class UsersInitialization(
             "user-3-device-id",
             "user3-alert-email@gmail.com"
         )
+        createUserAndDevice( // TODO: remove later
+            userService,
+            "user_4_email@gmail.com",
+            "user-4-password",
+            Role.USER,
+            "IPGBJMUV",
+            "a47128@alunos.isel.pt"
+        )
     }
 
     private fun createUserAndDevice(

@@ -142,7 +142,7 @@ void mqtt_send_encrypted_data(esp_mqtt_client_handle_t client, char* buf, char* 
 void mqtt_send_sensor_record(esp_mqtt_client_handle_t client, struct sensor_record *sensor_record, char* deviceID, char* sensor_type)
 {
     char buf[200];
-    sprintf(buf, "\"device_id\": \"%s\", \"value\": \"%f\", \"timestamp\": \"%d\", \"sensor_type\": \"%s\"", deviceID, sensor_record->value, sensor_record->timestamp, sensor_type);
+    sprintf(buf, "{\"device_id\": \"%s\", \"value\": %f, \"timestamp\": %d, \"sensor_type\": \"%s\"}", deviceID, sensor_record->value, sensor_record->timestamp, sensor_type);
 
     char topic[100] = "sensor_record";
     esp_mqtt_client_publish(client, topic, buf, 0, 0, 0);
@@ -154,7 +154,7 @@ void mqtt_send_device_wake_up_reason_alert(esp_mqtt_client_handle_t client, int 
 {
     char buf[200];
     ESP_LOGI(TAG, "Wake up reason: %s", wake_up_reason);
-    sprintf(buf, "{\"device_id\": \"%s\", \"timestamp\": \"%d\", \"reason\": \"%s\"}", deviceID, timestamp, wake_up_reason);
+    sprintf(buf, "{\"device_id\": \"%s\", \"timestamp\": %d, \"reason\": \"%s\"}", deviceID, timestamp, wake_up_reason);
 
     esp_mqtt_client_publish(client, "device_wake_up_log", buf, 0, 0, 0);
 
@@ -164,7 +164,7 @@ void mqtt_send_device_wake_up_reason_alert(esp_mqtt_client_handle_t client, int 
 void mqtt_send_error_reading_sensor(esp_mqtt_client_handle_t client, int timestamp, char* deviceID, char* sensor_type)
 {
     char buf[200];
-    sprintf(buf, "{\"device_id\": \"%s\", \"timestamp\": \"%d\", \"sensor_type\": \"%s\"}", deviceID, timestamp, sensor_type);
+    sprintf(buf, "{\"device_id\": \"%s\", \"timestamp\": %d, \"sensor_type\": \"%s\"}", deviceID, timestamp, sensor_type);
 
     esp_mqtt_client_publish(client, "error_reading_sensor", buf, 0, 1, 0);
 

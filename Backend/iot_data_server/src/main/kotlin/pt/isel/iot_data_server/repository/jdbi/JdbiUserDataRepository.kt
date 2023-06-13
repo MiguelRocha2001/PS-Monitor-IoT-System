@@ -253,6 +253,19 @@ class JdbiUserDataRepository(
             .execute()
     }
 
+    override fun hasPassword(userId: String): Boolean {
+        return handle.createQuery(
+            """
+            select count(*) 
+            from password 
+            where user_id = :user_id
+            """
+        )
+            .bind("user_id", userId)
+            .mapTo<Int>()
+            .single() > 0
+    }
+
     override fun getPasswordAndSalt(userId: String): Pair<String, String> {
         return handle.createQuery(
             """

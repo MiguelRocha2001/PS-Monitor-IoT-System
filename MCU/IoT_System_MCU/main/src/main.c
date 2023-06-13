@@ -20,8 +20,6 @@
 
 const static char* TAG = "MAIN";
 
-#define GPIO_RESET_PIN (CONFIG_GPIO_RESET_PIN)
-
 const static long LONG_SLEEP_TIME = 6; // 6 seconds
 
 RTC_DATA_ATTR struct sensor_records_struct sensor_records;
@@ -122,12 +120,12 @@ int was_reading_from_sensor(char* action, char* sensor)
 {
     if (strcmp(action, "reading_initial_ph") == 0) 
     {
-        strcpy(sensor, "ph");
+        strcpy(sensor, "initial-ph");
         return 1;
     }
     if (strcmp(action, "reading_final_ph") == 0) 
     {
-        strcpy(sensor, "tds");
+        strcpy(sensor, "final-ph");
         return 1;
     }
     if (strcmp(action, "reading_temperature") == 0) 
@@ -181,7 +179,7 @@ int handle_wake_up_reason(char* deviceID, esp_mqtt_client_handle_t client)
     {
         ESP_LOGE(TAG, "Reset reason: power-on");
         n_went_to_deep_sleep = 0; // reset sleep counter
-        mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "power-on");
+        mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "power on");
         return 1;
     }
     if (reset_reason & ESP_RST_SW) 

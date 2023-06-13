@@ -19,7 +19,7 @@ services:
     env_file:
       - env/server
     volumes:
-      - ./src/main/kotlin/pt/isel/iot_data_server/utils:/app/src/main/kotlin/pt/isel/iot_data_server/utils
+      - ./email_service_config:/app/email_service_config
   influxdb:
     image: influxdb:2.7.1-alpine
     container_name: influxdb

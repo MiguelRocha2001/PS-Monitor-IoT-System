@@ -27,6 +27,7 @@ interface UserDataRepository {
     @Deprecated("Not used anymore")
     fun getVerificationCode(email: String): String?
     fun storePasswordAndSalt(userId: String, value: String, salt: String)
+    fun hasPassword(userId: String): Boolean
     fun getPasswordAndSalt(userId: String): Pair<String, String>
     fun deleteAllPasswords(role: Role? = null)
     fun deleteUserPassword(userId: String)

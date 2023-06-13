@@ -11,7 +11,6 @@ import javax.mail.internet.MimeMessage
 
 @Component
 class EmailManager {
-
     fun sendEmail(to: String, subject: Map<String, String>, body: Map<String, String>, templateName: String) {
 
         val sender = System.getenv("SENDER_EMAIL")
@@ -59,7 +58,7 @@ class EmailManager {
 
     private fun createMessageFromTemplate(templateName : String, subjectDynamicContent: Map<String, String>, bodyDynamicContent: Map<String, String>):Pair<String,String> {
         val rootPath = System.getProperty("user.dir")
-        val templatesJson = String(Files.readAllBytes(Paths.get("$rootPath/src/main/kotlin/pt/isel/iot_data_server/utils/templateEmailMessages.json")))//fixme isto está hardcoded
+        val templatesJson = String(Files.readAllBytes(Paths.get("$rootPath/email_service_config/templateEmailMessages.json")))
         val templates = JSONObject(templatesJson)
 
         // Determine which template to use based on the conditions

@@ -63,7 +63,6 @@ class DeviceSensorDataMqttTopicHandler(
     }
 
     private fun sendEmailAlert(sensorRecord: SensorRecord, device: Device, lowerLimit: Double?, upperLimit: Double? = null) {
-
         val bodyMessage = mapOf(
             "device_id" to device.deviceId,
             "sensor_type" to sensorRecord.type,

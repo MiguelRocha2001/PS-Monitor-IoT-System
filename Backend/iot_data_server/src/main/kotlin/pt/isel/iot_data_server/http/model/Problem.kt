@@ -118,6 +118,12 @@ data class Problem(
             "Sensor Not Found",
             "There is still not any record found for this sensor",
         )
+
+        val createdWithGoogleAuth = Problem(
+            URI("https://github.com/isel-leic-daw/2022-daw-leic52d-2-22-daw-leic52d-g11/docs/problem/created-with-google-auth"),
+            "Created with Google Auth",
+            "This email is liked to a Google Account, please login with Google"
+        )
     }
 }
 
@@ -134,4 +140,5 @@ val problems = mapOf(
     "InvalidPassword" to Problem.response(400, Problem.invalidPassword),
     "DeviceNotBelongsToUser" to Problem.response(403, Problem.actionNotPermitted),
     "SensorNotFound" to Problem.response(404, Problem.sensorNotFound),
+    "CreatedWithGoogleAuth" to Problem.response(409, Problem.createdWithGoogleAuth),
 )
