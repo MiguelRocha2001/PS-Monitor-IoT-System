@@ -18,6 +18,8 @@ services:
       - influxdb
     env_file:
       - env/server
+    volumes:
+      - ./src/main/kotlin/pt/isel/iot_data_server/utils:/app/src/main/kotlin/pt/isel/iot_data_server/utils
   influxdb:
     image: influxdb:2.7.1-alpine
     container_name: influxdb

@@ -39,7 +39,7 @@ class EmailManager {
 
     private fun prepareProperties(): Properties {
         val props = Properties()
-        props["mail.smtp.host"] = "smtp.gmail.com" // replace with your email provider's SMTP host
+        props["mail.smtp.host"] = "smtp.gmail.com"
         props["mail.smtp.port"] = "587" // replace with your email provider's SMTP port
         props["mail.smtp.auth"] = "true" // enable SMTP authentication
         props["mail.smtp.starttls.enable"] = "true" // enable TLS encryption
