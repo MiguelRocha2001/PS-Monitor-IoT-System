@@ -13,7 +13,6 @@
 #include "driver/gpio.h"
 #include "driver/adc.h"
 #include "esp_adc_cal.h"
-#include "time_util.h"
 #include "sensor/sensor_record.h"
 #include "adc_reader.h"
 #include <esp_log.h>
@@ -47,11 +46,8 @@ int read_initial_ph_record(struct sensor_record *sensor_record)
 
     float ph = adc_reading * m + b;
 
-    int timestamp = getNowTimestamp();
-
     // sensor_record -> sensor_name = "ph";
     sensor_record -> value = ph;
-    sensor_record -> timestamp = timestamp;
 
     return 0;
 }
@@ -64,11 +60,8 @@ int read_final_ph_record(struct sensor_record *sensor_record)
 
     float ph = adc_reading * m + b;
 
-    int timestamp = getNowTimestamp();
-
     // sensor_record -> sensor_name = "ph";
     sensor_record -> value = ph;
-    sensor_record -> timestamp = timestamp;
 
     return 0;
 }

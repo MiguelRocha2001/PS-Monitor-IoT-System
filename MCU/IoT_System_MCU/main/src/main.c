@@ -21,18 +21,17 @@
 const static char* TAG = "MAIN";
 
 #define GPIO_RESET_PIN (CONFIG_GPIO_RESET_PIN)
-#define SENSOR_POWER_PIN GPIO_NUM_15
-#define sensor_stabilization_time 1000 * 5 // 1 minute
 
 const static long LONG_SLEEP_TIME = 6; // 6 seconds
 
 RTC_DATA_ATTR struct sensor_records_struct sensor_records;
-RTC_DATA_ATTR int readings_started;
+RTC_DATA_ATTR int n_went_to_deep_sleep = 0; // used to fake timestamps
 RTC_DATA_ATTR char action[100];
 RTC_DATA_ATTR int time_to_wake_up = 0;
 
 void continue_long_sleep() {
     int current_timestamp = getNowTimestamp();
+    n_went_to_deep_sleep += 1;
     if(current_timestamp < time_to_wake_up) 
     {
         ESP_LOGE(TAG, "Going to long sleep...");
@@ -48,40 +47,21 @@ void continue_long_sleep() {
 void send_sensor_records(esp_mqtt_client_handle_t client, char* deviceID) {
     strcpy(action, "sending_sensor_records");
     ESP_LOGE(TAG, "Sending sensor records...");
-    for (int i = 0; i < MAX_SENSOR_RECORDS; i++) {
-        mqtt_send_sensor_record(client, &sensor_records.initial_ph_records[i], deviceID, "initial-ph");
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-        mqtt_send_sensor_record(client, &sensor_records.final_ph_records[i], deviceID, "final-ph");
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-        mqtt_send_sensor_record(client, &sensor_records.temperature_records[i], deviceID, "temperature");
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-        mqtt_send_sensor_record(client, &sensor_records.humidity_records[i], deviceID, "humidity");
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-        mqtt_send_sensor_record(client, &sensor_records.humidity_records[i], deviceID, "humidity");
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-        mqtt_send_sensor_record(client, &sensor_records.water_flow_records[i], deviceID, "water-flow");
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-        // TODO: send water flow and humidity
-    }
-}
 
-void erase_sensor_records() {
-    strcpy(action, "erasing_sensor_records");
-    ESP_LOGE(TAG, "Erasing sensor records...");
-    for (int i = 0; i < MAX_SENSOR_RECORDS; i++) 
-    {
-        sensor_records.initial_ph_records[i].value = 0;
-        sensor_records.initial_ph_records[i].timestamp = 0;
-        sensor_records.final_ph_records[i].value = 0;
-        sensor_records.final_ph_records[i].timestamp = 0;
-        sensor_records.temperature_records[i].value = 0;
-        sensor_records.temperature_records[i].timestamp = 0;
-        sensor_records.humidity_records[i].value = 0;
-        sensor_records.humidity_records[i].timestamp = 0;
-        sensor_records.water_flow_records[i].value = 0;
-        sensor_records.water_flow_records[i].timestamp = 0;
-    }
-    sensor_records.index = 0; // resets the index
+    mqtt_send_sensor_record(client, &sensor_records.initial_ph_record, deviceID, "initial-ph");
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+    mqtt_send_sensor_record(client, &sensor_records.final_ph_record, deviceID, "final-ph");
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+    mqtt_send_sensor_record(client, &sensor_records.temperature_record, deviceID, "temperature");
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+    mqtt_send_sensor_record(client, &sensor_records.humidity_record, deviceID, "humidity");
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+    mqtt_send_sensor_record(client, &sensor_records.water_flow_record, deviceID, "water-flow");
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
 }
 
 void setup_wifi(void) {
@@ -102,15 +82,18 @@ void setup_wifi(void) {
     ESP_LOGE(TAG, "Finished setting up WiFi");
 }
 
+void fake_timestamps(struct sensor_records_struct *sensor_records) {
+    ESP_LOGE(TAG, "Faking timestamps...");
+    int n_seconds_in_day = 24 * 60 * 60;
+    sensor_records -> initial_ph_record.timestamp -= n_went_to_deep_sleep * n_seconds_in_day;
+    sensor_records -> final_ph_record.timestamp -= n_went_to_deep_sleep * n_seconds_in_day;
+    sensor_records -> temperature_record.timestamp -= n_went_to_deep_sleep * n_seconds_in_day;
+    sensor_records -> humidity_record.timestamp -= n_went_to_deep_sleep * n_seconds_in_day;
+    sensor_records -> water_flow_record.timestamp -= n_went_to_deep_sleep * n_seconds_in_day;
+}
+
 void compute_sensors(char* deviceID, esp_mqtt_client_handle_t client) 
 {
-    ESP_LOGE(TAG, "Powering sensors...");
-    gpio_set_direction(SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
-    gpio_set_level(SENSOR_POWER_PIN, 1); // power on sensors
-
-    ESP_LOGE(TAG, "Waiting for sensor stability...");
-    vTaskDelay(pdMS_TO_TICKS(sensor_stabilization_time));
-
     strcpy(action, "checking_water_leak");
     int leakage = read_water_leak_record(); // TODO: chenge name
     if(leakage == 1) 
@@ -124,30 +107,15 @@ void compute_sensors(char* deviceID, esp_mqtt_client_handle_t client)
     }
     
     read_sensor_records(&sensor_records, &action);
-
-    gpio_set_level(SENSOR_POWER_PIN, 0); // power off sensors
+    fake_timestamps(&sensor_records);
 
     ESP_LOGE(TAG, "Sensors reading is complete. Sending records...");
     send_sensor_records(client, deviceID);
-    erase_sensor_records();
     
     int new_time_to_wake_up = getNowTimestamp() + LONG_SLEEP_TIME;
     ESP_LOGE(TAG, "Setting new time to wake up: %d", new_time_to_wake_up);
     time_to_wake_up = new_time_to_wake_up; // sets new time to wake up
     continue_long_sleep();
-}
-
-void printDeepSleepWokeCause(esp_sleep_wakeup_cause_t wakeup_reason) 
-{
-    switch(wakeup_reason)
-    {
-        case ESP_SLEEP_WAKEUP_EXT0 : ESP_LOGE(TAG, "Wakeup caused by external signal using RTC_IO"); break;
-        case ESP_SLEEP_WAKEUP_EXT1 : ESP_LOGE(TAG, "Wakeup caused by external signal using RTC_CNTL"); break;
-        case ESP_SLEEP_WAKEUP_TIMER : ESP_LOGE(TAG, "Wakeup caused by timer"); break;
-        case ESP_SLEEP_WAKEUP_TOUCHPAD : ESP_LOGE(TAG, "Wakeup caused by touchpad"); break;
-        case ESP_SLEEP_WAKEUP_ULP : ESP_LOGE(TAG, "Wakeup caused by ULP program"); break;
-        default : ESP_LOGE(TAG, "Wakeup was not caused by deep sleep: %d", wakeup_reason); break;
-    }
 }
 
 int was_reading_from_sensor(char* action, char* sensor) 
@@ -186,7 +154,7 @@ int was_reading_from_sensor(char* action, char* sensor)
 }
 
 /**
- * Checks the wake up reason. Returns 0 if it is the timer, 1 otherwise.
+ * Checks the wake up reason. Returns 0 if it is the timer, 1 if is power on and 2 otherwise.
  * If it is not the timer, it sends an alert to the broker:
  * - Power up;
  * - Software reset;
@@ -207,19 +175,20 @@ int handle_wake_up_reason(char* deviceID, esp_mqtt_client_handle_t client)
     {
         ESP_LOGE(TAG, "Reset reason: unknown");
         mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "unknown");
-        return 1;
+        return 2;
     }
     if (reset_reason & ESP_RST_POWERON) 
     {
         ESP_LOGE(TAG, "Reset reason: power-on");
+        n_went_to_deep_sleep = 0; // reset sleep counter
         mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "power-on");
-        return 0;
+        return 1;
     }
     if (reset_reason & ESP_RST_SW) 
     {
         ESP_LOGE(TAG, "Reset reason: software");
         mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "software");
-        return 1;
+        return 2;
     }
     if (reset_reason & ESP_RST_PANIC) 
     {
@@ -246,7 +215,8 @@ int handle_wake_up_reason(char* deviceID, esp_mqtt_client_handle_t client)
     }
     if (sleep_wakeup_reason == ESP_SLEEP_WAKEUP_TIMER)
     {
-        ESP_LOGE(TAG, "JHASBDBA");
+        ESP_LOGE(TAG, "Wake up reason: timer");
+        mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "Wake up by timer");
         return 0;
     }
     /*
@@ -257,7 +227,7 @@ int handle_wake_up_reason(char* deviceID, esp_mqtt_client_handle_t client)
         return 1;
     }
     */
-    return 1; // Should not reach here
+    return 2; // Should not reach here
 }
 
 /**
@@ -308,9 +278,8 @@ void app_main(void)
     get_device_id(&deviceID);
 
     int res = handle_wake_up_reason(deviceID, client);
-    if (res == 0) // timer wake up
+    if (res == 0 || res == 1) // timer wake up or power on
     {
-        mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "Wake up by timer");
         compute_sensors(deviceID, client);
     }
     else // other wake up reason

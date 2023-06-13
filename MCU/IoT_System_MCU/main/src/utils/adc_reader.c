@@ -73,7 +73,6 @@ static void print_char_val_type(esp_adc_cal_value_t val_type)
 
 int read_adc(adc_channel_t channel)
 {
-    ESP_LOGE(TAG, "Reading from ADC");
     //Check if Two Point or Vref are burned into eFuse
     // check_efuse();
 

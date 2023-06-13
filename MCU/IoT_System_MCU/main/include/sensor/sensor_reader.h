@@ -10,14 +10,14 @@
 #define WATER_FLOW_SENSOR_ERROR -1
 #define HUMIDITY_SENSOR_ERROR -1
 
-#define MAX_SENSOR_RECORDS 1
+#define MAX_SENSOR_RECORDS 3
 
 typedef struct sensor_records_struct {
-    struct sensor_record initial_ph_records[MAX_SENSOR_RECORDS];
-    struct sensor_record final_ph_records[MAX_SENSOR_RECORDS];
-    struct sensor_record temperature_records[MAX_SENSOR_RECORDS];
-    struct sensor_record water_flow_records[MAX_SENSOR_RECORDS];
-    struct sensor_record humidity_records[MAX_SENSOR_RECORDS];
+    struct sensor_record initial_ph_record;
+    struct sensor_record final_ph_record;
+    struct sensor_record temperature_record;
+    struct sensor_record water_flow_record;
+    struct sensor_record humidity_record;
     int index;
 } sensor_records_struct;
 
