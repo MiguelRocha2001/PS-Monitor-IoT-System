@@ -11,14 +11,13 @@
 #include "driver/gpio.h"
 #include "sdkconfig.h"
 #include "time_util.h"
+#include <math.h>
+#include <esp_system.h>
+#include "nvs_util.h"
 
 const static char* TAG = "sensor_readings";
 
 #define BETWEEN_READINGS 2000 // 2 seconds
-
-#define PH_SENSOR_STABILIZATION_TIME 1000 * 5 // 1 minute
-#define DHT11_STABILIZATION_TIME 1000 * 5 // 1 minute
-#define WATER_FLOW_STABILIZATION_TIME 0 * 5 // 1 minute
 
 #define DHT11_SENSOR_POWER_PIN GPIO_NUM_15
 #define PH_SENSOR_POWER_PIN GPIO_NUM_13
@@ -86,6 +85,8 @@ int read_sensor_records(sensor_records_struct *sensor_records, char* action)
     gpio_set_direction(PH_SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
     gpio_set_level(PH_SENSOR_POWER_PIN, 1); // power on sensors
     ESP_LOGE(TAG, "pH sensor powered on. Waiting for stabilization...");
+    int PH_SENSOR_STABILIZATION_TIME = 0;
+    ESP_ERROR_CHECK(get_saved_ph_calibration_timing(&PH_SENSOR_STABILIZATION_TIME));
     vTaskDelay(pdMS_TO_TICKS(PH_SENSOR_STABILIZATION_TIME));
 
     for(int i = 0; i < MAX_SENSOR_RECORDS; i++) 
@@ -101,7 +102,7 @@ int read_sensor_records(sensor_records_struct *sensor_records, char* action)
     gpio_set_direction(DHT11_SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
     gpio_set_level(DHT11_SENSOR_POWER_PIN, 1); // power on sensors
     ESP_LOGE(TAG, "DHT11 sensor powered on. Waiting for stabilization...");
-    vTaskDelay(pdMS_TO_TICKS(DHT11_STABILIZATION_TIME));
+    vTaskDelay(pdMS_TO_TICKS(1)); // FIXME: DHT11 stabilization time
 
     for(int i = 0; i < MAX_SENSOR_RECORDS; i++) 
     {
@@ -116,7 +117,7 @@ int read_sensor_records(sensor_records_struct *sensor_records, char* action)
     gpio_set_direction(WATER_FLOW_SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
     gpio_set_level(WATER_FLOW_SENSOR_POWER_PIN, 1); // power on sensors
     ESP_LOGE(TAG, "Water flow sensor powered on. Waiting for stabilization...");
-    vTaskDelay(pdMS_TO_TICKS(WATER_FLOW_STABILIZATION_TIME));
+    vTaskDelay(pdMS_TO_TICKS(1)); // FIXME: Water flow sensor stabilization time
 
     for(int i = 0; i < MAX_SENSOR_RECORDS; i++) 
     {
@@ -136,4 +137,74 @@ int read_sensor_records(sensor_records_struct *sensor_records, char* action)
 
 int sensors_reading_is_complete(sensor_records_struct *sensor_records) {
     return sensor_records->index == MAX_SENSOR_RECORDS;
+}
+
+// Function to calculate standard deviation
+double calculate_standard_deviation(uint32_t* data, size_t data_length) {
+    double mean = 0.0;
+    double squared_deviation_sum = 0.0;
+
+    // Calculate mean
+    for (size_t i = 0; i < data_length; i++) {
+        mean += data[i];
+    }
+    mean /= data_length;
+
+    // Calculate squared deviations
+    for (size_t i = 0; i < data_length; i++) {
+        double deviation = data[i] - mean;
+        squared_deviation_sum += deviation * deviation;
+    }
+
+    // Calculate variance and standard deviation
+    double variance = squared_deviation_sum / data_length;
+    double standard_deviation = sqrt(variance);
+
+    return standard_deviation;
+}
+
+void determine_ph_sensors_calibration_time()
+{
+ESP_LOGE(TAG, "Determining sensor calibration timings");
+
+    gpio_set_direction(PH_SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
+    gpio_set_level(PH_SENSOR_POWER_PIN, 1); // power on sensors
+    ESP_LOGE(TAG, "pH sensor powered on. Waiting for stabilization...");
+
+    struct sensor_record sensor_record[10];
+
+    int initial_timestamp = getNowTimestamp();
+    double standard_deviation = -1;
+    while (standard_deviation != -1 && standard_deviation <= 2)
+    {
+        for(int i = 0; i < 10; i++)
+        {
+            read_initial_ph_record(&sensor_record[i]);
+            ESP_LOGE(TAG, "Value: %d", sensor_record[i].value);
+            vTaskDelay(pdMS_TO_TICKS(1000));
+        }
+
+        uint32_t data[10];
+        for(int i = 0; i < 10; i++)
+        {
+            data[i] = sensor_record[i].value;
+        }
+
+        double standard_deviation = calculate_standard_deviation(data, 10);
+        ESP_LOGE(TAG, "Standard deviation: %f", standard_deviation);
+    }
+
+    int final_timestamp = getNowTimestamp();
+    int stabilization_time = 1000 * (final_timestamp - initial_timestamp);
+    ESP_ERROR_CHECK(set_saved_ph_calibration_timing(stabilization_time));
+
+    gpio_set_level(PH_SENSOR_POWER_PIN, 0); // power off sensors
+    ESP_LOGE(TAG, "pH sensor powered off.");
+}
+
+void determine_sensor_calibration_timings()
+{
+    determine_ph_sensors_calibration_time();
+
+    // TODO: determine other sensors calibration timings
 }

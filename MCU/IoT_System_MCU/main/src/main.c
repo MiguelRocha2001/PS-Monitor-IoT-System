@@ -26,6 +26,9 @@ RTC_DATA_ATTR struct sensor_records_struct sensor_records; // TODO: maybe not ne
 RTC_DATA_ATTR int n_went_to_deep_sleep = 0; // used to fake timestamps
 RTC_DATA_ATTR char action[100];
 RTC_DATA_ATTR int time_to_wake_up = 0; // TODO: maybe not necessary anymore
+RTC_DATA_ATTR int PH_SENSOR_STABILIZATION_TIME;
+RTC_DATA_ATTR int DHT11_STABILIZATION_TIME;
+RTC_DATA_ATTR int WATER_FLOW_STABILIZATION_TIME;
 esp_mqtt_client_handle_t client;
 
 void continue_long_sleep() {
@@ -196,6 +199,9 @@ int handle_wake_up_reason(char* deviceID)
         ESP_LOGE(TAG, "Reset reason: power-on");
         n_went_to_deep_sleep = 0; // reset sleep counter
         mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "power on");
+
+        determine_sensor_calibration_timings(); // to set the calibration timings
+
         codeToReturn = 1;
     }
     if (reset_reason & ESP_RST_SW) 
@@ -276,7 +282,6 @@ void check_if_woke_up_to_reset()
 }
 
 // IMPORTANT -> run with $ idf.py monitor or $ idf.py -p COM5 flash monitor 
-
 /**
  * Program entry point.
  * It will read the pH value every 0.3 seconds and store it in RTC memory.
@@ -294,7 +299,7 @@ void app_main(void)
     get_device_id(&deviceID);
 
     int res = handle_wake_up_reason(deviceID);
-    if (res == 0 || res == 1) // timerout or power on
+    if (res == 0 || res == 1) // timeout
     {
         compute_sensors(deviceID);
     }
