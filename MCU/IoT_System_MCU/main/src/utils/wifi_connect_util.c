@@ -55,6 +55,8 @@ static void event_handler(void* arg, esp_event_base_t event_base,
 }
 
 void terminate_wifi() {
+    ESP_LOGI(TAG, "terminating wifi...");
+
     ESP_ERROR_CHECK(esp_wifi_disconnect());
     ESP_ERROR_CHECK(esp_wifi_stop());
 
@@ -71,8 +73,7 @@ void terminate_wifi() {
     esp_netif_destroy(m_esp_netif_sta);
     ESP_ERROR_CHECK(esp_event_loop_delete_default());
 
-
-
+    ESP_LOGI(TAG, "wifi terminated.");
 }
 
 bool wifi_init_sta(wifi_config_t wifiConfig) {

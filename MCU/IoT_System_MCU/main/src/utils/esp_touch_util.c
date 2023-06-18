@@ -64,7 +64,7 @@ static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_
         memcpy(ssid, evt->ssid, sizeof(evt->ssid));
         memcpy(password, evt->password, sizeof(evt->password));
         ESP_LOGI(TAG, "SSID: %s", ssid);
-        ESP_LOGI(TAG, "PASSWORD: %s", password);
+        ESP_LOGI(TAG, "PASSWORD: %s", password); // TODO: remove later
 
         if (evt->type == SC_TYPE_ESPTOUCH_V2) { // alows for data to be sent from the app to the device
             ESP_ERROR_CHECK( esp_smartconfig_get_rvd_data(rvd_data, sizeof(rvd_data)) );

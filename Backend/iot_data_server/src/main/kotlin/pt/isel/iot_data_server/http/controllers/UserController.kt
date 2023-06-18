@@ -177,7 +177,7 @@ class UserController(
             mediaType = "application/problem+json",
             schema = Schema(implementation = Problem::class))])
     @GetMapping(Uris.GoogleAuth.GOOGLE_AUTH)
-    fun loginWithGoogleAuth(
+    fun loginWithGoogleAuth( // TODO: change name to authWithGoogle
         @AuthenticationPrincipal oidcUser: OidcUser?,
         response: HttpServletResponse
     ) {
@@ -223,6 +223,8 @@ class UserController(
     fun logout(
         response: HttpServletResponse
     ): ResponseEntity<Unit> {
+        // TODO: delete token from database
+
         val cookie = buildCookie(0, null)
         response.addCookie(cookie)
 

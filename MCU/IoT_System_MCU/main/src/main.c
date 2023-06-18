@@ -22,10 +22,11 @@ const static char* TAG = "MAIN";
 
 const static long LONG_SLEEP_TIME = 6; // 6 seconds
 
-RTC_DATA_ATTR struct sensor_records_struct sensor_records;
+RTC_DATA_ATTR struct sensor_records_struct sensor_records; // TODO: maybe not necessary anymore
 RTC_DATA_ATTR int n_went_to_deep_sleep = 0; // used to fake timestamps
 RTC_DATA_ATTR char action[100];
-RTC_DATA_ATTR int time_to_wake_up = 0;
+RTC_DATA_ATTR int time_to_wake_up = 0; // TODO: maybe not necessary anymore
+esp_mqtt_client_handle_t client;
 
 void continue_long_sleep() {
     int current_timestamp = getNowTimestamp();
@@ -80,6 +81,12 @@ void setup_wifi(void) {
     ESP_LOGE(TAG, "Finished setting up WiFi");
 }
 
+void setup_wifi_and_mqtt() {
+    setup_wifi(); // connects to wifi
+    strcpy(action, "seting_up_mqtt");
+    client = setup_mqtt();
+}
+
 void fake_timestamps(struct sensor_records_struct *sensor_records) {
     ESP_LOGE(TAG, "Faking timestamps...");
     int n_seconds_in_day = 24 * 60 * 60;
@@ -90,25 +97,31 @@ void fake_timestamps(struct sensor_records_struct *sensor_records) {
     sensor_records -> water_flow_record.timestamp -= n_went_to_deep_sleep * n_seconds_in_day;
 }
 
-void compute_sensors(char* deviceID, esp_mqtt_client_handle_t client) 
+void compute_sensors(char* deviceID) 
 {
     strcpy(action, "checking_water_leak");
-    int leakage = read_water_leak_record(); // TODO: chenge name
+    int leakage = read_water_leak_record(); // TODO: change name
+    
+    read_sensor_records(&sensor_records, &action);
+    fake_timestamps(&sensor_records);
+
+    setup_wifi(); // connects to wifi
+    mqtt_app_start(client);
+    
+    ESP_LOGE(TAG, "Sensors reading is complete. Sending records...");
+    send_sensor_records(client, deviceID);
     if(leakage == 1) 
     {
         ESP_LOGE(TAG, "Water leakage detected. Sending message...");
-        mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "water-leak"); // send to water leak topic (create one)
+        mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "water-leak"); // TODO: send to water leak topic (create one)
     }
     else 
     {
         ESP_LOGE(TAG, "No water leakage detected.");
     }
-    
-    read_sensor_records(&sensor_records, &action);
-    fake_timestamps(&sensor_records);
 
-    ESP_LOGE(TAG, "Sensors reading is complete. Sending records...");
-    send_sensor_records(client, deviceID);
+    mqtt_app_stop(client);
+    terminate_wifi(); // disconnects from wifi
     
     int new_time_to_wake_up = getNowTimestamp() + LONG_SLEEP_TIME;
     ESP_LOGE(TAG, "Setting new time to wake up: %d", new_time_to_wake_up);
@@ -160,33 +173,36 @@ int was_reading_from_sensor(char* action, char* sensor)
  * - Brownout;
  * - Unknown.
 */
-int handle_wake_up_reason(char* deviceID, esp_mqtt_client_handle_t client) 
+int handle_wake_up_reason(char* deviceID) 
 {
+    setup_wifi_and_mqtt();
+
     ESP_LOGE(TAG, "Checking wake up reason...");
 
     // Read the Reset Reason Register
     uint32_t reset_reason = esp_reset_reason();
     esp_sleep_wakeup_cause_t sleep_wakeup_reason = esp_sleep_get_wakeup_cause();
 
+    int codeToReturn = 0;
     // Check the reset reason flags
     if (reset_reason & ESP_RST_UNKNOWN) 
     {
         ESP_LOGE(TAG, "Reset reason: unknown");
         mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "unknown");
-        return 2;
+        codeToReturn = 2;
     }
     if (reset_reason & ESP_RST_POWERON) 
     {
         ESP_LOGE(TAG, "Reset reason: power-on");
         n_went_to_deep_sleep = 0; // reset sleep counter
         mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "power on");
-        return 1;
+        codeToReturn = 1;
     }
     if (reset_reason & ESP_RST_SW) 
     {
         ESP_LOGE(TAG, "Reset reason: software");
         mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "software");
-        return 2;
+        codeToReturn = 2;
     }
     if (reset_reason & ESP_RST_PANIC) 
     {
@@ -210,12 +226,13 @@ int handle_wake_up_reason(char* deviceID, esp_mqtt_client_handle_t client)
                 ESP_LOGE(TAG, "Error setting up wifi or mqtt. Not sending message to broker");
             }
         }
+        codeToReturn = 2;
     }
     if (sleep_wakeup_reason == ESP_SLEEP_WAKEUP_TIMER)
     {
         ESP_LOGE(TAG, "Wake up reason: timer");
         mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "Wake up by timer");
-        return 0;
+        codeToReturn = 0;
     }
     /*
     if (reset_reason & ESP_RST_BROWNOUT) 
@@ -225,7 +242,11 @@ int handle_wake_up_reason(char* deviceID, esp_mqtt_client_handle_t client)
         return 1;
     }
     */
-    return 2; // Should not reach here
+
+    mqtt_app_stop(client);
+    terminate_wifi(); // disconnects from wifi
+
+    return codeToReturn;
 }
 
 /**
@@ -241,6 +262,7 @@ void check_if_woke_up_to_reset()
     // Check the reset reason flags
     if (sleep_wakeup_reason == ESP_SLEEP_WAKEUP_EXT0) 
     {
+        // TODO: maybe send log to broker
         ESP_LOGE(TAG, "Reset reason: external signal using RTC_IO");
         ESP_LOGE(TAG, "Resetting WiFi and device ID...");
         delete_saved_wifi();
@@ -268,17 +290,13 @@ void app_main(void)
 
     check_if_woke_up_to_reset();
 
-    setup_wifi();
-    strcpy(action, "seting_up_mqtt");
-    esp_mqtt_client_handle_t client = setup_mqtt();
-
     char* deviceID;
     get_device_id(&deviceID);
 
-    int res = handle_wake_up_reason(deviceID, client);
-    if (res == 0 || res == 1) // timer wake up or power on
+    int res = handle_wake_up_reason(deviceID);
+    if (res == 0 || res == 1) // timerout or power on
     {
-        compute_sensors(deviceID, client);
+        compute_sensors(deviceID);
     }
     else // other wake up reason
     {

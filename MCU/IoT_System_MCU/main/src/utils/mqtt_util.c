@@ -26,7 +26,7 @@
 
 static const char *TAG = "MQTT_MODULE";
 
-static const char *CONFIG_BROKER_URL = "mqtt://2.tcp.eu.ngrok.io:18891/";
+static const char *CONFIG_BROKER_URL = "mqtt://2.tcp.eu.ngrok.io:18560/";
 
 static void log_error_if_nonzero(const char *message, int error_code)
 {
@@ -88,7 +88,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
     }
 }
 
-esp_mqtt_client_handle_t mqtt_app_start(void)
+esp_mqtt_client_handle_t mqtt_app_init_and_start(void)
 {
     esp_mqtt_client_config_t mqtt_cfg = {
         .broker.address.uri = CONFIG_BROKER_URL,
@@ -98,8 +98,16 @@ esp_mqtt_client_handle_t mqtt_app_start(void)
     /* The last argument may be used to pass data to the event handler, in this example mqtt_event_handler */
     esp_mqtt_client_register_event(client, ESP_EVENT_ANY_ID, mqtt_event_handler, NULL);
     ESP_ERROR_CHECK(esp_mqtt_client_start(client));
-
     return client;
+}
+
+void mqtt_app_stop(esp_mqtt_client_handle_t client)
+{
+    ESP_ERROR_CHECK(esp_mqtt_client_stop(client));
+}
+
+void mqtt_app_start(esp_mqtt_client_handle_t client) {
+    ESP_ERROR_CHECK(esp_mqtt_client_start(client));
 }
 
 esp_mqtt_client_handle_t setup_mqtt()
@@ -123,7 +131,7 @@ esp_mqtt_client_handle_t setup_mqtt()
     // ESP_ERROR_CHECK(esp_netif_init());
     // ESP_ERROR_CHECK(esp_event_loop_create_default());
 
-    esp_mqtt_client_handle_t client = mqtt_app_start();
+    esp_mqtt_client_handle_t client = mqtt_app_init_and_start();
     return client;
 }
 

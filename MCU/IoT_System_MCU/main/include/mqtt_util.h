@@ -1,5 +1,7 @@
 
 esp_mqtt_client_handle_t setup_mqtt();
+void mqtt_app_stop(esp_mqtt_client_handle_t client);
+void mqtt_app_start(esp_mqtt_client_handle_t client);
 
 void mqtt_send_sensor_record(esp_mqtt_client_handle_t client, struct sensor_record1 *sensor_record, char* deviceID, char* topic);
 
