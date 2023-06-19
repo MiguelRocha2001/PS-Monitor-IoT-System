@@ -9,7 +9,7 @@ const static char* TAG = "WATER_FLOW_READER_FAKE";
 
 int read_water_flow_record(struct sensor_record *sensor_record)
 {
-    ESP_LOGE(TAG, "Reading water flow...");
+    ESP_LOGI(TAG, "Reading water flow...");
     float water_flow = (float) (int) generate_random_float();
     // int timestamp = generate_random_int();
     int timestamp = getNowTimestamp();

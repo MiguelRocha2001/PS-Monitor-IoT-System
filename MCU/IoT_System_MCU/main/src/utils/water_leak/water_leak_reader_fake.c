@@ -9,6 +9,6 @@ const static char* TAG = "WATER_LEAK_READER_FAKE";
 
 int read_water_leak_record()
 {
-    ESP_LOGE(TAG, "Reading water leak...");
+    ESP_LOGI(TAG, "Reading water leak...");
     return 0; // no water leak
 }

@@ -29,16 +29,16 @@ int read_water_leak_record()
 {
     gpio_set_direction(WATER_SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
     gpio_set_level(WATER_SENSOR_POWER_PIN, 1); // power on sensors
-    ESP_LOGE(TAG, "Water sensor powered on. Waiting for stabilization...");
+    ESP_LOGI(TAG, "Water sensor powered on. Waiting for stabilization...");
     vTaskDelay(pdMS_TO_TICKS(WATER_SENSOR_STABILIZATION_TIME));
 
-    ESP_LOGE(TAG, "Reading water leak..."); 
+    ESP_LOGI(TAG, "Reading water leak..."); 
 
     int adc_reading = read_adc(channel);
     int Vout = adc_reading * 2500 / 8191; // it's not necessary to check Voltage
 
     gpio_set_level(WATER_SENSOR_POWER_PIN, 0); // power off sensors
-    ESP_LOGE(TAG, "Water sensor powered off.");
+    ESP_LOGI(TAG, "Water sensor powered off.");
     
     return Vout > 500; // just check if adc is greater than 1638
 }

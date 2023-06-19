@@ -40,7 +40,7 @@ const double b = 4.0 - 7955 * m;
 
 int read_initial_ph_record(struct sensor_record *sensor_record)
 {
-    ESP_LOGE(TAG, "Reading initial PH");
+    ESP_LOGI(TAG, "Reading initial PH");
   
     int adc_reading = read_adc(initial_ph_channel);
 
@@ -54,7 +54,7 @@ int read_initial_ph_record(struct sensor_record *sensor_record)
 
 int read_final_ph_record(struct sensor_record *sensor_record)
 {
-    ESP_LOGE(TAG, "Reading final PH");
+    ESP_LOGI(TAG, "Reading final PH");
   
     int adc_reading = read_adc(final_ph_channel);
 

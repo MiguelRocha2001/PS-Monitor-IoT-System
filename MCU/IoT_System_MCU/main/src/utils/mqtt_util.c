@@ -28,6 +28,8 @@ static const char *TAG = "MQTT_MODULE";
 
 static const char *CONFIG_BROKER_URL = "mqtt://2.tcp.eu.ngrok.io:18560/";
 
+int isConnected = 0;
+
 static void log_error_if_nonzero(const char *message, int error_code)
 {
     if (error_code != 0) {
@@ -53,9 +55,11 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
     int msg_id;
     switch ((esp_mqtt_event_id_t)event_id) {
         case MQTT_EVENT_CONNECTED:
+            isConnected = 1;
             ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
             break;
         case MQTT_EVENT_DISCONNECTED:
+            isConnected = 0;
             ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");
             break;
         case MQTT_EVENT_SUBSCRIBED:
@@ -80,12 +84,25 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
                 log_error_if_nonzero("captured as transport's socket errno",  event->error_handle->esp_transport_sock_errno);
                 ESP_LOGI(TAG, "Last errno string (%s)", strerror(event->error_handle->esp_transport_sock_errno));
             }
-            abort();
+
+            if (event->error_handle->error_type == MQTT_ERROR_TYPE_CONNECTION_REFUSED) {
+                log_error_if_nonzero("Connection refused error", event->error_handle->connect_return_code);
+            }
             break;
         default:
             ESP_LOGI(TAG, "Other event id:%d", event->event_id);
             break;
     }
+}
+
+void mqtt_app_terminate(esp_mqtt_client_handle_t client)
+{
+    ESP_LOGI(TAG, "Terminating MQTT");
+    ESP_ERROR_CHECK(esp_mqtt_client_disconnect(client));
+    ESP_ERROR_CHECK(esp_mqtt_client_stop(client));
+    ESP_ERROR_CHECK(esp_mqtt_client_destroy(client));
+    esp_event_handler_unregister(ESP_EVENT_ANY_ID, ESP_EVENT_ANY_ID, mqtt_event_handler);
+    ESP_LOGI(TAG, "MQTT terminated");
 }
 
 esp_mqtt_client_handle_t mqtt_app_init_and_start(void)
@@ -101,18 +118,9 @@ esp_mqtt_client_handle_t mqtt_app_init_and_start(void)
     return client;
 }
 
-void mqtt_app_stop(esp_mqtt_client_handle_t client)
-{
-    ESP_ERROR_CHECK(esp_mqtt_client_stop(client));
-}
-
-void mqtt_app_start(esp_mqtt_client_handle_t client) {
-    ESP_ERROR_CHECK(esp_mqtt_client_start(client));
-}
-
 esp_mqtt_client_handle_t setup_mqtt()
 {
-    ESP_LOGE(TAG, "Setting up MQTT...");
+    ESP_LOGI(TAG, "Setting up MQTT...");
 
     ESP_LOGI(TAG, "[APP] Startup..");
     ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
