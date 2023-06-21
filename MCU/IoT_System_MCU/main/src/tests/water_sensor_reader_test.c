@@ -27,6 +27,8 @@ void app_main()
 {
     ESP_ERROR_CHECK(nvs_flash_init());
 
+    vTaskDelay(7000 / portTICK_PERIOD_MS);
+
     gpio_set_direction(WATER_SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
     gpio_set_level(WATER_SENSOR_POWER_PIN, 1); // power on sensors
     ESP_LOGE(TAG, "Water sensor powered on. Waiting for stabilization...");

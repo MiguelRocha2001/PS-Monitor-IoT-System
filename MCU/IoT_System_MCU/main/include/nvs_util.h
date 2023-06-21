@@ -18,5 +18,7 @@ esp_err_t delete_device_id();
 
 esp_err_t set_saved_ph_calibration_timing(int timing);
 esp_err_t get_saved_ph_calibration_timing(int* timing);
+esp_err_t set_saved_dht11_calibration_timing(int timing);
+esp_err_t get_saved_dht11_calibration_timing(int* timing);
 
 #endif // AES_UTIL_H

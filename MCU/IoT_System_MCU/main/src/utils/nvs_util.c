@@ -175,6 +175,63 @@ esp_err_t set_saved_ph_calibration_timing(int timing) {
     return err;
 }
 
+esp_err_t set_saved_dht11_calibration_timing(int timing) {
+    esp_err_t err = init_nvs();
+    nvs_handle_t my_handle;
+
+    if (err != ESP_OK) return err;
+
+    err = open_nvs("saved_params", &my_handle);
+
+    if (err != ESP_OK) return err;
+
+    size_t required_size = sizeof(int);
+
+    err = nvs_set_blob(my_handle, "dht11_cal_time", &timing, required_size);
+
+    if (err != ESP_OK) return err;
+
+    // Commit
+    err = nvs_commit(my_handle);
+    if (err != ESP_OK) return err;
+
+    // Close
+    nvs_close(my_handle);
+    return err;
+}
+
+esp_err_t get_saved_dht11_calibration_timing(int* timing) {
+    esp_err_t err = init_nvs();
+
+    if (err != ESP_OK) return err;
+
+    nvs_handle_t my_handle;
+    err = open_nvs("saved_params", &my_handle);
+
+    if (err != ESP_OK) return err;
+
+
+    size_t required_size = 0;  // value will default to 0, if not set yet in NVS
+    err = nvs_get_blob(my_handle, "dht11_cal_time", NULL, &required_size);
+
+    if (err != ESP_OK && err != ESP_ERR_NVS_NOT_FOUND) return err;
+
+
+    if (required_size == 0) {
+        ESP_LOGE(TAG, "There is no saved ph calibration timing!");
+        return err;
+    } else {
+
+        err = nvs_get_blob(my_handle, "dht11_cal_time", timing, &required_size);
+
+        if (err != ESP_OK) {
+            return err;
+        }
+
+        return err;
+    }
+}
+
 
 esp_err_t get_device_id(char** deviceID) {
     esp_err_t err = init_nvs();

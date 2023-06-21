@@ -7,15 +7,11 @@
 #include "wifi_connect_util.h"
 #include <mqtt_client.h>
 
-#include <ph_reader_fake.h>
 #include <deep_sleep.h>
 
-#include "ph_reader_fake.h"
-#include "broker_util.h"
 #include "wifi_connect_util.h"
 #include "nvs_util.h"
 #include "esp_touch_util.h"
-#include "ph_values_struct.h"
 #include "time_util.h"
 
 const static char* TAG = "MAIN";
@@ -40,11 +36,23 @@ void setup_wifi(void) {
 void app_main(void) {
     ESP_ERROR_CHECK(nvs_flash_init());
 
-    setup_wifi();
+    // setup_wifi();
 
+    // delay
+    for(int i = 0; i < 20; i++)
+    {
+        ESP_LOGI(TAG, "Doing nothing...");
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
+    
     int today_timestamp = getTodayTimestamp();
     ESP_LOGI(TAG, "Timestamp: %d", today_timestamp);
 
     int now_timestamp = getNowTimestamp();
     ESP_LOGI(TAG, "Timestamp: %d", now_timestamp);
+    
+    /*
+    esp_sleep_enable_timer_wakeup(1000000 * 10);
+    esp_deep_sleep_start();
+    */
 }

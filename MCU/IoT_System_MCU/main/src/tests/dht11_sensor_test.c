@@ -21,7 +21,10 @@
 void app_main()
 {
     ESP_ERROR_CHECK(nvs_flash_init());
+
     ESP_LOGI("DHT11", "DHT11 test!");
+
+    vTaskDelay(5000 / portTICK_PERIOD_MS);
 
     // Configure the GPIO pin as output
     gpio_set_direction(SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
@@ -31,11 +34,13 @@ void app_main()
     DHT11_init(GPIO_NUM_9);
     ESP_LOGI("DHT11", "DHT11 initialized!");
 
+    vTaskDelay(5000 / portTICK_PERIOD_MS);
+
     // ESP_LOGI("main", "Going to sleep now");
     // esp_deep_sleep_start();
 
     int i = 0;
-    while(i < 100) {
+    while(1) {
         printf("%d,%d,%d\n", i, DHT11_read().temperature, DHT11_read().humidity);
         /*
         printf("Temperature is %d \n", DHT11_read().temperature);
@@ -44,7 +49,7 @@ void app_main()
         */
         
         // sleep for 1 second
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        vTaskDelay(100 / portTICK_PERIOD_MS);
         i = i + 1;
     }
 }

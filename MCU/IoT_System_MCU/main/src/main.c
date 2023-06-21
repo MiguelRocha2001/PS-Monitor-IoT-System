@@ -7,6 +7,7 @@
 #include "wifi_connect_util.h"
 #include <mqtt_client.h>
 #include <deep_sleep.h>
+#include <time.h>
 #include "mqtt_util.h"
 #include "wifi_connect_util.h"
 #include "nvs_util.h"
@@ -22,15 +23,16 @@ const static char* TAG = "MAIN";
 
 const static long LONG_SLEEP_TIME = 6; // 6 seconds
 
-RTC_DATA_ATTR struct sensor_records_struct sensor_records; // TODO: maybe not necessary anymore
+RTC_DATA_ATTR struct sensor_records_struct sensor_records;
+RTC_DATA_ATTR int ready_to_upload_records_to_server = 0; // indicates that records were read but not yet uploaded to server
 RTC_DATA_ATTR int n_went_to_deep_sleep = 0; // used to fake timestamps
 RTC_DATA_ATTR char action[100];
 esp_mqtt_client_handle_t mqtt_client;
 
 void send_sensor_records(esp_mqtt_client_handle_t client, char* deviceID) {
     strcpy(action, "sending_sensor_records");
-    ESP_LOGE(TAG, "Sending sensor records...");
 
+    ESP_LOGE(TAG, "Sending sensor records...");
     mqtt_send_sensor_record(client, &sensor_records.initial_ph_record, deviceID, "initial-ph");
     vTaskDelay(1000 / portTICK_PERIOD_MS);
 
@@ -56,7 +58,8 @@ char* setup_wifi(void) {
 
     if (get_saved_wifi(&wifiConfig) == ESP_OK && get_device_id(&deviceID) == ESP_OK) 
     {
-        if(!connect_to_wifi(wifiConfig)) esp_touch_helper(&deviceID);
+        if(!connect_to_wifi(wifiConfig)) 
+            start_deep_sleep(LONG_SLEEP_TIME);
     } else 
     {
         esp_touch_helper(&deviceID); // device id may be null
@@ -71,6 +74,13 @@ char* setup_wifi_and_mqtt() {
     char* deviceID = setup_wifi(); // connects to wifi
     strcpy(action, "seting_up_mqtt");
     mqtt_client = setup_mqtt();
+
+    if (try_to_connect_to_broker_if_necessary(mqtt_client) == 0) 
+    {
+        ESP_LOGE(TAG, "Cannot connect to broker. Going to deep sleep...");
+        start_deep_sleep(LONG_SLEEP_TIME);
+    }
+
     return deviceID;
 }
 
@@ -90,12 +100,13 @@ void compute_sensors()
     int leakage = read_water_leak_record(); // TODO: change name
     
     read_sensor_records(&sensor_records, &action);
+    ready_to_upload_records_to_server = 1; // data needs to be uploaded
     fake_timestamps(&sensor_records);
 
     char* deviceID = setup_wifi_and_mqtt(); // turns on wifi
     
-    ESP_LOGI(TAG, "Sensors reading is complete. Sending records...");
     send_sensor_records(mqtt_client, deviceID);
+    ready_to_upload_records_to_server = 0; // data uploaded
     if(leakage == 1) 
     {
         ESP_LOGW(TAG, "Water leakage detected. Sending message...");
@@ -179,9 +190,6 @@ int handle_wake_up()
         ESP_LOGI(TAG, "Reset reason: power-on");
         n_went_to_deep_sleep = 0; // reset sleep counter
         mqtt_send_device_wake_up_reason_alert(mqtt_client, getNowTimestamp(), deviceID, "power on");
-
-        determine_sensor_calibration_timings(); // to set the calibration timings
-
         codeToReturn = 1;
     }
     if (reset_reason & ESP_RST_SW) 
@@ -217,6 +225,12 @@ int handle_wake_up()
     if (sleep_wakeup_reason == ESP_SLEEP_WAKEUP_TIMER)
     {
         ESP_LOGI(TAG, "Wake up reason: timer");
+        if (ready_to_upload_records_to_server == 1) // means records were read last time but not sent to server
+        {
+            ESP_LOGI(TAG, "Records were read last time but not sent to server. Sending records...");
+            send_sensor_records(mqtt_client, deviceID);
+        }
+        
         mqtt_send_device_wake_up_reason_alert(mqtt_client, getNowTimestamp(), deviceID, "Wake up by timer");
         codeToReturn = 0;
     }
@@ -276,8 +290,13 @@ void app_main(void)
     check_if_woke_up_to_reset();
 
     int res = handle_wake_up();
-    if (res == 0 || res == 1) // timeout
+    if (res == 0 || res == 1) // timeout or power on
     {
+        if (res == 1) // power on
+        {
+            determine_sensor_calibration_timings(); // to set the calibration timings
+        }
+        
         compute_sensors();
     }
     else // other wake up reason

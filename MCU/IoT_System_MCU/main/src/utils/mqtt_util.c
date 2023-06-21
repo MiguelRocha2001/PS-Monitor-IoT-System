@@ -24,11 +24,39 @@
 
 // see: https://docs.espressif.com/projects/esp-idf/en/v5.0.1/esp32s2/api-reference/protocols/mqtt.html
 
+#define N_BROKER_CONNECT_TRIES 5
+
 static const char *TAG = "MQTT_MODULE";
 
-static const char *CONFIG_BROKER_URL = "mqtt://2.tcp.eu.ngrok.io:18560/";
+static const char *CONFIG_BROKER_URL = "mqtt://0.tcp.eu.ngrok.io:10801/";
 
 int isConnected = 0;
+
+int try_to_connect_to_broker_if_necessary(esp_mqtt_client_handle_t mqtt_client)
+{
+    if (isConnected) 
+    {
+        return 1;
+    }
+    else
+    {
+        for(int i = 0; i < N_BROKER_CONNECT_TRIES; i++)
+        {
+            ESP_LOGW(TAG, "Trying to connect to MQTT broker...");
+            esp_mqtt_client_reconnect(mqtt_client);
+            vTaskDelay(1000 / portTICK_PERIOD_MS);
+            if (isConnected) 
+            {
+                return 1;
+            }
+            else
+            {
+                ESP_LOGE(TAG, "Failed to connect to MQTT broker");
+            }
+        }
+        return 0;
+    }
+}
 
 static void log_error_if_nonzero(const char *message, int error_code)
 {
@@ -102,6 +130,7 @@ void mqtt_app_terminate(esp_mqtt_client_handle_t client)
     ESP_ERROR_CHECK(esp_mqtt_client_stop(client));
     ESP_ERROR_CHECK(esp_mqtt_client_destroy(client));
     esp_event_handler_unregister(ESP_EVENT_ANY_ID, ESP_EVENT_ANY_ID, mqtt_event_handler);
+    isConnected = 0;
     ESP_LOGI(TAG, "MQTT terminated");
 }
 
@@ -110,6 +139,8 @@ esp_mqtt_client_handle_t mqtt_app_init_and_start(void)
     esp_mqtt_client_config_t mqtt_cfg = {
         .broker.address.uri = CONFIG_BROKER_URL,
     };
+
+    isConnected = 0;
     
     esp_mqtt_client_handle_t client = esp_mqtt_client_init(&mqtt_cfg);
     /* The last argument may be used to pass data to the event handler, in this example mqtt_event_handler */
