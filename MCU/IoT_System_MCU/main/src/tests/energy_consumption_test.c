@@ -15,10 +15,12 @@
 #include "sensor/sensor_reader.h"
 #include "mqtt_util.h"
 #include "dht11.h"
+#include "adc_reader.h"
 
 #define DHT11_SENSOR_POWER_PIN GPIO_NUM_15
 #define PH_SENSOR_POWER_PIN GPIO_NUM_13
 #define WATER_FLOW_SENSOR_POWER_PIN GPIO_NUM_12
+#define WATER_SENSOR_POWER_PIN GPIO_NUM_11
 
 const static char* TAG = "MAIN";
 
@@ -42,47 +44,104 @@ void setup_wifi(void)
 
 void active_mode_without_wifi()
 {
+    ESP_LOGW(TAG, "Starting iterations...");
     for(int i = 0; i < 10; i++)
     {
         // ESP_LOGI(TAG, "Doing nothing...");
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
+    ESP_LOGW(TAG, "Iterations completed");
 }
 
 void active_mode_with_wifi()
 {
     setup_wifi();
+    ESP_LOGW(TAG, "Starting iterations...");
+    for(int i = 0; i < 10; i++)
+    {
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
+    ESP_LOGW(TAG, "Iterations completed");
 }
 
 void active_mode_with_wifi_and_sending_mqtt()
 {
+    setup_wifi();
     esp_mqtt_client_handle_t mqtt_client = setup_mqtt();
     struct sensor_record record;
     record.value = 30.0f;
     record.timestamp = 1234567;
     char* device_id = "test-device-id";
 
-    while (1)
+    ESP_LOGW(TAG, "Starting iterations...");
+    for(int i = 0; i < 10; i++)
     {
         mqtt_send_sensor_record(mqtt_client, &record, device_id, "initial-ph");
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
+    ESP_LOGW(TAG, "Iterations completed");
 }
 
-void power_dht11() 
+void power_on_dht11() 
 {
     // Configure the GPIO pin as output
     gpio_set_direction(DHT11_SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
     // Set the GPIO pin to HIGH
     gpio_set_level(DHT11_SENSOR_POWER_PIN, 1);
+
+    ESP_LOGW(TAG, "Starting iterations...");
+    for(int i = 0; i < 10; i++)
+    {
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
+    ESP_LOGW(TAG, "Iterations completed");
 }
 
-void power_dht11_off() 
+void power_on_dht11_and_make_readings() 
 {
     // Configure the GPIO pin as output
     gpio_set_direction(DHT11_SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
     // Set the GPIO pin to HIGH
-    gpio_set_level(DHT11_SENSOR_POWER_PIN, 0);
+    gpio_set_level(DHT11_SENSOR_POWER_PIN, 1);
+
+    DHT11_init(GPIO_NUM_9);
+
+    ESP_LOGW(TAG, "Starting iterations...");
+    for(int i = 0; i < 10; i++)
+    {
+        DHT11_read();
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
+    ESP_LOGW(TAG, "Iterations completed");
+}
+
+void power_on_water_sensor()
+{
+    gpio_set_direction(WATER_SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
+    gpio_set_level(WATER_SENSOR_POWER_PIN, 1); // power on sensors
+
+    ESP_LOGW(TAG, "Starting iterations...");
+    for(int i = 0; i < 10; i++)
+    {
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
+    ESP_LOGW(TAG, "Iterations completed");
+}
+
+void power_on_and_read_from_water_sensor()
+{
+    gpio_set_direction(WATER_SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
+    gpio_set_level(WATER_SENSOR_POWER_PIN, 1); // power on sensors
+
+    static const adc_channel_t channel = ADC_CHANNEL_2;
+
+    ESP_LOGW(TAG, "Starting iterations...");
+    for(int i = 0; i < 10; i++)
+    {
+        read_adc(channel);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
+    ESP_LOGW(TAG, "Iterations completed");
 }
 
 void read_from_dht11()
@@ -102,22 +161,22 @@ void read_from_dht11()
     }
 }
 
-void app_main(void) {
-    start_deep_sleep(10);
+void app_main(void) 
+{
+    // start_deep_sleep(10);
     ESP_ERROR_CHECK(nvs_flash_init());
 
     ESP_LOGW(TAG, "Starting...");
-    vTaskDelay(3000 / portTICK_PERIOD_MS);
-    ESP_LOGW(TAG, "Started!!!");
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
     
     time_t start;
     time_t end;
 
-    time(&start);
-    ESP_LOGI(TAG, "Start: %d", start);
-    active_mode_without_wifi();
-    time(&end);
-    ESP_LOGI(TAG, "End: %d", end);
+    //time(&start);
+    //ESP_LOGI(TAG, "Start: %d", start);
+    power_on_and_read_from_water_sensor();
+    //time(&end);
+    //ESP_LOGI(TAG, "End: %d", end);
 
     
     /*
@@ -128,7 +187,7 @@ void app_main(void) {
     ESP_LOGI(TAG, "Timestamp: %d", now_timestamp);
     */
    // ESP_LOGI(TAG, "Time taken: %d", end - start);
-   ESP_LOGW(TAG, "Programm ended !!!");
+   //ESP_LOGW(TAG, "Programm ended !!!");
 
     // active_mode_with_wifi_and_sending_mqtt();
     // active_mode_with_wifi();
@@ -136,5 +195,5 @@ void app_main(void) {
     // power_dht11();
     // read_from_dht11();
     // power_dht11_off();
-   // start_deep_sleep(5);
+   start_deep_sleep(2);
 }
