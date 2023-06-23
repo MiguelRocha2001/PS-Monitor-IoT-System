@@ -4,7 +4,7 @@ import csv
 x = []
 y = []
 
-with open("water-sensor-readings\current.csv", 'r') as csvfile:
+with open("all-stages\current.csv", 'r') as csvfile:
     plots = csv.reader(csvfile, delimiter=';')
 
     for row in plots:
@@ -16,8 +16,7 @@ with open("water-sensor-readings\current.csv", 'r') as csvfile:
 data = sorted(zip(x, y), key=lambda point: point[0])
 x, y = zip(*data)
 
-# Average of the first 36 elements
-avg = sum(y) / len(y)
+avg = sum(y) / 30
 print("Sum:", sum(y))
 print("Average:", avg)
 
