@@ -171,6 +171,8 @@ int handle_wake_up()
 {
     char* deviceID = setup_wifi_and_mqtt();
 
+    long start = get_unsynced_time_in_miliiseconds();
+
     ESP_LOGI(TAG, "Checking wake up reason...");
 
     // Read the Reset Reason Register
@@ -235,6 +237,10 @@ int handle_wake_up()
         codeToReturn = 0;
     }
 
+    long end = get_unsynced_time_in_miliiseconds();
+    long time_spent = end - start;
+    // ESP_LOGW(TAG, "Time spent in milliseconds: %ld", time_spent);
+
     mqtt_app_terminate(mqtt_client); // stops mqtt tasks
     terminate_wifi(); // disconnects from wifi
 
@@ -276,10 +282,15 @@ void check_if_woke_up_to_reset()
 */
 void app_main(void) 
 {
+    long start = get_unsynced_time_in_microseconds();
+
     ESP_LOGI(TAG, "Starting app_main...");
     ESP_ERROR_CHECK(nvs_flash_init());
 
     check_if_woke_up_to_reset();
+
+    long end = get_unsynced_time_in_microseconds();
+    // ESP_LOGW(TAG, "Time to check if woke up to reset: %ld", end - start);
 
     int res = handle_wake_up();
     if (res == 0 || res == 1) // timeout or power on

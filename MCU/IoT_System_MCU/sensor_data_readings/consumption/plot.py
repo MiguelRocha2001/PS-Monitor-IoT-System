@@ -17,7 +17,8 @@ data = sorted(zip(x, y), key=lambda point: point[0])
 x, y = zip(*data)
 
 # Average of the first 36 elements
-avg = sum(y[:36]) / 36
+avg = sum(y) / len(y)
+print("Sum:", sum(y))
 print("Average:", avg)
 
 # Subtract 80 units from the y-values

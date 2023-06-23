@@ -162,3 +162,16 @@ void initialize_sntp(void)
         }
     }
 }
+
+long get_unsynced_time_in_microseconds() {
+    struct timeval te_start; 
+    gettimeofday(&te_start, NULL); // get current time
+    return te_start.tv_usec;
+}
+
+long get_unsynced_time_in_miliiseconds() {
+    struct timeval te; 
+    gettimeofday(&te, NULL); // get current time
+    long long milliseconds = te.tv_sec*1000LL + te.tv_usec/1000; // calculate milliseconds
+    return milliseconds;
+}

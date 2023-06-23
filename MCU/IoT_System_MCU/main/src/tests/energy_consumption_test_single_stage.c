@@ -27,7 +27,7 @@
 
 const static char* TAG = "MAIN";
 
-void wifi_reconnect_timeout()
+void setup_wifi(void) 
 {
     ESP_LOGE(TAG, "Setting up WiFi...");
 
@@ -35,7 +35,6 @@ void wifi_reconnect_timeout()
     wifi_config_t wifiConfig;
 
     if (get_saved_wifi(&wifiConfig) == ESP_OK && get_device_id(&deviceID) == ESP_OK ) {
-        wifiConfig.ap.password[0] = 'x';
         if(!connect_to_wifi(wifiConfig)) esp_touch_helper(&deviceID);
     } else {
         esp_touch_helper(&deviceID);
@@ -46,7 +45,15 @@ void wifi_reconnect_timeout()
     ESP_LOGE(TAG, "Finished setting up WiFi");
 }
 
-void setup_wifi(void) 
+void setup_wifi_and_mqtt(void)
+{
+    ESP_LOGE(TAG, "Setting up WiFi and MQTT...");
+    setup_wifi();
+    setup_mqtt();
+    ESP_LOGE(TAG, "Finished setting up WiFi and MQTT");
+}
+
+void wifi_reconnect_timeout()
 {
     ESP_LOGE(TAG, "Setting up WiFi...");
 
@@ -54,6 +61,7 @@ void setup_wifi(void)
     wifi_config_t wifiConfig;
 
     if (get_saved_wifi(&wifiConfig) == ESP_OK && get_device_id(&deviceID) == ESP_OK ) {
+        wifiConfig.ap.password[0] = 'x';
         if(!connect_to_wifi(wifiConfig)) esp_touch_helper(&deviceID);
     } else {
         esp_touch_helper(&deviceID);
@@ -156,15 +164,25 @@ void power_on_and_read_from_water_sensor()
 }
 
 /**
- * Active mode iddle -> 27mA/s
- * Active mode wifi iddle -> 36mA/s
- * Active mode wifi sending mqtt -> 39mA/s
+ * Active mode iddle 
+ *  Avg: 27mA/s;
+ *  Apending time per execution: 14332us
+ * Active mode wifi iddle
+ *  Agv: 36mA/s
+ * Active mode wifi sending mqtt
+ *  Avg: 39mA/s
+ *  Time per execution: 18ms (handle wake up reason) + ...
  * Power on DHT11;
  * Power on DHT11 and make readings;
  * Power on water sensor;
  * Power on and read from water sensor;
- * Deep sleep -> 9.6mA/s
- * WiFi reconnect timeout -> 73mA/s
+ * Deep sleep -> 
+ *  Avg: 9.6mA/s
+ * WiFi reconnect timeout
+ *  Sum: 2.64A
+ *  Avg: 73mA/s
+ * WiFi and MQTT setup
+ *  Sum: 0.49A
 */
 void app_main(void) 
 {
@@ -172,20 +190,7 @@ void app_main(void)
 
     vTaskDelay(3000 / portTICK_PERIOD_MS);
 
-    struct timeval te_start; 
-    gettimeofday(&te_start, NULL); // get current time
-    long long start = te_start.tv_sec*1000LL + te_start.tv_usec; // calculate microseconds
-    ESP_LOGW(TAG, "Start time: %lld", start);
-    
-    vTaskDelay(1001 / portTICK_PERIOD_MS);
-
-    struct timeval te_end;
-    gettimeofday(&te_end, NULL); // get current time
-    long long end = te_end.tv_sec*1000LL + te_end.tv_usec; // calculate microseconds
-    ESP_LOGW(TAG, "End time: %lld", end);
-
-    ESP_LOGW(TAG, "Time taken: %lld", end - start);
-
+    dht11_reading();
     
     start_deep_sleep(3);
 }
