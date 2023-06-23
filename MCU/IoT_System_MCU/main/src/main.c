@@ -234,14 +234,6 @@ int handle_wake_up()
         mqtt_send_device_wake_up_reason_alert(mqtt_client, getNowTimestamp(), deviceID, "Wake up by timer");
         codeToReturn = 0;
     }
-    /*
-    if (reset_reason & ESP_RST_BROWNOUT) 
-    {
-        ESP_LOGE(TAG, "Reset reason: brownout");
-        mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "brownout");
-        return 1;
-    }
-    */
 
     mqtt_app_terminate(mqtt_client); // stops mqtt tasks
     terminate_wifi(); // disconnects from wifi
