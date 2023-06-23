@@ -173,9 +173,11 @@ void power_on_and_read_from_water_sensor()
  *  Avg: 39mA/s
  *  Time per execution: 18ms (handle wake up reason) + ...
  * Power on DHT11;
- * Power on DHT11 and make readings;
+ * Power on DHT11 and make readings
+ *  Avg: 29mA/s
  * Power on water sensor;
- * Power on and read from water sensor;
+ * Power on and read from water sensor
+ *  Avg: 29mA/s
  * Deep sleep -> 
  *  Avg: 9.6mA/s
  * WiFi reconnect timeout
@@ -190,7 +192,7 @@ void app_main(void)
 
     vTaskDelay(3000 / portTICK_PERIOD_MS);
 
-    dht11_reading();
+    power_on_dht11_and_make_readings();
     
     start_deep_sleep(3);
 }
