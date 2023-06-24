@@ -6,7 +6,7 @@ x = []
 y2 = []
 y3 = []
 
-title = "MCU Mesured Voltage vs Real Voltage"
+title = "MCU mesured Voltage vs Real Voltage"
 
 with open("ph8_8_with_real_voltage.csv", 'r') as csvfile:
     plots = csv.reader(csvfile, delimiter=',')

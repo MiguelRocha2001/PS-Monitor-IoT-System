@@ -164,7 +164,7 @@ void power_on_and_read_from_water_sensor()
 }
 
 /**
- * Active mode idle 
+ * Active mode idle
  *  Avg: 49mA/s;
  *  Apending time per execution: 14332us
  * Active mode WiFi idle
@@ -172,13 +172,15 @@ void power_on_and_read_from_water_sensor()
  * Active mode WiFi sending MQTT
  *  Avg: 70mA/s
  *  Time per execution: 18ms (handle wake up reason) + ...
- * Power on DHT11;
+ * Power on DHT11
+ *  Avg: 53mA/s
  * Power on DHT11 and make readings
  *  Avg: 55mA/s
- * Power on water sensor;
+ * Power on water sensor
+ *  Avg: 50mA/s
  * Power on and read from water sensor
  *  Avg: 52mA/s
- * Deep sleep -> 
+ * Deep sleep
  *  Avg: 17mA/s
  * WiFi reconnect timeout (max tries)
  *  Sum: 2.64A
@@ -192,7 +194,7 @@ void app_main(void)
 
     vTaskDelay(3000 / portTICK_PERIOD_MS);
 
-    power_on_dht11_and_make_readings();
+    power_on_dht11();
     
     start_deep_sleep(3);
 }
