@@ -25,6 +25,7 @@ const static long LONG_SLEEP_TIME = 6; // 6 seconds
 const static long SHORT_SLEEP_TIME = 3; // 6 seconds
 
 RTC_DATA_ATTR struct sensor_records_struct sensor_records;
+RTC_DATA_ATTR int leakage_alert_pending = 0;
 RTC_DATA_ATTR int ready_to_upload_records_to_server = 0; // indicates that records were read but not yet uploaded to server
 RTC_DATA_ATTR int n_went_to_deep_sleep = 0; // used to fake timestamps
 RTC_DATA_ATTR char action[100];
@@ -63,7 +64,7 @@ char* setup_wifi(void) {
     if (get_saved_wifi(&wifiConfig) == ESP_OK && get_device_id(&deviceID) == ESP_OK) 
     {
         if(!connect_to_wifi(wifiConfig)) 
-            start_deep_sleep(LONG_SLEEP_TIME);
+            start_deep_sleep(SHORT_SLEEP_TIME);
     } else 
     {
         esp_touch_helper(&deviceID); // device id may be null
@@ -85,7 +86,7 @@ char* setup_wifi_and_mqtt() {
     if (try_to_connect_to_broker_if_necessary(mqtt_client) == 0) 
     {
         ESP_LOGE(TAG, "Cannot connect to broker. Going to deep sleep...");
-        start_deep_sleep(LONG_SLEEP_TIME);
+        start_deep_sleep(SHORT_SLEEP_TIME);
     }
 
     return deviceID;
@@ -113,12 +114,19 @@ void compute_sensors()
     {
         strcpy(action, "checking_water_leak");
         int leakage = read_water_leak_record(); // TODO: change name    
+        leakage_alert_pending = leakage;
 
-        if(leakage == 1) 
+        if (check_water_leakage_iteration++ == 3)
+        {
+            check_water_leakage = 0;
+        }
+
+        if(leakage == 1)
         {
             char* deviceID = setup_wifi_and_mqtt(); // turns on wifi
             ESP_LOGW(TAG, "Water leakage detected. Sending message...");
             mqtt_send_device_wake_up_reason_alert(mqtt_client, getNowTimestamp(), deviceID, "water-leak"); // TODO: send to water leak topic (create one)
+            leakage_alert_pending = 0;
             
             if (ready_to_upload_records_to_server == 1) // records were read last time but not sent to server
             {
@@ -137,8 +145,11 @@ void compute_sensors()
     else
     {
         read_sensor_records(&sensor_records, &action);
-        ready_to_upload_records_to_server = 1; // data needs to be uploaded
         // fake_timestamps(&sensor_records);
+        ready_to_upload_records_to_server = 1; // data needs to be uploaded
+
+        check_water_leakage = 1; // next cycle will check for water leakage
+        check_water_leakage_iteration = 0;
 
         char* deviceID = setup_wifi_and_mqtt(); // turns on wifi
         
@@ -260,13 +271,21 @@ int handle_wake_up()
     {
         ESP_LOGI(TAG, "Wake up reason: timer");
         wake_up_reason = "timer";
-        if (ready_to_upload_records_to_server == 1 && check_water_leakage == 0)
+        if (check_water_leakage == 0)
         {
-            ESP_LOGW(TAG, "System detected pending records to be sent to server. Sending them now...");
+            if (ready_to_upload_records_to_server == 1)
+            {
+                ESP_LOGW(TAG, "System detected pending records to be sent to server. Sending them now...");
+            }
+            if (leakage_alert_pending == 1)
+            {
+                ESP_LOGW(TAG, "System detected water leakage. Sending alert to server...");
+            }
+            
         }
         codeToReturn = 0;
     }
-    if(codeToReturn == 2 || (sleep_wakeup_reason == ESP_SLEEP_WAKEUP_TIMER  && ready_to_upload_records_to_server == 1 && check_water_leakage == 0))
+    if(codeToReturn == 2 || (sleep_wakeup_reason == ESP_SLEEP_WAKEUP_TIMER  && (ready_to_upload_records_to_server == 1 || leakage_alert_pending == 1) && check_water_leakage == 0))
     {   
         char* deviceID = setup_wifi_and_mqtt();
         if (codeToReturn == 2)
@@ -277,7 +296,14 @@ int handle_wake_up()
         // will send records to server if mcu will read sensor records in this cycle
         else
         {
-            send_sensor_records(mqtt_client, deviceID);
+            if (ready_to_upload_records_to_server == 1)
+            {
+                send_sensor_records(mqtt_client, deviceID);
+            }
+            if (leakage_alert_pending == 1)
+            {
+                mqtt_send_device_wake_up_reason_alert(mqtt_client, getNowTimestamp(), deviceID, "water-leak"); // TODO: send to water leak topic (create one)
+            }
         }
         
         terminate_wifi_and_mqtt();
@@ -349,16 +375,10 @@ void app_main(void)
         // defines what the next cycle will do
         if (check_water_leakage)
         {
-            if (check_water_leakage_iteration++ == 3)
-            {
-                check_water_leakage = 0;
-            }
             start_deep_sleep(SHORT_SLEEP_TIME);
         }
         else
         {
-            check_water_leakage = 1; // next cycle will check for water leakage
-            check_water_leakage_iteration = 0;
             start_deep_sleep(LONG_SLEEP_TIME);
         }
     }
