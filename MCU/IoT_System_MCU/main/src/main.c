@@ -134,7 +134,7 @@ void compute_sensors()
                 send_sensor_records(mqtt_client, deviceID);
             }
             
-            mqtt_send_device_wake_up_reason_alert(mqtt_client, getNowTimestamp(), deviceID, wake_up_reason);
+            // mqtt_send_device_wake_up_reason_alert(mqtt_client, getNowTimestamp(), deviceID, wake_up_reason);
             terminate_wifi_and_mqtt();
         }
         else 
@@ -156,7 +156,7 @@ void compute_sensors()
         send_sensor_records(mqtt_client, deviceID);
         ready_to_upload_records_to_server = 0; // data uploaded
 
-        mqtt_send_device_wake_up_reason_alert(mqtt_client, getNowTimestamp(), deviceID, wake_up_reason);
+        // mqtt_send_device_wake_up_reason_alert(mqtt_client, getNowTimestamp(), deviceID, wake_up_reason);
         terminate_wifi_and_mqtt();     
     }
 }
