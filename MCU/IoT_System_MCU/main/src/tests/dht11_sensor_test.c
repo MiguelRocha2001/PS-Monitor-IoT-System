@@ -24,7 +24,7 @@ void app_main()
 
     ESP_LOGI("DHT11", "DHT11 test!");
 
-    vTaskDelay(5000 / portTICK_PERIOD_MS);
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
 
     // Configure the GPIO pin as output
     gpio_set_direction(SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
