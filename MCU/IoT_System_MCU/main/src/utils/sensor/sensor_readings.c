@@ -87,7 +87,7 @@ int read_sensor_records(sensor_records_struct *sensor_records, char* action)
     ESP_LOGI(TAG, "pH sensor powered on. Waiting for stabilization...");
     int PH_SENSOR_STABILIZATION_TIME;
     ESP_ERROR_CHECK(get_saved_ph_calibration_timing(&PH_SENSOR_STABILIZATION_TIME));
-    vTaskDelay(pdMS_TO_TICKS(1 * 1000)); // FIXME: get from NVS
+    vTaskDelay(pdMS_TO_TICKS(110 * 1000)); // FIXME: get from NVS
 
     for(int i = 0; i < MAX_SENSOR_RECORDS; i++) 
     {
@@ -102,7 +102,7 @@ int read_sensor_records(sensor_records_struct *sensor_records, char* action)
     gpio_set_direction(DHT11_SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
     gpio_set_level(DHT11_SENSOR_POWER_PIN, 1); // power on sensors
     ESP_LOGI(TAG, "DHT11 sensor powered on. Waiting for stabilization...");
-    vTaskDelay(pdMS_TO_TICKS(1 * 1000)); // FIXME: get from NVS
+    vTaskDelay(pdMS_TO_TICKS(20 * 1000)); // FIXME: get from NVS
 
     for(int i = 0; i < MAX_SENSOR_RECORDS; i++) 
     {
@@ -117,7 +117,7 @@ int read_sensor_records(sensor_records_struct *sensor_records, char* action)
     gpio_set_direction(WATER_FLOW_SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
     gpio_set_level(WATER_FLOW_SENSOR_POWER_PIN, 1); // power on sensors
     ESP_LOGI(TAG, "Water flow sensor powered on. Waiting for stabilization...");
-    vTaskDelay(pdMS_TO_TICKS(1)); // FIXME: Water flow sensor stabilization time
+    vTaskDelay(pdMS_TO_TICKS(0)); // FIXME: Water flow sensor stabilization time
 
     for(int i = 0; i < MAX_SENSOR_RECORDS; i++) 
     {

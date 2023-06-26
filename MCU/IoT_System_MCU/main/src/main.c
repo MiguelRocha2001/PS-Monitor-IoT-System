@@ -30,6 +30,7 @@ RTC_DATA_ATTR int ready_to_upload_records_to_server = 0; // indicates that recor
 RTC_DATA_ATTR int n_went_to_deep_sleep = 0; // used to fake timestamps
 RTC_DATA_ATTR char action[100];
 RTC_DATA_ATTR int check_water_leakage = 0; // if true, the mcu will wake up and check for water leakage, else will make sensor readings
+RTC_DATA_ATTR int my_counter = 0;
 RTC_DATA_ATTR int check_water_leakage_iteration = 0;
 RTC_DATA_ATTR char* wake_up_reason;
 esp_mqtt_client_handle_t mqtt_client;
@@ -231,7 +232,7 @@ int handle_wake_up()
     }
     if (reset_reason & ESP_RST_POWERON) 
     {
-        sync_time();
+        // sync_time();
         ESP_LOGI(TAG, "Reset reason: power-on");
         n_went_to_deep_sleep = 0; // reset sleep counter
         wake_up_reason = "power-on";
@@ -348,9 +349,18 @@ void check_if_woke_up_to_reset()
  * It will read the pH value every 0.3 seconds and store it in RTC memory.
  * After 5 readings, it will send the values to the MQTT broker and go to deep sleep for 3 seconds.
  * For some unknown reason, the MQTT broker does not receive all messages, the first reading round.
+ * 
+ * Consumption times:
+ *  Wake up to make standard sensor readings: 1mAh and 6 mWh (2:36 min) - 1 cycle
+ *  Wake up to check for water leakage: 1mAh and 5mWh (2:15 min) - 21 cycles
+ *  Deep sleep: 1mAh and 5mWh (6:11 min)
 */
 void app_main(void) 
 {
+    vTaskDelay(pdMS_TO_TICKS(3 * 1000)); // FIXME: get from NVS
+
+    // start_deep_sleep(9999999);
+
     // long start = get_unsynced_time_in_microseconds();
 
     ESP_LOGI(TAG, "Starting app_main...");
@@ -375,6 +385,8 @@ void app_main(void)
         // defines what the next cycle will do
         if (check_water_leakage)
         {
+            ++my_counter;
+            printf("Counter: %d\n", my_counter);
             start_deep_sleep(SHORT_SLEEP_TIME);
         }
         else
