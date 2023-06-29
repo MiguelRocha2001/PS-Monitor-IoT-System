@@ -118,7 +118,7 @@ esp_err_t delete_saved_wifi() {
     return err;
 }
 
-esp_err_t get_saved_ph_calibration_timing(int* timing) {
+esp_err_t get_saved_ph_calibration_timing(int* time_in_ms) {
     esp_err_t err = init_nvs();
 
     if (err != ESP_OK) return err;
@@ -140,7 +140,7 @@ esp_err_t get_saved_ph_calibration_timing(int* timing) {
         return err;
     } else {
 
-        err = nvs_get_blob(my_handle, "ph_cal_time", timing, &required_size);
+        err = nvs_get_blob(my_handle, "ph_cal_time", time_in_ms, &required_size);
 
         if (err != ESP_OK) {
             return err;
@@ -150,7 +150,7 @@ esp_err_t get_saved_ph_calibration_timing(int* timing) {
     }
 }
 
-esp_err_t set_saved_ph_calibration_timing(int timing) {
+esp_err_t set_saved_ph_calibration_timing(int time_in_ms) {
     esp_err_t err = init_nvs();
     nvs_handle_t my_handle;
 
@@ -162,7 +162,7 @@ esp_err_t set_saved_ph_calibration_timing(int timing) {
 
     size_t required_size = sizeof(int);
 
-    err = nvs_set_blob(my_handle, "ph_cal_time", &timing, required_size);
+    err = nvs_set_blob(my_handle, "ph_cal_time", &time_in_ms, required_size);
 
     if (err != ESP_OK) return err;
 
@@ -175,7 +175,7 @@ esp_err_t set_saved_ph_calibration_timing(int timing) {
     return err;
 }
 
-esp_err_t set_saved_dht11_calibration_timing(int timing) {
+esp_err_t set_saved_dht11_calibration_timing(int time_in_ms) {
     esp_err_t err = init_nvs();
     nvs_handle_t my_handle;
 
@@ -187,7 +187,7 @@ esp_err_t set_saved_dht11_calibration_timing(int timing) {
 
     size_t required_size = sizeof(int);
 
-    err = nvs_set_blob(my_handle, "dht11_cal_time", &timing, required_size);
+    err = nvs_set_blob(my_handle, "dht11_cal_time", &time_in_ms, required_size);
 
     if (err != ESP_OK) return err;
 
@@ -200,7 +200,7 @@ esp_err_t set_saved_dht11_calibration_timing(int timing) {
     return err;
 }
 
-esp_err_t get_saved_dht11_calibration_timing(int* timing) {
+esp_err_t get_saved_dht11_calibration_timing(int* time_in_ms) {
     esp_err_t err = init_nvs();
 
     if (err != ESP_OK) return err;
@@ -218,11 +218,11 @@ esp_err_t get_saved_dht11_calibration_timing(int* timing) {
 
 
     if (required_size == 0) {
-        ESP_LOGE(TAG, "There is no saved ph calibration timing!");
+        ESP_LOGE(TAG, "There is no saved ph calibration time!");
         return err;
     } else {
 
-        err = nvs_get_blob(my_handle, "dht11_cal_time", timing, &required_size);
+        err = nvs_get_blob(my_handle, "dht11_cal_time", time_in_ms, &required_size);
 
         if (err != ESP_OK) {
             return err;

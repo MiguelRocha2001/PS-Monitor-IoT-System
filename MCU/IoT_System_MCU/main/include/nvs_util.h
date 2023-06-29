@@ -16,9 +16,9 @@ esp_err_t get_device_id(char** deviceID);
 esp_err_t set_device_id(char* deviceID);
 esp_err_t delete_device_id();
 
-esp_err_t set_saved_ph_calibration_timing(int timing);
-esp_err_t get_saved_ph_calibration_timing(int* timing);
-esp_err_t set_saved_dht11_calibration_timing(int timing);
-esp_err_t get_saved_dht11_calibration_timing(int* timing);
+esp_err_t set_saved_ph_calibration_timing(int time_in_ms);
+esp_err_t get_saved_ph_calibration_timing(int* time_in_ms);
+esp_err_t set_saved_dht11_calibration_timing(int time_in_ms);
+esp_err_t get_saved_dht11_calibration_timing(int* time_in_ms);
 
 #endif // AES_UTIL_H

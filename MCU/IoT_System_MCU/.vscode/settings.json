@@ -68,6 +68,14 @@
         "esp_log.h": "c",
         "task.h": "c",
         "mqtt5_client.h": "c",
-        "esp_adc_cal.h": "c"
+        "esp_adc_cal.h": "c",
+        "array": "c",
+        "bitset": "c",
+        "string_view": "c",
+        "initializer_list": "c",
+        "regex": "c",
+        "ratio": "c",
+        "system_error": "c",
+        "functional": "c"
     }
 }

@@ -14,8 +14,13 @@
 #include <math.h>
 #include <esp_system.h>
 #include "nvs_util.h"
+#include "dht11.h"
 
 const static char* TAG = "sensor_readings";
+
+#define window_size 5
+#define standard_deviation_threshold 3
+#define BETWEEN_READINGS_CALIBRATION 1000 // 1 second
 
 #define BETWEEN_READINGS 1000 // 1 second
 
@@ -85,9 +90,9 @@ int read_sensor_records(sensor_records_struct *sensor_records, char* action)
     gpio_set_direction(PH_SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
     gpio_set_level(PH_SENSOR_POWER_PIN, 1); // power on sensors
     ESP_LOGI(TAG, "pH sensor powered on. Waiting for stabilization...");
-    int PH_SENSOR_STABILIZATION_TIME;
-    ESP_ERROR_CHECK(get_saved_ph_calibration_timing(&PH_SENSOR_STABILIZATION_TIME));
-    vTaskDelay(pdMS_TO_TICKS(110 * 1000)); // FIXME: get from NVS
+    int ph_stabilization_time;
+    ESP_ERROR_CHECK(get_saved_ph_calibration_timing(&ph_stabilization_time));
+    vTaskDelay(pdMS_TO_TICKS(ph_stabilization_time)); // FIXME: get from NVS
 
     for(int i = 0; i < MAX_SENSOR_RECORDS; i++) 
     {
@@ -101,8 +106,11 @@ int read_sensor_records(sensor_records_struct *sensor_records, char* action)
 
     gpio_set_direction(DHT11_SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
     gpio_set_level(DHT11_SENSOR_POWER_PIN, 1); // power on sensors
+    DHT11_init(GPIO_NUM_9);
     ESP_LOGI(TAG, "DHT11 sensor powered on. Waiting for stabilization...");
-    vTaskDelay(pdMS_TO_TICKS(20 * 1000)); // FIXME: get from NVS
+    int dht11_stabilization_time;
+    ESP_ERROR_CHECK(get_saved_dht11_calibration_timing(&dht11_stabilization_time));
+    vTaskDelay(pdMS_TO_TICKS(dht11_stabilization_time)); // FIXME: get from NVS
 
     for(int i = 0; i < MAX_SENSOR_RECORDS; i++) 
     {
@@ -135,121 +143,70 @@ int read_sensor_records(sensor_records_struct *sensor_records, char* action)
     return 0;
 }
 
-int sensors_reading_is_complete(sensor_records_struct *sensor_records) {
-    return sensor_records->index == MAX_SENSOR_RECORDS;
-}
+void sliding_window(int sensor_power_pin, int (*read_function)(struct sensor_record*), esp_err_t (*nvs_function)(int), int is_dht11) {
+    gpio_set_direction(sensor_power_pin, GPIO_MODE_OUTPUT);
+    gpio_set_level(sensor_power_pin, 1); // power on sensor
 
-// Function to calculate standard deviation
-double calculate_standard_deviation(uint32_t* data, size_t data_length) {
-    double mean = 0.0;
-    double squared_deviation_sum = 0.0;
-
-    // Calculate mean
-    for (size_t i = 0; i < data_length; i++) {
-        mean += data[i];
+    if (is_dht11) { // initialize DHT11 sensor
+        DHT11_init(GPIO_NUM_9);
     }
-    mean /= data_length;
-
-    // Calculate squared deviations
-    for (size_t i = 0; i < data_length; i++) {
-        double deviation = data[i] - mean;
-        squared_deviation_sum += deviation * deviation;
-    }
-
-    // Calculate variance and standard deviation
-    double variance = squared_deviation_sum / data_length;
-    double standard_deviation = sqrt(variance);
-
-    return standard_deviation;
-}
-
-void determine_ph_sensors_calibration_time()
-{
-    gpio_set_direction(PH_SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
-    gpio_set_level(PH_SENSOR_POWER_PIN, 1); // power on sensors
-    ESP_LOGI(TAG, "pH sensor powered on. Waiting for stabilization...");
-
-    struct sensor_record sensor_record[10];
-
+    
+    sensor_record sensor_record;
+    double window[window_size];
     int initial_timestamp = getNowTimestamp();
-    double standard_deviation;
-    while (1)
+    while (true)
     {
-        for(int i = 0; i < 10; i++)
+        for(int i = 0; i < window_size; i++)
         {
-            read_initial_ph_record(&sensor_record[i]);
-            ESP_LOGI(TAG, "Value: %d", sensor_record[i].value);
-            vTaskDelay(pdMS_TO_TICKS(1000));
+            read_function(&sensor_record);
+            window[i] = sensor_record.value;
+            ESP_LOGW(TAG, "Value: %f", sensor_record.value);
+            vTaskDelay(pdMS_TO_TICKS(BETWEEN_READINGS_CALIBRATION));
         }
 
-        uint32_t data[10];
-        for(int i = 0; i < 10; i++)
-        {
-            data[i] = sensor_record[i].value;
+        double sum = 0;
+        for (int j = 0; j < window_size; j++) {
+            sum += window[j];
         }
-
-        standard_deviation = calculate_standard_deviation(data, 10);
-        if (standard_deviation <= 2.0) 
-            break;
         
-        ESP_LOGI(TAG, "Standard deviation: %f", standard_deviation);
-    }
-
-    int final_timestamp = getNowTimestamp();
-
-    gpio_set_level(PH_SENSOR_POWER_PIN, 0); // power off sensors
-    ESP_LOGI(TAG, "pH sensor powered off");
-
-    int stabilization_time = 1000 * (final_timestamp - initial_timestamp);
-    ESP_ERROR_CHECK(set_saved_ph_calibration_timing(stabilization_time));
-    ESP_LOGI(TAG, "pH sensor stabilization time: %d", stabilization_time);
-}
-
-void determine_dht11_sensors_calibration_time()
-{
-    gpio_set_direction(DHT11_SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
-    gpio_set_level(DHT11_SENSOR_POWER_PIN, 1); // power on sensors
-    ESP_LOGI(TAG, "dht11 sensor powered on. Waiting for stabilization...");
-
-    struct sensor_record sensor_record[10];
-
-    int initial_timestamp = getNowTimestamp();
-    double standard_deviation;
-    while (1)
-    {
-        for(int i = 0; i < 10; i++)
-        {
-            read_humidity_record(&sensor_record[i]);
-            ESP_LOGI(TAG, "Value: %d", sensor_record[i].value);
-            vTaskDelay(pdMS_TO_TICKS(1000));
+        double mean = sum / window_size;
+        
+        double squared_diff_sum = 0;
+        for (int j = 0; j < window_size; j++) {
+            double diff = window[j] - mean;
+            squared_diff_sum += diff * diff;
         }
-
-        uint32_t data[10];
-        for(int i = 0; i < 10; i++)
+        
+        double std_dev = sqrt(squared_diff_sum / window_size);
+        if (std_dev <= standard_deviation_threshold)
         {
-            data[i] = sensor_record[i].value;
-        }
+            int final_timestamp = getNowTimestamp();
+            int stabilization_time_in_ms = (final_timestamp - initial_timestamp) * 1000;
 
-        standard_deviation = calculate_standard_deviation(data, 10);
-        if (standard_deviation <= 1.0) 
+            ESP_LOGW(TAG, "Standard deviation is below threshold %f", std_dev);
+
+            ESP_ERROR_CHECK(nvs_function(stabilization_time_in_ms));
+            ESP_LOGW(TAG, "Saved stabilization time: %d", stabilization_time_in_ms);
+
             break;
+        }
+        ESP_LOGW(TAG, "Standard deviation: %f", std_dev);
+
+        for (int i = 0; i < window_size - 1; i++) {
+            window[i] = window[i + 1];
+        }
+        read_function(&sensor_record);
+        window[window_size - 1] = sensor_record.value; // new value
+
+        gpio_set_level(sensor_power_pin, 0); // power off sensor
     }
-
-    int final_timestamp = getNowTimestamp();
-
-    gpio_set_level(DHT11_SENSOR_POWER_PIN, 0); // power off sensors
-    ESP_LOGI(TAG, "dht11 sensor powered off");
-
-    int stabilization_time = 1000 * (final_timestamp - initial_timestamp);
-    ESP_ERROR_CHECK(set_saved_ph_calibration_timing(stabilization_time));
-    ESP_LOGI(TAG, "dht11 sensor stabilization time: %d", stabilization_time);
 }
 
 void determine_sensor_calibration_timings()
 {
-    ESP_LOGI(TAG, "Determining sensor calibration timings");
+    ESP_LOGI(TAG, "Determining pH sensor calibration time");
+    sliding_window(PH_SENSOR_POWER_PIN, read_initial_ph_record, set_saved_ph_calibration_timing, 0);
 
-    determine_ph_sensors_calibration_time();
-    determine_dht11_sensors_calibration_time();
-    // TODO: determine other sensors calibration timings
+    ESP_LOGI(TAG, "Determining DHT11 sensor calibration time");
+    sliding_window(DHT11_SENSOR_POWER_PIN, read_humidity_record, set_saved_dht11_calibration_timing, 1);
 }

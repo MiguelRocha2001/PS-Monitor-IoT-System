@@ -55,7 +55,7 @@ bool isTimeValid() {
 }
 
 int getNowTimestamp() {
-    return 0; // TODO: remove this line later
+    // return 0; // TODO: remove this line later
     time_t now;
     time(&now);
 

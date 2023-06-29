@@ -4,7 +4,7 @@ import csv
 x = []
 y = []
 
-with open("dht11-power-on\current.csv", 'r') as csvfile:
+with open("active-mode-iddle\current.csv", 'r') as csvfile:
     plots = csv.reader(csvfile, delimiter=';')
 
     for row in plots:
