@@ -54,13 +54,13 @@ class DeviceController(
         @PathVariable userId: String,
         @RequestParam(required = false) page: Int?,
         @RequestParam(required = false) limit: Int?,
-        @RequestParam(required = false) id: String?, // id chunk
+        @RequestParam(required = false) deviceIdChunk: String?, // id chunk
         @RequestParam(required = false) email: String?
     ): ResponseEntity<*> {
         val result = if (user.userInfo.role === Role.ADMIN) {
-            service.getUserDevices(userId, page, limit, email, id)
+            service.getUserDevices(userId, page, limit, email, deviceIdChunk)
         } else {
-            service.getUserDevices(user.id, page, limit, email, id) // TODO: check if is device owner
+            service.getUserDevices(user.id, page, limit, email, deviceIdChunk) // TODO: check if is device owner
         }
         return result.map {
             ResponseEntity.status(200)

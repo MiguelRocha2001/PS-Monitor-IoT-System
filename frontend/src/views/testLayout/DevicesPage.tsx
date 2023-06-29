@@ -75,7 +75,7 @@ export function Devices({userIdParam}: { userIdParam?: string}) {
     useEffect(() => {
         async function updateDevices() {
             if (userId_) {
-                services.getDevices(userId_, page, pageSize, undefined, undefined)
+                services.getDevices(userId_, page, pageSize, undefined, searchQuery)
                     .then(devices => setDevices(devices))
                     .catch(error => setError(error.message))
             }
