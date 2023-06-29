@@ -15,6 +15,7 @@ idf_component_register(
             "src/utils/rsa_util.c"
             "src/utils/sha256_util.c"
             "src/utils/utils.c"
+            "src/utils/sliding_window.c"
             "src/utils/entropy_poll.c"
             "src/utils/sensor/sensor_readings.c"
             "src/utils/ph/ph_reader_real.c"

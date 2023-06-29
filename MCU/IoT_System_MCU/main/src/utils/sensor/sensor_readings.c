@@ -15,12 +15,9 @@
 #include <esp_system.h>
 #include "nvs_util.h"
 #include "dht11.h"
+#include "sliding_window.h"
 
 const static char* TAG = "sensor_readings";
-
-#define window_size 5
-#define standard_deviation_threshold 3
-#define BETWEEN_READINGS_CALIBRATION 1000 // 1 second
 
 #define BETWEEN_READINGS 1000 // 1 second
 
@@ -143,70 +140,11 @@ int read_sensor_records(sensor_records_struct *sensor_records, char* action)
     return 0;
 }
 
-void sliding_window(int sensor_power_pin, int (*read_function)(struct sensor_record*), esp_err_t (*nvs_function)(int), int is_dht11) {
-    gpio_set_direction(sensor_power_pin, GPIO_MODE_OUTPUT);
-    gpio_set_level(sensor_power_pin, 1); // power on sensor
-
-    if (is_dht11) { // initialize DHT11 sensor
-        DHT11_init(GPIO_NUM_9);
-    }
-    
-    sensor_record sensor_record;
-    double window[window_size];
-    int initial_timestamp = getNowTimestamp();
-    while (true)
-    {
-        for(int i = 0; i < window_size; i++)
-        {
-            read_function(&sensor_record);
-            window[i] = sensor_record.value;
-            ESP_LOGW(TAG, "Value: %f", sensor_record.value);
-            vTaskDelay(pdMS_TO_TICKS(BETWEEN_READINGS_CALIBRATION));
-        }
-
-        double sum = 0;
-        for (int j = 0; j < window_size; j++) {
-            sum += window[j];
-        }
-        
-        double mean = sum / window_size;
-        
-        double squared_diff_sum = 0;
-        for (int j = 0; j < window_size; j++) {
-            double diff = window[j] - mean;
-            squared_diff_sum += diff * diff;
-        }
-        
-        double std_dev = sqrt(squared_diff_sum / window_size);
-        if (std_dev <= standard_deviation_threshold)
-        {
-            int final_timestamp = getNowTimestamp();
-            int stabilization_time_in_ms = (final_timestamp - initial_timestamp) * 1000;
-
-            ESP_LOGW(TAG, "Standard deviation is below threshold %f", std_dev);
-
-            ESP_ERROR_CHECK(nvs_function(stabilization_time_in_ms));
-            ESP_LOGW(TAG, "Saved stabilization time: %d", stabilization_time_in_ms);
-
-            break;
-        }
-        ESP_LOGW(TAG, "Standard deviation: %f", std_dev);
-
-        for (int i = 0; i < window_size - 1; i++) {
-            window[i] = window[i + 1];
-        }
-        read_function(&sensor_record);
-        window[window_size - 1] = sensor_record.value; // new value
-
-        gpio_set_level(sensor_power_pin, 0); // power off sensor
-    }
-}
-
 void determine_sensor_calibration_timings()
 {
     ESP_LOGI(TAG, "Determining pH sensor calibration time");
-    sliding_window(PH_SENSOR_POWER_PIN, read_initial_ph_record, set_saved_ph_calibration_timing, 0);
+    calibrate_ph_sensors();
 
     ESP_LOGI(TAG, "Determining DHT11 sensor calibration time");
-    sliding_window(DHT11_SENSOR_POWER_PIN, read_humidity_record, set_saved_dht11_calibration_timing, 1);
+    calibrate_dht11();
 }
