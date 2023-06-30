@@ -21,7 +21,7 @@
 
 const static char* TAG = "MAIN";
 
-const static long SLEEP_TIME = 0; // 6 seconds
+const static long SLEEP_TIME = 6; // 6 seconds
 
 RTC_DATA_ATTR struct sensor_records_struct sensor_records;
 RTC_DATA_ATTR int ready_to_upload_records_to_server = 0; // indicates that records were read but not yet uploaded to server
@@ -71,8 +71,8 @@ char* setup_wifi(void) {
 
     ESP_LOGI(TAG, "Finished setting up WiFi");
 
-    char my_device_id[100] = "user-3-device-id";
-    set_device_id(&my_device_id);
+    // char my_device_id[100] = "user-3-device-id";
+    // set_device_id(&my_device_id);
 
     return deviceID;
 }
@@ -199,9 +199,11 @@ int was_reading_from_sensor(char* action, char* sensor)
 */
 void sync_time() 
 {
+    ESP_LOGI(TAG, "Syncing time...");
     setup_wifi();
     getNowTimestamp();
     terminate_wifi();
+    ESP_LOGI(TAG, "Time synced.");
 }
 
 /**

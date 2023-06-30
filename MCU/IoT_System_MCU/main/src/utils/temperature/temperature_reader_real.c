@@ -11,7 +11,6 @@ const static char* TAG = "TEMP_READER_REAL";
 int read_temperature_record(struct sensor_record *temp_record)
 {
     ESP_LOGI(TAG, "Reading temperature...");
-    DHT11_init(GPIO_NUM_9);
     // sensor_record -> sensor_name = "temperature";
     temp_record -> value = DHT11_read().temperature;
     temp_record -> timestamp = getNowTimestamp();

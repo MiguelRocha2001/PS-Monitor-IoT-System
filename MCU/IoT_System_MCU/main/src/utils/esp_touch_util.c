@@ -73,9 +73,9 @@ static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_
             strcpy(*device_id, (char*)rvd_data);
         }
 
-
         set_saved_wifi(&wifi_config);
         set_device_id((char*)rvd_data);
+        ESP_LOGW(TAG, "Device ID: %s", (char*)rvd_data);
 
         ESP_ERROR_CHECK( esp_wifi_disconnect() );
         ESP_ERROR_CHECK( esp_wifi_set_config(WIFI_IF_STA, &wifi_config) );

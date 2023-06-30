@@ -72,7 +72,7 @@ void terminate_wifi() {
                                                         ESP_EVENT_ANY_ID,
                                                         &event_handler));
 
-    ESP_ERROR_CHECK(esp_wifi_clear_default_wifi_driver_and_handlers(m_esp_netif_sta));
+    ESP_ERROR_CHECK(esp_wifi_clear_default_wifi_driver_and_handlers(m_esp_netif_sta)); // this fails when esp touch is used to connect to wifi
     esp_netif_destroy(m_esp_netif_sta);
     ESP_ERROR_CHECK(esp_event_loop_delete_default());
 

@@ -4,7 +4,7 @@ import csv
 x = []
 y = []
 
-with open("cycle-2-no-alert-current.csv", 'r') as csvfile:
+with open("current.csv", 'r') as csvfile:
     plots = csv.reader(csvfile, delimiter=';')
 
     for row in plots:
@@ -25,7 +25,7 @@ plt.plot(x, y, color='g', linestyle='dashed', marker='o', label="Current")
 plt.xticks(rotation=25)
 plt.xlabel('Readings')
 plt.ylabel('Current')
-plt.title('Cycle 2 No Alert Current', fontsize=20)
+plt.title('ESP32-S2 Consumption', fontsize=20)
 plt.grid()
 plt.legend()
 plt.show()

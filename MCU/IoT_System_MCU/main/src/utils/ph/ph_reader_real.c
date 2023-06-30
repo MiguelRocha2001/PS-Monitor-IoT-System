@@ -43,7 +43,7 @@ int read_initial_ph_record(struct sensor_record *sensor_record)
     ESP_LOGI(TAG, "Reading initial PH");
   
     int adc_reading = read_adc(initial_ph_channel);
-    ESP_LOGE(TAG, "ADC reading: %d", adc_reading);
+    // ESP_LOGE(TAG, "ADC reading: %d", adc_reading);
 
     float ph = adc_reading * m + b;
 

@@ -46,9 +46,9 @@ fun generateRandomDeviceId(): String {
 
     // Generate a random string of characters for the device ID
     val sb = StringBuilder()
-    val characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" // TODO: use also lower case and reduce the size of the ID to 6 characters
+    val characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 
-    val length = 8
+    val length = 6
     for (i in 0 until length) {
         sb.append(characters[rand.nextInt(characters.length)])
     }
