@@ -272,10 +272,13 @@ export class RealServices implements Services {
         return response.properties.types//.map((type: string) => type.replace('_', ' ')) // FIXME: not working
     }
 
-    getUserCount(emailChunk: string | undefined): Promise<number> {
+    getUserCount(page: number, limit: number, emailChunk: string | undefined): Promise<number> {
         const userCountLink = SirenModule.getUserCountLink()
-        const linkAfterParams = userCountLink.href + '?emailChunk=' + emailChunk
-        if (!userCountLink) throw new Error('Get user count link not found')
+        let linkAfterParams = userCountLink.href + '?page=' + page + '&limit=' + limit
+        if (emailChunk) {
+            linkAfterParams = linkAfterParams.concat('&emailChunk=' + emailChunk)
+        }
+        if (!userCountLink) throw new Error('Get users link not found')
         const request = {
             url: linkAfterParams,
             method: 'GET'
@@ -283,9 +286,12 @@ export class RealServices implements Services {
         return doFetch(request, ResponseType.Siren).then(response => response.properties.userCount)
     }
 
-    getUsers(page: number, limit: number): Promise<User[]> {
+    getUsers(page: number, limit: number, emailChunk: string | undefined): Promise<User[]> {
         const getUsersLink = SirenModule.getUsersLink()
-        const linkAfterParams = getUsersLink.href + '?page=' + page + '&limit=' + limit
+        let linkAfterParams = getUsersLink.href + '?page=' + page + '&limit=' + limit
+        if (emailChunk) {
+            linkAfterParams = linkAfterParams.concat('&emailChunk=' + emailChunk)
+        }
         if (!getUsersLink) throw new Error('Get users link not found')
         const request = {
             url: linkAfterParams,

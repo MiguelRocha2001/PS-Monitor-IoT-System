@@ -5,7 +5,12 @@ import pt.isel.iot_data_server.service.user.Role
 
 interface UserDataRepository {
     fun createUser(user: User)
-    fun getAllUsers(): List<User>
+    fun getAllUsers(
+        role: Role? = null,
+        page: Int? = null,
+        limit: Int? = null,
+        email: String? = null
+    ): List<User>
     fun getUserCount(): Int
     fun getAllUsersWithRole(role: Role): List<User> // TODO: test this
     fun getUserByToken(token: String): User?

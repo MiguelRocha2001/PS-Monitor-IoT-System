@@ -24,11 +24,20 @@ class JdbiUserDataRepository(
             .execute()
     }
 
-    override fun getAllUsers(): List<User> {
+    override fun getAllUsers(role: Role?, page: Int?, limit: Int?, email: String?): List<User> {
+        val offset = ((page ?: 1) - 1) * (limit ?: 10)
         return handle.createQuery("""
             select _id, email, role 
             from _USER
+            where role = :role
+            and email LIKE '%' || :email || '%'
+            limit :limit 
+            offset :offset
         """)
+            .bind("role", role?.name?.lowercase() ?: "%")
+            .bind("email", email ?: "%")
+            .bind("limit", limit ?: 10)
+            .bind("offset", offset)
             .mapTo<UserMapper>()
             .list()
             .map { it.toUser() }

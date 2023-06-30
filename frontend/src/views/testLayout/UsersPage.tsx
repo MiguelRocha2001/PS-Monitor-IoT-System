@@ -31,7 +31,6 @@ export function Users() {
     const [redirect, setRedirect] = useState<string | undefined>(undefined)
 
     useEffect(() => {
-        console.log("Users page role: " + role)
         if (role?.toLowerCase() !== "admin") {
             setRedirect("/home")
         }
@@ -54,20 +53,10 @@ export function Users() {
         };
     }, []);
 
-    /*
-        useEffect(
-            () => {
-                if (loggedOut) {
-                    const navigate = useNavigate()
-                    console.log("logged out")
-                    return navigate("/")
-                }
-            }, [loggedOut]
-        )
-    */
     useEffect(() => {
         async function fetchNumberOfUsers() {
-            services.getUserCount(undefined)
+            const emailChunk = searchQuery === "" ? undefined : searchQuery
+            services.getUserCount(page, pageSize, emailChunk)
                 .then((number) => setTotalUsers(number))
                 .catch(error => setError(error.message))
         }
@@ -76,7 +65,8 @@ export function Users() {
 
     useEffect(() => { //TODO IF I FETCH DEVICE I STORE THEME SO WHEN I CLICK IN THE PREVIOUS BUTTON A NEW REQUEST IS NOT MADE
         async function fetchNumberOfUsers() {
-            services.getUserCount(undefined)
+            const emailChunk = searchQuery === "" ? undefined : searchQuery
+            services.getUserCount(page, pageSize, emailChunk)
                 .then((number) => setFilteredUsers(number))
                 .catch(error => setError(error.message))
         }
@@ -87,7 +77,8 @@ export function Users() {
 
     useEffect(() => {
         async function updateUsers() {
-            services.getUsers(page, pageSize, undefined)
+            const emailChunk = searchQuery === "" ? undefined : searchQuery
+            services.getUsers(page, pageSize, emailChunk)
                 .then(users => setUsers(users))
                 .catch(error => setError(error.message))
         }
@@ -96,10 +87,9 @@ export function Users() {
 
     const handleButtonPress = () => {
         if(searchQuery === "") return
-        console.log(searchQuery)
         services.getUsers(page, pageSize, searchQuery.toUpperCase())
             .then(users => {setUsers(users)})
-            .then(()=> services.getUserCount(searchQuery.toUpperCase()))
+            .then(()=> services.getUserCount(page, pageSize, searchQuery))
             .then((devicesSize)=>setFilteredUsers(devicesSize))
             .catch(error => setError(error.message))
     }

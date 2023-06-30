@@ -37,7 +37,7 @@ export interface Services {
     availableSensors(deviceId: string): Promise<string[]>
 
     getUsers(page: number, limit: number, emailChunk: string | undefined): Promise<User[]>
-    getUserCount(emailChunk: string | undefined): Promise<number>
+    getUserCount(page: number, limit: number, emailChunk: string | undefined): Promise<number>
 }
 
 export const services: Services = new RealServices()

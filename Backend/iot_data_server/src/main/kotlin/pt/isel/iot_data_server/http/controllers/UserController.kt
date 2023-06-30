@@ -70,8 +70,9 @@ class UserController(
         user: User,
         @RequestParam(required = false) page: Int?, // TODO: test pagination
         @RequestParam(required = false) limit: Int?,
+        @RequestParam(required = false) emailChunk: String?, // id chunk
     ): ResponseEntity<*> {
-        val users = service.getAllUsers(Role.USER) // only standard users
+        val users = service.getAllUsers(Role.USER, page, limit, emailChunk)
         return ResponseEntity.status(200)
             .contentType(SirenMediaType)
             .body(
@@ -85,9 +86,11 @@ class UserController(
     @Authorization(Role.ADMIN)
     fun getUserCount(
         user: User,
+        @RequestParam(required = false) page: Int?, // id chunk
+        @RequestParam(required = false) limit: Int?, // id chunk
         @RequestParam(required = false) emailChunk: String?, // id chunk
     ): ResponseEntity<*> {
-        val userCount = service.getUserCount(emailChunk)
+        val userCount = service.getUserCount(Role.USER, page, limit, emailChunk)
         return ResponseEntity.status(200)
             .contentType(SirenMediaType)
             .body(siren(

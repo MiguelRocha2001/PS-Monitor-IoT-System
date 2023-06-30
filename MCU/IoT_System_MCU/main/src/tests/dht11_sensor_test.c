@@ -49,7 +49,7 @@ void app_main()
         */
         
         // sleep for 1 second
-        vTaskDelay(100 / portTICK_PERIOD_MS);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
         i = i + 1;
     }
 }

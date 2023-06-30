@@ -52,27 +52,23 @@ class UserService(
         return emailRegexPattern.toRegex().matches(email)
     }
 
-    final fun getAllUsers(role: Role? = null): List<User> { // TODO: test this
+    final fun getAllUsers(
+        role: Role? = null,
+        page: Int? = null,
+        limit: Int? = null,
+        email: String? = null
+    ): List<User> { // TODO: test this
         return transactionManager.run {
-            if (role === null)
-                return@run it.userRepo.getAllUsers()
-            return@run it.userRepo.getAllUsersWithRole(role)
+            return@run it.userRepo.getAllUsers(role, page, limit, email)
         }
     }
-
-    final fun getAllUsers(role: Role? = null, emailChunk: String): List<User> { // TODO: test this
+    final fun getUserCount(
+        role: Role? = null,
+        page: Int? = null,
+        limit: Int? = null,
+        email: String? = null): Int {
         return transactionManager.run {
-            if (role === null)
-                return@run it.userRepo.getUsersByEmailChunkOrNull(emailChunk)
-            return@run it.userRepo.getAllUsersWithRole(role)
-        }
-    }
-
-    final fun getUserCount(emailChunk: String?): Int {
-        return transactionManager.run {
-            if (emailChunk === null)
-                return@run it.userRepo.getAllUsers().size
-            return@run it.userRepo.getUserCountByEmailChunkOrNull(emailChunk)
+            return@run it.userRepo.getAllUsers(role, page, limit, email).size // TODO: use sql to make query
         }
     }
 

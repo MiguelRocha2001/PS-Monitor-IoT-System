@@ -70,7 +70,7 @@ class UserRepoTests {
                 val user1 = createUser(usersRepo, "some_email_1@gmail.com")
                 val user2 = createUser(usersRepo, "some_email_2@gmail.com")
 
-                val users2 = usersRepo.getAllUsers()
+                val users2 = usersRepo.getAllUsers(page, limit, email)
 
                 assertTrue(users2.contains(user1))
                 assertTrue(users2.contains(user2))
@@ -162,7 +162,7 @@ class UserRepoTests {
                 assertNotNull(usersRepo.getUserByIdOrNull(user2.id))
 
                 usersRepo.deleteAllUsers()
-                val users3 = usersRepo.getAllUsers()
+                val users3 = usersRepo.getAllUsers(page, limit, email)
 
                 assertEquals(0, users3.size)
             }
