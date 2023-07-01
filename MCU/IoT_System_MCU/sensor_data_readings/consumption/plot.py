@@ -4,7 +4,7 @@ import csv
 x = []
 y = []
 
-with open("active-mode-iddle\current.csv", 'r') as csvfile:
+with open("active-mode-with-wifi-and-sending\current.csv", 'r') as csvfile:
     plots = csv.reader(csvfile, delimiter=';')
 
     for row in plots:
@@ -16,7 +16,7 @@ with open("active-mode-iddle\current.csv", 'r') as csvfile:
 data = sorted(zip(x, y), key=lambda point: point[0])
 x, y = zip(*data)
 
-avg = sum(y) / 30
+avg = sum(y) / len(y)
 print("Sum:", sum(y))
 print("Average:", avg)
 
@@ -30,4 +30,4 @@ plt.ylabel('Current')
 plt.title('ESP32-S2 Power Consumption', fontsize=20)
 plt.grid()
 plt.legend()
-plt.show()
+#plt.show()

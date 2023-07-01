@@ -76,6 +76,7 @@
         "regex": "c",
         "ratio": "c",
         "system_error": "c",
-        "functional": "c"
+        "functional": "c",
+        "esp_wifi_types.h": "c"
     }
 }

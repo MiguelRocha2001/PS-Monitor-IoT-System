@@ -194,7 +194,7 @@ void app_main(void)
 
     vTaskDelay(3000 / portTICK_PERIOD_MS);
 
-    power_on_dht11();
+    wifi_reconnect_timeout();
     
     start_deep_sleep(3);
 }

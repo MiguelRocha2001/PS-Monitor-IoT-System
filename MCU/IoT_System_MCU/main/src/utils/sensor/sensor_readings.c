@@ -146,5 +146,5 @@ void determine_sensor_calibration_timings()
     calibrate_ph_sensors();
 
     ESP_LOGI(TAG, "Determining DHT11 sensor calibration time");
-    calibrate_dht11();
+    calibrate_dht11_sensor();
 }

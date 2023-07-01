@@ -1,6 +1,6 @@
 idf_component_register(
         SRCS
-            "src/tests/dht11_sensor_test.c"
+            "src/tests/energy_consumption_test_single_stage.c"
             "src/utils/nvs_util.c"
             "src/utils/pushingbox_util.c"
             "src/utils/esp_touch_util.c"

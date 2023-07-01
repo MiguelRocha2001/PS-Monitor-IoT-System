@@ -35,7 +35,7 @@ fun fromMqttMsgStringToDeviceLogRecord(str: String): DeviceWakeUpLog {
 
 /**
  * Generates a random device ID
- * The size of the ID is 8 characters.
+ * The size of the ID is 6 characters.
  * 2^32 = 4,294,967,296 possible combinations.
  * This means that we need 8 characters to represent all possible 2^32 combinations.
  */
