@@ -16,6 +16,7 @@
   -->
 
 <hivemq>
+
     <listeners>
         <tls-tcp-listener>
             <port>8883</port>
@@ -23,11 +24,13 @@
             <tls>
                 <keystore>
                     <path>C:\Users\migas\Documents\GitHub\PS-Monitor-IoT-System\Backend\iot_data_server\src\main\resources\hivemq\conf\hivemq.jks</path>
-                    <password>changeme</password>
-                    <private-key-password>changeme</private-key-password>
+                    <password>password-keystore</password>
+                    <private-key-password>password-key</private-key-password>
                 </keystore>
                 <client-authentication-mode>NONE</client-authentication-mode>
             </tls>
         </tls-tcp-listener>
     </listeners>
+
+
 </hivemq>

@@ -7,6 +7,7 @@ import pt.isel.iot_data_server.domain.UserInfo
 import pt.isel.iot_data_server.repository.DeviceDataRepository
 import pt.isel.iot_data_server.repository.UserDataRepository
 import pt.isel.iot_data_server.service.user.Role
+import java.time.Instant
 import java.util.*
 import kotlin.random.Random
 
@@ -21,8 +22,13 @@ internal fun createUser(usersRepo: UserDataRepository, email: String): User {
 /**
  * Uses local function to generate random device ID since this one doesnt depend on the timestamp.
  */
-internal fun createDevice(deviceRepo: DeviceDataRepository, userId: String, alertEmail: String): Device {
-    val device = Device(generateRandomDeviceId(), alertEmail)
+internal fun createDevice(
+    deviceRepo: DeviceDataRepository,
+    userId: String,
+    alertEmail: String,
+    instant: Instant = Instant.now()
+): Device {
+    val device = Device(generateRandomDeviceId(), alertEmail, instant)
     deviceRepo.createDevice(userId, device)
     return device
 }

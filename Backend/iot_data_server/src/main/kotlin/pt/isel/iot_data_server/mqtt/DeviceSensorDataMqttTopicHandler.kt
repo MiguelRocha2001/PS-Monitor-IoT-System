@@ -3,10 +3,12 @@ package pt.isel.iot_data_server.mqtt
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
+import pt.isel.iot_data_server.configuration.NeutralizationDeviceStabilizationTime
 import pt.isel.iot_data_server.domain.*
 import pt.isel.iot_data_server.repository.tsdb.SensorDataRepo
 import pt.isel.iot_data_server.service.device.DeviceService
 import pt.isel.iot_data_server.service.email.EmailManager
+import java.time.Instant
 
 /**
  * This class is responsible for creating the admin (email=admin_email@gmail.com) user
@@ -17,10 +19,12 @@ class DeviceSensorDataMqttTopicHandler(
     private val emailSenderService: EmailManager,
     private val deviceService: DeviceService,
     private val sensorInfo: SensorInfo,
+    private val neutralizationDeviceStabilizationTime: NeutralizationDeviceStabilizationTime,
     private val sensorDataRepo: SensorDataRepo,
     client: MqttClient
 ) {
     private val logger = LoggerFactory.getLogger(DeviceSensorDataMqttTopicHandler::class.java)
+    private val stabilizationTime = neutralizationDeviceStabilizationTime.time
 
     init {
         subscribeSensorTopic(client)
@@ -39,6 +43,13 @@ class DeviceSensorDataMqttTopicHandler(
 
                 val deviceResult = deviceService.getDeviceByIdOrNull(deviceId)
                 if (deviceResult != null) {
+                    val createAt = deviceResult.createdAt
+                    val now = Instant.now().epochSecond
+                    if (now - createAt.epochSecond < stabilizationTime) {
+                        logger.info("Received sensor record from device: $deviceId, but it is still stabilizing.")
+                        return@subscribe
+                    }
+
                     alertIfDangerous(deviceResult, sensorRecord)
                     sensorDataRepo.saveSensorRecord(deviceId, sensorRecord)
                     logger.info("Saved sensor record: $sensorRecord, from device: $deviceId")

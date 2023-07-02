@@ -8,6 +8,8 @@ import pt.isel.iot_data_server.repository.TransactionManager
 import pt.isel.iot_data_server.service.Either
 import pt.isel.iot_data_server.service.user.UserService
 import pt.isel.iot_data_server.utils.emailVerifier
+import java.sql.Timestamp
+import java.time.Instant
 
 
 @Service
@@ -24,7 +26,8 @@ class DeviceService (
         }
         return transactionManager.run {
             return@run generateDeviceId().let { deviceId ->
-                val device = Device(deviceId, alertEmail)
+                val instant = Instant.now()
+                val device = Device(deviceId, alertEmail, instant)
                 it.deviceRepo.createDevice(userId, device)
                 logger.debug("Device with id ${device.deviceId} added")
                 Either.Right(deviceId)
@@ -43,7 +46,8 @@ class DeviceService (
                 logger.debug("Device with id $deviceId already exists")
                 Either.Left(CreateDeviceError.DeviceAlreadyExists)
             } else {
-                val device = Device(deviceId, alertEmail)
+                val instant = Instant.now()
+                val device = Device(deviceId, alertEmail, instant)
                 it.deviceRepo.createDevice(userId, device)
                 logger.debug("Device with id ${device.deviceId} added")
                 Either.Right(deviceId)

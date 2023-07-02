@@ -6,7 +6,7 @@ import java.time.Instant
 import kotlin.random.Random
 
 
-data class Device(val deviceId: String, val ownerEmail: String)
+data class Device(val deviceId: String, val ownerEmail: String, val createdAt: Instant)
 data class DeviceWakeUpLog(val deviceId: String, val instant: Instant, val reason: String)
 
 fun fromMqttMsgStringToDeviceLogRecord(str: String): DeviceWakeUpLog {

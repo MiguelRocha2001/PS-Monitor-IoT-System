@@ -18,19 +18,20 @@ class JdbiDeviceDataRepository(
     override fun createDevice(userId: String, device: Device) {
         handle.createUpdate(
             """
-            insert into device (id, user_id, email) values (:id, :user_id, :email)
+            insert into device (id, user_id, email, created_at) values (:id, :user_id, :email, :created_at)
             """
         )
             .bind("id", device.deviceId)
             .bind("user_id", userId)
             .bind("email", device.ownerEmail)
+            .bind("created_at", device.createdAt)
             .execute()
     }
 
     override fun getAllDevices(page: Int?, limit: Int?): List<Device> {
         val offset = ((page ?: 1) - 1) * (limit ?: 10)
         return handle.createQuery("""
-            select id, user_id, email
+            select id, user_id, email, created_at
             from device 
             limit :limit 
             offset :offset
@@ -52,7 +53,7 @@ class JdbiDeviceDataRepository(
         val offset = ((page ?: 1) - 1) * (limit ?: 10)
         return handle.createQuery(
             """
-            select id, user_id, email 
+            select id, user_id, email, created_at
             from device 
             where user_id = :user_id
             and email LIKE '%' || :email || '%'
@@ -75,7 +76,7 @@ class JdbiDeviceDataRepository(
         val offset = ((page ?: 1) - 1) * (limit ?: 10)
         return handle.createQuery(
             """
-            select id, user_id, email 
+            select id, user_id, email, created_at
             from device 
             where user_id = :user_id
             and id  LIKE '%' || :id || '%'
@@ -114,7 +115,7 @@ class JdbiDeviceDataRepository(
     override fun getDevicesByAlertEmail(email: String): List<Device> {
         return handle.createQuery(
             """
-            select id, user_id, email
+            select id, user_id, email, created_at
             from device 
             where email = :email
             """
@@ -127,7 +128,7 @@ class JdbiDeviceDataRepository(
     override fun getDeviceById(deviceId: String): Device? {
         return handle.createQuery(
             """
-            select id, user_id, email 
+            select id, user_id, email, created_at
             from device 
             where id = :id
             """
@@ -145,7 +146,7 @@ class JdbiDeviceDataRepository(
         return handle.createQuery(
             """
             select count(*) 
-            from device 
+            from device
             where user_id = :user_id
             and email LIKE '%' || :email || '%'
             and id  LIKE '%' || :id || '%'

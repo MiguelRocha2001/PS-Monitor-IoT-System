@@ -28,10 +28,11 @@ data class DeviceMapper(
     val id: String,
     val user_id: String,
     val email: String,
+    val created_at: Timestamp
 )
 
 fun DeviceMapper.toDevice() =
-    Device(id, email)
+    Device(id, email, created_at.toInstant())
 
 class PasswordAndSaltMapper(
     val value: String,

@@ -25,6 +25,7 @@ create table device(
     id varchar primary key,
     user_id varchar,
     email varchar,
+    created_at timestamp,
     foreign key (user_id) references _user(_id)
 );
 

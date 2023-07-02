@@ -72,8 +72,8 @@ char* setup_wifi(void) {
 
     ESP_LOGI(TAG, "Finished setting up WiFi");
 
-    // char my_device_id[100] = "user-3-device-id";
-    // set_device_id(&my_device_id);
+    char my_device_id[100] = "oxwWwa";
+    set_device_id(&my_device_id);
 
     return deviceID;
 }

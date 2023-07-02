@@ -51,8 +51,9 @@ class DeviceRepoTests {
 
                 val user = createUser(userRepo, "some_email_1@gmail.com")
                 val alertEmail = "some_alert_email_1@gmail.com"
-                val device1 = createDevice(deviceDataRepository, user.id, alertEmail)
-                val device2 = createDevice(deviceDataRepository, user.id, alertEmail)
+                val instant = Instant.now()
+                val device1 = createDevice(deviceDataRepository, user.id, alertEmail, instant)
+                val device2 = createDevice(deviceDataRepository, user.id, alertEmail, instant)
 
                 val foundDevices = deviceDataRepository.getAllDevices()
                 assertEquals(2, foundDevices.size)
@@ -75,8 +76,9 @@ class DeviceRepoTests {
                 val user1 = createUser(userRepo, "some_email_1@gmail.com")
                 val user2 = createUser(userRepo, "some_email_2@gmail.com")
                 val alertEmail = "some_alert_email_1@gmail.com"
-                val device1 = createDevice(deviceDataRepository, user1.id, alertEmail)
-                val device2 = createDevice(deviceDataRepository, user2.id, alertEmail)
+                val instant = Instant.now()
+                val device1 = createDevice(deviceDataRepository, user1.id, alertEmail, instant)
+                val device2 = createDevice(deviceDataRepository, user2.id, alertEmail, instant)
 
                 val foundDevices = deviceDataRepository.getAllDevices()
                 assertEquals(2, foundDevices.size)
@@ -122,11 +124,12 @@ class DeviceRepoTests {
 
                 val user = createUser(userRepo, "some_email_1@gmail.com")
 
+                val instant = Instant.now()
                 val device1 = createDevice(devicesRepo, user.id, "some_alert_email_1@gmail.com")
                 val device2 = createDevice(devicesRepo, user.id, "some_alert_email_2@gmail.com")
                 val device3 = createDevice(devicesRepo, user.id, "some_alert_email_3@gmail.com")
-                val device4 = createDevice(devicesRepo, user.id, "some_alert_email_4@gmail.com")
-                val device5 = createDevice(devicesRepo, user.id, "some_alert_email_5@gmail.com")
+                val device4 = createDevice(devicesRepo, user.id, "some_alert_email_4@gmail.com", instant)
+                val device5 = createDevice(devicesRepo, user.id, "some_alert_email_5@gmail.com", instant)
 
                 val devices = devicesRepo.getAllDevices(2, 3)
                 assertEquals(2, devices.size)
@@ -149,12 +152,13 @@ class DeviceRepoTests {
                 val user2 = createUser(userRepo, "some_email_2@gmail.com")
 
 
+                val instant = Instant.now()
                 val device1 = createDevice(devicesRepo, user1.id, "some_alert_email_1@gmail.com")
                 val device2 = createDevice(devicesRepo, user1.id, "some_alert_email_2@gmail.com")
                 val device3 = createDevice(devicesRepo, user1.id, "some_alert_email_3@gmail.com")
-                val device4 = createDevice(devicesRepo, user2.id, "some_alert_email_4@gmail.com")
-                val device5 = createDevice(devicesRepo, user2.id, "some_alert_email_5@gmail.com")
-                val device6 = createDevice(devicesRepo, user2.id, "some_alert_email_6@gmail.com")
+                val device4 = createDevice(devicesRepo, user2.id, "some_alert_email_4@gmail.com", instant)
+                val device5 = createDevice(devicesRepo, user2.id, "some_alert_email_5@gmail.com", instant)
+                val device6 = createDevice(devicesRepo, user2.id, "some_alert_email_6@gmail.com", instant)
                 val device7 = createDevice(devicesRepo, user2.id, "some_alert_email_7@gmail.com")
                 val device8 = createDevice(devicesRepo, user2.id, "some_alert_email_8@gmail.com")
 
@@ -175,12 +179,13 @@ class DeviceRepoTests {
                 val userRepo = transaction.userRepo
 
                 val user = createUser(userRepo, "some_email_1@gmail.com")
-                val device = createDevice(devicesRepo, user.id, "some_alert_email_8@gmail.com")
+                val instant = Instant.now()
+                val device = createDevice(devicesRepo, user.id, "some_alert_email_8@gmail.com", instant)
 
                 assertEquals(device, devicesRepo.getDeviceById(device.deviceId))
 
                 devicesRepo.deleteDevice(device.deviceId)
-                Assertions.assertNull(devicesRepo.getDeviceById(device.deviceId))
+                assertNull(devicesRepo.getDeviceById(device.deviceId))
             }
         }
     }
@@ -216,11 +221,12 @@ class DeviceRepoTests {
 
                 val user = createUser(userRepo, "some_email_1@gmail.com")
 
+                val instant = Instant.now()
                 checkDeviceCountIsZero(devicesRepo)
                 createDevice(devicesRepo, user.id, "some_alert_email_1@gmail.com")
-                val device1 = createDevice(devicesRepo, user.id, "some_alert_email_2@gmail.com")
-                val device2 = createDevice(devicesRepo, user.id, "some_alert_email_2@gmail.com")
-                val device3 = createDevice(devicesRepo, user.id, "some_alert_email_2@gmail.com")
+                val device1 = createDevice(devicesRepo, user.id, "some_alert_email_2@gmail.com", instant)
+                val device2 = createDevice(devicesRepo, user.id, "some_alert_email_2@gmail.com", instant)
+                val device3 = createDevice(devicesRepo, user.id, "some_alert_email_2@gmail.com", instant)
                 createDevice(devicesRepo, user.id, "some_alert_email_3@gmail.com")
                 assertEquals(5, devicesRepo.getAllDevices().size)
 

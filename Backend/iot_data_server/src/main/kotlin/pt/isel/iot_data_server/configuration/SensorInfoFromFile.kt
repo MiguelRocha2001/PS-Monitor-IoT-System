@@ -16,10 +16,11 @@ class SensorInfoFromFile: SensorInfo {
         } else {
             logger.info("Sensor thresholds file found. Loading thresholds.")
             file.forEachLine {
-                val split = it.split(":")
-                val sensorType = split[0]
-                val lowerThreshold = split[1].split(",")[0].toDoubleOrNull()
-                val upperThreshold = split[1].split(",")[1].toDoubleOrNull()
+                val split1 = it.split(":")
+                val sensorType = split1[0]
+                val split2 = split1[1].split(",")
+                val lowerThreshold = split2[0].toDoubleOrNull()
+                val upperThreshold = if (split2.size == 2) split2[1].toDoubleOrNull() else null
                 sensorThresholds[sensorType] = lowerThreshold to upperThreshold
             }
             logger.info("Sensor thresholds loaded.")
