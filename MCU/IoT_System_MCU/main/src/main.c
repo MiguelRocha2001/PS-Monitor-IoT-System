@@ -33,23 +33,24 @@ RTC_DATA_ATTR int check_water_leakage_iteration = 0;
 RTC_DATA_ATTR char* wake_up_reason;
 esp_mqtt_client_handle_t mqtt_client;
 
-void send_sensor_records(esp_mqtt_client_handle_t client, char* deviceID) {
+void send_sensor_records(esp_mqtt_client_handle_t client, char* deviceID, struct sensor_records_struct* sensor_records)
+{
     strcpy(action, "sending_sensor_records");
 
     ESP_LOGE(TAG, "Sending sensor records...");
-    mqtt_send_sensor_record(client, &sensor_records.initial_ph_record, deviceID, "initial-ph");
+    mqtt_send_sensor_record(client, &(sensor_records->initial_ph_record), deviceID, "initial-ph");
     vTaskDelay(1000 / portTICK_PERIOD_MS);
 
-    mqtt_send_sensor_record(client, &sensor_records.final_ph_record, deviceID, "final-ph");
+    mqtt_send_sensor_record(client, &(sensor_records->final_ph_record), deviceID, "final-ph");
     vTaskDelay(1000 / portTICK_PERIOD_MS);
 
-    mqtt_send_sensor_record(client, &sensor_records.temperature_record, deviceID, "temperature");
+    mqtt_send_sensor_record(client, &(sensor_records->temperature_record), deviceID, "temperature");
     vTaskDelay(1000 / portTICK_PERIOD_MS);
 
-    mqtt_send_sensor_record(client, &sensor_records.humidity_record, deviceID, "humidity");
+    mqtt_send_sensor_record(client, &(sensor_records->humidity_record), deviceID, "humidity");
     vTaskDelay(1000 / portTICK_PERIOD_MS);
 
-    mqtt_send_sensor_record(client, &sensor_records.water_flow_record, deviceID, "water-flow");
+    mqtt_send_sensor_record(client, &(sensor_records->water_flow_record), deviceID, "water-flow");
     vTaskDelay(1000 / portTICK_PERIOD_MS);
 }
 
@@ -107,12 +108,38 @@ void fake_timestamps(struct sensor_records_struct *sensor_records) {
     sensor_records -> water_flow_record.timestamp -= n_went_to_deep_sleep * n_seconds_in_day;
 }
 
+void save_previous_records(struct sensor_records_struct* previous_sensor_records)
+{
+    previous_sensor_records->initial_ph_record.timestamp = sensor_records.initial_ph_record.timestamp;
+    previous_sensor_records->initial_ph_record.value = sensor_records.initial_ph_record.value;
+
+    previous_sensor_records->final_ph_record.timestamp = sensor_records.final_ph_record.timestamp;
+    previous_sensor_records->final_ph_record.value = sensor_records.final_ph_record.value;
+
+    previous_sensor_records->temperature_record.timestamp = sensor_records.temperature_record.timestamp;
+    previous_sensor_records->temperature_record.value = sensor_records.temperature_record.value;
+
+    previous_sensor_records->humidity_record.timestamp = sensor_records.humidity_record.timestamp;
+    previous_sensor_records->humidity_record.value = sensor_records.humidity_record.value;
+
+    previous_sensor_records->water_flow_record.timestamp = sensor_records.water_flow_record.timestamp;
+    previous_sensor_records->water_flow_record.value = sensor_records.water_flow_record.value;
+}
+
 void compute_sensors() 
 {
-    int read_all_sensors_in_this_iteration = check_all_sensors;
+    int read_all = check_all_sensors;
     check_all_sensors = !check_all_sensors;
 
-    if(read_all_sensors_in_this_iteration)
+    int pending_records = 0;
+    struct sensor_records_struct previous_sensor_records;
+    if (ready_to_upload_records_to_server == 1) // saves last readings in a local variable before reading new ones
+    {
+        pending_records = 1;
+        save_previous_records(&previous_sensor_records);
+    }
+
+    if(read_all)
     {
         read_sensor_records(&sensor_records, &action);
         // fake_timestamps(&sensor_records);
@@ -123,16 +150,22 @@ void compute_sensors()
     int leakage = read_water_leak_record(); // TODO: change name
     
     char* deviceID = "";
-    if (read_all_sensors_in_this_iteration)
+    if (read_all)
     {
         deviceID = setup_wifi_and_mqtt(); // turns on wifi
-        send_sensor_records(mqtt_client, deviceID);
+        send_sensor_records(mqtt_client, deviceID, &sensor_records);
         ready_to_upload_records_to_server = 0; // data uploaded
+
+        if (pending_records == 1) // there were pending records
+        {
+            ESP_LOGW(TAG, "There were pending records. Sending now...");
+            send_sensor_records(mqtt_client, deviceID, &previous_sensor_records);
+        }
     }
 
-    if(leakage == 1)
+    if(leakage)
     {
-        if (!read_all_sensors_in_this_iteration) // wifi not started yet
+        if (!read_all) // wifi not started yet
         {
             
             deviceID = setup_wifi_and_mqtt(); // turns on wifi
@@ -140,7 +173,7 @@ void compute_sensors()
             if (ready_to_upload_records_to_server) // data wasnt uploaded last time
             {
                 ESP_LOGW(TAG, "Data was not uploaded last time. Sending now...");
-                send_sensor_records(mqtt_client, deviceID);
+                send_sensor_records(mqtt_client, deviceID, &sensor_records);
             }
         }
 
@@ -153,7 +186,8 @@ void compute_sensors()
     {
         ESP_LOGI(TAG, "No water leakage detected.");
     }
-    if (read_all_sensors_in_this_iteration || leakage == 1)
+
+    if (read_all || leakage)
     {
         terminate_wifi_and_mqtt(); // turns off wifi
     }
@@ -352,7 +386,7 @@ void app_main(void)
     int res = handle_wake_up();
     if (res == 0 || res == 1) // timeout or power on
     {
-        if (res == 1) // power on TODO: change back to 1 later
+        if (res == 10) // power on TODO: change back to 1 later
         {
             determine_sensor_calibration_timings(); // to set the calibration timings
         }
