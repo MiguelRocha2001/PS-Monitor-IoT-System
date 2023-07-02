@@ -33,7 +33,7 @@ class InfoHttpTests {
     fun `Can obtain a new Device Id`() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
-        val result = client.get().uri("/siren-info")
+        val result = client.get().uri("/siren-info".toApiUri())
             .exchange()
             .expectStatus().isOk
             .expectBody(SirenModel::class.java)
@@ -47,7 +47,7 @@ class InfoHttpTests {
 
         // asserting links
         val links = result.links
-        assertEquals(10, links.size)
+        assertEquals(13, links.size)
         links.any { it.rel.contains(Rels.IS_LOGGED_IN.value) && it.href == Uris.NonSemantic.loggedIn().toASCIIString() }
         links.any { it.rel.contains(Rels.ME.value) && it.href == URI(Uris.Users.ME).toASCIIString() }
         links.any { it.rel.contains(Rels.DEVICES.value) && it.href == Uris.Users.Devices.allByUser().toASCIIString() }
@@ -56,8 +56,11 @@ class InfoHttpTests {
         links.any { it.rel.contains(Rels.DEVICE_COUNT.value) && it.href == URI(Uris.Users.Devices.COUNT_2).toASCIIString() }
         links.any { it.rel.contains(Rels.SENSOR_DATA.value) && it.href == URI(Uris.Users.Devices.Sensor.ALL_2).toASCIIString() }
         links.any { it.rel.contains(Rels.IS_EMAIL_ALREADY_REGISTERED.value) && it.href == URI(Uris.Users.exists.BY_EMAIL_2).toASCIIString() }
-        links.any { it.rel.contains(Rels.IS_EMAIL_ALREADY_REGISTERED.value) && it.href == URI(Uris.Users.exists.BY_EMAIL_2).toASCIIString() }
         links.any { it.rel.contains(Rels.AVAILABLE_DEVICE_SENSORS.value) && it.href == URI(Uris.Users.Devices.Sensor.TYPES_2).toASCIIString() }
+        links.any { it.rel.contains(Rels.USERS.value) && it.href == URI(Uris.Users.ALL).toASCIIString() }
+        links.any { it.rel.contains(Rels.USER_COUNT.value) && it.href == URI(Uris.Users.COUNT).toASCIIString() }
+        links.any { it.rel.contains(Rels.VERIFY_CODE.value) && it.href == URI(Uris.Verification.CODE).toASCIIString() }
+        links.any { it.rel.contains(Rels.DEVICE_WAKE_UP_LOGS.value) && it.href == Uris.Users.Devices.WakeUpLogs.all().toASCIIString() }
 
         // asserting actions
         val actions = result.actions

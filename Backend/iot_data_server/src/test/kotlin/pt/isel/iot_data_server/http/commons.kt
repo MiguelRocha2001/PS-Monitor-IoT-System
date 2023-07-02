@@ -6,6 +6,10 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import pt.isel.iot_data_server.http.controllers.Uris
 import pt.isel.iot_data_server.http.infra.SirenModel
 
+fun String.toApiUri(): String {
+    return Uris.API + this
+}
+
 /**
  * Creates a user and returns the token
  */
@@ -20,7 +24,7 @@ fun createUserAndLogin(email: String, password: String, client: WebTestClient): 
  * @return the token and user id.
  */
 fun createUser(email: String, password: String, client: WebTestClient): Pair<String, String> {
-    val result = client.post().uri(Uris.Users.ALL)
+    val result = client.post().uri(Uris.Users.ALL.toApiUri())
         .bodyValue(
             mapOf(
                 "email" to email,
@@ -42,7 +46,7 @@ fun createUser(email: String, password: String, client: WebTestClient): Pair<Str
  * Creates a user and returns the token
  */
 fun login(email: String, password: String, client: WebTestClient): String {
-    val result = client.post().uri(Uris.Users.MY_TOKEN)
+    val result = client.post().uri(Uris.Users.MY_TOKEN.toApiUri())
         .bodyValue(
             mapOf(
                 "email" to email,
@@ -63,7 +67,7 @@ fun loginWithAdmin(client: WebTestClient) =
     login("admin_email@gmail.com", "admin-password", client) // logs with admin
 
 internal fun create_device(email: String, client: WebTestClient, userToken: String): String {
-    val result = client.post().uri(Uris.Users.Devices.ALL)
+    val result = client.post().uri(Uris.Users.Devices.ALL.toApiUri())
         .header(HttpHeaders.COOKIE, "token=$userToken")
         .bodyValue(mapOf("email" to email))
         .exchange()
@@ -74,14 +78,14 @@ internal fun create_device(email: String, client: WebTestClient, userToken: Stri
 
     val properties = result.properties as LinkedHashMap<*, *>
     Assertions.assertEquals(1, properties.size)
-    Assertions.assertEquals(8, (properties["deviceId"] as? String)?.length)
+    Assertions.assertEquals(6, (properties["deviceId"] as? String)?.length)
 
     return properties["deviceId"] as String
 }
 
 fun deleteAllStandardUsers(client: WebTestClient) {
     val adminToken = loginWithAdmin(client)
-    client.delete().uri(Uris.Users.ALL)
+    client.delete().uri(Uris.Users.ALL.toApiUri())
         .header(HttpHeaders.COOKIE, "token=$adminToken")
         .exchange()
         .expectStatus().isOk
@@ -103,7 +107,7 @@ fun deleteAllStandardUsers(client: WebTestClient) {
 }
 
 fun eraseAllData(client: WebTestClient) {
-    client.delete().uri(Uris.Data.ALL + "?leave-admin-user=true")
+    client.delete().uri((Uris.Data.ALL + "?leave-admin-user=true").toApiUri())
         .exchange()
         .expectStatus().isOk
         .expectBody(SirenModel::class.java)

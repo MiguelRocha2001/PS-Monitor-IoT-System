@@ -4,7 +4,7 @@ import csv
 x = []
 y = []
 
-with open("active-mode-with-wifi-and-sending\current.csv", 'r') as csvfile:
+with open("water-sensor-power-on_with-water\current.csv", 'r') as csvfile:
     plots = csv.reader(csvfile, delimiter=';')
 
     for row in plots:

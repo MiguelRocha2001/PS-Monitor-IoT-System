@@ -194,7 +194,7 @@ void app_main(void)
 
     vTaskDelay(3000 / portTICK_PERIOD_MS);
 
-    wifi_reconnect_timeout();
+    power_on_and_read_from_water_sensor();
     
     start_deep_sleep(3);
 }

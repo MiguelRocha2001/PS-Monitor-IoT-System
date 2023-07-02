@@ -48,7 +48,7 @@ class SensorDataTests {
         deleteAllTemperatureMeasurements(tsdbBuilder)
 
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
-        client.delete().uri(Uris.Data.ALL)
+        client.delete().uri(Uris.Data.ALL.toApiUri())
             .exchange()
             .expectStatus().isOk
             .expectBody(SirenModel::class.java)
@@ -61,10 +61,10 @@ class SensorDataTests {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         val email = generateRandomEmail()
-        val userToken = createUserAndLogin(email, generatePassword(1), client)
+        val (_, userToken) = createUser(email, generatePassword(1), client)
         val deviceId = create_device(email, client, userToken)
 
-        client.get().uri(Uris.Users.Devices.Sensor.ALL_1 + "?sensor-name=ph", deviceId)
+        client.get().uri((Uris.Users.Devices.Sensor.ALL_1 + "?sensor-name=ph").toApiUri(), deviceId)
             .header(HttpHeaders.COOKIE, "token=$userToken")
             .exchange()
             .expectStatus().isNotFound

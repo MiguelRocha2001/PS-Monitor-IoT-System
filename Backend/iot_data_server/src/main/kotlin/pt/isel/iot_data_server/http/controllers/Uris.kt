@@ -13,8 +13,8 @@ object Uris {
     object NonSemantic {
         // logout is a reserved word when using HttpSecurity
         // @see https://docs.spring.io/spring-security/reference/servlet/authentication/logout.html
-        const val logout = "log-out"
-        const val loggedIn = "logged-in"
+        const val logout = "/log-out"
+        const val loggedIn = "/logged-in"
 
         fun logout(): URI = URI(logout)
         fun loggedIn(): URI = URI(loggedIn)

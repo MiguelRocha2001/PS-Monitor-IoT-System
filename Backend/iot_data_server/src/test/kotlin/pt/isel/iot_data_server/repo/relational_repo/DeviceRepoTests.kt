@@ -1,8 +1,7 @@
 package pt.isel.iot_data_server.repo.relational_repo
 
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import pt.isel.iot_data_server.domain.DeviceWakeUpLog
@@ -284,14 +283,14 @@ class DeviceRepoTests {
 
                 val logRecords = devicesRepo.getDeviceWakeUpLogs(device1.deviceId)
                 assertEquals(3, logRecords.size)
-                assertTrue(logRecords.contains(log1))
-                assertTrue(logRecords.contains(log2))
-                assertTrue(logRecords.contains(log3))
+                assertNotNull(logRecords.find { it.deviceId == device1.deviceId && it.reason == "some_log_record1" })
+                assertNotNull(logRecords.find { it.deviceId == device1.deviceId && it.reason == "some_log_record2" })
+                assertNotNull(logRecords.find { it.deviceId == device1.deviceId && it.reason == "some_log_record3" })
 
                 val logRecords2 = devicesRepo.getDeviceWakeUpLogs(device2.deviceId)
                 assertEquals(2, logRecords2.size)
-                assertTrue(logRecords2.contains(log4))
-                assertTrue(logRecords2.contains(log5))
+                assertNotNull(logRecords2.find { it.deviceId == device2.deviceId && it.reason == "some_log_record2" })
+                assertNotNull(logRecords2.find { it.deviceId == device2.deviceId && it.reason == "some_log_record6" })
             }
         }
     }

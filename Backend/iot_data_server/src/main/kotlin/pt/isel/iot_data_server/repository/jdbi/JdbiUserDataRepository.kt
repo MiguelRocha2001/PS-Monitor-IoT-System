@@ -25,19 +25,38 @@ class JdbiUserDataRepository(
     }
 
     override fun getAllUsers(role: Role?, page: Int?, limit: Int?, email: String?): List<User> {
-        val offset = ((page ?: 1) - 1) * (limit ?: 10)
-        return handle.createQuery("""
+        val query = StringBuilder("""
             select _id, email, role 
             from _USER
-            where role = :role
-            and email LIKE '%' || :email || '%'
-            limit :limit 
-            offset :offset
         """)
-            .bind("role", role?.name?.lowercase() ?: "%")
-            .bind("email", email ?: "%")
-            .bind("limit", limit ?: 10)
-            .bind("offset", offset)
+
+        if (role != null) {
+            query.append(" where role = :role")
+        }
+
+        if (email != null) {
+            query.append(" where email = :email")
+        }
+
+        if (page != null && limit != null) {
+            query.append(" limit :limit offset :offset")
+        }
+
+        return handle.createQuery(query.toString())
+            .apply {
+                if (role != null) {
+                    bind("role", role.name.lowercase())
+                }
+
+                if (email != null) {
+                    bind("email", email)
+                }
+
+                if (page != null && limit != null) {
+                    bind("limit", limit)
+                    bind("offset", (page - 1) * limit)
+                }
+            }
             .mapTo<UserMapper>()
             .list()
             .map { it.toUser() }
@@ -70,7 +89,7 @@ class JdbiUserDataRepository(
             select _id, email, role
             from _USER as users 
             inner join TOKEN as tokens on users._id = tokens.user_id
-            where tokens.token = :token
+            where token = :token
             """
         )
             .bind("token", token)

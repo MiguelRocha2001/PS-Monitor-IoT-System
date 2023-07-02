@@ -39,6 +39,17 @@ class SensorDataServiceTest {
                 else -> null
             }
         }
+
+        override fun getSensorLowerThreshold(sensorName: String): Double? {
+            // Implement your logic here to retrieve the sensor threshold based on the sensor name
+            // Return the threshold value as a Double or null if it is not found
+            return when (sensorName) {
+                "temperature" -> 15.0
+                "ph initial" -> 5.0
+                "ph final" -> 5.0
+                else -> null
+            }
+        }
     }
 
     @BeforeEach
@@ -62,7 +73,7 @@ class SensorDataServiceTest {
             val sensorInfo = MySensorInfo()
             // Create service instance
             val sensorDataService =
-                SensorDataService(emailSenderService, sensorDataRepo, deviceService, sensorInfo, mqttClient)
+                SensorDataService(sensorDataRepo, deviceService)
 
             val deviceId = (deviceService.createDevice(userId, generateRandomEmail()) as Either.Right).value
 
@@ -87,7 +98,7 @@ class SensorDataServiceTest {
             val sensorInfo = MySensorInfo()
             // Create service instance
             val sensorDataService =
-                SensorDataService(emailSenderService, sensorDataRepo, deviceService, sensorInfo, mqttClient)
+                SensorDataService(sensorDataRepo, deviceService)
 
             val res2 = sensorDataService.getSensorRecords("invalid", "temperature")
             assert(res2 is Either.Left)
@@ -104,7 +115,7 @@ class SensorDataServiceTest {
             val sensorInfo = MySensorInfo()
             // Create service instance
             val sensorDataService =
-                SensorDataService(emailSenderService, sensorDataRepo, deviceService, sensorInfo, mqttClient)
+                SensorDataService(sensorDataRepo, deviceService)
 
             val email = generateRandomEmail()
             val res = deviceService.createDevice(userId, email)
@@ -129,7 +140,7 @@ class SensorDataServiceTest {
             val sensorInfo = MySensorInfo()
             // Create service instance
             val sensorDataService =
-                SensorDataService(emailSenderService, sensorDataRepo, deviceService, sensorInfo, mqttClient)
+                SensorDataService(sensorDataRepo, deviceService)
 
             val email = generateRandomEmail()
             val res = deviceService.createDevice(userId, email)
@@ -150,14 +161,15 @@ class SensorDataServiceTest {
             val sensorInfo = MySensorInfo()
             // Create service instance
             val sensorDataService =
-                SensorDataService(emailSenderService, sensorDataRepo, deviceService, sensorInfo, mqttClient)
+                SensorDataService(sensorDataRepo, deviceService)
 
             val email = generateRandomEmail()
             val res = deviceService.createDevice(userId, email)
             val deviceId = (res as Either.Right).value
 
             val types = sensorDataService.getAvailableSensors(deviceId)
-            assertEquals(0, types.size)
+            types as Either.Right
+            assertEquals(0, types.value.size)
         }
     }
 

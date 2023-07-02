@@ -181,9 +181,9 @@ class UserServiceTests {
 	fun `Delete All Users`() {
 		testWithTransactionManagerAndRollback { transactionManager ->
 			val saltPasswordOperations = SaltPasswordOperations(transactionManager)
-			val service = UserService(transactionManager,saltPasswordOperations, EmailManager())
+			val service = UserService(transactionManager, saltPasswordOperations, EmailManager())
 
-			service.deleteAllUsers()
+			service.deleteAllUsers(Role.USER)
 
 			service.createUser("testSubject1@email.com", null, role)
 			service.createUser("testSubject2@email.com", null, role)

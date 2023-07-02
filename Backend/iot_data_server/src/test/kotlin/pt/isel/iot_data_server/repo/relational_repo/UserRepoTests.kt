@@ -15,7 +15,7 @@ import java.util.*
 
 class UserRepoTests {
     @BeforeEach
-    fun preparation() {
+    fun cleanup() {
         testWithTransactionManagerAndDontRollback { transactionManager ->
             transactionManager.run { transaction ->
                 val usersRepo = transaction.userRepo
@@ -70,7 +70,7 @@ class UserRepoTests {
                 val user1 = createUser(usersRepo, "some_email_1@gmail.com")
                 val user2 = createUser(usersRepo, "some_email_2@gmail.com")
 
-                val users2 = usersRepo.getAllUsers(page, limit, email)
+                val users2 = usersRepo.getAllUsers()
 
                 assertTrue(users2.contains(user1))
                 assertTrue(users2.contains(user2))
@@ -90,7 +90,7 @@ class UserRepoTests {
 
                 val token = UUID.randomUUID().toString()
                 usersRepo.createToken(user.id, token)
-                val userByToken = usersRepo.getUserByToken(user.id)
+                val userByToken = usersRepo.getUserByToken(token)
 
                 assertEquals(user, userByToken)
                 assertEquals(token, usersRepo.getTokenFromUser(user.id))
@@ -162,7 +162,7 @@ class UserRepoTests {
                 assertNotNull(usersRepo.getUserByIdOrNull(user2.id))
 
                 usersRepo.deleteAllUsers()
-                val users3 = usersRepo.getAllUsers(page, limit, email)
+                val users3 = usersRepo.getAllUsers()
 
                 assertEquals(0, users3.size)
             }
