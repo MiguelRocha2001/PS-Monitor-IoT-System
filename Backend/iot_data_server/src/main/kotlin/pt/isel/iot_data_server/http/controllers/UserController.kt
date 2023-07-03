@@ -43,7 +43,7 @@ class UserController(
     fun create(
         @RequestBody input: UserCreateInputModel
     ): ResponseEntity<*> {
-        val res = service.createUser(input.email, input.password, Role.USER) // Role is always User
+        val res = service.createUser(input.email, input.password, Role.CLIENT) // Role is always User
         return res.map {
             val userId = it.first
             val token = it.second
@@ -72,7 +72,7 @@ class UserController(
         @RequestParam(required = false) limit: Int?,
         @RequestParam(required = false) emailChunk: String?, // id chunk
     ): ResponseEntity<*> {
-        val users = service.getAllUsers(Role.USER, page, limit, emailChunk)
+        val users = service.getAllUsers(Role.CLIENT, page, limit, emailChunk)
         return ResponseEntity.status(200)
             .contentType(SirenMediaType)
             .body(
@@ -90,11 +90,11 @@ class UserController(
         @RequestParam(required = false) limit: Int?, // id chunk
         @RequestParam(required = false) emailChunk: String?, // id chunk
     ): ResponseEntity<*> {
-        val userCount = service.getUserCount(Role.USER, page, limit, emailChunk)
+        val CLIENTCount = service.getUserCount(Role.CLIENT, page, limit, emailChunk)
         return ResponseEntity.status(200)
             .contentType(SirenMediaType)
             .body(siren(
-                UserCountOutputModel(userCount)
+                UserCountOutputModel(CLIENTCount)
             ) {
                 clazz("user-count")
             })
@@ -188,8 +188,8 @@ class UserController(
 
         val user = service.getUserByEmail(email)
         if (user == null) {
-            val userCreationResult = service.createUser(email, null, Role.USER) // password is not needed
-            if (userCreationResult is Either.Left) {
+            val CLIENTCreationResult = service.createUser(email, null, Role.CLIENT) // password is not needed
+            if (CLIENTCreationResult is Either.Left) {
                 throw RuntimeException("Error creating user")
             }
         }
@@ -250,7 +250,7 @@ class UserController(
     @Authorization(Role.ADMIN)
     @DeleteMapping(Uris.Users.ALL)
     fun deleteAllUsers() {
-        service.deleteAllUsers(Role.USER)
+        service.deleteAllUsers(Role.CLIENT)
     }
 
 

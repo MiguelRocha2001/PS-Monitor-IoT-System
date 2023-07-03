@@ -18,7 +18,7 @@ class DataEraserService(
         transactionManager.run {
             deviceService.deleteAllDevices()
             if (leaveAdminUser)
-                userService.deleteAllUsers(Role.USER) // erases standard users
+                userService.deleteAllUsers(Role.CLIENT) // erases standard users
             else
                 userService.deleteAllUsers() // erases all users
         }

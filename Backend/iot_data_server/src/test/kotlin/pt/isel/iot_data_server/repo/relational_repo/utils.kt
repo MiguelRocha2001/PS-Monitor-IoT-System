@@ -13,8 +13,8 @@ import kotlin.random.Random
 
 internal fun createUser(usersRepo: UserDataRepository, email: String): User {
     val userId = UUID.randomUUID().toString()
-    val userInfo = UserInfo(email, Role.USER)
-    val user = User(userId, userInfo)
+    val CLIENTInfo = UserInfo(email, Role.CLIENT)
+    val user = User(userId, CLIENTInfo)
     usersRepo.createUser(user)
     return user
 }

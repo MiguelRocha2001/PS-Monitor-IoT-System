@@ -33,9 +33,9 @@ class UserRepoTests {
                 val usersRepo = transaction.userRepo
 
                 val userId = UUID.randomUUID().toString()
-                val userInfo = UserInfo(generateRandomEmail(), Role.USER)
+                val CLIENTInfo = UserInfo(generateRandomEmail(), Role.CLIENT)
 
-                val user = User(userId, userInfo)
+                val user = User(userId, CLIENTInfo)
                 usersRepo.createUser(user)
 
                 assertEquals(user, usersRepo.getUserByIdOrNull(userId))

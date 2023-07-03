@@ -30,7 +30,7 @@ class UsersInitialization(
             userService,
             "user_1_email@gmail.com",
             "user-1-password",
-            Role.USER,
+            Role.CLIENT,
             "user-1-device-id",
             "user1-alert-email@gmail.com"
         )
@@ -38,7 +38,7 @@ class UsersInitialization(
             userService,
             "user_2_email@gmail.com",
             "user-2-password",
-            Role.USER,
+            Role.CLIENT,
             "user-2-device-id",
             "user2-alert-email@gmail.com"
         )
@@ -46,7 +46,7 @@ class UsersInitialization(
             userService,
             "user_3_email@gmail.com",
             "user-3-password",
-            Role.USER,
+            Role.CLIENT,
             "user-3-device-id",
             "user3-alert-email@gmail.com"
         )
@@ -54,7 +54,7 @@ class UsersInitialization(
             userService,
             "user_4_email@gmail.com",
             "user-4-password",
-            Role.USER,
+            Role.CLIENT,
             "IPGBJMUV",
             "a47128@alunos.isel.pt"
         )

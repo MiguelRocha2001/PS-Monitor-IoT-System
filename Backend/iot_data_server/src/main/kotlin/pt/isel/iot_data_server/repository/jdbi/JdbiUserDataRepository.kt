@@ -42,7 +42,7 @@ class JdbiUserDataRepository(
             query.append(" limit :limit offset :offset")
         }
 
-        return handle.createQuery(query.toString())
+        val t = handle.createQuery(query.toString())
             .apply {
                 if (role != null) {
                     bind("role", role.name.lowercase())
@@ -60,6 +60,7 @@ class JdbiUserDataRepository(
             .mapTo<UserMapper>()
             .list()
             .map { it.toUser() }
+        return t
     }
 
     override fun getUserCount(): Int {

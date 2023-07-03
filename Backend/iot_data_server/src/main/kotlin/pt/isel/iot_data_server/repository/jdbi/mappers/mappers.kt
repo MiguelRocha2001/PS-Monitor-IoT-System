@@ -20,7 +20,7 @@ internal fun UserMapper.toUser() = User(
 
 private fun String.toRole() = when (this.uppercase()) {
     "ADMIN" -> Role.ADMIN
-    "USER" -> Role.USER
+    "CLIENT" -> Role.CLIENT
     else -> throw IllegalArgumentException("Invalid role: $this")
 }
 

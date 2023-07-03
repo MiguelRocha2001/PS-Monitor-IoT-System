@@ -133,7 +133,7 @@ function DeviceList({ devices, searchQuery, setSearchQuery, handleButtonPress, t
                         }) {
     const lastLineText = devices.length === 0 ? "No devices found." : `Showing ${devices.length} of ${totalDevices} devices.`
 
-    const addDeviceButton = role?.toLowerCase() === "user" ? (
+    const addDeviceButton = role?.toLowerCase() === "client" ? (
         <div className="add-device">
             <MyLink
                 to="/add-new-device"

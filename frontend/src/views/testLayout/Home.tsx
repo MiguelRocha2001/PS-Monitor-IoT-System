@@ -18,7 +18,7 @@ export function Home() {
     useEffect(() => {
         if (role?.toLowerCase() === "admin") {
             setRedirect("/users")
-        } else if (role?.toLowerCase() === "user") {
+        } else if (role?.toLowerCase() === "client") {
             setRedirect("/users/self/devices") // user id is 'self'
         }
     }, [role])

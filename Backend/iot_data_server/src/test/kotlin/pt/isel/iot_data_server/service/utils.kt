@@ -23,13 +23,13 @@ fun getNewDeviceAndUserService(transactionManager: TransactionManager): Pair<Dev
  */
 
 fun createRandomUser(userService: UserService): String {
-    val user = userService.createUser(
+    val CLIENT = userService.createUser(
         generateRandomEmail(),
         null,
-        Role.USER
+        Role.CLIENT
     )
-    Assertions.assertTrue(user is Either.Right)
-    user as Either.Right
-    return user.value.first // user ID
+    Assertions.assertTrue(CLIENT is Either.Right)
+    CLIENT as Either.Right
+    return CLIENT.value.first // user ID
 }
 

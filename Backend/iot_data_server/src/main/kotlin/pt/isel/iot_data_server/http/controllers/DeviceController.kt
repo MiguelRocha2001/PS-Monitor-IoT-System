@@ -30,7 +30,7 @@ class DeviceController(
     @ApiResponse(responseCode = "201", description = "Device created", content = [Content(mediaType = "application/vnd.siren+json", schema = Schema(implementation = CreateDeviceOutputModel::class))])
     @ApiResponse(responseCode = "400", description = "Bad request - Invalid email", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
     @PostMapping(Uris.Users.Devices.ALL)
-    @Authorization(Role.USER)
+    @Authorization(Role.CLIENT)
     fun createDevice(
         @RequestBody deviceModel: DeviceInputModel,
         user: User
@@ -100,7 +100,7 @@ class DeviceController(
     @ApiResponse(responseCode = "200", description = "Device found", content = [Content(mediaType = "application/vnd.siren+json", schema = Schema(implementation = DeviceOutputModel::class))])
     @ApiResponse(responseCode = "400", description = "Device not found", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = Problem::class))])
     @GetMapping(Uris.Users.Devices.BY_ID1)
-    @Authorization(Role.USER)
+    @Authorization(Role.CLIENT)
     fun getDeviceById(
         user: User,
         @PathVariable device_id: String
@@ -120,7 +120,7 @@ class DeviceController(
     }
 
     @GetMapping(Uris.Users.Devices.WakeUpLogs.ALL_1)
-    @Authorization(Role.USER)
+    @Authorization(Role.CLIENT)
     fun getDeviceWakeUpLogs(
         user: User,
         @PathVariable device_id: String

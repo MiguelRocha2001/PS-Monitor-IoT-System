@@ -11,7 +11,7 @@ import pt.isel.iot_data_server.utils.testWithTransactionManagerAndRollback
 
 @SpringBootTest
 class UserServiceTests {
-    private val role = Role.USER
+    private val role = Role.CLIENT
 
     @Test
     fun `create user with password`() {
@@ -183,7 +183,7 @@ class UserServiceTests {
 			val saltPasswordOperations = SaltPasswordOperations(transactionManager)
 			val service = UserService(transactionManager, saltPasswordOperations, EmailManager())
 
-			service.deleteAllUsers(Role.USER)
+			service.deleteAllUsers(Role.CLIENT)
 
 			service.createUser("testSubject1@email.com", null, role)
 			service.createUser("testSubject2@email.com", null, role)
