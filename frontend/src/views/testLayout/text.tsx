@@ -13,6 +13,8 @@ export function ChartWithPeriodSelection({deviceId, deviceEmail}: { deviceId: st
     const [timeUnit, setTimeUnit] = React.useState<TimeUnit|undefined>(undefined);
     const [errorMessage, setErrorMessage] = useState<string>();
 
+    console.log("Sensor data: ", sensorsData);
+
     useEffect(() => {
         async function fetchAvailableSensors() {
             const availableSensors = await services.availableSensors(deviceId);
@@ -83,7 +85,7 @@ export function ChartWithPeriodSelection({deviceId, deviceEmail}: { deviceId: st
                 setTimeUnit("day");
                 const today3 = new Date(new Date());
                 const yesterday = new Date(today3.getTime() - (1 * 24 * 60 * 60 * 1000));
-                const lastMonth = new Date(today3.getFullYear(), today3.getMonth() - 1, today3.getDate());
+                const lastMonth = new Date(today3.getFullYear(), today3.getMonth() - 1, 1);
                 setStart(lastMonth); // last month
                 setEnd(yesterday); // today
                 break;
@@ -91,7 +93,7 @@ export function ChartWithPeriodSelection({deviceId, deviceEmail}: { deviceId: st
                 setTimeUnit("month");
                 const today4 = new Date();
                 const threeMonthsAgo = new Date(today4.getFullYear(), today4.getMonth() - 3, 1);
-                const lastMonth2 = new Date(today4.getFullYear(), today4.getMonth() - 1, today4.getDate());
+                const lastMonth2 = new Date(today4.getFullYear(), today4.getMonth() - 1, 31);
                 setStart(threeMonthsAgo); // 3 months ago
                 setEnd(lastMonth2); // last month
                 break;
@@ -99,7 +101,7 @@ export function ChartWithPeriodSelection({deviceId, deviceEmail}: { deviceId: st
                 setTimeUnit("month");
                 const today5 = new Date();
                 const sixMonthsAgo = new Date(today5.getFullYear(), today5.getMonth() - 6, 1);
-                const lastMonth3 = new Date(today5.getFullYear(), today5.getMonth() - 1, today5.getDate());
+                const lastMonth3 = new Date(today5.getFullYear(), today5.getMonth() - 1, 31); // TODO: should not be always 28
                 setStart(sixMonthsAgo); // 6 months ago
                 setEnd(lastMonth3); // last month
                 break;
@@ -107,31 +109,32 @@ export function ChartWithPeriodSelection({deviceId, deviceEmail}: { deviceId: st
                 setTimeUnit("month");
                 const today6 = new Date();
                 const lastYear = new Date(today6.getFullYear() - 1, today6.getMonth(), today6.getDate());
-                const lastMonth4 = new Date(today6.getFullYear(), today6.getMonth() - 1, today6.getDate());
+                const lastMonth4 = new Date(today6.getFullYear(), today6.getMonth() - 1, 31);
                 setStart(lastYear); // last year
                 setEnd(lastMonth4); // last month
                 break;
             case "last2years":
                 setTimeUnit("year");
                 const today7 = new Date();
-                const lastYear2 = new Date(today7.getFullYear() - 1, today7.getMonth(), today7.getDate());
-                const twoYearsAgo = new Date(today7.getFullYear() - 2, today7.getMonth(), today7.getDate());
-                setStart(twoYearsAgo); // last year
-                setEnd(lastYear2); // 2 years ago
+                const lastYear2 = new Date(today7.getFullYear() - 1, 11, 31);
+                const twoYearsAgo = new Date(today7.getFullYear() - 2, 0, 1);
+                setStart(twoYearsAgo);
+                setEnd(lastYear2);
                 break;
             case "last5years":
                 setTimeUnit("year");
                 const today8 = new Date();
-                const lastYear3 = new Date(today8.getFullYear() - 1, today8.getMonth(), today8.getDate());
-                const fiveYearsAgo = new Date(today8.getFullYear() - 5, today8.getMonth(), today8.getDate());
+                console.log("today8: ", today8);
+                const lastYear3 = new Date(today8.getFullYear() - 1, 11, 31);
+                const fiveYearsAgo = new Date(today8.getFullYear() - 5, 0, 1);
                 setStart(fiveYearsAgo); // 5 years ago
                 setEnd(lastYear3); // last year
                 break;
             case "last10years":
                 setTimeUnit("year");
                 const today9 = new Date();
-                const lastYear4 = new Date(today9.getFullYear() - 1, today9.getMonth(), today9.getDate());
-                const tenYearsAgo = new Date(today9.getFullYear() - 10, today9.getMonth(), today9.getDate());
+                const lastYear4 = new Date(today9.getFullYear() - 1, 11, 31);
+                const tenYearsAgo = new Date(today9.getFullYear() - 11, 0, 1);
                 setStart(tenYearsAgo); // 10 years ago
                 setEnd(lastYear4); // last year
                 break;

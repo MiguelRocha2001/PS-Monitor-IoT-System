@@ -143,8 +143,26 @@ int read_sensor_records(sensor_records_struct *sensor_records, char* action)
 void determine_sensor_calibration_timings()
 {
     ESP_LOGI(TAG, "Determining pH sensor calibration time");
-    calibrate_ph_sensors();
+    int stabilization_time_in_ms;
+    if (get_saved_ph_calibration_timing(&stabilization_time_in_ms) && stabilization_time_in_ms > 0)
+    {
+        calibrate_ph_sensors();
+        ESP_LOGI(TAG, "pH sensor calibration complete");
+    }
+    else
+    {
+        ESP_LOGI(TAG, "pH sensor calibration not needed");
+    }
+    
 
     ESP_LOGI(TAG, "Determining DHT11 sensor calibration time");
-    calibrate_dht11_sensor();
+    if (get_saved_dht11_calibration_timing(&stabilization_time_in_ms) && stabilization_time_in_ms > 0)
+    {
+        calibrate_dht11_sensor();
+        ESP_LOGI(TAG, "DHT11 sensor calibration complete");
+    }
+    else
+    {
+        ESP_LOGI(TAG, "DHT11 sensor calibration not needed");
+    }
 }

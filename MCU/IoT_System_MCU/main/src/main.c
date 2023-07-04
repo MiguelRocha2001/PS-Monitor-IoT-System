@@ -72,7 +72,7 @@ char* setup_wifi(void) {
 
     ESP_LOGI(TAG, "Finished setting up WiFi");
 
-    char my_device_id[100] = "oxwWwa";
+    char my_device_id[100] = "QJlcPa";
     set_device_id(&my_device_id);
 
     return deviceID;
@@ -106,6 +106,7 @@ void fake_timestamps(struct sensor_records_struct *sensor_records) {
     sensor_records -> temperature_record.timestamp -= n_went_to_deep_sleep * n_seconds_in_day;
     sensor_records -> humidity_record.timestamp -= n_went_to_deep_sleep * n_seconds_in_day;
     sensor_records -> water_flow_record.timestamp -= n_went_to_deep_sleep * n_seconds_in_day;
+    n_went_to_deep_sleep++;
 }
 
 void save_previous_records(struct sensor_records_struct* previous_sensor_records)
@@ -142,7 +143,7 @@ void compute_sensors()
     if(read_all)
     {
         read_sensor_records(&sensor_records, &action);
-        // fake_timestamps(&sensor_records);
+        fake_timestamps(&sensor_records);
         ready_to_upload_records_to_server = 1; // data needs to be uploaded
     }
 
@@ -178,7 +179,7 @@ void compute_sensors()
         }
 
         ESP_LOGW(TAG, "Water leakage detected. Sending message...");
-        mqtt_send_device_wake_up_reason_alert(mqtt_client, getNowTimestamp(), deviceID, "water-leak"); // TODO: send to water leak topic (create one)
+        mqtt_send_water_leak_alert(mqtt_client, getNowTimestamp(), deviceID);
 
         terminate_wifi_and_mqtt();
     }
@@ -386,7 +387,7 @@ void app_main(void)
     int res = handle_wake_up();
     if (res == 0 || res == 1) // timeout or power on
     {
-        if (res == 10) // power on TODO: change back to 1 later
+        if (res == 1) // power on TODO: change back to 1 later
         {
             determine_sensor_calibration_timings(); // to set the calibration timings
         }

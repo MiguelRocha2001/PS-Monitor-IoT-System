@@ -7,7 +7,7 @@ import threading
 
 # see: https://pypi.org/project/paho-mqtt/
 
-device_id = "user-2-device-id"
+device_id = "DxdOmO"
 
 def sorround_with_quotes(value):
     return "\"" + value + "\""
@@ -42,23 +42,26 @@ class thread1(threading.Thread):
         threading.Thread.__init__(self)
         self.client = client
         self.timestamp = round(time.time())
+        self.delay = 0.4
         
     # helper function to execute the threads
     def run(self):
-        hour = 0
+        iter = 0
         while True:
-            timestamp = self.timestamp - hour * 3600 * 24
-            client.publish("sensor_record", get_sensor_record_mqtt_message("ph", timestamp))
-            time.sleep(1)
+            timestamp = self.timestamp - iter * 3600 * 24
+            client.publish("sensor_record", get_sensor_record_mqtt_message("initial-ph", timestamp))
+            time.sleep(self.delay)
+            client.publish("sensor_record", get_sensor_record_mqtt_message("final-ph", timestamp))
+            time.sleep(self.delay)
             client.publish("sensor_record", get_sensor_record_mqtt_message("humidity", timestamp))
-            time.sleep(1)
+            time.sleep(self.delay)
             client.publish("sensor_record", get_sensor_record_mqtt_message("temperature", timestamp))
-            time.sleep(1)
+            time.sleep(self.delay)
             client.publish("sensor_record", get_sensor_record_mqtt_message("water-flow", timestamp))
-            time.sleep(1)
+            time.sleep(self.delay)
             client.publish("sensor_record", get_sensor_record_mqtt_message("water-level", timestamp))
-            time.sleep(1)
-            hour = hour + 1
+            time.sleep(self.delay)
+            iter = iter + 1
 
 
 class thread2(threading.Thread):

@@ -1,3 +1,0 @@
-initial-ph: 3.0, 4.5
-final-ph: 6.5
-temperature: , 35

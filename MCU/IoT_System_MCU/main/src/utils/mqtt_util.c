@@ -28,7 +28,7 @@
 
 static const char *TAG = "MQTT_MODULE";
 
-static const char *CONFIG_BROKER_URL = "mqtt://6.tcp.eu.ngrok.io:18499/";
+static const char *CONFIG_BROKER_URL = "mqtt://5.tcp.eu.ngrok.io:19528/";
 
 int isConnected = 0;
 
@@ -216,4 +216,14 @@ void mqtt_send_error_reading_sensor(esp_mqtt_client_handle_t client, int timesta
     esp_mqtt_client_publish(client, "error_reading_sensor", buf, 0, 1, 0);
 
     ESP_LOGI(TAG, "Message: %s published on topic /error_reading_sensor", buf);
+}
+
+void mqtt_send_water_leak_alert(esp_mqtt_client_handle_t client, int timestamp, char* deviceID)
+{
+    char buf[200];
+    sprintf(buf, "{\"device_id\": \"%s\", \"timestamp\": %d}", deviceID, timestamp);
+
+    esp_mqtt_client_publish(client, "water_leak", buf, 0, 1, 0);
+
+    ESP_LOGI(TAG, "Message: %s published on topic /water_leak_alert", buf);
 }

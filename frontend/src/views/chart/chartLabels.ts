@@ -91,14 +91,51 @@ function mapRecordToDayLabel(start: Date, end: Date, records: SensorRecord[]): a
     return toAverage(filtered);
 }
 
+function toMonthString(month: number): string {
+    switch (month) {
+        case 0:
+            return "jan."
+        case 1:
+            return "feb."
+        case 2:
+            return "mar."
+        case 3:
+            return "apr."
+        case 4:
+            return "may."
+        case 5:
+            return "jun."
+        case 6:
+            return "jul."
+        case 7:
+            return "aug."
+        case 8:
+            return "sep."
+        case 9:
+            return "oct."
+        case 10:
+            return "nov."
+        case 11:
+            return "dec."
+        default:
+            throw new Error(`Unsupported month ${month}`)
+    }
+}
+
 function mapRecordToMonthLabel(start: Date, end: Date, records: SensorRecord[]): any[] {
+    console.log("START: ", start)
+    console.log("END: ", end)
+    console.log("RECORDS: ", records)
+    const t = filterByDate(start, end, records)
+    console.log("HERERER: ", t)
     const filtered = filterByDate(start, end, records)
         .map((record) => {
             return {
-                x: record.date.getMonth().toString(),
+                x: toMonthString(record.date.getMonth()),
                 y: record.value
             };
         });
+    console.log("FILTERED: ", filtered)
     return toAverage(filtered);
 }
 

@@ -58,7 +58,9 @@ export function MyChart(
     const labels = toLabels(start, end, timeUnit);
     const datasets = (metadata !== undefined) ?
         sensorsData.map((sensorData: SensorData) => {
+            console.log("Sensor data: ", sensorData)
             const data = mapToData(start, end, timeUnit, sensorData.records);
+            console.log("Data: ", data)
             return metadata[sensorData.type].isVisible ? {
                 label: sensorData.type,
                 data: data,
