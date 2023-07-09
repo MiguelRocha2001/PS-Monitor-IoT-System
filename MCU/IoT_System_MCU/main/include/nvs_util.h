@@ -21,4 +21,7 @@ esp_err_t get_saved_ph_calibration_timing(int* time_in_ms);
 esp_err_t set_saved_dht11_calibration_timing(int time_in_ms);
 esp_err_t get_saved_dht11_calibration_timing(int* time_in_ms);
 
+esp_err_t set_last_action_performed(char* action);
+esp_err_t get_last_action_performed(char** action);
+
 #endif // AES_UTIL_H

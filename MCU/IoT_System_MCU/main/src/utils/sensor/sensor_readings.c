@@ -92,7 +92,7 @@ void compute_average(sensor_records_struct *sensor_records, sensor_records_tempo
  * 
  * @return 0 if success.
 */
-int read_sensor_records(sensor_records_struct *sensor_records, char* action) 
+int read_sensor_records(sensor_records_struct *sensor_records) 
 {
     sensor_records_temporary_struct sensor_records_temp;
 

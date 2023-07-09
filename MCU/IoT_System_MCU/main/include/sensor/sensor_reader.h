@@ -21,11 +21,7 @@ typedef struct sensor_records_struct {
     int index;
 } sensor_records_struct;
 
-int read_sensor_records(sensor_records_struct *sensor_records, char* action);
-
-int check_if_sensors_are_working(int *sensors_not_working);
-
-int sensors_reading_is_complete(sensor_records_struct *sensor_records);
+int read_sensor_records(sensor_records_struct *sensor_records);
 
 void determine_sensor_calibration_timings();
 

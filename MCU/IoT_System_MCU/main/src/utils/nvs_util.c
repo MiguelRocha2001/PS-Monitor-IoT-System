@@ -289,6 +289,65 @@ esp_err_t set_device_id(char* deviceID) {
     return err;
 }
 
+esp_err_t set_last_action_performed(char* action)
+{
+    ESP_LOGW(TAG, "Setting last action performed to %s", action);
+    esp_err_t err = init_nvs();
+    nvs_handle_t my_handle;
+
+    if (err != ESP_OK) return err;
+
+    err = open_nvs("saved_params", &my_handle);
+
+    if (err != ESP_OK) return err;
+
+    err = nvs_set_str(my_handle, "last_action_per", action);
+
+    if (err != ESP_OK) return err;
+
+    // Commit
+    err = nvs_commit(my_handle);
+    if (err != ESP_OK) return err;
+
+    // Close
+    nvs_close(my_handle);
+    return err;
+}
+
+esp_err_t get_last_action_performed(char** action) 
+{
+    esp_err_t err = init_nvs();
+
+    if (err != ESP_OK) return err;
+
+    nvs_handle_t my_handle;
+    err = open_nvs("saved_params", &my_handle);
+
+    if (err != ESP_OK) return err;
+
+
+    size_t required_size = 0;  // value will default to 0, if not set yet in NVS
+    err = nvs_get_str(my_handle, "last_action_per", NULL, &required_size);
+
+    if (err != ESP_OK && err != ESP_ERR_NVS_NOT_FOUND) return err;
+
+
+    if (required_size == 0) {
+        ESP_LOGE(TAG, "There is no saved last action performed!");
+        return err;
+    } else {
+        *action = malloc(required_size);
+
+        err = nvs_get_str(my_handle, "last_action_per", *action, &required_size);
+
+        if (err != ESP_OK) {
+            return err;
+        }
+
+        return err;
+    }
+}
+
 esp_err_t delete_device_id() {
     esp_err_t err = init_nvs();
     nvs_handle_t my_handle;
