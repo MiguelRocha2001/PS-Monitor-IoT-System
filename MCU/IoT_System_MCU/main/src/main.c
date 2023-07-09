@@ -24,15 +24,18 @@ const static char* TAG = "MAIN";
 const static long SLEEP_TIME = 6; // 6 seconds
 
 RTC_DATA_ATTR struct sensor_records_struct sensor_records;
-RTC_DATA_ATTR int ready_to_upload_records_to_server = 0; // indicates that records were read but not yet uploaded to server
+RTC_DATA_ATTR int sensor_readings_not_yet_uploaded = 0; // indicates that records were read but not yet uploaded to server
 RTC_DATA_ATTR int n_went_to_deep_sleep = 0; // used to fake timestamps
 RTC_DATA_ATTR char action[100];
 RTC_DATA_ATTR int check_all_sensors = 1; // if true, the mcu will read all sensors and not just the water sensor
 RTC_DATA_ATTR int my_counter = 0;
-RTC_DATA_ATTR int check_water_leakage_iteration = 0;
 RTC_DATA_ATTR char* wake_up_reason;
 esp_mqtt_client_handle_t mqtt_client;
 
+/**
+ * Uses WiFi and MQTT to send the stores sensor records to the server.
+ * This records are stores in the global RTC variable sensor_records.
+*/
 void send_sensor_records(esp_mqtt_client_handle_t client, char* deviceID, struct sensor_records_struct* sensor_records)
 {
     strcpy(action, "sending_sensor_records");
@@ -54,6 +57,13 @@ void send_sensor_records(esp_mqtt_client_handle_t client, char* deviceID, struct
     vTaskDelay(1000 / portTICK_PERIOD_MS);
 }
 
+/**
+ * Tries to start WiFi, based on saved credentials (wifi credentials are saved in flash memory).
+ * If the device id or wifi credentials are not saved, or the wifi connection fails the maximum number of tries,
+ * the device will enter in the esp touch mode.
+ * This function will block until the user uses his personal phone to send the WiFi credentials to the device.
+ * @return the saved device id.
+*/
 char* setup_wifi(void) {
     strcpy(action, "seting_up_wifi");
     ESP_LOGI(TAG, "Setting up WiFi...");
@@ -78,12 +88,20 @@ char* setup_wifi(void) {
     return deviceID;
 }
 
+/**
+ * Tries to connect to the WiFi. 
+ * @see setup_wifi.
+ * If successful, tries to connect to the MQTT broker, for a maximum number of tries.
+ * @see try_to_connect_to_broker_if_necessary.
+ * If cannot connect to the broker, the device will enter in deep sleep mode, for SLEEP_TIME seconds.
+ * 
+*/
 char* setup_wifi_and_mqtt() {
     char* deviceID = setup_wifi(); // connects to wifi
     strcpy(action, "seting_up_mqtt");
     mqtt_client = setup_mqtt();
 
-    if (try_to_connect_to_broker_if_necessary(mqtt_client) == 0) 
+    if (try_to_connect_to_broker_if_necessary(mqtt_client) == -1) 
     {
         ESP_LOGE(TAG, "Cannot connect to broker. Going to deep sleep...");
         start_deep_sleep(SLEEP_TIME);
@@ -98,6 +116,9 @@ void terminate_wifi_and_mqtt()
     terminate_wifi(); // disconnects from wifi
 }
 
+/**
+ * Overrides timestamps, based on how many times the mcu woke up.
+*/
 void fake_timestamps(struct sensor_records_struct *sensor_records) {
     ESP_LOGE(TAG, "Faking timestamps...");
     int n_seconds_in_day = 24 * 60 * 60;
@@ -109,6 +130,9 @@ void fake_timestamps(struct sensor_records_struct *sensor_records) {
     n_went_to_deep_sleep++;
 }
 
+/**
+ * Copies all sensor records from RTC sensor_records global variable to previous_sensor_records strcut.
+*/
 void save_previous_records(struct sensor_records_struct* previous_sensor_records)
 {
     previous_sensor_records->initial_ph_record.timestamp = sensor_records.initial_ph_record.timestamp;
@@ -127,6 +151,13 @@ void save_previous_records(struct sensor_records_struct* previous_sensor_records
     previous_sensor_records->water_flow_record.value = sensor_records.water_flow_record.value;
 }
 
+/**
+ * Makes the apropriate actions based on the current wake up iteration.
+ * If the global variable "check_all_sensors" is true, it will read all sensors, and check for water leakage.
+ * In this case, it will also try to upload the last readings, if they are not uploaded yet.
+ * If the global variable "check_all_sensors" is false, it will only check for water leakage. If water is detected,
+ * it will try to upload the last readings, if they are not uploaded yet.
+*/
 void compute_sensors() 
 {
     int read_all = check_all_sensors;
@@ -134,7 +165,7 @@ void compute_sensors()
 
     int pending_records = 0;
     struct sensor_records_struct previous_sensor_records;
-    if (ready_to_upload_records_to_server == 1) // saves last readings in a local variable before reading new ones
+    if (sensor_readings_not_yet_uploaded == 1) // saves last readings in a local variable before reading new ones
     {
         pending_records = 1;
         save_previous_records(&previous_sensor_records);
@@ -144,7 +175,7 @@ void compute_sensors()
     {
         read_sensor_records(&sensor_records, &action);
         fake_timestamps(&sensor_records);
-        ready_to_upload_records_to_server = 1; // data needs to be uploaded
+        sensor_readings_not_yet_uploaded = 1; // data needs to be uploaded
     }
 
     strcpy(action, "checking_water_leak");
@@ -155,7 +186,7 @@ void compute_sensors()
     {
         deviceID = setup_wifi_and_mqtt(); // turns on wifi
         send_sensor_records(mqtt_client, deviceID, &sensor_records);
-        ready_to_upload_records_to_server = 0; // data uploaded
+        sensor_readings_not_yet_uploaded = 0; // data uploaded
 
         if (pending_records == 1) // there were pending records
         {
@@ -171,7 +202,7 @@ void compute_sensors()
             
             deviceID = setup_wifi_and_mqtt(); // turns on wifi
             
-            if (ready_to_upload_records_to_server) // data wasnt uploaded last time
+            if (sensor_readings_not_yet_uploaded) // data wasnt uploaded last time
             {
                 ESP_LOGW(TAG, "Data was not uploaded last time. Sending now...");
                 send_sensor_records(mqtt_client, deviceID, &sensor_records);
@@ -194,6 +225,12 @@ void compute_sensors()
     }
 }
 
+/**
+ * Determines what sensor the device was reading from based on the action.
+ * @param action The action that the device was performing.
+ * @param sensor The sensor that the device was reading from.
+ * Returns 1 if the device was reading from a sensor, 0 otherwise.
+*/
 int was_reading_from_sensor(char* action, char* sensor) 
 {
     if (strcmp(action, "reading_initial_ph") == 0) 
@@ -306,10 +343,6 @@ int handle_wake_up()
     {
         ESP_LOGI(TAG, "Wake up reason: timer");
         wake_up_reason = "timer";
-        if (ready_to_upload_records_to_server == 1)
-        {
-            ESP_LOGW(TAG, "System detected pending records to be sent to server. Sending them now...");
-        }
         codeToReturn = 0;
     }
     if(codeToReturn == 2)
@@ -355,17 +388,20 @@ void check_if_woke_up_to_reset()
 // IMPORTANT -> run with $ idf.py monitor or $ idf.py -p COM5 flash monitor 
 /**
  * Program entry point.
- * It will read the pH value every 0.3 seconds and store it in RTC memory.
- * After 5 readings, it will send the values to the MQTT broker and go to deep sleep for 3 seconds.
- * For some unknown reason, the MQTT broker does not receive all messages, the first reading round.
+ * The device will wake up every 6 hours to check for water leakage.
+ * Also, each two iterations (12 hours interval), apart from the water sensor, 
+ * the device will also make readings using the other sensors:
+ * - ph;
+ * - temperature;
+ * - humidity;
+ * - water flow (driver not implemented yet)
  * 
  * Consumption times:
  *  Wake up to make standard sensor readings: 1mAh and 6 mWh (2:36 min) - 1 cycle
  *  Wake up to check for water leakage: 1mAh and 5mWh (2:15 min) - 21 cycles
  *  Deep sleep: 1mAh and 5mWh (6:11 min) or 9.7mAh for each hour sleeping
  * 
- * 1 hour without leakage and deep sleep -> 29mAh and 149mWh and 60 cycles
- * 3 hours without leakage and deep sleep -> 80mAh and 409mWh and 149 cycles
+ * 3 hours without leakage and deep sleep -> 80mAh and 409mWh and 150 wakeups (75 cycles)
  * 2:30 hours deep sleep: 25mAh
 */
 void app_main(void) 

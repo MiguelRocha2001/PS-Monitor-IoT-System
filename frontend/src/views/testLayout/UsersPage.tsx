@@ -55,8 +55,8 @@ export function Users() {
 
     useEffect(() => {
         async function fetchNumberOfUsers() {
-            const emailChunk = searchQuery === "" ? undefined : searchQuery
-            services.getUserCount(page, pageSize, emailChunk)
+            const userIdChunk = searchQuery === "" ? undefined : searchQuery
+            services.getUserCount(page, pageSize, undefined, userIdChunk)
                 .then((number) => setTotalUsers(number))
                 .catch(error => setError(error.message))
         }
@@ -65,8 +65,8 @@ export function Users() {
 
     useEffect(() => { //TODO IF I FETCH DEVICE I STORE THEME SO WHEN I CLICK IN THE PREVIOUS BUTTON A NEW REQUEST IS NOT MADE
         async function fetchNumberOfUsers() {
-            const emailChunk = searchQuery === "" ? undefined : searchQuery
-            services.getUserCount(page, pageSize, emailChunk)
+            const userIdChunk = searchQuery === "" ? undefined : searchQuery
+            services.getUserCount(page, pageSize, undefined, userIdChunk)
                 .then((number) => setFilteredUsers(number))
                 .catch(error => setError(error.message))
         }
@@ -77,8 +77,8 @@ export function Users() {
 
     useEffect(() => {
         async function updateUsers() {
-            const emailChunk = searchQuery === "" ? undefined : searchQuery
-            services.getUsers(page, pageSize, emailChunk)
+            const userIdChunk = searchQuery === "" ? undefined : searchQuery
+            services.getUsers(page, pageSize, undefined, userIdChunk)
                 .then(users => setUsers(users))
                 .catch(error => setError(error.message))
         }
@@ -87,9 +87,10 @@ export function Users() {
 
     const handleButtonPress = () => {
         if(searchQuery === "") return
-        services.getUsers(page, pageSize, searchQuery.toUpperCase())
+        const userIdChunk = searchQuery === "" ? undefined : searchQuery
+        services.getUsers(page, pageSize, undefined, userIdChunk)
             .then(users => {setUsers(users)})
-            .then(()=> services.getUserCount(page, pageSize, searchQuery))
+            .then(()=> services.getUserCount(page, pageSize, undefined, userIdChunk))
             .then((devicesSize)=>setFilteredUsers(devicesSize))
             .catch(error => setError(error.message))
     }
@@ -127,11 +128,11 @@ function UserList({ users, searchQuery, setSearchQuery, handleButtonPress, total
                 {users.length > 0 ? (
                     <ul className="list-group">
                         {users.map((user) => (
-                            <li key={user.email} className="list-group-item">
+                            <li key={user.id} className="list-group-item">
                                 <div className="list-item-info">
                                     <MyLink
                                         to={`/users/${user.id}/devices`}
-                                        text={user.email}
+                                        text={user.id}
                                         center={false}
                                     />
                                 </div>

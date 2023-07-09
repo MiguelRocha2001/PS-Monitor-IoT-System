@@ -88,7 +88,7 @@ class UserServiceTests {
 			assertTrue(res2 is Either.Right)
 			assertTrue(res3 is Either.Right)
 
-			val users = service.getAllUsers()
+			val users = service.getAllUsers(idChunk = idChunk)
 
 			assertTrue(users.any { it.userInfo.email == email1 })
 			assertTrue(users.any { it.userInfo.email == email2 })
@@ -189,11 +189,11 @@ class UserServiceTests {
 			service.createUser("testSubject2@email.com", null, role)
 			service.createUser("testSubject3@email.com", null, role)
 
-			assertEquals(3, service.getAllUsers().size)
+			assertEquals(3, service.getAllUsers(idChunk = idChunk).size)
 
 			service.deleteAllUsers()
 
-			assertEquals(0, service.getAllUsers().size)
+			assertEquals(0, service.getAllUsers(idChunk = idChunk).size)
 		}
 	}
 

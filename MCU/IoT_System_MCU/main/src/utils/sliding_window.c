@@ -28,6 +28,11 @@
 
 static const char* TAG = "sliding_window";
 
+/**
+ * Uses a sliding window to determine how much time it takes for the pH sensors to stabilize.
+ * Since in this project, both pH sensors are powered using the same input, this function
+ * only stores the time it takes for the last sensor to stabilize.
+*/
 void calibrate_ph_sensors() {
     gpio_set_direction(PH_SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
     gpio_set_level(PH_SENSOR_POWER_PIN, 1); // power on sensor
@@ -139,6 +144,11 @@ void calibrate_ph_sensors() {
     gpio_set_level(PH_SENSOR_POWER_PIN, 0); // power off sensor
 }
 
+/**
+ * Uses a sliding window to determine how much time it takes for the DHT11 sensor to stabilize.
+ * This sensor provides both temperature and humidity readings. Duo to this, the stabilization
+ * time corresponds to the time it takes for the last one to stabilize.
+*/
 void calibrate_dht11_sensor() {
     gpio_set_direction(DHT11_SENSOR_POWER_PIN, GPIO_MODE_OUTPUT);
     gpio_set_level(DHT11_SENSOR_POWER_PIN, 1); // power on sensor

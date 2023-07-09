@@ -56,19 +56,22 @@ class UserService(
         role: Role? = null,
         page: Int? = null,
         limit: Int? = null,
-        email: String? = null
+        email: String? = null,
+        idChunk: String? = null
     ): List<User> { // TODO: test this
         return transactionManager.run {
-            return@run it.userRepo.getAllUsers(role, page, limit, email)
+            return@run it.userRepo.getAllUsers(role, page, limit, email, idChunk)
         }
     }
     final fun getUserCount(
         role: Role? = null,
         page: Int? = null,
         limit: Int? = null,
-        email: String? = null): Int {
+        email: String? = null,
+        userId: String? = null
+    ): Int {
         return transactionManager.run {
-            return@run it.userRepo.getAllUsers(role, page, limit, email).size // TODO: use sql to make query
+            return@run it.userRepo.getAllUsers(role, page, limit, email, userId).size // TODO: use sql to make query
         }
     }
 

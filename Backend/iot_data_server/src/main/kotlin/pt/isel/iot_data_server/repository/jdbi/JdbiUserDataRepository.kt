@@ -24,7 +24,7 @@ class JdbiUserDataRepository(
             .execute()
     }
 
-    override fun getAllUsers(role: Role?, page: Int?, limit: Int?, email: String?): List<User> {
+    override fun getAllUsers(role: Role?, page: Int?, limit: Int?, email: String?, userId: String?): List<User> {
         val query = StringBuilder("""
             select _id, email, role 
             from _USER
@@ -35,7 +35,17 @@ class JdbiUserDataRepository(
         }
 
         if (email != null) {
-            query.append(" where email = :email")
+            if (role != null)
+                query.append(" and email = :email")
+            else
+                query.append(" where email = :email")
+        }
+
+        if (userId != null) {
+            if (role != null || email != null)
+                query.append(" and _id like :_id")
+            else
+                query.append(" where _id like :_id")
         }
 
         if (page != null && limit != null) {
@@ -50,6 +60,10 @@ class JdbiUserDataRepository(
 
                 if (email != null) {
                     bind("email", email)
+                }
+
+                if (userId != null) {
+                    bind("_id", "%$userId%")
                 }
 
                 if (page != null && limit != null) {

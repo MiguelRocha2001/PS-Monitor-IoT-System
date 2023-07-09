@@ -36,8 +36,8 @@ export interface Services {
     sendValidationCode(email:string): Promise<string>
     availableSensors(deviceId: string): Promise<string[]>
 
-    getUsers(page: number, limit: number, emailChunk: string | undefined): Promise<User[]>
-    getUserCount(page: number, limit: number, emailChunk: string | undefined): Promise<number>
+    getUsers(page: number, limit: number, emailChunk: string | undefined, userIdChuck: string | undefined): Promise<User[]>
+    getUserCount(page: number, limit: number, emailChunk: string | undefined, userIdChuck: string | undefined): Promise<number>
 }
 
 export const services: Services = new RealServices()

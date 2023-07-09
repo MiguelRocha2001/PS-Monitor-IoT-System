@@ -4,7 +4,7 @@ import csv
 x = []
 y = []
 
-with open("water-sensor-power-on_with-water\current.csv", 'r') as csvfile:
+with open("fake.csv", 'r') as csvfile:
     plots = csv.reader(csvfile, delimiter=';')
 
     for row in plots:
@@ -30,4 +30,4 @@ plt.ylabel('Current')
 plt.title('ESP32-S2 Power Consumption', fontsize=20)
 plt.grid()
 plt.legend()
-#plt.show()
+plt.show()

@@ -35,6 +35,9 @@ typedef struct sensor_records_temporary_struct {
     int index;
 } sensor_records_temporary_struct;
 
+/**
+ * Computes the average of each sensor readings and saves them in the sensor_records struct.
+*/
 void compute_average(sensor_records_struct *sensor_records, sensor_records_temporary_struct sensor_records_temp) {
     int timestamp = getNowTimestamp();
 
@@ -75,8 +78,19 @@ void compute_average(sensor_records_struct *sensor_records, sensor_records_tempo
 }
 
 /**
- * Read sensor records and store them in the sensor_records_struct.
- * Return 0 if success, 1 if the sensor_records_struct is full, -1 if there is an error with some sensor reading.
+ * Makes multiple readings using each sensor, computes the average and saves the result in the sensor_records struct.
+ * The sensors are the following:
+ * - initial pH sensor;
+ * - final pH sensor;
+ * - temperature sensor;
+ * - humidity sensor;
+ * - water flow sensor (not implemented yet)
+ * 
+ * For each sensor, the thread will block until the sensor has stabilized.
+ * The maximum number of sensor readings is MAX_SENSOR_RECORDS.
+ * Between each reading, the thread will wait for BETWEEN_READINGS milliseconds. This help avoiding sensor noise.
+ * 
+ * @return 0 if success.
 */
 int read_sensor_records(sensor_records_struct *sensor_records, char* action) 
 {
@@ -140,6 +154,10 @@ int read_sensor_records(sensor_records_struct *sensor_records, char* action)
     return 0;
 }
 
+/**
+ * If not saved yet, uses Slinding Window Algorithm to determine the stabilization time of the initial ph, 
+ * final ph and dht11 sensors, and saves the result in the NVS.
+*/
 void determine_sensor_calibration_timings()
 {
     ESP_LOGI(TAG, "Determining pH sensor calibration time");
@@ -154,7 +172,6 @@ void determine_sensor_calibration_timings()
         ESP_LOGI(TAG, "pH sensor calibration not needed");
     }
     
-
     ESP_LOGI(TAG, "Determining DHT11 sensor calibration time");
     if (get_saved_dht11_calibration_timing(&stabilization_time_in_ms) && stabilization_time_in_ms > 0)
     {

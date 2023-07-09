@@ -32,11 +32,16 @@ static const char *CONFIG_BROKER_URL = "mqtt://5.tcp.eu.ngrok.io:19528/";
 
 int isConnected = 0;
 
+/**
+ * Tries to connect to the MQTT broker if not already connected.
+ * It tries to connect N_BROKER_CONNECT_TRIES times before giving up.
+ * @return 0 if connected, -1 otherwise.
+*/
 int try_to_connect_to_broker_if_necessary(esp_mqtt_client_handle_t mqtt_client)
 {
     if (isConnected) 
     {
-        return 1;
+        return 0;
     }
     else
     {
@@ -47,14 +52,14 @@ int try_to_connect_to_broker_if_necessary(esp_mqtt_client_handle_t mqtt_client)
             vTaskDelay(1000 / portTICK_PERIOD_MS);
             if (isConnected) 
             {
-                return 1;
+                return 0;
             }
             else
             {
                 ESP_LOGE(TAG, "Failed to connect to MQTT broker");
             }
         }
-        return 0;
+        return -1;
     }
 }
 
@@ -123,6 +128,9 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
     }
 }
 
+/**
+ * Terminates MQTT connection.
+*/
 void mqtt_app_terminate(esp_mqtt_client_handle_t client)
 {
     ESP_LOGI(TAG, "Terminating MQTT");
@@ -186,6 +194,9 @@ void mqtt_send_encrypted_data(esp_mqtt_client_handle_t client, char* buf, char* 
 }
 */
 
+/**
+ * Sends a sensor record to the MQTT broker.
+*/
 void mqtt_send_sensor_record(esp_mqtt_client_handle_t client, struct sensor_record *sensor_record, char* deviceID, char* sensor_type)
 {
     char buf[200];
@@ -197,6 +208,9 @@ void mqtt_send_sensor_record(esp_mqtt_client_handle_t client, struct sensor_reco
     ESP_LOGI(TAG, "Message: %s published on topic /sensor_record", buf);
 }
 
+/**
+ * Sends a wake up log to the MQTT broker.
+*/
 void mqtt_send_device_wake_up_reason_alert(esp_mqtt_client_handle_t client, int timestamp, char* deviceID, char* wake_up_reason)
 {
     char buf[200];
@@ -208,6 +222,9 @@ void mqtt_send_device_wake_up_reason_alert(esp_mqtt_client_handle_t client, int 
     ESP_LOGI(TAG, "Message: %s published on topic /device_wake_up_log", buf);
 }
 
+/**
+ * Sends a message to the MQTT broker indicating that there is a sensor that failed to read.
+*/
 void mqtt_send_error_reading_sensor(esp_mqtt_client_handle_t client, int timestamp, char* deviceID, char* sensor_type)
 {
     char buf[200];
@@ -218,6 +235,9 @@ void mqtt_send_error_reading_sensor(esp_mqtt_client_handle_t client, int timesta
     ESP_LOGI(TAG, "Message: %s published on topic /error_reading_sensor", buf);
 }
 
+/**
+ * Sends a message to the MQTT broker indicating that there is a water leak.
+*/
 void mqtt_send_water_leak_alert(esp_mqtt_client_handle_t client, int timestamp, char* deviceID)
 {
     char buf[200];

@@ -7,6 +7,10 @@
 
 const static char* TAG = "DEEP_SLEEP";
 
+/**
+ * Enters deep sleep mode for the specified amount of time.
+ * It also enables the GPIO_NUM_8 pin as a wake up source.
+*/
 void start_deep_sleep(long sleep_time) {
     rtc_gpio_pulldown_en(GPIO_NUM_8);
     esp_sleep_enable_ext0_wakeup(GPIO_NUM_8, 1); // reset pin

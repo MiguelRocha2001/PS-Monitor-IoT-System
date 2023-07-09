@@ -9,7 +9,8 @@ interface UserDataRepository {
         role: Role? = null,
         page: Int? = null,
         limit: Int? = null,
-        email: String? = null
+        email: String? = null,
+        userId: String? = null
     ): List<User>
     fun getUserCount(): Int
     fun getAllUsersWithRole(role: Role): List<User> // TODO: test this

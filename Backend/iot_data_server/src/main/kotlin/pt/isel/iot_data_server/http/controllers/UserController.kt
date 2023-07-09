@@ -70,9 +70,10 @@ class UserController(
         user: User,
         @RequestParam(required = false) page: Int?, // TODO: test pagination
         @RequestParam(required = false) limit: Int?,
-        @RequestParam(required = false) emailChunk: String?, // id chunk
+        @RequestParam(required = false) emailChunk: String?,
+        @RequestParam(required = false) userIdChunk: String?
     ): ResponseEntity<*> {
-        val users = service.getAllUsers(Role.CLIENT, page, limit, emailChunk)
+        val users = service.getAllUsers(Role.CLIENT, page, limit, emailChunk, userIdChunk)
         return ResponseEntity.status(200)
             .contentType(SirenMediaType)
             .body(
@@ -86,15 +87,16 @@ class UserController(
     @Authorization(Role.ADMIN)
     fun getUserCount(
         user: User,
-        @RequestParam(required = false) page: Int?, // id chunk
-        @RequestParam(required = false) limit: Int?, // id chunk
-        @RequestParam(required = false) emailChunk: String?, // id chunk
+        @RequestParam(required = false) page: Int?,
+        @RequestParam(required = false) limit: Int?,
+        @RequestParam(required = false) emailChunk: String?,
+        @RequestParam(required = false) userIdChunk: String?
     ): ResponseEntity<*> {
-        val CLIENTCount = service.getUserCount(Role.CLIENT, page, limit, emailChunk)
+        val clientCount = service.getUserCount(Role.CLIENT, page, limit, emailChunk, userIdChunk)
         return ResponseEntity.status(200)
             .contentType(SirenMediaType)
             .body(siren(
-                UserCountOutputModel(CLIENTCount)
+                UserCountOutputModel(clientCount)
             ) {
                 clazz("user-count")
             })
