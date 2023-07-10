@@ -103,6 +103,7 @@ int read_sensor_records(sensor_records_struct *sensor_records)
     ESP_LOGI(TAG, "pH sensor powered on. Waiting for stabilization...");
     int ph_stabilization_time;
     ESP_ERROR_CHECK(get_saved_ph_calibration_timing(&ph_stabilization_time));
+    ESP_LOGI(TAG, "PH Stabilization time: %d", ph_stabilization_time);
     vTaskDelay(pdMS_TO_TICKS(ph_stabilization_time)); // FIXME: get from NVS
 
     for(int i = 0; i < MAX_SENSOR_RECORDS; i++) 

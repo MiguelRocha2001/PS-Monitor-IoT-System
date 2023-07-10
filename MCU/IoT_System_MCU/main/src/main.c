@@ -282,7 +282,7 @@ void sync_time()
     ESP_LOGI(TAG, "Syncing time...");
     setup_wifi();
     getNowTimestamp();
-    terminate_wifi();
+    // terminate_wifi();
     ESP_LOGI(TAG, "Time synced.");
 }
 
@@ -446,11 +446,13 @@ void app_main(void)
             ESP_ERROR_CHECK(set_saved_dht11_calibration_timing(-1)); // only for tests
 
             determine_sensor_calibration_timings(); // to set the calibration timings
+
+            start_deep_sleep(1);
         }
         
         compute_sensors();
         ++my_counter;
-        ESP_LOGW(TAG, "Counter: %d", my_counter);
+        // ESP_LOGW(TAG, "Counter: %d", my_counter);
         start_deep_sleep(SLEEP_TIME);
     }
     else // other wake up reason

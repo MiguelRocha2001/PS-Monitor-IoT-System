@@ -101,7 +101,7 @@ struct dht11_reading DHT11_read() {
     _sendStartSignal();
 
     if(_checkResponse() == DHT11_TIMEOUT_ERROR) {
-        printf("DHT11 Timeout waiting for response.\n");
+        // printf("DHT11 Timeout waiting for response.\n");
         return last_read = _timeoutError();
     }
     
@@ -109,7 +109,7 @@ struct dht11_reading DHT11_read() {
     for(int i = 0; i < 40; i++) {
         /* Initial data */
         if(_waitOrTimeout(50, 0) == DHT11_TIMEOUT_ERROR) {
-            printf("DHT11 Timeout waiting for bit %d.\n", i);
+            // printf("DHT11 Timeout waiting for bit %d.\n", i);
             return last_read = _timeoutError();
         }
                 
@@ -125,7 +125,7 @@ struct dht11_reading DHT11_read() {
         last_read.humidity = data[0];
         return last_read;
     } else {
-        printf("DHT11 CRC error.\n");
+        // printf("DHT11 CRC error.\n");
         return last_read = _crcError();
     }
 }
