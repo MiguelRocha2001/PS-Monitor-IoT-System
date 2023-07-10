@@ -392,6 +392,8 @@ void check_if_woke_up_to_reset()
         ESP_LOGI(TAG, "Resetting WiFi and device ID...");
         delete_saved_wifi();
         delete_device_id();
+        ESP_ERROR_CHECK(set_saved_ph_calibration_timing(-1)); 
+        ESP_ERROR_CHECK(set_saved_dht11_calibration_timing(-1));
         ESP_LOGI(TAG, "Finished resetting WiFi and device ID");
         // mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "external-signal-using-rtc-io");
         return;
@@ -438,8 +440,11 @@ void app_main(void)
     int res = handle_wake_up();
     if (res == 0 || res == 1) // timeout or power on
     {
-        if (res == 1) // power on TODO: change back to 1 later
+        if (res == 1)
         {
+            ESP_ERROR_CHECK(set_saved_ph_calibration_timing(-1)); // only for tests
+            ESP_ERROR_CHECK(set_saved_dht11_calibration_timing(-1)); // only for tests
+
             determine_sensor_calibration_timings(); // to set the calibration timings
         }
         

@@ -162,8 +162,10 @@ void determine_sensor_calibration_timings()
 {
     ESP_LOGI(TAG, "Determining pH sensor calibration time");
     int stabilization_time_in_ms;
-    if (get_saved_ph_calibration_timing(&stabilization_time_in_ms) && stabilization_time_in_ms > 0)
+    get_saved_ph_calibration_timing(&stabilization_time_in_ms);
+    if (stabilization_time_in_ms < 0)
     {
+        ESP_LOGI(TAG, "Initiating pH sensor calibration");
         calibrate_ph_sensors();
         ESP_LOGI(TAG, "pH sensor calibration complete");
     }
@@ -173,8 +175,10 @@ void determine_sensor_calibration_timings()
     }
     
     ESP_LOGI(TAG, "Determining DHT11 sensor calibration time");
-    if (get_saved_dht11_calibration_timing(&stabilization_time_in_ms) && stabilization_time_in_ms > 0)
+    get_saved_dht11_calibration_timing(&stabilization_time_in_ms);
+    if (stabilization_time_in_ms < 0)
     {
+        ESP_LOGI(TAG, "Initiating DHT11 sensor calibration");
         calibrate_dht11_sensor();
         ESP_LOGI(TAG, "DHT11 sensor calibration complete");
     }
