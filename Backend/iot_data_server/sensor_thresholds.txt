@@ -1,0 +1,4 @@
+initial-ph: 6.1 - 8
+final-ph: 7 - 9.2
+temperature: 18
+humidity: null - 30

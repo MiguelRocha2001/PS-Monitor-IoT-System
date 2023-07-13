@@ -35,7 +35,7 @@ class UsersInitialization(
                 val alertEmail = if (split1[4] == "null") null else split1[4] // TODO: remove later (null is for testing
                 createUserAndDevice(userService, email, password, role, deviceId, alertEmail)
             }
-            logger.info("Sensor thresholds loaded.")
+            logger.info("Users Configuration file loading complete")
         }
         /*
         createUserAndDevice( // TODO: remove later
