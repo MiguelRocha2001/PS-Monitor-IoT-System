@@ -5,6 +5,7 @@ import pt.isel.iot_data_server.service.Either
 import pt.isel.iot_data_server.service.device.DeviceService
 import pt.isel.iot_data_server.service.user.Role
 import pt.isel.iot_data_server.service.user.UserService
+import java.io.File
 import java.util.logging.Logger
 
 /**
@@ -17,39 +18,26 @@ class UsersInitialization(
     private val deviceService: DeviceService
 ) {
     private val logger = Logger.getLogger(UsersInitialization::class.java.name)
+    private val FILE_NAME = "users-initialization.txt"
+    private val file = File(FILE_NAME)
     init {
-        createUserAndDevice(
-            userService,
-            "admin_email@gmail.com",
-                "admin-password",
-            Role.ADMIN,
-            null,
-            null
-        )
-        createUserAndDevice(
-            userService,
-            "user_1_email@gmail.com",
-            "user-1-password",
-            Role.CLIENT,
-            "user-1-device-id",
-            "user1-alert-email@gmail.com"
-        )
-        createUserAndDevice(
-            userService,
-            "user_2_email@gmail.com",
-            "user-2-password",
-            Role.CLIENT,
-            "user-2-device-id",
-            "user2-alert-email@gmail.com"
-        )
-        createUserAndDevice(
-            userService,
-            "user_3_email@gmail.com",
-            "user-3-password",
-            Role.CLIENT,
-            "user-3-device-id",
-            "user3-alert-email@gmail.com"
-        )
+        logger.info("Initializing users")
+        if (!file.exists()) {
+            logger.info("Users initialization file not found. Skipping users initialization...")
+        } else {
+            logger.info("Sensor thresholds file found. Loading users...")
+            file.forEachLine {
+                val split1 = it.split(":").map { split -> split.trim() }
+                val role = if (split1[0] == "admin") Role.ADMIN else Role.CLIENT
+                val email = split1[1]
+                val password = split1[2]
+                val deviceId = if (split1[3] == "null") null else split1[3] // TODO: remove later (null is for testing
+                val alertEmail = if (split1[4] == "null") null else split1[4] // TODO: remove later (null is for testing
+                createUserAndDevice(userService, email, password, role, deviceId, alertEmail)
+            }
+            logger.info("Sensor thresholds loaded.")
+        }
+        /*
         createUserAndDevice( // TODO: remove later
             userService,
             "user_4_email@gmail.com",
@@ -58,6 +46,7 @@ class UsersInitialization(
             "IPGBJMUV",
             "a47128@alunos.isel.pt"
         )
+         */
     }
 
     private fun createUserAndDevice(
@@ -113,9 +102,9 @@ class UsersInitialization(
         if (!deviceExists) {
             val result3 = deviceService.createDeviceWithId(userId, deviceId, alertEmail)
             check(result3 is Either.Right)
-            logger.info("${username ?: userId} device created")
+            logger.info("User ${username ?: userId} device created")
         } else {
-            logger.info("${username ?: userId} device already exists. Skipping creation")
+            logger.info("User ${username ?: userId} device already exists. Skipping creation")
         }
     }
 }

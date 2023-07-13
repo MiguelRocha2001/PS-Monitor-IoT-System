@@ -77,7 +77,7 @@ There are two ways of launching the system:
         - Go to website project and lunch the website, using webpack;
         - Go to MCU project and load the firmware in the MCU;
 - Using Docker:
-    - Go to "/Backend/iot\_data\_server" folder and use dokcer-compose to lunch the system. The docker-compose file is already configured to lunch the Postgres DB, InfluxDB and the Spring server. The website is served as static content, in Spring server.
+    - Go to "/Backend/iot\_data\_server" folder and use docker-compose to lunch the system. The docker-compose file is already configured to lunch the Postgres DB, InfluxDB and the Spring server. The website is served as static content, in Spring server.
 
 Instructions:
 - Load MCU firmware in device:

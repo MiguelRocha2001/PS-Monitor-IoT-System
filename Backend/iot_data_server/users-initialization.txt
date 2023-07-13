@@ -1,0 +1,4 @@
+admin : admin_email@gmail.com : admin-password : null : null
+client : user_1_email@gmail.com : user-1-password : user-1-device-id : user1-alert-email@gmail.com
+client : user_2_email@gmail.com : user-2-password : user-2-device-id : user2-alert-email@gmail.com
+client : user_3_email@gmail.com : user-3-password : user-3-device-id : user3-alert-email@gmail.com
