@@ -20,8 +20,9 @@ services:
       - env/server
     volumes:
       - ./email_service_config:/app/email_service_config
-      - ./users-initialization:/app/users-initialization
-      - ./neutralization-device-stabilization-time:/app/neutralization-device-stabilization-time
+      - ./users-initialization.txt:/app/users-initialization.txt
+      - ./neutralization-device-stabilization-time.txt:/app/neutralization-device-stabilization-time.txt
+      - ./sensor-thresholds.txt:/app/sensor-thresholds.txt
   influxdb:
     image: influxdb:2.7.1-alpine
     container_name: influxdb
