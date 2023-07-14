@@ -57,7 +57,7 @@ esp_err_t get_saved_wifi(wifi_config_t* wifi_config) {
 
 
     if (required_size == 0) {
-        ESP_LOGE(TAG, "There is no saved wifi!");
+        ESP_LOGW(TAG, "There is no saved wifi!");
         return err;
     } else {
 
@@ -136,7 +136,7 @@ esp_err_t get_saved_ph_calibration_timing(int* time_in_ms) {
 
 
     if (required_size == 0) {
-        ESP_LOGE(TAG, "There is no saved ph calibration timing!");
+        ESP_LOGW(TAG, "There is no saved ph calibration timing!");
         return err;
     } else {
 
@@ -218,7 +218,7 @@ esp_err_t get_saved_dht11_calibration_timing(int* time_in_ms) {
 
 
     if (required_size == 0) {
-        ESP_LOGE(TAG, "There is no saved ph calibration time!");
+        ESP_LOGW(TAG, "There is no saved ph calibration time!");
         return err;
     } else {
 
@@ -251,7 +251,7 @@ esp_err_t get_device_id(char** deviceID) {
 
 
     if (required_size == 0) {
-        ESP_LOGE(TAG, "There is no saved deviceID!");
+        ESP_LOGW(TAG, "There is no saved deviceID!");
         return err;
     } else {
         *deviceID = malloc(required_size);
@@ -291,7 +291,7 @@ esp_err_t set_device_id(char* deviceID) {
 
 esp_err_t set_last_action_performed(char* action)
 {
-    ESP_LOGW(TAG, "Setting last action performed to %s", action);
+    ESP_LOGI(TAG, "Setting last action performed to %s", action);
     esp_err_t err = init_nvs();
     nvs_handle_t my_handle;
 
@@ -333,7 +333,7 @@ esp_err_t get_last_action_performed(char** action)
 
 
     if (required_size == 0) {
-        ESP_LOGE(TAG, "There is no saved last action performed!");
+        ESP_LOGW(TAG, "There is no saved last action performed!");
         return err;
     } else {
         *action = malloc(required_size);

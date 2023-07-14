@@ -53,13 +53,13 @@ void calibrate_ph_sensors() {
             {
                 read_initial_ph_record(&sensor_record1);
                 window1[i] = sensor_record1.value;
-                ESP_LOGW(TAG, "Final pH value 1: %f", sensor_record1.value);
+                ESP_LOGI(TAG, "Initial pH value: %f", sensor_record1.value);
             }
             if (!time_2_calculated)
             {
                 read_final_ph_record(&sensor_record2);
                 window2[i] = sensor_record2.value;
-                ESP_LOGW(TAG, "Final pH value 2: %f", sensor_record2.value);
+                ESP_LOGI(TAG, "Final pH value: %f", sensor_record2.value);
             }
             vTaskDelay(pdMS_TO_TICKS(BETWEEN_READINGS_CALIBRATION));
         }
@@ -89,18 +89,18 @@ void calibrate_ph_sensors() {
             int final_timestamp = getNowTimestamp();
             int stabilization_time_in_ms = (final_timestamp - initial_timestamp1) * 1000;
 
-            ESP_LOGW(TAG, "Standard deviation is below threshold %f", std_dev1);
+            ESP_LOGI(TAG, "Standard deviation is below threshold %f", std_dev1);
 
             if (time_2_calculated)
             {
                 ESP_ERROR_CHECK(set_saved_ph_calibration_timing(stabilization_time_in_ms));    
-                ESP_LOGW(TAG, "Saved stabilization time: %d", stabilization_time_in_ms);
+                ESP_LOGI(TAG, "Saved stabilization time: %d", stabilization_time_in_ms);
                 break;
             }
 
             time_1_calculated = 1;
         }
-        ESP_LOGW(TAG, "Standard deviation: %f", std_dev1);
+        ESP_LOGI(TAG, "Standard deviation: %f", std_dev1);
 
         double std_dev2 = sqrt(squared_diff_sum2 / ph_window_size);
         if (std_dev2 <= ph_standard_deviation_threshold)
@@ -108,12 +108,12 @@ void calibrate_ph_sensors() {
             int final_timestamp = getNowTimestamp();
             int stabilization_time_in_ms = (final_timestamp - initial_timestamp2) * 1000;
 
-            ESP_LOGW(TAG, "Standard deviation is below threshold %f", std_dev2);
+            ESP_LOGI(TAG, "Standard deviation is below threshold %f", std_dev2);
 
             if (time_1_calculated)
             {
                 ESP_ERROR_CHECK(set_saved_ph_calibration_timing(stabilization_time_in_ms));    
-                ESP_LOGW(TAG, "Saved stabilization time: %d", stabilization_time_in_ms);
+                ESP_LOGI(TAG, "Saved stabilization time: %d", stabilization_time_in_ms);
                 break;
             }
 
@@ -170,13 +170,13 @@ void calibrate_dht11_sensor() {
             {
                 read_temperature_record(&sensor_record1);
                 window1[i] = sensor_record1.value;
-                ESP_LOGW(TAG, "Temperature value 1: %f", sensor_record1.value);
+                ESP_LOGI(TAG, "Temperature value: %f", sensor_record1.value);
             }
             if (!time_2_calculated)
             {
                 read_humidity_record(&sensor_record2);
                 window2[i] = sensor_record2.value;
-                ESP_LOGW(TAG, "Humidity value 2: %f", sensor_record2.value);
+                ESP_LOGI(TAG, "Humidity value: %f", sensor_record2.value);
             }
             vTaskDelay(pdMS_TO_TICKS(BETWEEN_READINGS_CALIBRATION));
         }
@@ -206,18 +206,18 @@ void calibrate_dht11_sensor() {
             int final_timestamp = getNowTimestamp();
             int stabilization_time_in_ms = (final_timestamp - initial_timestamp1) * 1000;
 
-            ESP_LOGW(TAG, "Standard deviation is below threshold %f", std_dev1);
+            ESP_LOGI(TAG, "Standard deviation is below threshold %f", std_dev1);
 
             if (time_2_calculated)
             {
                 ESP_ERROR_CHECK(set_saved_dht11_calibration_timing(stabilization_time_in_ms));    
-                ESP_LOGW(TAG, "Saved stabilization time: %d", stabilization_time_in_ms);
+                ESP_LOGI(TAG, "Saved stabilization time: %d", stabilization_time_in_ms);
                 break;
             }
 
             time_1_calculated = 1;
         }
-        ESP_LOGW(TAG, "Standard deviation: %f", std_dev1);
+        ESP_LOGI(TAG, "Standard deviation: %f", std_dev1);
 
         double std_dev2 = sqrt(squared_diff_sum2 / dht11_window_size);
         if (std_dev2 <= dht11_standard_deviation_threshold)
@@ -225,12 +225,12 @@ void calibrate_dht11_sensor() {
             int final_timestamp = getNowTimestamp();
             int stabilization_time_in_ms = (final_timestamp - initial_timestamp2) * 1000;
 
-            ESP_LOGW(TAG, "Standard deviation is below threshold %f", std_dev2);
+            ESP_LOGI(TAG, "Standard deviation is below threshold %f", std_dev2);
 
             if (time_1_calculated)
             {
                 ESP_ERROR_CHECK(set_saved_dht11_calibration_timing(stabilization_time_in_ms));    
-                ESP_LOGW(TAG, "Saved stabilization time: %d", stabilization_time_in_ms);
+                ESP_LOGI(TAG, "Saved stabilization time: %d", stabilization_time_in_ms);
                 break;
             }
 

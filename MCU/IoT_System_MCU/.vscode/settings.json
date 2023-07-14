@@ -78,6 +78,8 @@
         "system_error": "c",
         "functional": "c",
         "esp_wifi_types.h": "c",
-        "dns.h": "c"
+        "dns.h": "c",
+        "sliding_window.h": "c",
+        "math.h": "c"
     }
 }

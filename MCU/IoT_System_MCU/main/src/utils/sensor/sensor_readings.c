@@ -78,6 +78,40 @@ void compute_average(sensor_records_struct *sensor_records, sensor_records_tempo
 }
 
 /**
+ * If not saved yet, uses Slinding Window Algorithm to determine the stabilization time of the initial ph, 
+ * final ph and dht11 sensors, and saves the result in the NVS.
+*/
+void determine_sensor_stabilization_timings()
+{
+    // ESP_LOGI(TAG, "Determining pH sensor calibration time");
+    int stabilization_time_in_ms;
+    get_saved_ph_calibration_timing(&stabilization_time_in_ms);
+    if (stabilization_time_in_ms < 0)
+    {
+        ESP_LOGW(TAG, "Initiating pH sensor calibration");
+        calibrate_ph_sensors();
+        ESP_LOGI(TAG, "pH sensor calibration complete");
+    }
+    else
+    {
+        ESP_LOGI(TAG, "pH sensor calibration not needed");
+    }
+    
+    // ESP_LOGI(TAG, "Determining DHT11 sensor calibration time");
+    get_saved_dht11_calibration_timing(&stabilization_time_in_ms);
+    if (stabilization_time_in_ms < 0)
+    {
+        ESP_LOGW(TAG, "Initiating DHT11 sensor calibration");
+        calibrate_dht11_sensor();
+        ESP_LOGI(TAG, "DHT11 sensor calibration complete");
+    }
+    else
+    {
+        ESP_LOGI(TAG, "DHT11 sensor calibration not needed");
+    }
+}
+
+/**
  * Makes multiple readings using each sensor, computes the average and saves the result in the sensor_records struct.
  * The sensors are the following:
  * - initial pH sensor;
@@ -94,6 +128,8 @@ void compute_average(sensor_records_struct *sensor_records, sensor_records_tempo
 */
 int read_sensor_records(sensor_records_struct *sensor_records) 
 {
+    determine_sensor_stabilization_timings(); // before make any readings, check if the calibration timings are correct
+
     sensor_records_temporary_struct sensor_records_temp;
 
     ESP_LOGI(TAG, "Reading sensor records");
@@ -153,38 +189,4 @@ int read_sensor_records(sensor_records_struct *sensor_records)
     ESP_LOGI(TAG, "Sensor readings complete");
 
     return 0;
-}
-
-/**
- * If not saved yet, uses Slinding Window Algorithm to determine the stabilization time of the initial ph, 
- * final ph and dht11 sensors, and saves the result in the NVS.
-*/
-void determine_sensor_calibration_timings()
-{
-    ESP_LOGI(TAG, "Determining pH sensor calibration time");
-    int stabilization_time_in_ms;
-    get_saved_ph_calibration_timing(&stabilization_time_in_ms);
-    if (stabilization_time_in_ms < 0)
-    {
-        ESP_LOGI(TAG, "Initiating pH sensor calibration");
-        calibrate_ph_sensors();
-        ESP_LOGI(TAG, "pH sensor calibration complete");
-    }
-    else
-    {
-        ESP_LOGI(TAG, "pH sensor calibration not needed");
-    }
-    
-    ESP_LOGI(TAG, "Determining DHT11 sensor calibration time");
-    get_saved_dht11_calibration_timing(&stabilization_time_in_ms);
-    if (stabilization_time_in_ms < 0)
-    {
-        ESP_LOGI(TAG, "Initiating DHT11 sensor calibration");
-        calibrate_dht11_sensor();
-        ESP_LOGI(TAG, "DHT11 sensor calibration complete");
-    }
-    else
-    {
-        ESP_LOGI(TAG, "DHT11 sensor calibration not needed");
-    }
 }

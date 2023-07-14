@@ -6,7 +6,7 @@ import java.util.logging.Logger
 
 class SensorInfoFromFile: SensorInfo {
     private val logger = Logger.getLogger(SensorInfoFromFile::class.java.name)
-    private val file = File("sensor_thresholds.txt")
+    private val file = File("sensor-thresholds.txt")
     private val sensorThresholds = mutableMapOf<String, Pair<Double?, Double?>>()
     init {
         if (!file.exists()) {

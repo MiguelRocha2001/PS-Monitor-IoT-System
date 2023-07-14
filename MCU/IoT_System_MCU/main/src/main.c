@@ -77,7 +77,8 @@ char* setup_wifi(void) {
             start_deep_sleep(SLEEP_TIME);
     } else 
     {
-        esp_touch_helper(&deviceID); // device id may be null
+        ESP_LOGW(TAG, "Cannot get saved wifi credentials or device id. Going to esp touch mode...");
+        esp_touch_helper(&deviceID); // uses esp touch to get wifi credentials
     }
 
     ESP_LOGI(TAG, "Finished setting up WiFi");
@@ -122,7 +123,8 @@ void terminate_wifi_and_mqtt()
     
     strcpy(action, "terminating_wifi");
     set_last_action_performed(&action);
-    terminate_wifi(); // disconnects from wifi
+
+    terminate_wifi();
 }
 
 /**
@@ -281,8 +283,8 @@ void sync_time()
 {
     ESP_LOGI(TAG, "Syncing time...");
     setup_wifi();
-    getNowTimestamp();
-    // terminate_wifi();
+    getNowTimestamp(); // sync time
+    // terminate_wifi(); // causes exception duo to a bug when wifi connection is made by using esp touch
     ESP_LOGI(TAG, "Time synced.");
 }
 
@@ -311,7 +313,6 @@ int handle_wake_up()
     }
     if (reset_reason & ESP_RST_POWERON) 
     {
-        sync_time();
         ESP_LOGI(TAG, "Reset reason: power-on");
         n_went_to_deep_sleep = 0; // reset sleep counter
         wake_up_reason = "power-on";
@@ -387,19 +388,64 @@ void check_if_woke_up_to_reset()
     // Check the reset reason flags
     if (sleep_wakeup_reason == ESP_SLEEP_WAKEUP_EXT0) 
     {
-        // TODO: maybe send log to broker
-        ESP_LOGI(TAG, "Reset reason: external signal using RTC_IO");
-        ESP_LOGI(TAG, "Resetting WiFi and device ID...");
+        ESP_LOGW(TAG, "Reset performed by external signal using RTC_IO");
+
+        ESP_LOGI(TAG, "Resetting WiFi, device ID and calibration times...");
         delete_saved_wifi();
         delete_device_id();
         ESP_ERROR_CHECK(set_saved_ph_calibration_timing(-1)); 
         ESP_ERROR_CHECK(set_saved_dht11_calibration_timing(-1));
-        ESP_LOGI(TAG, "Finished resetting WiFi and device ID");
-        // mqtt_send_device_wake_up_reason_alert(client, getNowTimestamp(), deviceID, "external-signal-using-rtc-io");
+        ESP_LOGI(TAG, "Finished resetting WiFi, device ID and calibration times.");
+
+        // sensor stabilization time calculation is not necessary because the next time the ESP tries to read from sensors,
+        // it will determine stabilization time
+
         return;
     }
     ESP_LOGI(TAG, "No external signal using RTC_IO");
     return;
+}
+
+/**
+ * Connects to the wifi and syncs time with NTP server.
+*/
+void perform_initial_setup()
+{
+    ESP_LOGI(TAG, "Performing initial setup...");
+
+    ESP_ERROR_CHECK(set_saved_ph_calibration_timing(-1)); // only for tests
+    ESP_ERROR_CHECK(set_saved_dht11_calibration_timing(-1)); // only for tests
+
+    sync_time(); // makes connection to wifi and syncs time with NTP server
+
+    ESP_LOGI(TAG, "Initial setup finished !!!");
+
+    start_deep_sleep(0);
+}
+
+/**
+ * If device is not configured, it will use ESP TOUCH to connect to wifi,
+ * save wifi and device ID to flash memory, sync time with NTP server, and then restarts the device.
+ * Otherwise, it will do nothing, and return.
+*/
+void check_if_device_is_configured()
+{
+    char* deviceID;
+    wifi_config_t wifiConfig;
+    if (get_saved_wifi(&wifiConfig) != ESP_OK || get_device_id(&deviceID) != ESP_OK)
+    {
+        ESP_LOGW(TAG, "Device is not configured !!!");
+        perform_initial_setup();
+
+        // this sleep is necessary because there is a bug when we try to disconnect from 
+        // wifi when the esp touch was used otherwise, we might be tempted to call terminate 
+        // wifi and the programm aborts
+        start_deep_sleep(0);
+    }
+    else
+    {
+        ESP_LOGI(TAG, "Device is configured !!!");
+    }
 }
 
 // IMPORTANT -> run with $ idf.py monitor or $ idf.py -p COM5 flash monitor 
@@ -434,22 +480,18 @@ void app_main(void)
 
     check_if_woke_up_to_reset();
 
+    check_if_device_is_configured(); // only returns if device is configured
+
     // long end = get_unsynced_time_in_microseconds();
     // ESP_LOGW(TAG, "Time to check if woke up to reset: %ld", end - start);
 
     int res = handle_wake_up();
     if (res == 0 || res == 1) // timeout or power on
     {
-        if (res == 1)
+        if (res == 1) // power on
         {
-            ESP_ERROR_CHECK(set_saved_ph_calibration_timing(-1)); // only for tests
-            ESP_ERROR_CHECK(set_saved_dht11_calibration_timing(-1)); // only for tests
-
-            determine_sensor_calibration_timings(); // to set the calibration timings
-
-            start_deep_sleep(1);
+           perform_initial_setup();
         }
-        
         compute_sensors();
         ++my_counter;
         // ESP_LOGW(TAG, "Counter: %d", my_counter);
