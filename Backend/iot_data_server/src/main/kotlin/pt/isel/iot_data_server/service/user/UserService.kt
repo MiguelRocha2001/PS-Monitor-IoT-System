@@ -63,6 +63,19 @@ class UserService(
             return@run it.userRepo.getAllUsers(role, page, limit, email, idChunk)
         }
     }
+
+    final fun getAllUserIds(
+        role: Role? = null,
+        page: Int? = null,
+        limit: Int? = null,
+        email: String? = null,
+        idChunk: String? = null
+    ): List<String> { // TODO: test this
+        return transactionManager.run {
+            return@run it.userRepo.getAllUserIds(role, page, limit, email, idChunk)
+        }
+    }
+
     final fun getUserCount(
         role: Role? = null,
         page: Int? = null,

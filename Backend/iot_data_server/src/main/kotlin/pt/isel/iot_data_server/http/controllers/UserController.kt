@@ -66,18 +66,18 @@ class UserController(
 
     @GetMapping(Uris.Users.ALL)
     @Authorization(Role.ADMIN)
-    fun getAllUsers(
+    fun getAllUserIds(
         user: User,
         @RequestParam(required = false) page: Int?, // TODO: test pagination
         @RequestParam(required = false) limit: Int?,
         @RequestParam(required = false) emailChunk: String?,
         @RequestParam(required = false) userIdChunk: String?
     ): ResponseEntity<*> {
-        val users = service.getAllUsers(Role.CLIENT, page, limit, emailChunk, userIdChunk)
+        val users = service.getAllUserIds(Role.CLIENT, page, limit, emailChunk, userIdChunk)
         return ResponseEntity.status(200)
             .contentType(SirenMediaType)
             .body(
-                siren(UsersOutputModel.fromUsers(users)) {
+                siren(UserIdsOutputModel(users)) {
                     clazz("users")
                 }
             )

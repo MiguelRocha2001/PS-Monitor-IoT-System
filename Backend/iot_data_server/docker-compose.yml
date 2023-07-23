@@ -11,10 +11,10 @@ services:
     depends_on:
       influxdb:
         condition: service_healthy
-      db:
+      postgresdb:
         condition: service_healthy
     links:
-      - db
+      - postgresdb
       - influxdb
     env_file:
       - env/server
@@ -39,9 +39,9 @@ services:
       - $PWD/config:/etc/influxdb2
     env_file:
       - env/influx
-  db:
-    container_name: db
-    hostname: db
+  postgresdb:
+    container_name: postgresdb
+    hostname: localhost
     image: postgres:14.1-alpine
     restart: always
     ports:
@@ -52,12 +52,12 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - postgresdb-data:/var/lib/postgresql/data
       - ./sql/create.sql:/docker-entrypoint-initdb.d/create.sql
     env_file:
       - env/postgres
 volumes:
-  db-data:
+  postgresdb-data:
     driver: local
   influxdb:
     driver: local

@@ -8,6 +8,7 @@ import pt.isel.iot_data_server.repository.jdbi.mappers.PasswordAndSaltMapper
 import pt.isel.iot_data_server.repository.jdbi.mappers.UserMapper
 import pt.isel.iot_data_server.repository.jdbi.mappers.toUser
 import pt.isel.iot_data_server.service.user.Role
+import com.nimbusds.oauth2.sdk.device.UserCode
 
 class JdbiUserDataRepository(
     private val handle: Handle
@@ -24,11 +25,25 @@ class JdbiUserDataRepository(
             .execute()
     }
 
-    override fun getAllUsers(role: Role?, page: Int?, limit: Int?, email: String?, userId: String?): List<User> {
-        val query = StringBuilder("""
-            select _id, email, role 
-            from _USER
-        """)
+    private enum class UserColumn() {
+        ID, ALL
+    }
+    private sealed class UsersQuery
+    private data class AllUserIdsQuery(val userIds: List<String>) : UsersQuery()
+    private data class AllUsersQuery(val users: List<User>) : UsersQuery()
+    private fun userQuery(userColumn: UserColumn, role: Role?, page: Int?, limit: Int?, email: String?, userId: String?): UsersQuery {
+        // chooses the query to execute based on the userColumn
+        val query = if (userColumn == UserColumn.ID) {
+            StringBuilder("""
+                select _id
+                from _USER
+            """)
+        } else {
+            StringBuilder("""
+                select _id, email, role
+                from _USER
+            """)
+        }
 
         if (role != null) {
             query.append(" where role = :role")
@@ -73,8 +88,19 @@ class JdbiUserDataRepository(
             }
             .mapTo<UserMapper>()
             .list()
-            .map { it.toUser() }
-        return t
+
+        if (userColumn == UserColumn.ID)
+            return AllUserIdsQuery(t.map { it._id })
+        else
+            return AllUsersQuery(t.map { it.toUser() })
+    }
+
+    override fun getAllUsers(role: Role?, page: Int?, limit: Int?, email: String?, userId: String?): List<User> {
+        return (userQuery(UserColumn.ALL, role, page, limit, email, userId) as AllUsersQuery).users
+    }
+
+    override fun getAllUserIds(role: Role?, page: Int?, limit: Int?, email: String?, userId: String?): List<String> {
+        return (userQuery(UserColumn.ID, role, page, limit, email, userId) as AllUserIdsQuery).userIds
     }
 
     override fun getUserCount(): Int {

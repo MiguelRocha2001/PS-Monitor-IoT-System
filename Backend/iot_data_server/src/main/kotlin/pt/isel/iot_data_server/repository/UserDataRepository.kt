@@ -12,6 +12,13 @@ interface UserDataRepository {
         email: String? = null,
         userId: String? = null
     ): List<User>
+    fun getAllUserIds(
+        role: Role? = null,
+        page: Int? = null,
+        limit: Int? = null,
+        email: String? = null,
+        userId: String? = null
+    ): List<String>
     fun getUserCount(): Int
     fun getAllUsersWithRole(role: Role): List<User> // TODO: test this
     fun getUserByToken(token: String): User?
