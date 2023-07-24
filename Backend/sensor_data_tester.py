@@ -7,7 +7,7 @@ import threading
 
 # see: https://pypi.org/project/paho-mqtt/
 
-device_id = "DxdOmO"
+device_id = "jmKESK"
 
 def sorround_with_quotes(value):
     return "\"" + value + "\""
