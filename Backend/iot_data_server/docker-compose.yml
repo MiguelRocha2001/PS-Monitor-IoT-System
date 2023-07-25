@@ -7,7 +7,6 @@ services:
     image: iot-service-1
     ports:
       - "9000:9000"
-      - "1883:1883"
     depends_on:
       influxdb:
         condition: service_healthy
@@ -16,6 +15,7 @@ services:
     links:
       - postgresdb
       - influxdb
+      - hivemq
     env_file:
       - env/server
     volumes:
@@ -56,6 +56,17 @@ services:
       - ./sql/create.sql:/docker-entrypoint-initdb.d/create.sql
     env_file:
       - env/postgres
+  hivemq:
+    container_name: hivemq
+    image: hivemq/hivemq-ce
+    restart: always
+    ports:
+      - "1883:1883" # MQTT port
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:1883" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 volumes:
   postgresdb-data:
     driver: local

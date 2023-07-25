@@ -13,8 +13,9 @@ import javax.net.ssl.TrustManagerFactory
 
 class MqttClient {
     companion object {
+        private val mqttBrokerUrl = System.getenv()["HIVE_MQ_BROKER_URL"] ?: "tcp://localhost:1883"
         fun getMqttClient(): MqttClient =
-            MqttClient("tcp://localhost:1883", MqttClient.generateClientId())
+            MqttClient(mqttBrokerUrl, MqttClient.generateClientId())
     }
 }
 

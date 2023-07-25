@@ -25,11 +25,11 @@ class IotDataServerApplication {
 		}
 	).configure()
 
-	@Bean("hiveMQManager")
+	//@Bean("hiveMQManager")
 	fun hiveMQManager() = HiveMQManager()
 
 	@Bean
-	@DependsOn("hiveMQManager")
+	//@DependsOn("hiveMQManager")
 	fun mqttClient(): MqttClient {
 		val client = getMqttClient()
 		client.connect()
