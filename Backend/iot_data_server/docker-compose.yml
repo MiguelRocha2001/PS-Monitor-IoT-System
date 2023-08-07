@@ -1,12 +1,11 @@
 version: '3.8'
 services:
   iot-service:
-    container_name: iot-service-1
     build:
       context: ./
     image: iot-service-1
     ports:
-      - "9000:9000"
+      - ":9000"
     depends_on:
       influxdb:
         condition: service_healthy
@@ -40,12 +39,11 @@ services:
     env_file:
       - env/influx
   postgresdb:
-    container_name: postgresdb
     hostname: localhost
     image: postgres:14.1-alpine
     restart: always
     ports:
-      - "5434:5432"
+      - ":5432"
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres"]
       interval: 10s
@@ -67,6 +65,14 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  nginx:
+    build:
+      context: nginx/
+    image: iot-service-nginx
+    ports:
+      - "9000:80"
+    depends_on:
+      - iot-service
 volumes:
   postgresdb-data:
     driver: local
