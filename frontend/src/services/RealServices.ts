@@ -7,7 +7,7 @@ import {
     toDevices,
     toDeviceWakeUpLogs,
     toSensorData,
-    toUsers,
+    toUsersIds,
     User
 } from "./domain";
 import {Services} from "./services";
@@ -37,7 +37,7 @@ export class RealServices implements Services {
             SirenModule.extractGetVerifyCodeLink(response.links)
             SirenModule.extractAvailableDeviceSensorsLink(response.links)
             SirenModule.extractGetUserCountLink(response.links)
-            SirenModule.extractGetUsersLink(response.links)
+            SirenModule.extractGetUsersIdsLink(response.links)
             SirenModule.extractGetDeviceWakeUpLogsLink(response.links)
         }
 
@@ -289,8 +289,8 @@ export class RealServices implements Services {
         return doFetch(request, ResponseType.Siren).then(response => response.properties.userCount)
     }
 
-    getUsers(page: number, limit: number, emailChunk: string | undefined, userIdChuck: string | undefined): Promise<User[]> {
-        const getUsersLink = SirenModule.getUsersLink()
+    async getUserIds(page: number, limit: number, emailChunk: string | undefined, userIdChuck: string | undefined): Promise<string[]> {
+        const getUsersLink = SirenModule.getUsersIdsLink()
         let linkAfterParams = getUsersLink.href + '?page=' + page + '&limit=' + limit
         if (emailChunk) {
             linkAfterParams = linkAfterParams.concat('&emailChunk=' + emailChunk)
@@ -303,6 +303,6 @@ export class RealServices implements Services {
             url: linkAfterParams,
             method: 'GET'
         }
-        return doFetch(request, ResponseType.Siren).then(response => toUsers(response.properties))
+        return doFetch(request, ResponseType.Siren).then(response => toUsersIds(response.properties))
     }
 }

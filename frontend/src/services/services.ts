@@ -36,7 +36,7 @@ export interface Services {
     sendValidationCode(email:string): Promise<string>
     availableSensors(deviceId: string): Promise<string[]>
 
-    getUsers(page: number, limit: number, emailChunk: string | undefined, userIdChuck: string | undefined): Promise<User[]>
+    getUserIds(page: number, limit: number, emailChunk: string | undefined, userIdChuck: string | undefined): Promise<string[]>
     getUserCount(page: number, limit: number, emailChunk: string | undefined, userIdChuck: string | undefined): Promise<number>
 }
 

@@ -13,6 +13,10 @@ data class UserMapper(
     val role: String
 )
 
+data class UserIdMapper(
+    val _id: String,
+)
+
 internal fun UserMapper.toUser() = User(
     id = _id,
     userInfo = UserInfo(email, role.toRole())

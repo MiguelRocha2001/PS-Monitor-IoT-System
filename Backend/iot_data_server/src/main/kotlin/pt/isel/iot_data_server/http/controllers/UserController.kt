@@ -21,7 +21,6 @@ import pt.isel.iot_data_server.http.model.user.*
 import pt.isel.iot_data_server.service.Either
 import pt.isel.iot_data_server.service.user.Role
 import pt.isel.iot_data_server.service.user.UserService
-import java.util.*
 
 @Tag(name = "User", description = "User API")
 @RestController
@@ -64,9 +63,9 @@ class UserController(
             .body(siren(UserEmailAlreadyRegisteredOutputModel(res)) { clazz("users") })
     }
 
-    @GetMapping(Uris.Users.ALL)
+    @GetMapping(Uris.Users.IDS)
     @Authorization(Role.ADMIN)
-    fun getAllUserIds(
+    fun getUserIds(
         user: User,
         @RequestParam(required = false) page: Int?, // TODO: test pagination
         @RequestParam(required = false) limit: Int?,

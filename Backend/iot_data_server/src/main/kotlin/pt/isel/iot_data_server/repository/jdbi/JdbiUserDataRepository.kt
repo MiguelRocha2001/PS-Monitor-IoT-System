@@ -9,6 +9,7 @@ import pt.isel.iot_data_server.repository.jdbi.mappers.UserMapper
 import pt.isel.iot_data_server.repository.jdbi.mappers.toUser
 import pt.isel.iot_data_server.service.user.Role
 import com.nimbusds.oauth2.sdk.device.UserCode
+import pt.isel.iot_data_server.repository.jdbi.mappers.UserIdMapper
 
 class JdbiUserDataRepository(
     private val handle: Handle
@@ -67,7 +68,7 @@ class JdbiUserDataRepository(
             query.append(" limit :limit offset :offset")
         }
 
-        val t = handle.createQuery(query.toString())
+        val result = handle.createQuery(query.toString())
             .apply {
                 if (role != null) {
                     bind("role", role.name.lowercase())
@@ -86,13 +87,11 @@ class JdbiUserDataRepository(
                     bind("offset", (page - 1) * limit)
                 }
             }
-            .mapTo<UserMapper>()
-            .list()
 
-        if (userColumn == UserColumn.ID)
-            return AllUserIdsQuery(t.map { it._id })
+        return if (userColumn == UserColumn.ID)
+            AllUserIdsQuery(result.mapTo<UserIdMapper>().list().map { it._id })
         else
-            return AllUsersQuery(t.map { it.toUser() })
+            AllUsersQuery(result.mapTo<UserMapper>().list().map { it.toUser() })
     }
 
     override fun getAllUsers(role: Role?, page: Int?, limit: Int?, email: String?, userId: String?): List<User> {

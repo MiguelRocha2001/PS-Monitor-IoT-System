@@ -82,3 +82,9 @@ fun getUsersLink(sirenBuilderScope: SirenBuilderScope<*>) =
         href = URI(Uris.Users.ALL),
         rel = Rels.USERS
     )
+
+fun getUserIdsLink(sirenBuilderScope: SirenBuilderScope<*>) =
+    sirenBuilderScope.link(
+        href = URI(Uris.Users.IDS),
+        rel = Rels.USER_IDS
+    )

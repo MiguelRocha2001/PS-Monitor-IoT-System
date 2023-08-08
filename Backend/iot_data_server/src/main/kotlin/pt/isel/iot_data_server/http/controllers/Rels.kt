@@ -15,6 +15,7 @@ object Rels {
     val IS_EMAIL_ALREADY_REGISTERED = LinkRelation("is-email-already-registered")
     val USER_COUNT = LinkRelation("user-count")
     val USERS = LinkRelation("users")
+    val USER_IDS = LinkRelation("users-ids")
 
     //--------------------VERIFICATION ---------------
     val VERIFY_CODE = LinkRelation("verify-code")

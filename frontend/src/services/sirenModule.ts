@@ -88,6 +88,7 @@ let GET_DEVICES_FILTERED_BY_ID_COUNT_LINK: Link
 let AVAILABLE_DEVICE_SENSORS_LINK: Link
 let GET_USER_COUNT_LINK: Link
 let GET_USERS_LINK: Link
+let GET_USERS_IDS_LINK: Link
 let GET_DEVICE_WAKE_UP_LOGS_LINK: Link
 
 
@@ -164,8 +165,8 @@ function getUserCountLink(): Link {
     return GET_USER_COUNT_LINK
 }
 
-function getUsersLink(): Link {
-    return GET_USERS_LINK
+function getUsersIdsLink(): Link {
+    return GET_USERS_IDS_LINK
 }
 
 function getDeviceWakeUpLogsLink(): Link {
@@ -253,6 +254,10 @@ function extractGetUsersLink(links: Link[]) {
     return GET_USERS_LINK = extractLink(links, "users")
 }
 
+function extractGetUsersIdsLink(links: Link[]) {
+    return GET_USERS_IDS_LINK = extractLink(links, "users-ids")
+}
+
 function extractGetDeviceWakeUpLogsLink(links: Link[]) {
     return GET_DEVICE_WAKE_UP_LOGS_LINK = extractLink(links, "device-wake-up-logs")
 }
@@ -337,7 +342,8 @@ export const SirenModule = {
     extractGetUserCountLink,
     getUserCountLink,
     extractGetUsersLink,
-    getUsersLink,
+    getUsersIdsLink,
+    extractGetUsersIdsLink,
     extractGetDeviceWakeUpLogsLink,
     getDeviceWakeUpLogsLink
 }

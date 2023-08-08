@@ -22,12 +22,12 @@ export function toUser(json: any): User {
     return new User(id, email, role)
 }
 
-export function toUsers(json: any): User[] {
-    const users = json.users
-    if (!Array.isArray(users)) {
-        throw new Error(`Invalid users: ${users}`)
+export function toUsersIds(json: any): string[] {
+    const usersIds = json.users
+    if (!Array.isArray(usersIds)) {
+        throw new Error(`Invalid users: ${usersIds}`)
     }
-    return users.map(toUser)
+    return usersIds
 }
 
 export class Device {

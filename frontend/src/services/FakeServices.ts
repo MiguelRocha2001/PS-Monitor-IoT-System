@@ -133,18 +133,17 @@ export class FakeServices implements Services {
         throw new Error('Not logged in')
     }
 
-    async getUsers(page: number, limit: number, emailChunk: string | undefined, userIdChuck: string | undefined): Promise<User[]> {
+    async getUserIds(page: number, limit: number, emailChunk: string | undefined, userIdChuck: string | undefined): Promise<string[]> {
         const start = (page - 1) * limit
         const end = start + limit
         let users= this.users.map(u => u.user).slice(start, end)
-        console.log(emailChunk)
         if (emailChunk) {
             users = users.filter(u => u.email.toLowerCase().includes(emailChunk.toLowerCase()))
         }
         if (userIdChuck) {
             users = users.filter(u => u.id.toLowerCase().includes(userIdChuck.toLowerCase()))
         }
-        return users
+        return users.map(u => u.id)
     }
 
     async getUserDeviceCount(

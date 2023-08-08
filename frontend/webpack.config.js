@@ -3,7 +3,7 @@ const { EnvironmentPlugin } = require('webpack');
 
 module.exports = (env, argv) => {
     const isDevelopment = argv.mode === 'development';
-    const targetPort = isDevelopment ? 8081 : 9000;
+    const targetPort = isDevelopment ? 8080 : 9000;
     return {
         mode: "development",
         resolve: {

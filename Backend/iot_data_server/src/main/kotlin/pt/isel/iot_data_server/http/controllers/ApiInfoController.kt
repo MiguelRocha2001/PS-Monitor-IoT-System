@@ -42,6 +42,7 @@ class ApiInfoController {
                 getMyAvailableDeviceSensorsLink(this)
                 getUserCountLink(this)
                 getUsersLink(this)
+                getUserIdsLink(this)
             })
     }
 }

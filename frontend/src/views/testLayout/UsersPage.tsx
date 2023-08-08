@@ -14,7 +14,7 @@ import {useRole, useSetIsLoggedIn} from "../auth/Authn";
 
 export function Users() {
     const setError = useSetError()
-    const [users, setUsers] = useState<User[]>([])
+    const [usersIds, setUsersIds] = useState<string[]>([])
     const [searchQuery, setSearchQuery] = useState("");
 
 
@@ -78,8 +78,8 @@ export function Users() {
     useEffect(() => {
         async function updateUsers() {
             const userIdChunk = searchQuery === "" ? undefined : searchQuery
-            services.getUsers(page, pageSize, undefined, userIdChunk)
-                .then(users => setUsers(users))
+            services.getUserIds(page, pageSize, undefined, userIdChunk)
+                .then(users => setUsersIds(users))
                 .catch(error => setError(error.message))
         }
         updateUsers()
@@ -88,8 +88,8 @@ export function Users() {
     const handleButtonPress = () => {
         if(searchQuery === "") return
         const userIdChunk = searchQuery === "" ? undefined : searchQuery
-        services.getUsers(page, pageSize, undefined, userIdChunk)
-            .then(users => {setUsers(users)})
+        services.getUserIds(page, pageSize, undefined, userIdChunk)
+            .then(users => {setUsersIds(users)})
             .then(()=> services.getUserCount(page, pageSize, undefined, userIdChunk))
             .then((devicesSize)=>setFilteredUsers(devicesSize))
             .catch(error => setError(error.message))
@@ -110,13 +110,13 @@ export function Users() {
         return (
             <div className={"Users"}>
                 <LogoutButton handleButtonPressed={handleButtonPressed}/>
-                <UserList users={users} searchQuery={searchQuery} setSearchQuery={setSearchQuery} handleButtonPress={handleButtonPress} totalUsers={totalUsers}/>
+                <UserList users={usersIds} searchQuery={searchQuery} setSearchQuery={setSearchQuery} handleButtonPress={handleButtonPress} totalUsers={totalUsers}/>
                 <Pagination currentPage={page} totalPages={Math.ceil(filteredDevices/pageSize)} onPageChange={(selectedPage: number) => setPage(selectedPage)} />
             </div>
         )
 }
 
-function UserList({ users, searchQuery, setSearchQuery, handleButtonPress, totalUsers }: { users: User[], searchQuery: string, setSearchQuery: (searchQuery: string) => void, handleButtonPress: () => void, totalUsers: number }) {
+function UserList({ users, searchQuery, setSearchQuery, handleButtonPress, totalUsers }: { users: string[], searchQuery: string, setSearchQuery: (searchQuery: string) => void, handleButtonPress: () => void, totalUsers: number }) {
     const lastLineText = users.length === 0 ? "No Users found." : `Showing ${users.length} of ${totalUsers} users.`
 
     return (
@@ -128,11 +128,11 @@ function UserList({ users, searchQuery, setSearchQuery, handleButtonPress, total
                 {users.length > 0 ? (
                     <ul className="list-group">
                         {users.map((user) => (
-                            <li key={user.id} className="list-group-item">
+                            <li key={user} className="list-group-item">
                                 <div className="list-item-info">
                                     <MyLink
-                                        to={`/users/${user.id}/devices`}
-                                        text={user.id}
+                                        to={`/users/${user}/devices`}
+                                        text={user}
                                         center={false}
                                     />
                                 </div>
