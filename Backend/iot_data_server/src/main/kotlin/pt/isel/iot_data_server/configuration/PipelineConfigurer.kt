@@ -20,7 +20,7 @@ class PipelineConfigurer(
 ) : WebMvcConfigurer {
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/**")
-            .allowedOrigins("http://localhost:8080") // TODO: review this
+            .allowedOrigins("http://localhost:8080", "http://localhost:9000") // TODO: review this
             .allowedMethods("GET", "POST", "PUT", "DELETE")
             .allowCredentials(true)
     }
